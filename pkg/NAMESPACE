@@ -1,1 +1,11 @@
-#placeholder
+import(rJava)
+
+#exportClasses(clusterer, stream)
+#export(build,
+#       clusterer,
+#       stream)
+
+exportClasses(clusterer)
+export(helloworld,
+       clusterer,
+       cluster)

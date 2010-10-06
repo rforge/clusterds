@@ -7,10 +7,7 @@ Maintainer: John Forrest <jhforrest@smu.edu>
 Description: A comparison of various data stream clustering algorithms
              and associated visualization.
 Depends: R (>= 2.6.0)
-Imports: 
+Imports: rJava (>= 0.6-3)
 Suggests: 
-SystemRequirements: 
-License: GPL
-Packaged: 
-Repository: 
-Date/Publication: 
+SystemRequirements: Java (>= 5.0)
+License: GPL-2
