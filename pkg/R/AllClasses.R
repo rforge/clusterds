@@ -11,11 +11,13 @@
 setClass("clusterer",
 	#contains("stream"),
 	representation(
-		algorithm	= "character"
+		algorithm	= "character",
+                options		= "character"
 		
 	),
 
 	prototype(
-		algorithm	= "denstream"
+		algorithm	= "denstream",
+                options		= ""
 	)
 )

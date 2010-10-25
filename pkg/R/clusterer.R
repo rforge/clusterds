@@ -1,21 +1,5 @@
-## constructor
-clusterer <- function(algorithm="denstream") {
-
-	new("clusterer", algorithm=algorithm)	
-}
-
-## show
-setMethod("show", signature(object = "clusterer"),
-        function(object) {
-            cat("Clusterer\n", 
-                    "Algorithm:", object@algorithm, "\n"
-                    )
-            invisible(NULL)
-        }
-)
-
-cluster <- function(clusterer, options="") {
-   if (clusterer@algorithm == "denstream") {
+cluster <- function(algorithm="denstream", options="") {
+   if (algorithm == "denstream") {
       # denstream options:
       # -e epsilon 	0.01 (defines the epsilon neighborhood, range: 0 to 1)
       # -p minPoints 	10 (min. num. points a cluster must have)
@@ -29,18 +13,34 @@ cluster <- function(clusterer, options="") {
       .jcall(c, "V", "prepareForUse")
    }
 
-   else if (clusterer@algorithm == "clustream") {
+   else if (algorithm == "clustream") {
+      # clustream options:
+      # -t timeWindow (default: 1000)
+      # Range of the window.
+      # -k maxNumKernels (default: 100)
+      # Maximum number of micro kernels to use.
+      # -M evaluateMicroClustering
+      # Evaluate the underlying microclustering instead of the macro clustering
+
       c <- .jnew("moa/clusterers/clustream/Clustream")
       .jcall(c, "V", "prepareForUse")
    }
 
-   else if (clusterer@algorithm == "cobweb") {
+   else if (algorithm == "cobweb") {
+      # cobweb options:
+      # -a acuity (default: 1.0)
+      # Acuity (minimum standard deviation)
+      # -c cutoff (default: 0.002)
+      # Cutoff (minimum category utility)
+      # -r randomSeed (default: 1)
+      # Seed for random noise.
+
       c <- .jnew("moa/clusterers/CobWeb")
       .jcall(c, "V", "prepareForUse")
    }
 
    else {
-      return;
+      stop("invalid clusterer.")
    }
 
    # if the user passes options to the function, the cluster's parameters can be set
@@ -51,13 +51,16 @@ cluster <- function(clusterer, options="") {
       print(test)
    }
    else {
-      print("using default options")
+      print("no CLI options defined, using default parameters for clusterer")
    }
 
    panel <- .jnew("moa/gui/clustertab/ClusteringAlgoPanel")
    strm <- .jcall(panel, "Lmoa/streams/clustering/ClusteringStream;", "getStream")
    .jcall(strm, "V", "prepareForUse")
    
+   #TODO: be able to expand the number of instances we loop through, and give
+   #      the user the ability to pause or resume the datastream
+
    #looping through the stream, feeding the new datapoints into 
    #the algorithm
    for (i in 1:1000) {
