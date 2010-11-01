@@ -1,58 +1,4 @@
-cluster <- function(algorithm="denstream", options="") {
-   if (algorithm == "denstream") {
-      # denstream options:
-      # -e epsilon 	0.01 (defines the epsilon neighborhood, range: 0 to 1)
-      # -p minPoints 	10 (min. num. points a cluster must have)
-      # -l lambda	0.006 (range: 0 to 1)
-      # -b beta		0.001 (range: 0 to 1)
-      # -m mu		1 (range: 0 to max(double))
-      # -i initPoints	10000 (number of points to use for initialization)
-      # -M		false (evaluate micro clustering flag)
-
-      c <- .jnew("moa/clusterers/denstream/DenStream")
-      .jcall(c, "V", "prepareForUse")
-   }
-
-   else if (algorithm == "clustream") {
-      # clustream options:
-      # -t timeWindow (default: 1000)
-      # Range of the window.
-      # -k maxNumKernels (default: 100)
-      # Maximum number of micro kernels to use.
-      # -M evaluateMicroClustering
-      # Evaluate the underlying microclustering instead of the macro clustering
-
-      c <- .jnew("moa/clusterers/clustream/Clustream")
-      .jcall(c, "V", "prepareForUse")
-   }
-
-   else if (algorithm == "cobweb") {
-      # cobweb options:
-      # -a acuity (default: 1.0)
-      # Acuity (minimum standard deviation)
-      # -c cutoff (default: 0.002)
-      # Cutoff (minimum category utility)
-      # -r randomSeed (default: 1)
-      # Seed for random noise.
-
-      c <- .jnew("moa/clusterers/CobWeb")
-      .jcall(c, "V", "prepareForUse")
-   }
-
-   else {
-      stop("invalid clusterer.")
-   }
-
-   # if the user passes options to the function, the cluster's parameters can be set
-   if (options != "") {
-      o <- .jcall(c, "Lmoa/options/Options;", "getOptions")
-      .jcall(o, "V", "setViaCLIString", options)
-      test <- .jcall(o, "Ljava/lang/String;", "getAsCLIString")
-      print(test)
-   }
-   else {
-      print("no CLI options defined, using default parameters for clusterer")
-   }
+cluster <- function(clusterer=ClusterDS()) {
 
    panel <- .jnew("moa/gui/clustertab/ClusteringAlgoPanel")
    strm <- .jcall(panel, "Lmoa/streams/clustering/ClusteringStream;", "getStream")
@@ -66,7 +12,7 @@ cluster <- function(algorithm="denstream", options="") {
    for (i in 1:1000) {
       inst <- .jnew("weka/core/Instance")
       inst <- .jcall(strm, "Lweka/core/Instance;", "nextInstance")
-      .jcall(c, "V", "trainOnInstanceImpl", inst)
+      .jcall(clusterer$javaObj, "V", "trainOnInstanceImpl", inst)
    }
 	
 
@@ -137,6 +83,75 @@ DenStream <- function(epsilon=0.1, minPoints=10, lambda=0.006, beta=0.001, mu=1,
 
   # initializing the R object
   l <- list(description = "DenStream",
+            options = cliParams,
+            javaObj = clusterer)
+
+  class(l) <- "ClusterDS"
+  l
+}
+
+# clustream options:
+# -t timeWindow (default: 1000)
+# Range of the window.
+# -k maxNumKernels (default: 100)
+# Maximum number of micro kernels to use.
+# -M evaluateMicroClustering
+# Evaluate the underlying microclustering instead of the macro clustering
+Clustream <- function(timeWindow=1000, maxNumKernels=100) {
+  if (timeWindow < 0)
+    stop("invalid timeWindow, must be > 0")
+
+  if (maxNumKernels < 0)
+    stop("invalid maxNumKernels, must be > 0")
+
+  paramList <- list(t = timeWindow,
+                    k = maxNumKernels)
+
+  # converting the param list to a cli string to use in java
+  cliParams <- convertParams(paramList)
+
+  # initializing the clusterer
+  clusterer <- .jnew("moa/clusterers/clustream/Clustream")
+  .jcall(clusterer, "V", "prepareForUse")
+
+  options <- .jcall(clusterer, "Lmoa/options/Options;", "getOptions")
+  .jcall(options, "V", "setViaCLIString", cliParams)
+
+  # initializing the R object
+  l <- list(description = "Clustream",
+            options = cliParams,
+            javaObj = clusterer)
+
+  class(l) <- "ClusterDS"
+  l
+}
+
+# cobweb options:
+# -a acuity (default: 1.0)
+# Acuity (minimum standard deviation)
+# -c cutoff (default: 0.002)
+# Cutoff (minimum category utility)
+# -r randomSeed (default: 1)
+# Seed for random noise.
+CobWeb <- function(acuity=1.0, cutoff=0.002, randomSeed=1) {
+
+  #need some error checking on params, need to verify
+  paramList <- list(a=acuity,
+                    c=cutoff,
+                    r=randomSeed)
+
+  # converting the param list to a cli string to use in java
+  cliParams <- convertParams(paramList)
+  
+  # initializing the clusterer
+  clusterer <- .jnew("moa/clusterers/CobWeb")
+  .jcall(clusterer, "V", "prepareForUse")
+
+  options <- .jcall(clusterer, "Lmoa/options/Options;", "getOptions")
+  .jcall(options, "V", "setViaCLIString", cliParams)
+
+  # initializing the R object
+  l <- list(description = "CobWeb",
             options = cliParams,
             javaObj = clusterer)
 

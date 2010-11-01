@@ -2,4 +2,6 @@ import(rJava)
 
 export(cluster,
        DenStream,
+       CobWeb,
+       Clustream,
        convertParams)
