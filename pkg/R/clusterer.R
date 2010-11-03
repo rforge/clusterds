@@ -1,21 +1,19 @@
 cluster <- function(clusterer=ClusterDS()) {
 
-   panel <- .jnew("moa/gui/clustertab/ClusteringAlgoPanel")
-   strm <- .jcall(panel, "Lmoa/streams/clustering/ClusteringStream;", "getStream")
-   .jcall(strm, "V", "prepareForUse")
+  panel <- .jnew("moa/gui/clustertab/ClusteringAlgoPanel")
+  strm <- .jcall(panel, "Lmoa/streams/clustering/ClusteringStream;", "getStream")
+  .jcall(strm, "V", "prepareForUse")
    
-   #TODO: be able to expand the number of instances we loop through, and give
-   #      the user the ability to pause or resume the datastream
+  #TODO: be able to expand the number of instances we loop through, and give
+  #      the user the ability to pause or resume the datastream
 
-   #looping through the stream, feeding the new datapoints into 
-   #the algorithm
-   for (i in 1:1000) {
-      inst <- .jnew("weka/core/Instance")
-      inst <- .jcall(strm, "Lweka/core/Instance;", "nextInstance")
-      .jcall(clusterer$javaObj, "V", "trainOnInstanceImpl", inst)
-   }
-	
-
+  #looping through the stream, feeding the new datapoints into 
+  #the algorithm
+  for (i in 1:5000) {
+    inst <- .jnew("weka/core/Instance")
+    inst <- .jcall(strm, "Lweka/core/Instance;", "nextInstance")
+    .jcall(clusterer$javaObj, "V", "trainOnInstanceImpl", inst)
+  }
 }
 
 convertParams <- function(paramList=list()) {
@@ -160,4 +158,29 @@ CobWeb <- function(acuity=1.0, cutoff=0.002, randomSeed=1) {
 }
 
 print.ClusterDS <- function(x, ...) {
+}
+
+#plot.ClusterDS <- function(x, ...) {
+testPlot <- function(x, ...) {
+
+  if (.jcall(x$javaObj, "Z", "implementsMicroClusterer")) {
+
+    # Clustering of microclusters
+    mClustering <- .jcall(x$javaObj, "Lmoa/cluster/Clustering;", "getMicroClusteringResult")
+
+    # array of microclusters
+    mClusters <- .jcall(mClustering, "Lmoa/core/AutoExpandVector;", "getClustering")
+
+    # length of array
+    length <- .jcall(mClusters, "I", "size")
+    .jmethods(mClusters)
+
+    # iterating over the array, extracting data to be plotted
+    #for (i in 1:length) {
+    #  mCluster <- .jcall(mClusters, "Ljava/lang/Object;", "get", i-1)
+    #  print("obtained micro cluster")
+    #}
+
+    mClusters
+  }
 }
