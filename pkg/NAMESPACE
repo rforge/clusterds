@@ -5,4 +5,8 @@ export(cluster,
        CobWeb,
        Clustream,
        convertParams,
-       testPlot)
+       create_stream,
+       get_instance)
+
+S3method(print, ClusterDS)
+S3method(plot, ClusterDS)

@@ -1,17 +1,28 @@
-cluster <- function(clusterer=ClusterDS()) {
-
+create_stream <- function() {
   panel <- .jnew("moa/gui/clustertab/ClusteringAlgoPanel")
   strm <- .jcall(panel, "Lmoa/streams/clustering/ClusteringStream;", "getStream")
   .jcall(strm, "V", "prepareForUse")
-   
-  #TODO: be able to expand the number of instances we loop through, and give
-  #      the user the ability to pause or resume the datastream
 
-  #looping through the stream, feeding the new datapoints into 
-  #the algorithm
-  for (i in 1:5000) {
-    inst <- .jnew("weka/core/Instance")
-    inst <- .jcall(strm, "Lweka/core/Instance;", "nextInstance")
+  l <- list(Description = "RandomRBFGeneratorEvents",
+            cliParams = "",
+            javaObj = strm)
+
+  class(l) <- "DS"
+  l
+}
+
+get_instance <- function(strm=DS()) {
+  inst <- .jcall(strm$javaObj, "Lweka/core/Instance;", "nextInstance")
+}
+
+cluster <- function(clusterer=ClusterDS(), strm=DS(), numPoints=10000) { 
+  if (numPoints < 2)
+    stop("numPoints must be > 1")
+
+  # looping through the stream, feeding the new datapoints into 
+  # the algorithm
+  for (i in 1:numPoints) {
+    inst <- get_instance(strm)
     .jcall(clusterer$javaObj, "V", "trainOnInstanceImpl", inst)
   }
 }
@@ -133,7 +144,7 @@ Clustream <- function(timeWindow=1000, maxNumKernels=100) {
 # Seed for random noise.
 CobWeb <- function(acuity=1.0, cutoff=0.002, randomSeed=1) {
 
-  #need some error checking on params, need to verify
+  # need some error checking on params, need to verify
   paramList <- list(a=acuity,
                     c=cutoff,
                     r=randomSeed)
@@ -157,11 +168,13 @@ CobWeb <- function(acuity=1.0, cutoff=0.002, randomSeed=1) {
   l
 }
 
+print.DS <- function(x, ...) {
+}
+
 print.ClusterDS <- function(x, ...) {
 }
 
-#plot.ClusterDS <- function(x, ...) {
-testPlot <- function(x, ...) {
+plot.ClusterDS <- function(x, ...) {
 
   if (.jcall(x$javaObj, "Z", "implementsMicroClusterer")) {
 
@@ -173,14 +186,33 @@ testPlot <- function(x, ...) {
 
     # length of array
     length <- .jcall(mClusters, "I", "size")
-    .jmethods(mClusters)
+    #print(length) #TODO: testing statement
+
+    if (length < 2)
+      stop("not enough microclusters, please cluster more data")
+
+    # this matrix will hold the data to plot
+    m <- matrix(ncol=2, nrow=length)
 
     # iterating over the array, extracting data to be plotted
-    #for (i in 1:length) {
-    #  mCluster <- .jcall(mClusters, "Ljava/lang/Object;", "get", i-1)
-    #  print("obtained micro cluster")
-    #}
+    for (i in 1:length) {
 
-    mClusters
+      #print(i) #TODO: testing statement
+ 
+      # will have to cast mCluster as moa/cluster/Cluster
+      mCluster <- .jcall(mClusters, "Ljava/lang/Object;", "get", i-1L)
+      mCluster <- .jcast(mCluster, "Lmoa/cluster/Cluster")
+
+      # array of doubles for each dimension
+      center <- .jcall(mCluster, "[D", "getCenter") 
+      
+      # if the data is 2 dimensional, we don't have to project 
+      #if (.jcall(center, "I", "length") == 2) {
+        m[i, 1] = center[1]
+        m[i, 2] = center[2]
+      #}
+    }
+
+    plot(m)
   }
 }
