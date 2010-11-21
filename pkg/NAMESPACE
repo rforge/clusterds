@@ -6,7 +6,9 @@ export(cluster,
        Clustream,
        convertParams,
        create_stream,
-       get_instance)
+       get_instance,
+       get_centroids)
+#       DS)
 
 S3method(print, ClusterDS)
-S3method(plot, ClusterDS)
+S3method(print, DS)

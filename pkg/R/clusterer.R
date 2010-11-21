@@ -11,9 +11,21 @@ create_stream <- function() {
   l
 }
 
+#DS <- function() {
+#  if (filename==NULL)
+#    stop("invalid file name")
+
+  # setting the random seed
+#  set.seed(format(Sys.time(), "%S"))
+#}
+
 get_instance <- function(strm=DS()) {
   inst <- .jcall(strm$javaObj, "Lweka/core/Instance;", "nextInstance")
 }
+
+#get_instance <- function(strm=DS()) {
+#  runif(2, min=0, max=1)
+#}
 
 cluster <- function(clusterer=ClusterDS(), strm=DS(), numPoints=10000) { 
   if (numPoints < 2)
@@ -23,6 +35,10 @@ cluster <- function(clusterer=ClusterDS(), strm=DS(), numPoints=10000) {
   # the algorithm
   for (i in 1:numPoints) {
     inst <- get_instance(strm)
+    
+    # casting the inst to a java object
+#    inst <- .jnew("weka/core/Instance", 1, inst)
+#    print(inst)
     .jcall(clusterer$javaObj, "V", "trainOnInstanceImpl", inst)
   }
 }
@@ -144,7 +160,7 @@ Clustream <- function(timeWindow=1000, maxNumKernels=100) {
 # Seed for random noise.
 CobWeb <- function(acuity=1.0, cutoff=0.002, randomSeed=1) {
 
-  # need some error checking on params, need to verify
+  # TODO: need some error checking on params, need to verify
   paramList <- list(a=acuity,
                     c=cutoff,
                     r=randomSeed)
@@ -168,13 +184,67 @@ CobWeb <- function(acuity=1.0, cutoff=0.002, randomSeed=1) {
   l
 }
 
-print.DS <- function(x, ...) {
+# ClusTree options:
+# -t timeWindow (default: 1000)
+# -h the maximal height of the tree (default: 8)
+ClusTree <- function(timeWindow=1000, maxHeight=8) {
+
+  # TODO: need some error checking on params, need to verify
+  paramList <- list(t=timeWindow,
+                    h=maxHeight)
+
+  # converting the param list to a cli string to use in java
+  cliParams <- convertParams(paramList)
+  
+  # initializing the clusterer
+  clusterer <- .jnew("moa/clusterers/clustree/ClusTree")
+  .jcall(clusterer, "V", "prepareForUse")
+
+  options <- .jcall(clusterer, "Lmoa/options/Options;", "getOptions")
+  .jcall(options, "V", "setViaCLIString", cliParams)
+
+  # initializing the R object
+  l <- list(description = "ClusTree",
+            options = cliParams,
+            javaObj = clusterer)
+
+  class(l) <- "ClusterDS"
+  l  
 }
 
-print.ClusterDS <- function(x, ...) {
+# StreamKM options:
+# -s sizeCoreset, size of the coreset
+# -k numClusters
+# -w widthOption
+# -r randomSeedOption
+StreamKM <- function(sizeCoreset=100, numClusters=5, width=1000, randomSeed=1) {
+
+  # TODO: need some error checking on params, need to verify
+  paramList <- list(s=sizeCoreset,
+                    k=numClusters,
+                    w=width,
+                    r=randomSeed)
+
+  # converting the param list to a cli string to use in java
+  cliParams <- convertParams(paramList)
+  
+  # initializing the clusterer
+  clusterer <- .jnew("moa/clusterers/streamkm/StreamKM")
+  .jcall(clusterer, "V", "prepareForUse")
+
+  options <- .jcall(clusterer, "Lmoa/options/Options;", "getOptions")
+  .jcall(options, "V", "setViaCLIString", cliParams)
+
+  # initializing the R object
+  l <- list(description = "StreamKM",
+            options = cliParams,
+            javaObj = clusterer)
+
+  class(l) <- "ClusterDS"
+  l  
 }
 
-plot.ClusterDS <- function(x, ...) {
+get_centroids <- function(x, ...) {
 
   if (.jcall(x$javaObj, "Z", "implementsMicroClusterer")) {
 
@@ -186,18 +256,16 @@ plot.ClusterDS <- function(x, ...) {
 
     # length of array
     length <- .jcall(mClusters, "I", "size")
-    #print(length) #TODO: testing statement
 
     if (length < 2)
       stop("not enough microclusters, please cluster more data")
 
     # this matrix will hold the data to plot
     m <- matrix(ncol=2, nrow=length)
+    colnames(m) <- c("x", "y")
 
     # iterating over the array, extracting data to be plotted
     for (i in 1:length) {
-
-      #print(i) #TODO: testing statement
  
       # will have to cast mCluster as moa/cluster/Cluster
       mCluster <- .jcall(mClusters, "Ljava/lang/Object;", "get", i-1L)
@@ -207,12 +275,19 @@ plot.ClusterDS <- function(x, ...) {
       center <- .jcall(mCluster, "[D", "getCenter") 
       
       # if the data is 2 dimensional, we don't have to project 
-      #if (.jcall(center, "I", "length") == 2) {
+      #if (length(center) == 2) {
         m[i, 1] = center[1]
         m[i, 2] = center[2]
       #}
     }
-
-    plot(m)
+    
+    # returning the matrix 
+    m
   }
+}
+
+print.DS <- function(x, ...) {
+}
+
+print.ClusterDS <- function(x, ...) {
 }
