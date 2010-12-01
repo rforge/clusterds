@@ -11,9 +11,30 @@ create_stream <- function() {
   l
 }
 
-create_rStream <- function() {
+# clusterProb is a vector of probabilities for the clusters created
+create_rStream <- function(mu=0.5, sd=0.2, numAttr=2, numClusters=1L, clusterProb=1) {
+  if (length(mu) != numClusters) {
+    stop("mu vector is a different length than the number of clusters")
+  }
+
+  if (length(sd) != numClusters) {
+    stop("sd vector is a different length than the number of clusters")
+  }
+
+  if (length(clusterProb) != numClusters) {
+    print("probability vector is a different length than the number of clusters, defaulting to an even split")
+    prob <- 1/numClusters
+    clusterProb <- as.vector(array(prob, numClusters))
+  }
+
   l <- list(Description = "rStream",
-            parameters = list(mu=.5, sd=.2))
+            mu = mu,
+            sd = sd,
+            numAttr = numAttr,
+            numClusters = numClusters,
+            clusterProb = clusterProb,
+            centroids = as.vector(array(0, numClusters)),
+            numPoints = as.vector(array(0, numClusters)))
   class(l) <- "rDS"
   l
 }
@@ -24,12 +45,41 @@ get_instance.default <- function(x, ...) {
    stop(gettextf("get_instance not implemented for class '%s'.", class(x)))
 }
 
-get_instance.DS <- function(x) {
+get_instance.DS <- function(x, ...) {
   inst <- .jcall(x$javaObj, "Lweka/core/Instance;", "nextInstance")
 }
 
-get_instance.rDS <- function(x) {
-  inst <- rnorm(2, mean=x$parameters$mu, x$parameters$sd)
+# TODO: how do we re-assign the variable after calculating the values??
+get_instance.rDS <- function(x, ...) {
+
+  # probabilistic selection of cluster
+  if (x$numClusters == 1) {
+    numCluster <- 1
+  } else {
+    roll <- runif(max=1, min=0, n=1)
+    val <- x$clusterProb[1]
+    for (i in 1:length(x$clusterProb)) {
+      if (roll <= val) {
+        numCluster <- i
+        break;
+      }  else {
+        val <- val + i
+      }
+    }
+  }
+
+  # generating an instance
+  inst <- rnorm(n=x$numAttr, mean=x$mu[numCluster], x$sd[numCluster])
+  print(inst)
+
+  # recalculating number of points & centroids
+  # TODO: is this the right way to calculate the centroid??
+  if (x$numPoints[numCluster] == 0) {
+    x$centroids[numCluster] = mean(inst)
+  } else {
+    x$centroids[numCluster] <- (x$centroids[numCluster] * x$numPoints[numCluster] + mean(inst)) / (x$numPoints[numCluster]+1)
+  }
+  x$numPoints[numCluster] <- x$numPoints[numCluster]+1
 
   # casting the inst to a java object
   inst <- .jnew("weka/core/Instance", 1, inst)

@@ -1,9 +1,7 @@
 \name{Clustream}
 \alias{Clustream}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-%%  ~~function to do ... ~~
-}
+\title{Creating a Clustream instance}
 \description{
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }

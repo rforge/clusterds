@@ -1,9 +1,7 @@
 \name{convertParams}
 \alias{convertParams}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-%%  ~~function to do ... ~~
-}
+\title{Converting CLI style params to a list}
 \description{
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }

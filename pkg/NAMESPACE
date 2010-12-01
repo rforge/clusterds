@@ -1,4 +1,5 @@
 import(rJava)
+import(MASS)
 
 export(cluster,
        DenStream,
@@ -12,5 +13,5 @@ export(cluster,
 
 S3method(print, ClusterDS)
 S3method(print, DS)
-#S3method(get_instance, DS)
-#S3method(get_instance, rDS)
+S3method(get_instance, DS)
+S3method(get_instance, rDS)
