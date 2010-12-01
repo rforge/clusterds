@@ -10,29 +10,18 @@ get_centroids(x, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{x}{
-%%     ~~Describe \code{x} here~~
-}
-  \item{\dots}{
-%%     ~~Describe \code{\dots} here~~
-}
+  \item{x}{a \code{ClusterDS} object.}
 }
 \details{
 %%  ~~ If necessary, more details than the description above ~~
 }
 \value{
-%%  ~Describe the value returned
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
+A matrix that holds the centroids for each microcluster in the Clustering.
 }
 \references{
 %% ~put references to the literature/web site here ~
 }
-\author{
-%%  ~~who you are~~
-}
+\author{}
 \note{
 %%  ~~further notes~~
 }
@@ -43,36 +32,14 @@ get_centroids(x, ...)
 %% ~~objects to See Also as \code{\link{help}}, ~~~
 }
 \examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
 
-## The function is currently defined as
-function (x, ...) 
-{
-    if (.jcall(x$javaObj, "Z", "implementsMicroClusterer")) {
-        mClustering <- .jcall(x$javaObj, "Lmoa/cluster/Clustering;", 
-            "getMicroClusteringResult")
-        mClusters <- .jcall(mClustering, "Lmoa/core/AutoExpandVector;", 
-            "getClustering")
-        length <- .jcall(mClusters, "I", "size")
-        if (length < 2) 
-            stop("not enough microclusters, please cluster more data")
-        m <- matrix(ncol = 2, nrow = length)
-        colnames(m) <- c("x", "y")
-        for (i in 1:length) {
-            mCluster <- .jcall(mClusters, "Ljava/lang/Object;", 
-                "get", i - 1L)
-            mCluster <- .jcast(mCluster, "Lmoa/cluster/Cluster")
-            center <- .jcall(mCluster, "[D", "getCenter")
-            m[i, 1] = center[1]
-            m[i, 2] = center[2]
-        }
-        m
-    }
-  }
+## creating a datastream and clusterer
+ds <- create_rStream()
+d <- DenStream()
+
+## clustering some data
+cluster(clusterer=d, x=ds, numPoints=10000)
+
+## plots the microclusters
+plot(get_centroids(d))
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
-\keyword{ ~kwd1 }
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line

@@ -70,7 +70,6 @@ get_instance.rDS <- function(x, ...) {
 
   # generating an instance
   inst <- rnorm(n=x$numAttr, mean=x$mu[numCluster], x$sd[numCluster])
-  print(inst)
 
   # recalculating number of points & centroids
   # TODO: is this the right way to calculate the centroid??
@@ -85,14 +84,14 @@ get_instance.rDS <- function(x, ...) {
   inst <- .jnew("weka/core/Instance", 1, inst)
 }
 
-cluster <- function(clusterer=ClusterDS(), x, numPoints=10000) { 
+cluster <- function(clusterer, x, numPoints=10000) { 
   if (numPoints < 2)
     stop("numPoints must be > 1")
 
   # looping through the stream, feeding the new datapoints into 
   # the algorithm
   for (i in 1:numPoints) {
-    inst <- get_instance(strm)
+    inst <- get_instance(x)
     .jcall(clusterer$javaObj, "V", "trainOnInstanceImpl", inst)
   }
 }
