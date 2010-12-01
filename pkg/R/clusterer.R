@@ -11,23 +11,31 @@ create_stream <- function() {
   l
 }
 
-#DS <- function() {
-#  if (filename==NULL)
-#    stop("invalid file name")
-
-  # setting the random seed
-#  set.seed(format(Sys.time(), "%S"))
-#}
-
-get_instance <- function(strm=DS()) {
-  inst <- .jcall(strm$javaObj, "Lweka/core/Instance;", "nextInstance")
+create_rStream <- function() {
+  l <- list(Description = "rStream",
+            parameters = list(mu=.5, sd=.2))
+  class(l) <- "rDS"
+  l
 }
 
-#get_instance <- function(strm=DS()) {
-#  runif(2, min=0, max=1)
-#}
+get_instance <- function(x, ...) UseMethod("get_instance")
 
-cluster <- function(clusterer=ClusterDS(), strm=DS(), numPoints=10000) { 
+get_instance.default <- function(x, ...) {
+   stop(gettextf("get_instance not implemented for class '%s'.", class(x)))
+}
+
+get_instance.DS <- function(x) {
+  inst <- .jcall(x$javaObj, "Lweka/core/Instance;", "nextInstance")
+}
+
+get_instance.rDS <- function(x) {
+  inst <- rnorm(2, mean=x$parameters$mu, x$parameters$sd)
+
+  # casting the inst to a java object
+  inst <- .jnew("weka/core/Instance", 1, inst)
+}
+
+cluster <- function(clusterer=ClusterDS(), x, numPoints=10000) { 
   if (numPoints < 2)
     stop("numPoints must be > 1")
 
@@ -35,10 +43,6 @@ cluster <- function(clusterer=ClusterDS(), strm=DS(), numPoints=10000) {
   # the algorithm
   for (i in 1:numPoints) {
     inst <- get_instance(strm)
-    
-    # casting the inst to a java object
-#    inst <- .jnew("weka/core/Instance", 1, inst)
-#    print(inst)
     .jcall(clusterer$javaObj, "V", "trainOnInstanceImpl", inst)
   }
 }
