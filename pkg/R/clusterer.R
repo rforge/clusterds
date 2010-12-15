@@ -1,4 +1,4 @@
-create_stream <- function() {
+create_javaDS <- function() {
   panel <- .jnew("moa/gui/clustertab/ClusteringAlgoPanel")
   strm <- .jcall(panel, "Lmoa/streams/clustering/ClusteringStream;", "getStream")
   .jcall(strm, "V", "prepareForUse")
@@ -7,81 +7,89 @@ create_stream <- function() {
             cliParams = "",
             javaObj = strm)
 
-  class(l) <- "DS"
+  class(l) <- "javaDS"
   l
 }
 
 # clusterProb is a vector of probabilities for the clusters created
-create_rStream <- function(mu=0.5, sd=0.2, numAttr=2, numClusters=1L, clusterProb=1) {
-  if (length(mu) != numClusters) {
-    stop("mu vector is a different length than the number of clusters")
+create_staticDS <- function(mu=c(0.5,0.5), sd=c(0.2,0.2), clusterProb=1) {
+  
+  mu <- as.matrix(mu)
+  sd <- as.matrix(sd)
+
+  if (ncol(mu) != ncol(sd) ||
+      nrow(mu) != nrow(sd)) {
+    stop("mu matrix is a different size than sd matrix")
   }
 
-  if (length(sd) != numClusters) {
-    stop("sd vector is a different length than the number of clusters")
+  # if the cluster probability differs in length, we default to an equal probability to all clusters
+  if (length(clusterProb) != ncol(mu)) {
+    prob <- 1/ncol(mu)
+    clusterProb <- as.vector(array(prob, ncol(mu)))
   }
 
-  if (length(clusterProb) != numClusters) {
-    print("probability vector is a different length than the number of clusters, defaulting to an even split")
-    prob <- 1/numClusters
-    clusterProb <- as.vector(array(prob, numClusters))
-  }
-
-  l <- list(Description = "rStream",
+  l <- list(Description = "Static R Data Stream",
             mu = mu,
             sd = sd,
-            numAttr = numAttr,
-            numClusters = numClusters,
-            clusterProb = clusterProb,
-            centroids = as.vector(array(0, numClusters)),
-            numPoints = as.vector(array(0, numClusters)))
-  class(l) <- "rDS"
+            clusterProb = clusterProb)
+  class(l) <- "staticDS"
   l
 }
 
-get_instance <- function(x, ...) UseMethod("get_instance")
+create_dynamicDS <- function() {
+}
 
-get_instance.default <- function(x, ...) {
+create_fDS <- function(path="", delimiter=",") {
+  if (path == "") {
+    stop("no path defined")
+  }
+
+  con <- file(description=path, blocking=FALSE)
+  open(con)
+
+  #TODO: currently this only handles local files, use
+  #      url(description=path) for URLs
+  l <- list(Description = "File Data Stream",
+            con = con,
+            delimiter = delimiter)
+  class(l) <- "fDS"
+  l
+}
+
+get_instance <- function(x, numPoints=1, ...) UseMethod("get_instance")
+
+get_instance.default <- function(x, numPoints=1, ...) {
    stop(gettextf("get_instance not implemented for class '%s'.", class(x)))
 }
 
-get_instance.DS <- function(x, ...) {
+#TODO: need to extend this to handle when numPoints > 1
+get_instance.javaDS <- function(x, numPoints=1, ...) {
   inst <- .jcall(x$javaObj, "Lweka/core/Instance;", "nextInstance")
 }
 
-# TODO: how do we re-assign the variable after calculating the values??
-get_instance.rDS <- function(x, ...) {
-
-  # probabilistic selection of cluster
-  if (x$numClusters == 1) {
-    numCluster <- 1
-  } else {
-    roll <- runif(max=1, min=0, n=1)
-    val <- x$clusterProb[1]
-    for (i in 1:length(x$clusterProb)) {
-      if (roll <= val) {
-        numCluster <- i
-        break;
-      }  else {
-        val <- val + i
-      }
-    }
+get_instance.staticDS <- function(x, numPoints=1, ...) {
+  # selecting a cluster, and generating the instances
+  for (i in 1:numPoints) {
+    numCluster <- sample(x=c(1:ncol(x$mu)), size=numPoints, replace=TRUE, prob=x$clusterProb)
+    inst <- rbind(inst, rnorm(n=ncol(mu), mean=x$mu[numCluster,], x$sd[numCluster,]))
   }
 
-  # generating an instance
-  inst <- rnorm(n=x$numAttr, mean=x$mu[numCluster], x$sd[numCluster])
+  inst
+}
 
-  # recalculating number of points & centroids
-  # TODO: is this the right way to calculate the centroid??
-  if (x$numPoints[numCluster] == 0) {
-    x$centroids[numCluster] = mean(inst)
-  } else {
-    x$centroids[numCluster] <- (x$centroids[numCluster] * x$numPoints[numCluster] + mean(inst)) / (x$numPoints[numCluster]+1)
+get_instance.dynamicDS <- function(x, numPoints=1, ...) {
+}
+
+get_instance.fDS <- function(x, numPoints=1, ...) {
+  # reading from the connection
+  lines <- strsplit(x=readLines(x$con, n=numPoints, ok=TRUE), split=x$delimiter)
+
+  # converting the strings to a numeric matrix
+  for (i in 1:numPoints) {
+    inst <- rbind(inst, as.numeric(lines[[i]]))
   }
-  x$numPoints[numCluster] <- x$numPoints[numCluster]+1
-
-  # casting the inst to a java object
-  inst <- .jnew("weka/core/Instance", 1, inst)
+  
+  inst
 }
 
 cluster <- function(clusterer, x, numPoints=10000) { 
@@ -92,6 +100,12 @@ cluster <- function(clusterer, x, numPoints=10000) {
   # the algorithm
   for (i in 1:numPoints) {
     inst <- get_instance(x)
+    
+    # casting the inst to a java object
+    if (class(x) != "javaDS") {
+      inst <- .jnew("weka/core/Instance", 1, inst)
+    }
+
     .jcall(clusterer$javaObj, "V", "trainOnInstanceImpl", inst)
   }
 }
@@ -339,8 +353,17 @@ get_centroids <- function(x, ...) {
   }
 }
 
-print.DS <- function(x, ...) {
+print.ClusterDS <- function(x, ...) {
 }
 
-print.ClusterDS <- function(x, ...) {
+print.javaDS <- function(x, ...) {
+}
+
+print.staticDS <- function(x, ...) {
+}
+
+print.dynamicDS <- function(x, ...) {
+}
+
+print.fDS <- function(x, ...) {
 }

@@ -6,12 +6,19 @@ export(cluster,
        CobWeb,
        Clustream,
        convertParams,
-       create_stream,
-       create_rStream,
        get_centroids,
-       get_instance)
+       get_instance,
+       create_javaDS,
+       create_staticDS,
+       create_dynamicDS,
+       create_fDS)
 
 S3method(print, ClusterDS)
-S3method(print, DS)
-S3method(get_instance, DS)
-S3method(get_instance, rDS)
+S3method(print, javaDS)
+S3method(print, staticDS)
+S3method(print, dynamicDS)
+S3method(print, fDS)
+S3method(get_instance, javaDS)
+S3method(get_instance, staticDS)
+S3method(get_instance, dynamicDS)
+S3method(get_instance, fDS)
