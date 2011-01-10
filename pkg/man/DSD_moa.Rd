@@ -1,19 +1,16 @@
-\name{convertParams}
-\alias{convertParams}
+\name{DSD_moa}
+\alias{DSD_moa}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{Converting CLI style params to a list}
+\title{
+%%  ~~function to do ... ~~
+}
 \description{
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
-convertParams(paramList = list())
+DSD_moa()
 }
 %- maybe also 'usage' for other objects documented here.
-\arguments{
-  \item{paramList}{
-%%     ~~Describe \code{paramList} here~~
-}
-}
 \details{
 %%  ~~ If necessary, more details than the description above ~~
 }
@@ -45,17 +42,16 @@ convertParams(paramList = list())
 ##--	or do  help(data=index)  for the standard data sets.
 
 ## The function is currently defined as
-function (paramList = list()) 
+function () 
 {
-    length <- length(paramList)
-    if (length == 0) 
-        stop("invalid param list")
-    cliParams <- ""
-    for (i in 1:length) {
-        cliParams <- paste(cliParams, "-", names(paramList[i]), 
-            " ", paramList[[i]], " ", sep = "")
-    }
-    cliParams <- substr(cliParams, 1, nchar(cliParams) - 1)
+    panel <- .jnew("moa/gui/clustertab/ClusteringAlgoPanel")
+    strm <- .jcall(panel, "Lmoa/streams/clustering/ClusteringStream;", 
+        "getStream")
+    .jcall(strm, "V", "prepareForUse")
+    l <- list(Description = "RandomRBFGeneratorEvents", cliParams = "", 
+        javaObj = strm)
+    class(l) <- "javaDS"
+    l
   }
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

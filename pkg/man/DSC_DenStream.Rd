@@ -1,20 +1,34 @@
-\name{Clustream}
-\alias{Clustream}
+\name{DSC_DenStream}
+\alias{DSC_DenStream}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{Creating a Clustream instance}
+\title{
+%%  ~~function to do ... ~~
+}
 \description{
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
-Clustream(timeWindow = 1000, maxNumKernels = 100)
+DSC_DenStream(epsilon = 0.1, minPoints = 10, lambda = 0.006, beta = 0.001, mu = 1, initPoints = 10000)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{timeWindow}{
-%%     ~~Describe \code{timeWindow} here~~
+  \item{epsilon}{
+%%     ~~Describe \code{epsilon} here~~
 }
-  \item{maxNumKernels}{
-%%     ~~Describe \code{maxNumKernels} here~~
+  \item{minPoints}{
+%%     ~~Describe \code{minPoints} here~~
+}
+  \item{lambda}{
+%%     ~~Describe \code{lambda} here~~
+}
+  \item{beta}{
+%%     ~~Describe \code{beta} here~~
+}
+  \item{mu}{
+%%     ~~Describe \code{mu} here~~
+}
+  \item{initPoints}{
+%%     ~~Describe \code{initPoints} here~~
 }
 }
 \details{
@@ -48,19 +62,29 @@ Clustream(timeWindow = 1000, maxNumKernels = 100)
 ##--	or do  help(data=index)  for the standard data sets.
 
 ## The function is currently defined as
-function (timeWindow = 1000, maxNumKernels = 100) 
+function (epsilon = 0.1, minPoints = 10, lambda = 0.006, beta = 0.001, 
+    mu = 1, initPoints = 10000) 
 {
-    if (timeWindow < 0) 
-        stop("invalid timeWindow, must be > 0")
-    if (maxNumKernels < 0) 
-        stop("invalid maxNumKernels, must be > 0")
-    paramList <- list(t = timeWindow, k = maxNumKernels)
+    if (epsilon <= 0 || epsilon >= 1) 
+        stop("invalid epsilon, range: 0 to 1 exclusive")
+    if (minPoints < 10) 
+        stop("invalid minPoints, must be > 0")
+    if (lambda <= 0 || lambda >= 1) 
+        stop("invalid lambda, range: 0 to 1 exclusive")
+    if (beta <= 0 || beta >= 1) 
+        stop("invalid beta, range: 0 to 1 exclusive")
+    if (mu <= 0) 
+        stop("invalid mu, must be > 0")
+    if (initPoints < 0) 
+        stop("invalid initPoints, must be > 0")
+    paramList <- list(e = epsilon, p = minPoints, l = lambda, 
+        b = beta, m = mu, i = initPoints)
     cliParams <- convertParams(paramList)
-    clusterer <- .jnew("moa/clusterers/clustream/Clustream")
+    clusterer <- .jnew("moa/clusterers/denstream/DenStream")
     .jcall(clusterer, "V", "prepareForUse")
     options <- .jcall(clusterer, "Lmoa/options/Options;", "getOptions")
     .jcall(options, "V", "setViaCLIString", cliParams)
-    l <- list(description = "Clustream", options = cliParams, 
+    l <- list(description = "DenStream", options = cliParams, 
         javaObj = clusterer)
     class(l) <- "ClusterDS"
     l
