@@ -3,7 +3,15 @@
 # -h the maximal height of the tree (default: 8)
 DSC_ClusTree <- function(timeWindow=1000, maxHeight=8) {
 
-  # TODO: need some error checking on params, need to verify
+  # error checking
+  if (maxHeight < 0) {
+    stop("invalid maxHeight")
+  }
+
+  if (timeWindow < 0) {
+    stop("invalid timeWindow")
+  }
+
   paramList <- list(t=timeWindow,
                     h=maxHeight)
 
@@ -22,6 +30,6 @@ DSC_ClusTree <- function(timeWindow=1000, maxHeight=8) {
             options = cliParams,
             javaObj = clusterer)
 
-  class(l) <- "ClusterDS"
+  class(l) <- c("DSClusterer","DSC_ClusTree")
   l  
 }

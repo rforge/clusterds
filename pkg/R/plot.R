@@ -1,4 +1,4 @@
-get_centroids <- function(x, ...) {
+getCenters <- function(x, ...) {
 
   if (.jcall(x$javaObj, "Z", "implementsMicroClusterer")) {
 
@@ -28,6 +28,8 @@ get_centroids <- function(x, ...) {
       # array of doubles for each dimension
       center <- .jcall(mCluster, "[D", "getCenter") 
       
+      #TODO: projection
+      print(c("debugging: dimensions = ", length(center)))
       # if the data is 2 dimensional, we don't have to project 
       #if (length(center) == 2) {
         m[i, 1] = center[1]

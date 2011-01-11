@@ -5,7 +5,13 @@
 # -r randomSeedOption
 DSC_StreamKM <- function(sizeCoreset=100, numClusters=5, width=1000, randomSeed=1) {
 
-  # TODO: need some error checking on params, need to verify
+  if (sizeCoreset < 0)
+    stop("invalid sizeCoreset")
+  if (numClusters < 0)
+    stop("invalid numClusters")
+  if (width < 0)
+    stop("invalid width")
+
   paramList <- list(s=sizeCoreset,
                     k=numClusters,
                     w=width,
@@ -26,6 +32,6 @@ DSC_StreamKM <- function(sizeCoreset=100, numClusters=5, width=1000, randomSeed=
             options = cliParams,
             javaObj = clusterer)
 
-  class(l) <- "ClusterDS"
+  class(l) <- c("DSClusterer", "DSC_StreamKM")
   l  
 }

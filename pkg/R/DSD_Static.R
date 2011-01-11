@@ -19,15 +19,20 @@ DSD_Static <- function(mu=c(0.5,0.5), sd=c(0.2,0.2), clusterProb=1) {
             mu = mu,
             sd = sd,
             clusterProb = clusterProb)
-  class(l) <- "staticDS"
+  class(l) <- c("DSD","DSD_Static")
   l
 }
 
-get_instance.Static <- function(x, numPoints=1, ...) {
+getPoints.Static <- function(x, n=1, ...) {
+
   # selecting a cluster, and generating the instances
-  for (i in 1:numPoints) {
-    numCluster <- sample(x=c(1:ncol(x$mu)), size=numPoints, replace=TRUE, prob=x$clusterProb)
-    inst <- rbind(inst, rnorm(n=ncol(mu), mean=x$mu[numCluster,], x$sd[numCluster,]))
+  if (n >= 1) {
+    for (i in 1:numPoints) {
+      numCluster <- sample(x=c(1:ncol(x$mu)), size=numPoints, replace=TRUE, prob=x$clusterProb)
+      inst <- rbind(inst, rnorm(n=ncol(mu), mean=x$mu[numCluster,], x$sd[numCluster,]))
+    }
+  } else {
+    stop("invalid n")
   }
 
   inst

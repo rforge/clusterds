@@ -1,5 +1,8 @@
+#TODO: implement these
 DSD_Dynamic <- function() {
+  stop("not yet implemented")
 }
 
-get_instance.dynamic <- function(x, numPoints=1, ...) {
+getPoints.Dynamic <- function(x, numPoints=1, ...) {
+  stop("not yet implemented")
 }

@@ -22,6 +22,7 @@ DSC_Clustream <- function(timeWindow=1000, maxNumKernels=100) {
   clusterer <- .jnew("moa/clusterers/clustream/Clustream")
   .jcall(clusterer, "V", "prepareForUse")
 
+  # setting the input params based on the string created
   options <- .jcall(clusterer, "Lmoa/options/Options;", "getOptions")
   .jcall(options, "V", "setViaCLIString", cliParams)
 
@@ -30,6 +31,6 @@ DSC_Clustream <- function(timeWindow=1000, maxNumKernels=100) {
             options = cliParams,
             javaObj = clusterer)
 
-  class(l) <- "ClusterDS"
+  class(l) <- c("DSClusterer", "DSC_Clustream")
   l
 }

@@ -5,15 +5,17 @@ export(cluster,
        DSC_DenStream,
        DSC_CobWeb,
        DSC_Clustream,
+       DSC_ClusTree,
+       DSC_StreamKM,
        convertParams,
-       get_centroids,
-       get_instance,
-       create_javaDS,
-       create_staticDS,
-       create_dynamicDS,
-       create_fDS)
+       getCenters,
+       getPoints,
+       DSD_moa,
+       DSD_Static,
+#      DSD_Dynamic,
+       DSD_ReadStream)
 
-S3method(get_instance, javaDS)
-S3method(get_instance, staticDS)
-S3method(get_instance, dynamicDS)
-S3method(get_instance, fDS)
+S3method(getPoints, moa)
+S3method(getPoints, Static)
+#S3method(getPoints, Dynamic)
+S3method(getPoints, ReadStream)

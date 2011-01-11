@@ -51,6 +51,6 @@ DSC_DenStream <- function(epsilon=0.1, minPoints=10, lambda=0.006, beta=0.001, m
             options = cliParams,
             javaObj = clusterer)
 
-  class(l) <- "ClusterDS"
+  class(l) <- c("DSClusterer", "DSC_DenStream")
   l
 }
