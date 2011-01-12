@@ -1,30 +1,18 @@
 \name{DSC_CobWeb}
 \alias{DSC_CobWeb}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-%%  ~~function to do ... ~~
-}
-\description{
-%%  ~~ A concise (1-5 lines) description of what the function does. ~~
-}
+\title{DataStreamClusterer: CobWeb}
+\description{Creates a new DataStreamClusterer with the CobWeb algorithm}
 \usage{
 DSC_CobWeb(acuity = 1, cutoff = 0.002, randomSeed = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{acuity}{
-%%     ~~Describe \code{acuity} here~~
+  \item{acuity}{}
+  \item{cutoff}{}
+  \item{randomSeed}{}
 }
-  \item{cutoff}{
-%%     ~~Describe \code{cutoff} here~~
-}
-  \item{randomSeed}{
-%%     ~~Describe \code{randomSeed} here~~
-}
-}
-\details{
-%%  ~~ If necessary, more details than the description above ~~
-}
+\details{}
 \value{
 %%  ~Describe the value returned
 %%  If it is a LIST, use
@@ -32,39 +20,18 @@ DSC_CobWeb(acuity = 1, cutoff = 0.002, randomSeed = 1)
 %%  \item{comp2 }{Description of 'comp2'}
 %% ...
 }
-\references{
-%% ~put references to the literature/web site here ~
-}
-\author{
-%%  ~~who you are~~
-}
-\note{
-%%  ~~further notes~~
-}
-
+\references{ ~put references to the literature/web site here ~}
+\author{ ~~who you are~~}
+\note{ ~~further notes~~}
 %% ~Make other sections like Warning with \section{Warning }{....} ~
-
 \seealso{
 %% ~~objects to See Also as \code{\link{help}}, ~~~
 }
 \examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
-
-## The function is currently defined as
-function (acuity = 1, cutoff = 0.002, randomSeed = 1) 
-{
-    paramList <- list(a = acuity, c = cutoff, r = randomSeed)
-    cliParams <- convertParams(paramList)
-    clusterer <- .jnew("moa/clusterers/CobWeb")
-    .jcall(clusterer, "V", "prepareForUse")
-    options <- .jcall(clusterer, "Lmoa/options/Options;", "getOptions")
-    .jcall(options, "V", "setViaCLIString", cliParams)
-    l <- list(description = "CobWeb", options = cliParams, javaObj = clusterer)
-    class(l) <- "ClusterDS"
-    l
-  }
+dsc <- DSC_CobWeb()
+dsd <- DSD_moa()
+cluster(dsc, dsd, 100000)
+plot(getCenters(dsc))
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

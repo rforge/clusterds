@@ -14,6 +14,7 @@ DSD_moa <- function() {
 }
 
 #TODO: need to extend this to handle when numPoints > 1
+getPoints <- function(x, numPoints=1, ...) UseMethod("getPoints")
 getPoints.moa <- function(x, numPoints=1, ...) {
   inst <- .jcall(x$javaObj, "Lweka/core/Instance;", "nextInstance")
 }

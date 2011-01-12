@@ -2,7 +2,7 @@
 # -e epsilon 	0.01 (defines the epsilon neighborhood, range: 0 to 1)
 # -p minPoints 	10 (min. num. points a cluster must have)
 # -l lambda	0.006 (range: 0 to 1)
-# -b beta		0.001 (range: 0 to 1)
+# -b beta	0.001 (range: 0 to 1)
 # -m mu		1 (range: 0 to max(double))
 # -i initPoints	10000 (number of points to use for initialization)
 # -M		false (evaluate micro clustering flag)
@@ -41,10 +41,6 @@ DSC_DenStream <- function(epsilon=0.1, minPoints=10, lambda=0.006, beta=0.001, m
 
   options <- .jcall(clusterer, "Lmoa/options/Options;", "getOptions")
   .jcall(options, "V", "setViaCLIString", cliParams)
-
-  # testing to ensure the options are set correctly
-  # setParams <- .jcall(options, "Ljava/lang/String;", "getAsCLIString")
-  # print(setParams)
 
   # initializing the R object
   l <- list(description = "DenStream",

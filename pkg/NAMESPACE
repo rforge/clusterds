@@ -2,6 +2,7 @@ import(rJava)
 import(MASS)
 
 export(cluster,
+       clusterTesting,
        DSC_DenStream,
        DSC_CobWeb,
        DSC_Clustream,

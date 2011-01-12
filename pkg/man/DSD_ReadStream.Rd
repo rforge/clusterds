@@ -1,9 +1,7 @@
 \name{DSD_ReadStream}
 \alias{DSD_ReadStream}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-%%  ~~function to do ... ~~
-}
+\title{DataStreamData: ReadStream (from an open connection)}
 \description{
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }

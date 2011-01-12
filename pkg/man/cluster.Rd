@@ -1,71 +1,32 @@
 \name{cluster}
 \alias{cluster}
-%- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-%%  ~~function to do ... ~~
-}
-\description{
-%%  ~~ A concise (1-5 lines) description of what the function does. ~~
-}
+\title{Clustering data based with input algorithm and data stream}
+\description{Clusters a number of input points from a data stream into a clustering object.}
 \usage{
 cluster(clusterer, x, numPoints = 10000)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{clusterer}{
-%%     ~~Describe \code{clusterer} here~~
-}
-  \item{x}{
-%%     ~~Describe \code{x} here~~
-}
-  \item{numPoints}{
-%%     ~~Describe \code{numPoints} here~~
-}
+  \item{clusterer}{a DSC object}
+  \item{x}{a DSD object}
+  \item{numPoints}{number of points}
 }
 \details{
-%%  ~~ If necessary, more details than the description above ~~
+  Clusters input data. The underlying Java object in the DSC object is updated
+  from the data stream data.
 }
-\value{
-%%  ~Describe the value returned
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
-}
-\references{
-%% ~put references to the literature/web site here ~
-}
-\author{
-%%  ~~who you are~~
-}
-\note{
-%%  ~~further notes~~
-}
-
+\value{  No return value, the input DSC object is updated (similar to being passed by reference)}
+\references{ ~put references to the literature/web site here ~}
+\author{ ~~who you are~~}
+\note{ ~~further notes~~}
 %% ~Make other sections like Warning with \section{Warning }{....} ~
-
 \seealso{
 %% ~~objects to See Also as \code{\link{help}}, ~~~
 }
 \examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
-
-## The function is currently defined as
-function (clusterer, x, numPoints = 10000) 
-{
-    if (numPoints < 2) 
-        stop("numPoints must be > 1")
-    for (i in 1:numPoints) {
-        inst <- get_instance(x)
-        if (class(x) != "javaDS") {
-            inst <- .jnew("weka/core/Instance", 1, inst)
-        }
-        .jcall(clusterer$javaObj, "V", "trainOnInstanceImpl", 
-            inst)
-    }
-  }
+dsc <- DSC_DenStream()
+dsd <- DSD_moa()
+cluster(dsc, dsd, 100000)
+plot(getCenters(dsc))
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
