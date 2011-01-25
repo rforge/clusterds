@@ -21,10 +21,9 @@ DSC_CobWeb <- function(acuity=1.0, cutoff=0.002, randomSeed=1) {
   
   # initializing the clusterer
   clusterer <- .jnew("moa/clusterers/CobWeb")
-  .jcall(clusterer, "V", "prepareForUse")
-
   options <- .jcall(clusterer, "Lmoa/options/Options;", "getOptions")
   .jcall(options, "V", "setViaCLIString", cliParams)
+  .jcall(clusterer, "V", "prepareForUse")
 
   # initializing the R object
   l <- list(description = "CobWeb",

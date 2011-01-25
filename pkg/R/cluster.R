@@ -1,14 +1,15 @@
-cluster <- function(clusterer, x, numPoints=10000) { 
-  if (numPoints < 2)
+cluster <- function(clusterer, x, n=10000) { 
+  if (n < 2)
     stop("numPoints must be > 1")
 
   # looping through the stream, feeding the new datapoints into 
   # the algorithm
-  for (i in 1:numPoints) {
+  for (i in 1:n) {
     inst <- getPoints(x)
     
+    #TODO: how do we check if either of the classes == javaDS ??
     # casting the inst to a java object
-    if (class(x) != "javaDS") {
+    if (class(x) != "DSD") {
       inst <- .jnew("weka/core/Instance", 1, inst)
     }
 

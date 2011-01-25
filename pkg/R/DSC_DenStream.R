@@ -37,10 +37,9 @@ DSC_DenStream <- function(epsilon=0.1, minPoints=10, lambda=0.006, beta=0.001, m
 
   # initializing the clusterer
   clusterer <- .jnew("moa/clusterers/denstream/DenStream")
-  .jcall(clusterer, "V", "prepareForUse")
-
   options <- .jcall(clusterer, "Lmoa/options/Options;", "getOptions")
   .jcall(options, "V", "setViaCLIString", cliParams)
+  .jcall(clusterer, "V", "prepareForUse")
 
   # initializing the R object
   l <- list(description = "DenStream",

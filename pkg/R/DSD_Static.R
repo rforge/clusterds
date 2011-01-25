@@ -28,12 +28,12 @@ getPoints.DSD_Static <- function(x, n=1, ...) {
   # if n == 1, we just create 1 instance
   if (n == 1) {
       numCluster <- sample(x=c(1:ncol(x$mu)), size=n, replace=TRUE, prob=x$clusterProb)
-      inst <- rnorm(n=ncol(x$mu), mean=x$mu[numCluster,], x$sd[numCluster,])
+      inst <- rnorm(n=nrow(x$mu), mean=x$mu[numCluster,], x$sd[numCluster,])
   
   # otherwise, we loop and create a number of instances
   } else if (n > 1) {
       numCluster <- sample(x=c(1:ncol(x$mu)), size=n, replace=TRUE, prob=x$clusterProb)
-      inst <- rnorm(n=ncol(x$mu), mean=x$mu[numCluster,], x$sd[numCluster,])
+      inst <- rnorm(n=nrow(x$mu), mean=x$mu[numCluster,], x$sd[numCluster,])
 
     #TODO: is there a better way to do this than looping? (using vectorization)
     for (i in 2:n) {

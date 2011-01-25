@@ -20,10 +20,9 @@ DSC_ClusTree <- function(timeWindow=1000, maxHeight=8) {
   
   # initializing the clusterer
   clusterer <- .jnew("moa/clusterers/clustree/ClusTree")
-  .jcall(clusterer, "V", "prepareForUse")
-
   options <- .jcall(clusterer, "Lmoa/options/Options;", "getOptions")
   .jcall(options, "V", "setViaCLIString", cliParams)
+  .jcall(clusterer, "V", "prepareForUse")
 
   # initializing the R object
   l <- list(description = "ClusTree",
