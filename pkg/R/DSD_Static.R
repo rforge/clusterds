@@ -23,13 +23,22 @@ DSD_Static <- function(mu=c(0.5,0.5), sd=c(0.2,0.2), clusterProb=1) {
   l
 }
 
-getPoints.Static <- function(x, n=1, ...) {
+getPoints.DSD_Static <- function(x, n=1, ...) {
 
-  # selecting a cluster, and generating the instances
-  if (n >= 1) {
-    for (i in 1:numPoints) {
-      numCluster <- sample(x=c(1:ncol(x$mu)), size=numPoints, replace=TRUE, prob=x$clusterProb)
-      inst <- rbind(inst, rnorm(n=ncol(mu), mean=x$mu[numCluster,], x$sd[numCluster,]))
+  # if n == 1, we just create 1 instance
+  if (n == 1) {
+      numCluster <- sample(x=c(1:ncol(x$mu)), size=n, replace=TRUE, prob=x$clusterProb)
+      inst <- rnorm(n=ncol(x$mu), mean=x$mu[numCluster,], x$sd[numCluster,])
+  
+  # otherwise, we loop and create a number of instances
+  } else if (n > 1) {
+      numCluster <- sample(x=c(1:ncol(x$mu)), size=n, replace=TRUE, prob=x$clusterProb)
+      inst <- rnorm(n=ncol(x$mu), mean=x$mu[numCluster,], x$sd[numCluster,])
+
+    #TODO: is there a better way to do this than looping? (using vectorization)
+    for (i in 2:n) {
+      numCluster <- sample(x=c(1:ncol(x$mu)), size=n, replace=TRUE, prob=x$clusterProb)
+      inst <- rbind(inst, rnorm(n=ncol(x$mu), mean=x$mu[numCluster,], x$sd[numCluster,]))
     }
   } else {
     stop("invalid n")

@@ -23,7 +23,7 @@ DSD_ReadStream <- function(x, delimiter=",") {
   l
 }
 
-getPoints.ReadStream <- function(x, n=1, ...) {
+getPoints.DSD_ReadStream <- function(x, n=1, ...) {
 
   # reading from the connection
   lines <- strsplit(x=readLines(x$con, n=numPoints, ok=TRUE), split=x$delimiter)

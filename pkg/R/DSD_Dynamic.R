@@ -3,6 +3,6 @@ DSD_Dynamic <- function() {
   stop("not yet implemented")
 }
 
-getPoints.Dynamic <- function(x, numPoints=1, ...) {
+getPoints.DSD_Dynamic <- function(x, n=1, ...) {
   stop("not yet implemented")
 }

@@ -15,24 +15,3 @@ cluster <- function(clusterer, x, numPoints=10000) {
     .jcall(clusterer$javaObj, "V", "trainOnInstanceImpl", inst)
   }
 }
-
-clusterTesting <- function(clusterer, x, numPoints=10000) { 
-  if (numPoints < 2)
-    stop("numPoints must be > 1")
-
-  dataPoints <- getPoints(x, numPoints)
-
-  # looping through the stream, feeding the new datapoints into 
-  # the algorithm
-  for (i in 1:numPoints) {
-    
-    # casting the inst to a java object
-    if (class(x) != "javaDS") {
-      inst <- .jnew("weka/core/Instance", 1, dataPoints[[i]])
-    } else {
-      inst <- dataPoints[[i]]
-    }
-
-    .jcall(clusterer$javaObj, "V", "trainOnInstanceImpl", inst)
-  }
-}

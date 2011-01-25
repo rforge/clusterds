@@ -13,8 +13,14 @@ DSD_moa <- function() {
   l
 }
 
-#TODO: need to extend this to handle when numPoints > 1
-getPoints <- function(x, numPoints=1, ...) UseMethod("getPoints")
-getPoints.moa <- function(x, numPoints=1, ...) {
-  inst <- .jcall(x$javaObj, "Lweka/core/Instance;", "nextInstance")
+# we only create 1 data point at a time for Java instances
+getPoints.DSD_moa <- function(x, n=1, ...) {
+  if (n == 1) {
+    inst <- .jcall(x$javaObj, "Lweka/core/Instance;", "nextInstance")
+  } else if (n > 1) {    
+    stop("getPoints.DSD_moa must have n = 1")
+  } else {
+    stop("invalid n")
+  }
+
 }

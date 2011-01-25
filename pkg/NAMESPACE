@@ -2,7 +2,6 @@ import(rJava)
 import(MASS)
 
 export(cluster,
-       clusterTesting,
        DSC_DenStream,
        DSC_CobWeb,
        DSC_Clustream,
@@ -16,7 +15,7 @@ export(cluster,
 #      DSD_Dynamic,
        DSD_ReadStream)
 
-S3method(getPoints, moa)
-S3method(getPoints, Static)
+S3method(getPoints, DSD_moa)
+S3method(getPoints, DSD_Static)
 #S3method(getPoints, Dynamic)
-S3method(getPoints, ReadStream)
+S3method(getPoints, DSD_ReadStream)

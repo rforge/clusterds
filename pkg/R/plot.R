@@ -1,3 +1,7 @@
+#plot.DSC() {
+#  plot(getCenters)
+#}
+
 getCenters <- function(x, ...) {
 
   if (.jcall(x$javaObj, "Z", "implementsMicroClusterer")) {
