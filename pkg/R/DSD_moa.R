@@ -48,6 +48,9 @@ DSD_moa <- function(modelSeed=1, instanceSeed=1, numCluster=4L, avgRadius=0, den
   l
 }
 
+### FIXME: this should also return the data as a R vector or
+### matrix for n>1
+
 # we only create 1 data point at a time for Java instances
 getPoints.DSD_moa <- function(x, n=1, ...) {
   if (n == 1) {
