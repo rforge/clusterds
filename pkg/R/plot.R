@@ -33,7 +33,7 @@ getCenters <- function(x, ...) {
       center <- .jcall(mCluster, "[D", "getCenter") 
       
       #TODO: projection
-      print(c("debugging: dimensions = ", length(center)))
+      #print(c("debugging: dimensions = ", length(center)))
       # if the data is 2 dimensional, we don't have to project 
       #if (length(center) == 2) {
         m[i, 1] = center[1]

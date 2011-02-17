@@ -6,7 +6,7 @@ Author: John Forrest, Michael Hahsler
 Maintainer: John Forrest <jhforrest@smu.edu>
 Description: A comparison of various data stream clustering algorithms
              and associated visualization.
-Depends: R (>= 2.6.0)
+Depends: R (>= 2.6.0), clusterGeneration
 Imports: rJava (>= 0.6-3), MASS
 Suggests: 
 SystemRequirements: Java (>= 5.0)
