@@ -29,6 +29,6 @@ DSC_ClusTree <- function(timeWindow=1000, maxHeight=8) {
             options = cliParams,
             javaObj = clusterer)
 
-  class(l) <- c("DSClusterer","DSC_ClusTree")
+  class(l) <- c("DSC","DSC_ClusTree")
   l  
 }

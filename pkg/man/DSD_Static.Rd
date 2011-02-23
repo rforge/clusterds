@@ -1,74 +1,74 @@
 \name{DSD_Static}
 \alias{DSD_Static}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{DataStreamData: Static datastream}
 \description{
-%%  ~~ A concise (1-5 lines) description of what the function does. ~~
+A DataStream that generates random data based upon either a 
+defined covariance matrix or a randomly generated covariance
+matrix.
 }
 \usage{
-DSD_Static(mu = c(0.5, 0.5), sd = c(0.2, 0.2), clusterProb = 1)
+DSD_Static(k=3, d=2) #leaving the other params as defaults
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
+  \item{k}{
+Determines the number of clusters
+}
+  \item{d}{
+Determines the number of dimensions
+}
   \item{mu}{
-%%     ~~Describe \code{mu} here~~
+A matrix of means for each dimension of each cluster.
 }
-  \item{sd}{
-%%     ~~Describe \code{sd} here~~
+  \item{sigma}{
+The covariance matrix.
 }
-  \item{clusterProb}{
-%%     ~~Describe \code{clusterProb} here~~
+  
+  \item{p}{
+A vector of probabilities that determines the likelihood of
+generated a data point from a particular cluster.
 }
 }
 \details{
-%%  ~~ If necessary, more details than the description above ~~
+%% TODO
 }
 \value{
-%%  ~Describe the value returned
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
+Returns a DSD_Static object which is a list of the defined
+params. The params are either passed in from the function or
+created internally. They include: the number of clusters k,
+the number of dimensions d, the means mu, the covariance
+matrix sigma, and probability p.
 }
-\references{
+%%\references{
 %% ~put references to the literature/web site here ~
-}
-\author{
+%%}
+%%\author{
 %%  ~~who you are~~
-}
-\note{
+%%}
+%%\note{
 %%  ~~further notes~~
-}
-
+%%}
 %% ~Make other sections like Warning with \section{Warning }{....} ~
-
-\seealso{
+%%
+%%\seealso{
 %% ~~objects to See Also as \code{\link{help}}, ~~~
-}
+%%}
 \examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
+# other params will be generated internally
+dsd <- DSD_Static(k=2, d=2)
+dsc <- DSC_DenStream()
 
-## The function is currently defined as
-function (mu = c(0.5, 0.5), sd = c(0.2, 0.2), clusterProb = 1) 
-{
-    mu <- as.matrix(mu)
-    sd <- as.matrix(sd)
-    if (ncol(mu) != ncol(sd) || nrow(mu) != nrow(sd)) {
-        stop("mu matrix is a different size than sd matrix")
-    }
-    if (length(clusterProb) != ncol(mu)) {
-        prob <- 1/ncol(mu)
-        clusterProb <- as.vector(array(prob, ncol(mu)))
-    }
-    l <- list(Description = "Static R Data Stream", mu = mu, 
-        sd = sd, clusterProb = clusterProb)
-    class(l) <- "staticDS"
-    l
-  }
+# obtaining some data
+sample <- getPoints(dsd, 500)
+
+# clustering some data, this will take some time
+cluster(dsc, dsd, 15000)
+
+# plotting the data
+plot(sample, xlab='x', ylab='y', pch=4, cex=.5)
+points(getCenters(dsc),col='red', cex=3,lwd=2)
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
-\keyword{ ~kwd1 }
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line
+%% Add one or more standard keywords, see file 'KEYWORDS' in the
+%% R documentation directory.
+%%\keyword{ ~kwd1 }
+%%\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line

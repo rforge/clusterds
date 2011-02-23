@@ -1,6 +1,6 @@
-#plot.DSC() {
-#  plot(getCenters)
-#}
+plot.DSC <- function(x, ...) {
+  plot(getCenters(x), ...)
+}
 
 getCenters <- function(x, ...) {
 
