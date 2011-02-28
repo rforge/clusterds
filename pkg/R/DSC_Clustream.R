@@ -29,6 +29,6 @@ DSC_Clustream <- function(timeWindow=1000, maxNumKernels=100) {
             options = cliParams,
             javaObj = clusterer)
 
-  class(l) <- c("DSC", "DSC_Clustream")
+  class(l) <- c("DSC", "DSC_MOA", "DSC_Clustream")
   l
 }

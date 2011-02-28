@@ -1,58 +1,18 @@
 \name{DSD_moa}
 \alias{DSD_moa}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{DataStreamData - MOA}
 \description{
-%%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
-DSD_moa()
+DSD_MOA <- function(modelSeed=1, instanceSeed=1, numCluster=4L, avgRadius=0, density=0)
 }
-%- maybe also 'usage' for other objects documented here.
 \details{
-%%  ~~ If necessary, more details than the description above ~~
 }
 \value{
-%%  ~Describe the value returned
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
+	\item{description}{The name of the class of the DSD object.}
+	\item{options}{The CLI params defined when creating the DSD object.}
+	\item{javaObj}{The underlying Java object associated with DSD_MOA objects.}
 }
-\references{
-%% ~put references to the literature/web site here ~
-}
-\author{
-%%  ~~who you are~~
-}
-\note{
-%%  ~~further notes~~
-}
-
-%% ~Make other sections like Warning with \section{Warning }{....} ~
-
-\seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
-}
-\examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
-
-## The function is currently defined as
-function () 
-{
-    panel <- .jnew("moa/gui/clustertab/ClusteringAlgoPanel")
-    strm <- .jcall(panel, "Lmoa/streams/clustering/ClusteringStream;", 
-        "getStream")
-    .jcall(strm, "V", "prepareForUse")
-    l <- list(Description = "RandomRBFGeneratorEvents", cliParams = "", 
-        javaObj = strm)
-    class(l) <- "javaDS"
-    l
-  }
-}
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
-\keyword{ ~kwd1 }
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line
+%%\references{} TODO: perhaps reference the randomrbfgenerator from the moa project?
+%%\seealso{} TODO: reference the other DSD classes
+%%\examples{} TODO: make an example

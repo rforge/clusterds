@@ -3,18 +3,18 @@
 \title{Clustering data based with input algorithm and data stream}
 \description{Clusters a number of input points from a data stream into a clustering object.}
 \usage{
-cluster(clusterer, x, numPoints = 10000)
+cluster(dsc, dsd, n = 10000)
 }
 \arguments{
-  \item{clusterer}{a DSC object}
-  \item{x}{a DSD object}
-  \item{numPoints}{number of points}
+  \item{dsc}{a DSC object}
+  \item{dsd}{a DSD object}
+  \item{n}{number of points to cluster}
 }
 \details{
-  Clusters input data. The underlying Java object in the DSC object is updated
-  from the data stream data.
+  Clusters input data. The underlying clustering in the DSC object is implicitly updated
+  as if the object was 'passed by reference' in a traditional programming language.
 }
-\value{  No return value, the input DSC object is updated (similar to being passed by reference)}
+\value{ The updated DSC object is returned invisibly for reassignment. }
 %%\references{ ~put references to the literature/web site here ~}
 %%\author{ ~~who you are~~}
 %%\note{ ~~further notes~~}
@@ -26,9 +26,5 @@ cluster(clusterer, x, numPoints = 10000)
 dsc <- DSC_DenStream()
 dsd <- DSD_moa()
 cluster(dsc, dsd, 100000)
-plot(getCenters(dsc))
+plot(dsc)
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
-%%\keyword{ ~kwd1 }
-%%\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line

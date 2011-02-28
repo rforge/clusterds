@@ -26,23 +26,7 @@ DSD_ReadStream <- function(x, delimiter=",") {
 getPoints.DSD_ReadStream <- function(x, n=1, ...) {
 
   # reading from the connection
+  #TODO deal with quotation marks or other weird stuff
   lines <- strsplit(x=readLines(x$con, n=numPoints, ok=TRUE), split=x$delimiter)
-  
-  # if n==1, read the first line
-  if (numPoints == 1) {
-    inst <- as.numeric(lines[[1]])
-
-  # otherwise read additional lines
-  } else if (numPoints > 1) {
-    inst <- as.numeric(lines[[1]])
-
-    # converting the strings to a numeric matrix
-    for (i in 1:numPoints) {
-      inst <- rbind(inst, as.numeric(lines[[i]]))
-    }
-  } else {
-    stop("invalid n")
-  }
-  
-  inst
+  matrix(as.numeric(unlist(lines)),ncol=length(lines[[1]]), byrow=TRUE)
 }

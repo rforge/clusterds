@@ -6,24 +6,23 @@ cluster <- function(dsc, dsd, n=10000) {
   # the algorithm
   for (i in 1:n) {
     inst <- getPoints(dsd)
-    if(dsc$javaObj != NULL) {
-
-      # casting the inst to a java object
-      if (!is(dsd, "DSD_moa")) {
-        inst <- .jnew("weka/core/Instance", 1, inst)
-      }
-
-      .jcall(dsc$javaObj, "V", "trainOnInstanceImpl", inst)
-
-    } else {
-
-      # R clusterer
-      # FIXME: this needs more thinking! Maybe we should use a environment
-      # to simulate pass by reference.
-      clusterer <- dsc$clusterFun(dsc, inst)
-    }
-  }
-
-    ### so cl <- cluster(cl, ...) also works
+    .cluster(dsc, inst)
+	
+    # so cl <- cluster(cl, ...) also works
     invisible(dsc)
+  }
 }
+
+.cluster <- function(dsc, inst) UseMethod(".cluster")
+
+.cluster.DSC_MOA <- function(dsc, inst) {
+	inst <- .jnew("weka/core/Instance", 1, inst)
+    .jcall(dsc$javaObj, "V", "trainOnInstanceImpl", inst)
+	invisible(dsc)
+}
+
+.cluster.DSC_R <- function(dsc, inst) {
+	dsc <- dsc$clusterFun(dsc, inst)
+	invisible(dsc)
+}
+

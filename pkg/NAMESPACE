@@ -11,13 +11,13 @@ export(cluster,
        getCenters,
        getPoints,
 	   plot,
-       DSD_moa,
+       DSD_MOA,
        DSD_Static,
        DSD_Dynamic,
        DSD_ReadStream)
 
 S3method(plot, DSC)
-S3method(getPoints, DSD_moa)
+S3method(getPoints, DSD_MOA)
 S3method(getPoints, DSD_Static)
 S3method(getPoints, DSD_Dynamic)
 S3method(getPoints, DSD_ReadStream)

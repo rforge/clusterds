@@ -1,58 +1,31 @@
 \name{DSD_Static}
 \alias{DSD_Static}
 \title{DataStreamData: Static datastream}
-\description{
-A DataStream that generates random data based upon either a 
-defined covariance matrix or a randomly generated covariance
-matrix.
-}
-\usage{
-DSD_Static(k=3, d=2) #leaving the other params as defaults
-}
-%- maybe also 'usage' for other objects documented here.
+\description{A DataStream that generates random data based upon either a 
+			 defined covariance matrix or a randomly generated covariance
+			 matrix.}
+\usage{DSD_Static(k=3, d=2) #leaving the other params as defaults}
 \arguments{
-  \item{k}{
-Determines the number of clusters
+  \item{k}{Determines the number of clusters.}
+  \item{d}{Determines the number of dimensions.}
+  \item{mu}{A matrix of means for each dimension of each cluster.}
+  \item{sigma}{The covariance matrix.}
+  \item{p}{A vector of probabilities that determines the likelihood of
+		   generated a data point from a particular cluster.}
 }
-  \item{d}{
-Determines the number of dimensions
+
+%%\details{} TODO
+
+\value{Returns a DSD_Static object which is a list of the defined
+	   params. The params are either passed in from the function or
+	   created internally. They include: the number of clusters k,
+	   the number of dimensions d, the means mu, the covariance
+	   matrix sigma, and probability p.}
+	   
+\seealso{
+ \code{\link{DSD_MOA}},
+ \code{\link{DSD_ReadStream}}
 }
-  \item{mu}{
-A matrix of means for each dimension of each cluster.
-}
-  \item{sigma}{
-The covariance matrix.
-}
-  
-  \item{p}{
-A vector of probabilities that determines the likelihood of
-generated a data point from a particular cluster.
-}
-}
-\details{
-%% TODO
-}
-\value{
-Returns a DSD_Static object which is a list of the defined
-params. The params are either passed in from the function or
-created internally. They include: the number of clusters k,
-the number of dimensions d, the means mu, the covariance
-matrix sigma, and probability p.
-}
-%%\references{
-%% ~put references to the literature/web site here ~
-%%}
-%%\author{
-%%  ~~who you are~~
-%%}
-%%\note{
-%%  ~~further notes~~
-%%}
-%% ~Make other sections like Warning with \section{Warning }{....} ~
-%%
-%%\seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
-%%}
 \examples{
 # other params will be generated internally
 dsd <- DSD_Static(k=2, d=2)
@@ -68,7 +41,3 @@ cluster(dsc, dsd, 15000)
 plot(sample, xlab='x', ylab='y', pch=4, cex=.5)
 points(getCenters(dsc),col='red', cex=3,lwd=2)
 }
-%% Add one or more standard keywords, see file 'KEYWORDS' in the
-%% R documentation directory.
-%%\keyword{ ~kwd1 }
-%%\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line

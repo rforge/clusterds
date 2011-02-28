@@ -1,12 +1,10 @@
 \name{DSC_DenStream}
 \alias{DSC_DenStream}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{DataStreamClusterer: DenStream}
 \description{Creates a new DataStreamClusterer with the DenStream algorithm}
 \usage{
 DSC_DenStream(epsilon = 0.1, minPoints = 10, lambda = 0.006, beta = 0.001, mu = 1, initPoints = 10000)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{epsilon}{-e (defines the epsilon neighborhood, range: 0 to 1)}
   \item{minPoints}{-p (min. num. points a cluster must have)}
@@ -15,26 +13,19 @@ DSC_DenStream(epsilon = 0.1, minPoints = 10, lambda = 0.006, beta = 0.001, mu = 
   \item{mu}{-m (range: 0 to max(double))}
   \item{initPoints}{-i (number of points to use for initialization)}
 }
-\details{}
+%%\details{}
 \value{
-  \item{description}{The name of the algorithm}
-  \item{options}{The CLI parameters that are passed to Java}
-  \item{javaObj}{The underlying MOA object created in Java}
+	\item{description}{The name of the algorithm in the DSC object.}
+	\item{options}{The CLI params defined when creating the DSC object.}
+	\item{javaObj}{The underlying Java object associated with DSC_MOA objects.}
 }
-\references{ ~put references to the literature/web site here ~}
-\author{ ~~who you are~~}
-\note{ ~~further notes~~}
-%% ~Make other sections like Warning with \section{Warning }{....} ~
-\seealso{
+%%\references{ } TODO: reference the original literature
+%%\seealso{
 %% ~~objects to See Also as \code{\link{help}}, ~~~
-}
+%%}
 \examples{
 dsc <- DSC_DenStream()
-dsd <- DSD_moa()
+dsd <- DSD_Static()
 cluster(dsc, dsd, 100000)
-plot(getCenters(dsc))
+plot(dsc)
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
-\keyword{ ~kwd1 }
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line

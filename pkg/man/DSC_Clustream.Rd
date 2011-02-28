@@ -1,6 +1,5 @@
 \name{DSC_Clustream}
 \alias{DSC_Clustream}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{DataStreamClusterer: Clustream}
 \description{Creates a new DataStreamClusterer with the Clustream algorithm}
 \usage{
@@ -12,26 +11,17 @@ DSC_Clustream(timeWindow = 1000, maxNumKernels = 100)
 }
 \details{}
 \value{
-%%  ~Describe the value returned
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
+	\item{description}{The name of the algorithm in the DSC object.}
+	\item{options}{The CLI params defined when creating the DSC object.}
+	\item{javaObj}{The underlying Java object associated with DSC_MOA objects.}
 }
-\references{ ~put references to the literature/web site here ~}
-\author{ ~~who you are~~}
-\note{ ~~further notes~~}
-%% ~Make other sections like Warning with \section{Warning }{....} ~
-\seealso{
+%% \references{ } TODO: need to reference the Clustream paper
+%%\seealso{
 %% ~~objects to See Also as \code{\link{help}}, ~~~
-}
+%%}
 \examples{
 dsc <- DSC_Clustream()
-dsd <- DSD_moa()
+dsd <- DSD_Static()
 cluster(dsc, dsd, 100000)
-plot(getCenters(dsc))
+plot(dsc)
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
-\keyword{ ~kwd1 }
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line
