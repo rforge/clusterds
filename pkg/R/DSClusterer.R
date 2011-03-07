@@ -2,17 +2,14 @@
 # all DSC classes have these methods
 # and an additional function to create the DSC
 
-convertParams <- function(paramList=list()) {
-  length <- length(paramList)
-  if (length == 0)
-    stop("invalid param list")
+getCenters <- function(x, ...) UseMethod("getCenters")
 
-  cliParams <- ""
+nclusters <- function(x) nrow(getCenters(x))
 
-  for (i in 1:length) {
-    cliParams <- paste(cliParams, "-", names(paramList[i]), " ", paramList[[i]], " ", sep="")
-  }
-
-  # removing the trailing space
-  cliParams <- substr(cliParams, 1, nchar(cliParams)-1)
+print.DSC <- function(x, ...) {
+    cat(paste('DSC - Data Stream Clusterer:', x$description, '\n'))
+    ### FIXME: print number of clusters and other stats
 }
+
+plot.DSC <- function(x, ...) plot(getCenters(x), ...)
+

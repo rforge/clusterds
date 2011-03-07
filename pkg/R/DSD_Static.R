@@ -41,7 +41,7 @@ DSD_Static <- function(k=2, d=2, mu, sigma, p) {
   # list of length k
   # d x d matrix in the list
 
-  l <- list(Description = "Static R Data Stream",
+  l <- list(description = "Static R Data Stream",
 			k = k,
 			d = d,
             mu = mu,

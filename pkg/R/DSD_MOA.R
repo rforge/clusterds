@@ -13,39 +13,40 @@
 # -M eventMergeWeight
 # -P eventSplitWeight
 # because there are so many parameters, let's only use a few key ones...
-DSD_MOA <- function(modelSeed=1, instanceSeed=1, numCluster=4L, avgRadius=0, density=0) {
-  #TODO: need error checking on the params
+DSD_MOA <- function(modelSeed=1, instanceSeed=1, numCluster=4L, 
+	avgRadius=0, density=0) {
+    #TODO: need error checking on the params
 
-  # we leave the other parameters as defaults
-  paramList <- list(m=modelSeed,
-                    i=instanceSeed,
-                    K=numCluster,
-                    k=3L,
-                    R=avgRadius,
-                    r=0.0,
-                    d=density,
-                    V=100L,
-                    v=0L,
-                    N=0.1,
-                    E=15000L,
-                    M=0.5,
-                    P=0.5)
+    # we leave the other parameters as defaults
+    paramList <- list(m=modelSeed,
+	    i=instanceSeed,
+	    K=numCluster,
+	    k=3L,
+	    R=avgRadius,
+	    r=0.0,
+	    d=density,
+	    V=100L,
+	    v=0L,
+	    N=0.1,
+	    E=15000L,
+	    M=0.5,
+	    P=0.5)
 
-  # converting the param list to a cli string to use in java
-  cliParams <- convertParams(paramList)
+    # converting the param list to a cli string to use in java
+    cliParams <- convertParams(paramList)
 
-  # initializing the clusterer
-  strm <- .jnew("moa/streams/clustering/RandomRBFGeneratorEvents")
-  .jcall(strm, "V", "prepareForUse") #TODO: does this need to be after the options have been set??
-  options <- .jcall(strm, "Lmoa/options/Options;", "getOptions")
-  .jcall(options, "V", "setViaCLIString", cliParams)
+    # initializing the clusterer
+    strm <- .jnew("moa/streams/clustering/RandomRBFGeneratorEvents")
+    .jcall(strm, "V", "prepareForUse") #TODO: does this need to be after the options have been set??
+    options <- .jcall(strm, "Lmoa/options/Options;", "getOptions")
+    .jcall(options, "V", "setViaCLIString", cliParams)
 
-  l <- list(Description = "RandomRBFGeneratorEvents",
-            cliParams = cliParams,
-            javaObj = strm)
+    l <- list(description = "RandomRBFGeneratorEvents",
+	    cliParams = cliParams,
+	    javaObj = strm)
 
-  class(l) <- c("DSD","DSD_MOA")
-  l
+    class(l) <- c("DSD","DSD_MOA")
+    l
 }
 
 ### FIXME: this should also return the data as a R vector or
@@ -53,12 +54,12 @@ DSD_MOA <- function(modelSeed=1, instanceSeed=1, numCluster=4L, avgRadius=0, den
 
 # we only create 1 data point at a time for Java instances
 getPoints.DSD_MOA <- function(x, n=1, ...) {
-  if (n == 1) {
-    inst <- .jcall(x$javaObj, "Lweka/core/Instance;", "nextInstance")
-  } else if (n > 1) {    
-    stop("getPoints.DSD_MOA must have n = 1")
-  } else {
-    stop("invalid n")
-  }
+    if (n == 1) {
+	inst <- .jcall(x$javaObj, "Lweka/core/Instance;", "nextInstance")
+    } else if (n > 1) {    
+	stop("getPoints.DSD_MOA must have n = 1")
+    } else {
+	stop("invalid n")
+    }
 
 }

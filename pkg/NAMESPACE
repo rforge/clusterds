@@ -2,21 +2,33 @@ import(rJava)
 import(MASS)
 
 export(cluster,
-       DSC_DenStream,
-       DSC_CobWeb,
-       DSC_Clustream,
-       DSC_ClusTree,
-       DSC_StreamKM,
-       convertParams,
-       getCenters,
-       getPoints,
-	   plot,
-       DSD_MOA,
-       DSD_Static,
-       DSD_Dynamic,
-       DSD_ReadStream)
+	DSC_DenStream,
+	DSC_CobWeb,
+	DSC_Clustream,
+	DSC_ClusTree,
+	DSC_StreamKM,
+	
+	DSC_tNN,
+	
+	DSD_MOA,
+	DSD_Static,
+	DSD_Dynamic,
+	DSD_ReadStream,
+	
+	convertParams,
+	getCenters,
+	getPoints,
+	nclusters,
+	plot
+      )
 
 S3method(plot, DSC)
+S3method(print, DSC)
+S3method(print, DSD)
+
+S3method(getCenters, DSC_MOA)
+S3method(getCenters, DSC_tNN)
+
 S3method(getPoints, DSD_MOA)
 S3method(getPoints, DSD_Static)
 S3method(getPoints, DSD_Dynamic)
