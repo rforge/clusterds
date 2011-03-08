@@ -1,3 +1,5 @@
+## wrapper fo cluster functions
+
 cluster <- function(dsc, dsd, n=10000) { 
   if (n < 2)
     stop("numPoints must be > 1")

@@ -51,7 +51,7 @@ DSD_Static <- function(k=2, d=2, mu, sigma, p) {
   l
 }
 
-getPoints.DSD_Static <- function(x, n=1, ...) {
+getPoints.DSD_Static <- function(x, n=1, assignment = FALSE, ...) {
 
     clusterOrder <- sample(x=c(1:x$k), 
                            size=n, 
@@ -60,5 +60,6 @@ getPoints.DSD_Static <- function(x, n=1, ...) {
 						 
 	data <- t(sapply(clusterOrder, FUN = function(i)
 				mvrnorm(1, mu=x$mu[i,], Sigma=x$sigma[[i]])))			
+	if(assignment) attr(data, "assignment") <- clusterOrder
 	data
 }
