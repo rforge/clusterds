@@ -2,23 +2,25 @@
 DSD_ReadStream <- function(x, delimiter=",") {
 
     # if the user passes a string, create a new connection and open it
-    if (class(x) == "character") {
-	x <- file(x)
-	open(x)
-
+    if (is(x,"character")) {
+	  x <- file(x)
+	  open(x)
+	}
+	
 	# error out if no string or connection is passed
-    } else if (class(x) != "connection") {
-	stop("please pass a valid connection")
-
+    else if (!is(x,"connection")) {
+	  stop("please pass a valid connection")
+	}
+	
 	# open the connection if its closed
-    } else if (isOpen(x) == "FALSE") {
-	open(x)
+    else if (!isOpen(x)) {
+	  open(x)
     }
 
     # creating the DSD object
     l <- list(description = "File Data Stream",
-	    con = x,
-	    delimiter = delimiter)
+			  con = x,
+	          delimiter = delimiter)
     class(l) <- c("DSD","DSD_ReadStream")
     l
 }

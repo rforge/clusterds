@@ -61,5 +61,4 @@ getPoints.DSD_MOA <- function(x, n=1, ...) {
     } else {
 	stop("invalid n")
     }
-
 }
