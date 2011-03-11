@@ -1,11 +1,12 @@
-library("ClusterDS")
+library("stream")
 
-#source("AAA.R")
-#source("cluster.R")
-#source("tNN.R")
+#source("../R/AAA.R")
+#source("../R/cluster.R")
+#source("../R/tNN.R")
 
 ## create stream
-dsd <- DSD_Static(k=2, d=2, mu=rbind(c(0,0),c(1,1)))
+#dsd <- DSD_Static(k=2, d=2, mu=rbind(c(0,0),c(1,1)))
+dsd <- DSD_Static(k=3, d=2)
 
 d <- getPoints(dsd, 1000, assignment = TRUE)
 
