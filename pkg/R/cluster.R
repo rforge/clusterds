@@ -18,7 +18,7 @@ cluster <- function(dsc, dsd, n=10000) {
 .cluster <- function(dsc, inst) UseMethod(".cluster")
 
 .cluster.DSC_MOA <- function(dsc, inst) {
-	inst <- .jnew("weka/core/Instance", 1, inst)
+	inst <- .jnew("weka/core/Instance", 1.0, inst[1,])
     .jcall(dsc$javaObj, "V", "trainOnInstanceImpl", inst)
 	invisible(dsc)
 }

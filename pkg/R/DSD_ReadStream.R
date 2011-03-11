@@ -25,10 +25,12 @@ DSD_ReadStream <- function(x, delimiter=",") {
     l
 }
 
-getPoints.DSD_ReadStream <- function(x, n=1, ...) {
+getPoints.DSD_ReadStream <- function(x, n=1, loop=FALSE, ...) {
 
     # reading from the connection
     #TODO deal with quotation marks or other weird stuff
-    lines <- strsplit(x=readLines(x$con, n=numPoints, ok=TRUE), split=x$delimiter)
+	
+	# TODO: deal with the new parameter, loop and EOF
+    lines <- strsplit(x=readLines(x$con, n=n, ok=TRUE), split=x$delimiter)
     matrix(as.numeric(unlist(lines)),ncol=length(lines[[1]]), byrow=TRUE)
 }

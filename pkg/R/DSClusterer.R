@@ -2,6 +2,10 @@
 # all DSC classes have these methods
 # and an additional function to create the DSC
 
+getCenters.default <- function(x, ...) {
+   stop(gettextf("getCenters not implemented for class '%s'.", class(x)))
+}
+
 getCenters <- function(x, ...) UseMethod("getCenters")
 
 nclusters <- function(x) nrow(getCenters(x))

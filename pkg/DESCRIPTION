@@ -1,7 +1,7 @@
-Package: ClusterDS
+Package: stream
 Version: 0.0
 Date: 2010-09-29
-Title: ClusterDS
+Title: Infrastructure for Data Streams
 Author: John Forrest, Michael Hahsler
 Maintainer: John Forrest <jhforrest@smu.edu>
 Description: A comparison of various data stream clustering algorithms

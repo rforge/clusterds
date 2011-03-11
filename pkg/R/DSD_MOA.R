@@ -12,36 +12,41 @@
 # -E eventFrequency
 # -M eventMergeWeight
 # -P eventSplitWeight
+# -a numAtts (dimensionality)
 # because there are so many parameters, let's only use a few key ones...
-DSD_MOA <- function(modelSeed=1, instanceSeed=1, numCluster=4L, 
-	avgRadius=0, density=0) {
+DSD_MOA <- function(modelSeed=1, instanceSeed=1, k=3, d=2,
+					avgRadius=0, density=0) {
     #TODO: need error checking on the params
 
     # we leave the other parameters as defaults
-    paramList <- list(m=modelSeed,
-	    i=instanceSeed,
-	    K=numCluster,
-	    k=3L,
-	    R=avgRadius,
-	    r=0.0,
-	    d=density,
-	    V=100L,
-	    v=0L,
-	    N=0.1,
-	    E=15000L,
-	    M=0.5,
-	    P=0.5)
+    paramList <- list(
+#		m=modelSeed,
+#	    i=instanceSeed,
+	    K=k,
+#	    k=3L,
+#	    R=avgRadius,
+#	    r=0.0,
+#	    d=density,
+#	    V=100L,
+#	    v=0L,
+#	    N=0.1,
+#	    E=15000L,
+#	    M=0.5,
+#	    P=0.5,
+		a=d)
 
     # converting the param list to a cli string to use in java
     cliParams <- convertParams(paramList)
 
     # initializing the clusterer
     strm <- .jnew("moa/streams/clustering/RandomRBFGeneratorEvents")
-    .jcall(strm, "V", "prepareForUse") #TODO: does this need to be after the options have been set??
     options <- .jcall(strm, "Lmoa/options/Options;", "getOptions")
     .jcall(options, "V", "setViaCLIString", cliParams)
+	.jcall(strm, "V", "prepareForUse")
 
     l <- list(description = "RandomRBFGeneratorEvents",
+		k = k,
+		d = d,
 	    cliParams = cliParams,
 	    javaObj = strm)
 
@@ -49,16 +54,20 @@ DSD_MOA <- function(modelSeed=1, instanceSeed=1, numCluster=4L,
     l
 }
 
-### FIXME: this should also return the data as a R vector or
-### matrix for n>1
-
-# we only create 1 data point at a time for Java instances
 getPoints.DSD_MOA <- function(x, n=1, ...) {
-    if (n == 1) {
-	inst <- .jcall(x$javaObj, "Lweka/core/Instance;", "nextInstance")
-    } else if (n > 1) {    
-	stop("getPoints.DSD_MOA must have n = 1")
-    } else {
-	stop("invalid n")
-    }
+	
+	if (n < 1)
+		stop("n must be > 0")
+	
+	# pre-allocating the space for the matrix
+	data <- matrix(NA, nrow=n, ncol=x$d)
+
+	# unpackaging the java instances
+	for (i in 1:n) {
+		row <- .jcall(x$javaObj, "Lweka/core/Instance;", "nextInstance")
+		row <- .jcall(row, "[D", "toDoubleArray")
+		data[i,] <- row[1:x$d]
+	}
+	
+	data
 }

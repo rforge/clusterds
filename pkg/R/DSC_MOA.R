@@ -15,9 +15,6 @@ convertParams <- function(paramList=list()) {
     cliParams <- substr(cliParams, 1, nchar(cliParams)-1)
 }
 
-
-
-
 getCenters.DSC_MOA <- function(x, ...) {
 
     if (.jcall(x$javaObj, "Z", "implementsMicroClusterer")) {
@@ -35,6 +32,7 @@ getCenters.DSC_MOA <- function(x, ...) {
 	    stop("not enough microclusters, please cluster more data")
 
 	# this matrix will hold the data to plot
+	# TODO: ncol is tied to the number of dimensions
 	m <- matrix(ncol=2, nrow=length)
 	colnames(m) <- c("x", "y")
 
@@ -49,7 +47,6 @@ getCenters.DSC_MOA <- function(x, ...) {
 	    center <- .jcall(mCluster, "[D", "getCenter") 
 
 	    #TODO: projection
-	    #print(c("debugging: dimensions = ", length(center)))
 	    # if the data is 2 dimensional, we don't have to project 
 	    #if (length(center) == 2) {
 	    m[i, 1] = center[1]

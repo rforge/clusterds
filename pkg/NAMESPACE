@@ -1,20 +1,25 @@
 import(rJava)
 import(MASS)
 
-export(cluster,
+export(
+
+	# DSC_MOA
 	DSC_DenStream,
 	DSC_CobWeb,
 	DSC_Clustream,
 	DSC_ClusTree,
 	DSC_StreamKM,
 	
+	# DSC_R
 	DSC_tNN,
 	
 	DSD_MOA,
 	DSD_Static,
 	DSD_Dynamic,
 	DSD_ReadStream,
+	DSD_WriteStream,
 	
+	cluster,
 	convertParams,
 	getCenters,
 	getPoints,

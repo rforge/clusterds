@@ -1,8 +1,7 @@
-WriteStream <- function(dsd, con, n=100, delim=',') {	
+DSD_WriteStream <- function(dsd, con, n=100, sep=", ", ...) {	
 	# string w/ file name
 	if (is(con, "character")) {
-		con <- file(con)
-		open(con)
+		con <- file(con, open="w")
 	}
 	
 	# error
@@ -17,5 +16,6 @@ WriteStream <- function(dsd, con, n=100, delim=',') {
 	
 	# getting a matrix of data
 	d <- getPoints(dsd, n)
-	write.table(d, con, row.names=FALSE, col.names=FALSE, sep=delim)
+	write.table(d, con, sep=sep, ...)
+	close(con)
 }
