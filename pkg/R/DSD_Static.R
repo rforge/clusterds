@@ -62,9 +62,15 @@ getPoints.DSD_Static <- function(x, n=1, assignment = FALSE, ...) {
 
     data <- t(sapply(clusterOrder, FUN = function(i)
 		    mvrnorm(1, mu=x$mu[i,], Sigma=x$sigma[[i]])))			
-    ## TODO: Add noise
-    if(x$noise) stop("Noise not implemented yet!")
-    
+    ## Replace some points by random noise
+    ## FIXME: [0,1]^d might not be a good choice. Some clusters can have
+    ## points outside this range!
+    if(x$noise) {
+	repl <- runif(n)<x$noise 
+	data[repl,] <- replicate(x$d, runif(sum(repl)))
+	clusterOrder[repl] <- NA
+    }
+
     if(assignment) attr(data, "assignment") <- clusterOrder
     data
 }
