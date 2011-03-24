@@ -2,9 +2,11 @@
 \alias{DSC_DenStream}
 \title{DataStreamClusterer: DenStream}
 \description{Creates a new DataStreamClusterer with the DenStream algorithm}
+
 \usage{
 DSC_DenStream(epsilon = 0.1, minPoints = 10, lambda = 0.006, beta = 0.001, mu = 1, initPoints = 1000)
 }
+
 \arguments{
   \item{epsilon}{-e (defines the epsilon neighborhood, range: 0 to 1)}
   \item{minPoints}{-p (min. num. points a cluster must have)}
@@ -13,6 +15,7 @@ DSC_DenStream(epsilon = 0.1, minPoints = 10, lambda = 0.006, beta = 0.001, mu = 
   \item{mu}{-m (range: 0 to max(double))}
   \item{initPoints}{-i (number of points to use for initialization)}
 }
+
 \details{
 DSC_DenStream is based on the DenStream algorithm. DenStream is a density 
 based clustering algorithm that summarizes the incoming data points into micro-clusters 
@@ -40,11 +43,13 @@ The parameters are defined as follows:
  \code{initPoints}
 	{is the number of data points to initialize the algorithm with.}
 }
+
 \value{
 	\item{description}{The name of the algorithm in the DSC object.}
 	\item{options}{The CLI params defined when creating the DSC object.}
 	\item{javaObj}{The underlying Java object associated with DSC_MOA objects.}
 }
+
 \references{
 Cao F, Ester M, Qian W, Zhou A (2006). "Density-Based Clustering over 
 an Evolving Data Stream with Noise." In "Proceedings of the 2006 SIAM International 
@@ -55,9 +60,15 @@ Bifet A, Holmes G, Pfahringer B, Kranen P, Kremer H, Jansen T, Seidl T (2010).
 Clustering." In "Journal of Machine Learning Research (JMLR) Workshop and Conference Proceedings,"
 }
 
-%%\seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
-%%}
+\seealso{
+	\code{\link{DSClusterer}},
+	\code{\link{DSC_MOA}},
+	\code{\link{DSC_Clustream}},
+	\code{\link{DSC_CobWeb}},
+	\code{\link{DSC_StreamKM}},
+	\code{\link{DSC_ClusTree}}
+}
+
 \examples{
 dsc <- DSC_DenStream()
 dsd <- DSD_Gaussian_Static()

@@ -28,13 +28,14 @@ from a particular time period.
 The \code{timeWindow} parameter changes the granularity at which the snapshots 
 are taken for the micro-cluster summary maintanence. \code{maxNumKernels} 
 is analogous to the q micro-clusters that are maintained within the algorithm.
-
 }
+
 \value{
 	\item{description}{The name of the algorithm in the DSC object.}
 	\item{options}{The CLI params defined when creating the DSC object.}
 	\item{javaObj}{The underlying Java object associated with DSC_MOA objects.}
 }
+
 \references{
 Aggarwal CC, Han J, Wang J, Yu PS (2003). "A Framework for Clustering 
 Evolving Data Streams." In "Proceedings of the International 
@@ -46,12 +47,12 @@ Clustering." In "Journal of Machine Learning Research (JMLR) Workshop and Confer
 }
 
 \seealso{
-\code{\link{DSClusterer}},
-\code{\link{DSC_MOA}},
-\code{\link{DSC_DenStream}},
-\code{\link{DSC_CobWeb}},
-\code{\link{DSC_StreamKM}},
-\code{\link{DSC_ClusTree}}
+	\code{\link{DSClusterer}},
+	\code{\link{DSC_MOA}},
+	\code{\link{DSC_DenStream}},
+	\code{\link{DSC_CobWeb}},
+	\code{\link{DSC_StreamKM}},
+	\code{\link{DSC_ClusTree}}
 }
 
 \examples{

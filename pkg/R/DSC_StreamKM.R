@@ -1,19 +1,19 @@
 # StreamKM options:
 # -s sizeCoreset, size of the coreset
-# -k numClusters
+# -k number of clusters
 # -w widthOption
 # -r randomSeedOption
-DSC_StreamKM <- function(sizeCoreset=100, numClusters=5, width=1000, randomSeed=1) {
+DSC_StreamKM <- function(sizeCoreset=100, k=5, width=1000, randomSeed=1) {
 
   if (sizeCoreset < 0)
     stop("invalid sizeCoreset")
-  if (numClusters < 0)
-    stop("invalid numClusters")
+  if (k < 0)
+    stop("invalid k")
   if (width < 0)
     stop("invalid width")
 
   paramList <- list(s=sizeCoreset,
-                    k=numClusters,
+                    k=k,
                     w=width,
                     r=randomSeed)
 
