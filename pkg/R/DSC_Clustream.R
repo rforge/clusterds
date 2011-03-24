@@ -16,7 +16,7 @@ DSC_Clustream <- function(timeWindow=1000, maxNumKernels=100) {
                     k = maxNumKernels)
 
   # converting the param list to a cli string to use in java
-  cliParams <- convertParams(paramList)
+  cliParams <- convert_params(paramList)
 
   # initializing the clusterer
   clusterer <- .jnew("moa/clusterers/clustream/Clustream")

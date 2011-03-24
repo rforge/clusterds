@@ -14,15 +14,14 @@ export(
 	DSC_tNN,
 	
 	DSD_MOA,
-	DSD_Static,
-	DSD_Dynamic,
+	DSD_Gaussian_Static,
+	DSD_Gaussian_Dynamic,
 	DSD_ReadStream,
-	DSD_WriteStream,
 	
+	write_stream,
 	cluster,
-	convertParams,
-	getCenters,
-	getPoints,
+	get_centers,
+	get_points,
 	nclusters,
 	plot
       )
@@ -31,10 +30,12 @@ S3method(plot, DSC)
 S3method(print, DSC)
 S3method(print, DSD)
 
-S3method(getCenters, DSC_MOA)
-S3method(getCenters, DSC_tNN)
+S3method(write_stream, DSD)
 
-S3method(getPoints, DSD_MOA)
-S3method(getPoints, DSD_Static)
-S3method(getPoints, DSD_Dynamic)
-S3method(getPoints, DSD_ReadStream)
+S3method(get_centers, DSC_MOA)
+S3method(get_centers, DSC_tNN)
+
+S3method(get_points, DSD_MOA)
+S3method(get_points, DSD_Gaussian_Static)
+S3method(get_points, DSD_Gaussian_Dynamic)
+S3method(get_points, DSD_ReadStream)

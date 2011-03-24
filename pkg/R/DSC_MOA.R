@@ -1,6 +1,5 @@
 ## MOA specific stuff
-
-convertParams <- function(paramList=list()) {
+convert_params <- function(paramList=list()) {
     length <- length(paramList)
     if (length == 0)
 	stop("invalid param list")
@@ -15,7 +14,7 @@ convertParams <- function(paramList=list()) {
     cliParams <- substr(cliParams, 1, nchar(cliParams)-1)
 }
 
-getCenters.DSC_MOA <- function(x, ...) {
+get_centers.DSC_MOA <- function(x, ...) {
 
     if (.jcall(x$javaObj, "Z", "implementsMicroClusterer")) {
 

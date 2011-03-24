@@ -3,7 +3,7 @@
 #	- rangeVar (for genPositiveDefMat)
 #	- min/max on runif
 #
-DSD_Static <- function(k=2, d=2, mu, sigma, p, noise = 0) { 
+DSD_Gaussian_Static <- function(k=2, d=2, mu, sigma, p, noise = 0) { 
 
     # if p isn't defined, we give all the clusters equal probability
     if (missing(p)) {
@@ -41,7 +41,6 @@ DSD_Static <- function(k=2, d=2, mu, sigma, p, noise = 0) {
     # list of length k
     # d x d matrix in the list
 
-
     l <- list(description = "Static R Data Stream",
 	    k = k,
 	    d = d,
@@ -49,11 +48,11 @@ DSD_Static <- function(k=2, d=2, mu, sigma, p, noise = 0) {
 	    sigma = sigma,
 	    p = p,
 	    noise = noise)
-    class(l) <- c("DSD","DSD_Static")
+    class(l) <- c("DSD","DSD_R","DSD_Gaussian_Static")
     l
 }
 
-getPoints.DSD_Static <- function(x, n=1, assignment = FALSE, ...) {
+get_points.DSD_Gaussian_Static <- function(x, n=1, assignment = FALSE, ...) {
 
     clusterOrder <- sample(x=c(1:x$k), 
 	    size=n, 
@@ -62,6 +61,7 @@ getPoints.DSD_Static <- function(x, n=1, assignment = FALSE, ...) {
 
     data <- t(sapply(clusterOrder, FUN = function(i)
 		    mvrnorm(1, mu=x$mu[i,], Sigma=x$sigma[[i]])))			
+			
     ## Replace some points by random noise
     ## FIXME: [0,1]^d might not be a good choice. Some clusters can have
     ## points outside this range!

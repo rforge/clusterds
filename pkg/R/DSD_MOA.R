@@ -14,14 +14,16 @@
 # -P eventSplitWeight
 # -a numAtts (dimensionality)
 # because there are so many parameters, let's only use a few key ones...
-DSD_MOA <- function(modelSeed=1, instanceSeed=1, k=3, d=2,
-					avgRadius=0, density=0) {
+DSD_MOA <- function(k=3, d=2, avgRadius=0,
+					modelSeed=1, instanceSeed=1) {
     #TODO: need error checking on the params
 
     # we leave the other parameters as defaults
+	# TODO: if the random seeds aren't defined, should we pass them anyway??
+	#		the user may be left unaware that they are producing the same data
     paramList <- list(
-#		m=modelSeed,
-#	    i=instanceSeed,
+		m=modelSeed,
+	    i=instanceSeed,
 	    K=k,
 #	    k=3L,
 #	    R=avgRadius,
@@ -50,11 +52,11 @@ DSD_MOA <- function(modelSeed=1, instanceSeed=1, k=3, d=2,
 	    cliParams = cliParams,
 	    javaObj = strm)
 
-    class(l) <- c("DSD","DSD_MOA")
+    class(l) <- c("DSD","DSD_MOA","DSD_RandomRBF")
     l
 }
 
-getPoints.DSD_MOA <- function(x, n=1, ...) {
+get_points.DSD_MOA <- function(x, n=1, ...) {
 	
 	if (n < 1)
 		stop("n must be > 0")

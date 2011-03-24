@@ -2,11 +2,38 @@
 # all DSD classes have these functions
 # and an additional function to create the DSD
 
-getPoints.default <- function(x, n=1, ...) {
-   stop(gettextf("getPoints not implemented for class '%s'.", class(x)))
+get_points.default <- function(x, n=1, ...) {
+   stop(gettextf("get_points not implemented for class '%s'.", class(x)))
 }
 
-getPoints <- function(x, n=1, ...) UseMethod("getPoints")
+get_points <- function(x, n=1, ...) UseMethod("get_points")
+
+write_stream.default <- function(dsd, con, n=100, sep=", ", ...) {
+   stop(gettextf("write_stream not implemented for class '%s'.", class(x)))
+}
+
+write_stream <- function(dsd, con, n=100, sep=", ", ...) UseMethod("write_stream")
+write_stream.DSD <- function(dsd, con, n=100, sep=", ", ...) {	
+	# string w/ file name
+	if (is(con, "character")) {
+	con <- file(con, open="w")
+	}
+	
+	# error
+	else if (!is(con, "connection")) {
+	stop("please pass a valid connection")
+	}
+	
+	# needs opening
+	else if (!isOpen(con)) {
+	open(con)
+	}
+	
+	# getting a matrix of data
+	d <- get_points(dsd, n)
+	write.table(d, con, sep=sep, ...)
+	close(con)
+}
 
 print.DSD <- function(x, ...) {
     cat(paste('DSD - Data Stream Datasource:', x$description, '\n'))

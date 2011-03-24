@@ -17,7 +17,7 @@ DSC_CobWeb <- function(acuity=1.0, cutoff=0.002, randomSeed=1) {
                     r=randomSeed)
 
   # converting the param list to a cli string to use in java
-  cliParams <- convertParams(paramList)
+  cliParams <- convert_params(paramList)
   
   # initializing the clusterer
   clusterer <- .jnew("moa/clusterers/CobWeb")

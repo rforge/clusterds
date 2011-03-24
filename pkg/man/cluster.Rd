@@ -3,7 +3,7 @@
 \title{Clustering data based with input algorithm and data stream}
 \description{Clusters a number of input points from a data stream into a clustering object.}
 \usage{
-cluster(dsc, dsd, n = 10000)
+cluster(dsc, dsd, n = 1000)
 }
 \arguments{
   \item{dsc}{a DSC object}
@@ -24,7 +24,7 @@ cluster(dsc, dsd, n = 10000)
 %%}
 \examples{
 dsc <- DSC_DenStream()
-dsd <- DSD_moa()
-cluster(dsc, dsd, 100000)
+dsd <- DSD_MOA()
+cluster(dsc, dsd, 2000)
 plot(dsc)
 }

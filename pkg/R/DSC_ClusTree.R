@@ -16,7 +16,7 @@ DSC_ClusTree <- function(timeWindow=1000, maxHeight=8) {
                     h=maxHeight)
 
   # converting the param list to a cli string to use in java
-  cliParams <- convertParams(paramList)
+  cliParams <- convert_params(paramList)
   
   # initializing the clusterer
   clusterer <- .jnew("moa/clusterers/clustree/ClusTree")

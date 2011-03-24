@@ -18,7 +18,7 @@ DSC_StreamKM <- function(sizeCoreset=100, numClusters=5, width=1000, randomSeed=
                     r=randomSeed)
 
   # converting the param list to a cli string to use in java
-  cliParams <- convertParams(paramList)
+  cliParams <- convert_params(paramList)
   
   # initializing the clusterer
   clusterer <- .jnew("moa/clusterers/streamkm/StreamKM")

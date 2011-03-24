@@ -30,7 +30,7 @@ setClass("tNN",
 
 	## FIXME: Implement check
 	#validity= function(object) {}
-	)
+)
 
 setMethod("initialize", "tNN", function(.Object, 
 		threshold = 0.2, 
@@ -55,9 +55,7 @@ setMethod("initialize", "tNN", function(.Object,
 	    #.Object <- callNextMethod(.Object, ...)
 
 	    .Object
-	})
-
-
+})
 
 .cluster_tNN <-	function(RObj, newdata, verbose = FALSE) {
    
@@ -67,7 +65,6 @@ setMethod("initialize", "tNN", function(.Object,
     ###
 
     tnn_d <- x@tnn_d
-
     tnn_d$last <- character(nrow(newdata))
 
     for(i in 1:nrow(newdata)) {
@@ -141,23 +138,19 @@ setMethod("initialize", "tNN", function(.Object,
 		    ## update counts 
 		    tnn_d$counts[sel] <- tnn_d$counts[sel] + 1
 		}
-	    }
+	}
 
 	    tnn_d$last[i] <- sel
 
-	}
-
+	} # end for loop
 
 	if(verbose) cat ("Done -", nclusters(x), "clusters.\n")
 
-	# invisible(x)
-	
 	###
 	RObj$RObj <- x
 	invisible(RObj)
 	###
-    }
-
+}
 
 ### creator    
 DSC_tNN <- function(threshold = 0.2, measure = "euclidean",
@@ -176,6 +169,4 @@ DSC_tNN <- function(threshold = 0.2, measure = "euclidean",
 }
 
 ### get centers
-getCenters.DSC_tNN <- function(x) x$RObj@tnn_d$centers
-
-
+get_centers.DSC_tNN <- function(x) x$RObj@tnn_d$centers

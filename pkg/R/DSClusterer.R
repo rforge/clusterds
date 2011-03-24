@@ -2,13 +2,13 @@
 # all DSC classes have these methods
 # and an additional function to create the DSC
 
-getCenters.default <- function(x, ...) {
-   stop(gettextf("getCenters not implemented for class '%s'.", class(x)))
+get_centers.default <- function(x, ...) {
+   stop(gettextf("get_centers not implemented for class '%s'.", class(x)))
 }
 
-getCenters <- function(x, ...) UseMethod("getCenters")
+get_centers <- function(x, ...) UseMethod("get_centers")
 
-nclusters <- function(x) nrow(getCenters(x))
+nclusters <- function(x) nrow(get_centers(x))
 
 print.DSC <- function(x, ...) {
     cat(paste('DSC - Data Stream Clusterer:', x$description, '\n'))
@@ -18,7 +18,7 @@ print.DSC <- function(x, ...) {
 
 plot.DSC <- function(x, ..., method="pairs") {
     ## method can be pairs, plot or pc (projection with PCA)
-    centers <- getCenters(x)
+    centers <- get_centers(x)
     if(ncol(centers)>2 && method=="pairs") pairs(centers, ...)
     else if(ncol(centers)>2 && method=="pc") {
 	## we assume Euclidean here

@@ -1,13 +1,13 @@
 ## wrapper fo cluster functions
 
-cluster <- function(dsc, dsd, n=10000) { 
+cluster <- function(dsc, dsd, n=1000) { 
   if (n < 2)
     stop("numPoints must be > 1")
 
   # looping through the stream, feeding the new datapoints into 
   # the algorithm
   for (i in 1:n) {
-    inst <- getPoints(dsd)
+    inst <- get_points(dsd)
     .cluster(dsc, inst)
 	
     # so cl <- cluster(cl, ...) also works
