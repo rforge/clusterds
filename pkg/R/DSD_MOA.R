@@ -38,7 +38,7 @@ DSD_MOA <- function(k=3, d=2, avgRadius=0,
 		a=d)
 
     # converting the param list to a cli string to use in java
-    cliParams <- convertParams(paramList)
+    cliParams <- convert_params(paramList)
 
     # initializing the clusterer
     strm <- .jnew("moa/streams/clustering/RandomRBFGeneratorEvents")
