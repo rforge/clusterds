@@ -13,6 +13,7 @@ write_stream.default <- function(dsd, con, n=100, sep=", ", ...) {
 }
 
 write_stream <- function(dsd, con, n=100, sep=", ", ...) UseMethod("write_stream")
+
 write_stream.DSD <- function(dsd, con, n=100, sep=", ", ...) {	
 	# string w/ file name
 	if (is(con, "character")) {
@@ -29,9 +30,16 @@ write_stream.DSD <- function(dsd, con, n=100, sep=", ", ...) {
 	open(con)
 	}
 	
+	# clearing the file before appending data
+	writeLines("", con, sep="")
+	
+	for (i in 1:n) {
+	d <- get_points(dsd, 1)
+	write.table(d, con, sep=sep, append=TRUE, ...)
+	}
+	
 	# getting a matrix of data
-	d <- get_points(dsd, n)
-	write.table(d, con, sep=sep, ...)
+	
 	close(con)
 }
 
