@@ -1,5 +1,5 @@
 # accepts an open connection
-DSD_ReadStream <- function(x, delimiter=",") {
+DSD_ReadStream <- function(x, delimiter=",", loop=FALSE) {
 
     # if the user passes a string, create a new connection and open it
     if (is(x,"character")) {
@@ -20,12 +20,13 @@ DSD_ReadStream <- function(x, delimiter=",") {
     # creating the DSD object
     l <- list(description = "File Data Stream",
 			  con = x,
-	          delimiter = delimiter)
+	          delimiter = delimiter,
+			  loop = loop)
     class(l) <- c("DSD","DSD_R","DSD_ReadStream")
     l
 }
 
-get_points.DSD_ReadStream <- function(x, n=1, loop=FALSE, ...) {
+get_points.DSD_ReadStream <- function(x, n=1, ...) {
 
     # reading from the connection
     #TODO deal with quotation marks or other weird stuff

@@ -25,7 +25,7 @@ export(
 	get_points,
 	nclusters,
 	plot,
-	reset
+	reset_stream
       )
 
 S3method(plot, DSC)
@@ -43,4 +43,5 @@ S3method(get_points, DSD_Gaussian_Dynamic)
 S3method(get_points, DSD_ReadStream)
 S3method(get_points, DSD_DataFrame)
 
-S3method(reset, DSD_DataFrame)
+S3method(reset_stream, DSD_DataFrame)
+S3method(reset_stream, DSD_ReadStream)
