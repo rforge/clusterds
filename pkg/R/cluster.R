@@ -7,11 +7,9 @@ cluster <- function(dsc, dsd, n=1000) {
   # looping through the stream, feeding the new datapoints into 
   # the algorithm
   for (i in 1:n) {
-    inst <- get_points(dsd)
+	# have to convert to matrix, data.frame conflicts with rJava
+    inst <- as.matrix(get_points(dsd)) 
     .cluster(dsc, inst)
-	
-	##TODO: BUG- DSD_DataFrame stopping at 98 out of 100 data points in a stream
-	##print(i)
 	
     # so cl <- cluster(cl, ...) also works
     invisible(dsc)

@@ -60,10 +60,10 @@ get_points.DSD_DataFrame <- function(x, n=1, ...) {
     }
 
     # we will go of the edge, but no loop, so return as much as possible and warn the user
-    else if (x$state$counter + n > nrow(x$strm)) {
+    else if (x$state$counter + n - 1 > nrow(x$strm)) {
 		remaining <- nrow(x$strm) - x$state$counter
 
-		if (remaining > 0) {
+		if (remaining >= 0) {
 			d <- x$strm[x$state$counter:nrow(x$strm),]
 			x$state$counter <- nrow(x$strm)
 		}
@@ -83,7 +83,7 @@ get_points.DSD_DataFrame <- function(x, n=1, ...) {
 		x$state$counter <- x$state$counter + n
     }
 
-    as.matrix(d)
+    d
 }
 
 # test cases
