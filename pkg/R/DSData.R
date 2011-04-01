@@ -8,13 +8,16 @@ get_points.default <- function(x, n=1, ...) {
 
 get_points <- function(x, n=1, ...) UseMethod("get_points")
 
-write_stream.default <- function(dsd, con, n=100, sep=", ", ...) {
+write_stream.default <- function(dsd, con, n=100, sep=",", 
+	col.names=FALSE, row.names=FALSE, ...) {
    stop(gettextf("write_stream not implemented for class '%s'.", class(x)))
 }
 
-write_stream <- function(dsd, con, n=100, sep=", ", ...) UseMethod("write_stream")
+write_stream <- function(dsd, con, n=100, sep=",", 
+	col.names=FALSE, row.names=FALSE, ...) UseMethod("write_stream")
 
-write_stream.DSD <- function(dsd, con, n=100, sep=", ", ...) {	
+write_stream.DSD <- function(dsd, con, n=100, sep=",", 
+	col.names=FALSE, row.names=FALSE, ...) {	
 	# string w/ file name
 	if (is(con, "character")) {
 	con <- file(con, open="w")
@@ -31,14 +34,16 @@ write_stream.DSD <- function(dsd, con, n=100, sep=", ", ...) {
 	}
 	
 	# clearing the file before appending data
-	writeLines("", con, sep="")
-	
-	for (i in 1:n) {
 	d <- get_points(dsd, 1)
-	write.table(d, con, sep=sep, append=TRUE, ...)
-	}
+	write.table(d, con, sep=sep, col.names=col.names, row.names=row.names, ...)
 	
-	# getting a matrix of data
+	# all following calls have to have col.names=FALSE regardless
+	if (n > 1) {
+		for (i in 2:n) {
+			d <- get_points(dsd, 1)
+			write.table(d, con, sep=sep, append=TRUE, col.names=FALSE, row.names=row.names, ...)
+		}
+	}
 	
 	close(con)
 }

@@ -10,6 +10,9 @@ cluster <- function(dsc, dsd, n=1000) {
     inst <- get_points(dsd)
     .cluster(dsc, inst)
 	
+	##TODO: BUG- DSD_DataFrame stopping at 98 out of 100 data points in a stream
+	##print(i)
+	
     # so cl <- cluster(cl, ...) also works
     invisible(dsc)
   }

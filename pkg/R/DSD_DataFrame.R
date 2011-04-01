@@ -83,7 +83,7 @@ get_points.DSD_DataFrame <- function(x, n=1, ...) {
 		x$state$counter <- x$state$counter + n
     }
 
-    d
+    as.matrix(d)
 }
 
 # test cases
