@@ -9,10 +9,10 @@
 }
 
 \arguments{
-	\item{threshold}{}
-	\item{measure}{}
-	\item{centroids}{}
-	\item{lambda}{}
+	\item{threshold}{The threshold in the nearest neighborhood algorithm.}
+	\item{measure}{The measure used to calculate cluster proximity.}
+	\item{centroids}{The measure used to calculate centroid proximity.}
+	\item{lambda}{The lambda used in the fading function.}
 }
 
 \details{
@@ -24,7 +24,13 @@
 	\item{RObj}{The underlying R object associated with DSC_R objects.}
 }
 
-%%\references{ } TODO: need to reference the original paper
+\references{ 
+M.H. Dunham, Y. Meng, J. Huang (2004): Extensible Markov Model, In: ICDM '04:
+Proceedings of the Fourth IEEE International Conference on Data Mining, pp. 371–374.
+
+M. Hahsler, M. H. Dunham (2010): rEMM: Extensible Markov Model for Data
+Stream Clustering in R, Journal of Statistical Software, 35(5), 1-31, URL \url{http://www.jstatsoft.org/v35/i05/}
+}
 
 \seealso{
 	\code{\link{DSClusterer}},

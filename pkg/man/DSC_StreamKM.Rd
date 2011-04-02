@@ -8,10 +8,10 @@ DSC_StreamKM(sizeCoreset=100, k=5, width=1000, randomSeed=1)
 }
 
 \arguments{
-	\item{sizeCoreset}{}
-	\item{k}{}
+	\item{sizeCoreset}{The size of the coreset tree.}
+	\item{k}{The number of clusters.}
 	\item{width}{}
-	\item{randomSeed}{}
+	\item{randomSeed}{The random seed used in the k-means algorithm.}
 }
 
 \details{
@@ -27,7 +27,7 @@ contains the following items:
 }
 
 \references{
-Marcel R. Ackermann, Christiane Lammersen, Marcus Märtens, Christoph Raupach,
+Marcel R. Ackermann, Christiane Lammersen, Marcus M{\"a}rtens, Christoph Raupach,
 Christian Sohler, Kamil Swierkot. StreamKM++: A Clustering Algorithm for Data
 Streams. In Proceedings of the 12th Workshop on Algorithm Engineering and
 Experiments (ALENEX '10), pp. 173-187, Society for Industrial and Applied
@@ -44,8 +44,8 @@ Mathematics, 2010.
 }
 
 \examples{
-dsc <- DSC_StreamKM()
-dsd <- DSD_Gaussian_Static()
-cluster(dsc, dsd, 5000)
-plot(dsc)
+#dsc <- DSC_StreamKM()
+#dsd <- DSD_Gaussian_Static()
+#cluster(dsc, dsd, 5000)
+#plot(dsc)
 }

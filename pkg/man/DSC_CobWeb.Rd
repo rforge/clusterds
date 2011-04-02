@@ -8,9 +8,9 @@ DSC_CobWeb(acuity = 1, cutoff = 0.002, randomSeed = 1)
 }
 
 \arguments{
-  \item{acuity}{}
-  \item{cutoff}{}
-  \item{randomSeed}{}
+  \item{acuity}{The acuity used in the underlying implementation.}
+  \item{cutoff}{The cut off.}
+  \item{randomSeed}{The random seed used in the MOA implementation.}
 }
 
 \details{
@@ -40,8 +40,8 @@ Clustering. Mach. Learn. 2, 2 (September 1987), 139-172.
 }
 
 \examples{
-dsc <- DSC_CobWeb()
-dsd <- DSD_Gaussian_Static()
-cluster(dsc, dsd, 1000)
-plot(dsc)
+#dsc <- DSC_CobWeb()
+#dsd <- DSD_Gaussian_Static()
+#cluster(dsc, dsd, 1000)
+#plot(dsc)
 }

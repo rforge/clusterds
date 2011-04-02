@@ -74,7 +74,7 @@ dsd <- DSD_Gaussian_Static(k=2, d=2)
 dsc <- DSC_DenStream()
 
 # obtaining some data
-sample <- getPoints(dsd, 500)
+sample <- get_points(dsd, 500)
 
 # clustering some data, this will take some time
 cluster(dsc, dsd, 5000)

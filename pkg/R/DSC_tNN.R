@@ -169,4 +169,4 @@ DSC_tNN <- function(threshold = 0.2, measure = "euclidean",
 }
 
 ### get centers
-get_centers.DSC_tNN <- function(x) x$RObj@tnn_d$centers
+get_centers.DSC_tNN <- function(x, ...) x$RObj@tnn_d$centers

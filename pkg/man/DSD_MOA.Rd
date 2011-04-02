@@ -8,7 +8,7 @@ RandomRBFGenerator implemented in MOA.
 }
 
 \usage{
-DSD_MOA <- function(k=3, d=2, avgRadius=0, modelSeed=1, instanceSeed=1)
+DSD_MOA(k=3, d=2, avgRadius=0, modelSeed=1, instanceSeed=1)
 }
 
 \arguments{
@@ -36,6 +36,11 @@ Pattern Analysis (2010).
 }
 
 \seealso{
+	\code{\link{DSD_Gaussian_Static}},
+	\code{\link{DSD_ReadStream}},
+%%	\code{\link{DSD_Gaussian_Dynamic}},
+	\code{\link{DSD_DataFrame}},
+	\code{\link{write_stream}}
 }
 
 \examples{
