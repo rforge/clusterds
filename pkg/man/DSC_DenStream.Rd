@@ -24,27 +24,26 @@ based upon the frequency of data points in a particular location within a define
 data points to decrease exponentially as t increases. This means that temporal structures 
 within the data stream are also visible using this algorithm. 
 
-%%TODO: why doesn't \item work here??
 The parameters are defined as follows:
- \code{epsilon}
-	{refers to the neighborhood in which the density of each micro-cluster is 
-	 calculated (in other words, the radius).}
- \code{minPoints}
-	{is the minimum number of points a micro-cluster must have.}
- \code{lambda}
-	{alters the fading function: the larger \code{lambda}, the lower the 
-	 weight of the historic data.}
- \code{beta}
-	{is the outlier threshold, and is used in conjunction with \code{mu}}
- \code{mu}
-	{the minimum weight a micro-cluster must have within the \code{epsilon} 
-	 neighborhood to be considered a core-micro-cluster (as opposed to an 
-	 outlier or a potential-micro-cluster).}
- \code{initPoints}
-	{is the number of data points to initialize the algorithm with.}
+epsilon: refers to the neighborhood in which the density of each micro-cluster is calculated (in other words, the radius).
+
+minPoints: is the minimum number of points a micro-cluster must have.
+
+lambda: alters the fading function: the larger \code{lambda}, the lower the weight of the historic data.
+
+beta: is the outlier threshold, and is used in conjunction with \code{mu}
+
+mu: the minimum weight a micro-cluster must have within the \code{epsilon} neighborhood
+
+epsilon: the neighborhood to be considered a core-micro-cluster (as opposed to an outlier or a potential-micro-cluster).
+
+initPoints: is the number of data points to initialize the algorithm with.
 }
 
 \value{
+A list of class \code{DSC}, \code{DSC_MOA}, and \code{DSC_DenStream}. The list
+contains the following items:
+
 	\item{description}{The name of the algorithm in the DSC object.}
 	\item{options}{The CLI params defined when creating the DSC object.}
 	\item{javaObj}{The underlying Java object associated with DSC_MOA objects.}

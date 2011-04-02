@@ -14,8 +14,7 @@
 # -P eventSplitWeight
 # -a numAtts (dimensionality)
 # because there are so many parameters, let's only use a few key ones...
-DSD_MOA <- function(k=3, d=2, avgRadius=0,
-					modelSeed=1, instanceSeed=1) {
+DSD_MOA <- function(k=3, d=2, avgRadius=0, modelSeed=1, instanceSeed=1) {
     #TODO: need error checking on the params
 
     # we leave the other parameters as defaults

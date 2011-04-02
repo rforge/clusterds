@@ -33,6 +33,8 @@ get_points.DSD_ReadStream <- function(x, n=1, ...) {
 	# TODO: have to think of a better way to deal with the warnings
 	options(warn=-1)
 	
+	#suppressWarnings()
+	
 	# comment.char="" is for performance reasons
 	tryCatch({
 		d <- read.table(file=x$con, sep=x$sep, nrows=n, comment.char="", ...)

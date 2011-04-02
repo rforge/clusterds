@@ -1,18 +1,42 @@
-\name{DSD_moa}
-\alias{DSD_moa}
+\name{DSD_MOA}
+\alias{DSD_MOA}
 \title{DataStreamData - MOA}
+
 \description{
+A DataStreamData that generates random data based upon the
+RandomRBFGenerator implemented in MOA.
 }
+
 \usage{
-DSD_MOA <- function(modelSeed=1, instanceSeed=1, numCluster=4L, avgRadius=0, density=0)
+DSD_MOA <- function(k=3, d=2, avgRadius=0, modelSeed=1, instanceSeed=1)
 }
+
+\arguments{
+	\item{k}{The number of clusters.}
+	\item{d}{The dimensionality of the data.}
+	\item{avgRadius}{The average radius of the micro-clusters.}
+	\item{modelSeed}{Random seed for the model.}
+	\item{instanceSeed}{Random seed for the instances.}
+}
+
 \details{
 }
+
 \value{
 	\item{description}{The name of the class of the DSD object.}
 	\item{options}{The CLI params defined when creating the DSD object.}
 	\item{javaObj}{The underlying Java object associated with DSD_MOA objects.}
 }
-%%\references{} TODO: perhaps reference the randomrbfgenerator from the moa project?
-%%\seealso{} TODO: reference the other DSD classes
-%%\examples{} TODO: make an example
+
+\references{
+Albert Bifet, Geoff Holmes, Bernhard Pfahringer, Philipp Kranen, Hardy Kremer,
+Timm Jansen, Thomas Seidl. Journal of Machine Learning Research (JMLR)
+Workshop and Conference Proceedings. Volume 11: Workshop on Applications of
+Pattern Analysis (2010).
+}
+
+\seealso{
+}
+
+\examples{
+}
