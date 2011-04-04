@@ -69,8 +69,8 @@ Clustering." In "Journal of Machine Learning Research (JMLR) Workshop and Confer
 }
 
 \examples{
-dsc <- DSC_DenStream()
+dsc <- DSC_DenStream(initPoints=100)
 dsd <- DSD_Gaussian_Static()
-cluster(dsc, dsd, 5000)
-plot(dsc)
+cluster(dsc, dsd, 1000)
+get_centers(dsc)
 }

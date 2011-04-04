@@ -29,37 +29,40 @@ DSD_ReadStream <- function(x, sep=",", loop=FALSE) {
 ## it is important that the connection is OPEN
 get_points.DSD_ReadStream <- function(x, n=1, ...) {
 	
-	# suppressing the warnings from read.table
-	# TODO: have to think of a better way to deal with the warnings
-	options(warn=-1)
-	
-	#suppressWarnings()
+	togo <- n
 	
 	# comment.char="" is for performance reasons
 	tryCatch({
-		d <- read.table(file=x$con, sep=x$sep, nrows=n, comment.char="", ...)
+		d <- suppressWarnings(read.table(file=x$con, sep=x$sep, nrows=n, comment.char="", ...))
+		togo <- n - nrow(d)
 	}, error = function(ex) {
-		d <- 0 # no lines were read
 	})
-	togo <- n - nrow(d)
+	
+	# this means no lines were read, we need to do a prep-read before looping
+	if (x$loop && togo == n) {
+		seek(x$con, where=0) # resetting the connection
+		d <- suppressWarnings(read.table(file=x$con, sep=x$sep, nrows=n, comment.char="", ...))
+		togo <- n - nrow(d)
+	}
 	
 	# we need to loop
 	while (x$loop && togo > 0) {
 		seek(x$con, where=0) # resetting the connection
 		
-		prev <- nrow(d)
-		d <- rbind(d, read.table(file=x$con, sep=x$sep, nrows=togo, comment.char="", ...))
+		prev <- nrow(d)	
+		d <- suppressWarnings(rbind(d, read.table(file=x$con, sep=x$sep, nrows=togo, comment.char="", ...)))
 		togo <- togo - (nrow(d)-prev)
 	}
 	
-	# restoring the warnings
-	options(warn=0)
-	
 	# looping disabled, warn the user
-	if (!x$loop && (d == 0 || nrow(d) < n)) {
-		warning("reached the end of the stream, returned as much as possible")
+	if (!x$loop && togo == n) {
+	stop("looping disabled and the stream is empty")
+	}
+	
+	else if (!x$loop && togo > 0) {
+	warning("reached the end of the stream, returned as much as possible")
 	}
 	
 	# if enough data was read, return like normal
-	d
+	return(d)
 }

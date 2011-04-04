@@ -15,6 +15,10 @@ DSC_StreamKM(sizeCoreset=100, k=5, width=1000, randomSeed=1)
 }
 
 \details{
+Applies the k-means++ algorithm to data streams. Rather than use all of the stream data,
+a random sampling is taken then the k-means++ algorithm is performed on the sample.
+The authors also propose a new data structure called a coreset tree to reduce the
+sampling time during the construction of the coreset.
 }
 
 \value{

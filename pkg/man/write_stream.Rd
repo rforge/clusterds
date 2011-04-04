@@ -19,6 +19,9 @@
 }
 
 \details{
+\code{write_stream()} accepts either a \code{connection} directly, or the file name to be written to. The \code{sep} parameter defines how the dimensions in each data point are separated. Behind the scenes we are using the \code{write.table()} function to write the data to disk. We are able to pass additional parameters to this function to alter how the data is written. By default, the column names and row names are hidden.
+
+Additionally, the parameter \code{comment.char} in \code{write.table} is hidden due to performance reasons. 
 }
 
 \value{

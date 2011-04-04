@@ -1,30 +1,54 @@
 \name{cluster}
 \alias{cluster}
 \title{Clustering data based with input algorithm and data stream}
-\description{Clusters a number of input points from a data stream into a clustering object.}
+
+\description{
+Clusters a number of input points from a data stream into a clustering object.
+}
+
 \usage{
 cluster(dsc, dsd, n = 1000)
 }
+
 \arguments{
   \item{dsc}{a DSC object}
   \item{dsd}{a DSD object}
   \item{n}{number of points to cluster}
 }
+
 \details{
-  Clusters input data. The underlying clustering in the DSC object is implicitly updated
-  as if the object was 'passed by reference' in a traditional programming language.
+Clusters input data. The underlying clustering in the DSC object is implicitly updated
+as if the object was 'passed by reference' in a traditional programming language.
+
+The data points from the DSD object will be extracted one at a time. Although this operation
+is slower, it always allows the clustering of \code{n} to infinity data points, as long as
+the underlying stream clustering algorithm is capable of summarizing \code{n} amount of
+data points.
 }
-\value{ The updated DSC object is returned invisibly for reassignment. }
-%%\references{ ~put references to the literature/web site here ~}
-%%\author{ ~~who you are~~}
-%%\note{ ~~further notes~~}
-%% ~Make other sections like Warning with \section{Warning }{....} ~
-%%\seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
-%%}
+
+\value{
+The updated DSC object is returned invisibly for reassignment. To obtain the updated
+clustering result, call \code{get_centers()} upon the DSC object.
+}
+
+
+\seealso{
+	\code{\link{DSClusterer}},
+	\code{\link{DSData}},
+	\code{\link{DSC_MOA}},
+	\code{\link{DSC_Clustream}},
+	\code{\link{DSC_CobWeb}},
+	\code{\link{DSC_StreamKM}},
+	\code{\link{DSC_ClusTree}}
+	\code{\link{DSD_MOA}},
+	\code{\link{DSD_ReadStream}},
+	\code{\link{DSD_DataFrame}},
+	\code{\link{get_centers}}
+}
+
 \examples{
-dsc <- DSC_DenStream()
+dsc <- DSC_DenStream(initPoints=100)
 dsd <- DSD_MOA()
-cluster(dsc, dsd, 2000)
-plot(dsc)
+cluster(dsc, dsd, 1000)
+get_centers(dsc)
 }

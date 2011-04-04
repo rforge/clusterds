@@ -15,6 +15,13 @@ done by performing method calls directly in the JRI and unpackaging the
 multi-dimensional Java array into a local R data type.
 }
 
+\references{
+MOA: Massive Online Analysis, a Framework for Stream Classification and Clustering
+Albert Bifet, Geoff Holmes, Bernhard Pfahringer, Philipp Kranen, Hardy Kremer, Timm Jansen, Thomas Seidl.
+Journal of Machine Learning Research (JMLR) Workshop and Conference Proceedings.
+Volume 11: Workshop on Applications of Pattern Analysis (2010).
+}
+
 \seealso{
 	\code{\link{DSClusterer}},
 	\code{\link{DSC_CobWeb}},

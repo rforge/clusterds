@@ -14,6 +14,7 @@ DSC_CobWeb(acuity = 1, cutoff = 0.002, randomSeed = 1)
 }
 
 \details{
+An incremental clustering technique using classification trees applied to data streams.
 }
 
 \value{
@@ -40,8 +41,9 @@ Clustering. Mach. Learn. 2, 2 (September 1987), 139-172.
 }
 
 \examples{
-#dsc <- DSC_CobWeb()
-#dsd <- DSD_Gaussian_Static()
-#cluster(dsc, dsd, 1000)
-#plot(dsc)
+dsc <- DSC_CobWeb()
+dsd <- DSD_Gaussian_Static()
+cluster(dsc, dsd, 1000)
+
+#CobWeb doesn't implement micro-clusters
 }
