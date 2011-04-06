@@ -15,7 +15,7 @@ export(
 	
 	DSD_MOA,
 	DSD_Gaussian_Static,
-	DSD_Gaussian_Dynamic,
+#	DSD_Gaussian_Dynamic,
 	DSD_ReadStream,
 	DSD_DataFrame,
 	
@@ -24,7 +24,6 @@ export(
 	get_centers,
 	get_points,
 	nclusters,
-	plot,
 	reset_stream
       )
 
@@ -39,7 +38,7 @@ S3method(get_centers, DSC_tNN)
 
 S3method(get_points, DSD_MOA)
 S3method(get_points, DSD_Gaussian_Static)
-S3method(get_points, DSD_Gaussian_Dynamic)
+#S3method(get_points, DSD_Gaussian_Dynamic)
 S3method(get_points, DSD_ReadStream)
 S3method(get_points, DSD_DataFrame)
 

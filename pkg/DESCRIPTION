@@ -7,7 +7,7 @@ Maintainer: John Forrest <jhforrest@smu.edu>
 Description: A framework for data stream modelling and
              associated data mining tasks such as 
 			 clustering and classification.
-Depends: R (>= 2.10.0), clusterGeneration, proxy
+Depends: R (>= 2.10.0), clusterGeneration, proxy, methods
 Imports: rJava (>= 0.6-3), MASS
 SystemRequirements: Java (>= 5.0)
 License: GPL-2
