@@ -1,0 +1,195 @@
+\begin{thebibliography}{24}
+\newcommand{\enquote}[1]{``#1''}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\providecommand{\urlprefix}{URL }
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi:\discretionary{}{}{}#1}\else
+  \providecommand{\doi}{doi:\discretionary{}{}{}\begingroup
+  \urlstyle{rm}\Url}\fi
+\providecommand{\eprint}[2][]{\url{#2}}
+
+\bibitem[{Ackermann \emph{et~al.}(2010)Ackermann, Lammersen, M{\"a}rtens,
+  Raupach, Sohler, and
+  Swierkot}]{stream:Ackermann+Lammersen+Maertens+Raupach:2010}
+Ackermann MR, Lammersen C, M{\"a}rtens M, Raupach C, Sohler C, Swierkot K
+  (2010).
+\newblock \enquote{StreamKM++: A Clustering Algorithm for Data Streams.}
+\newblock In \enquote{Proceedings of the 12th Workshop on Algorithm Engineering
+  and Experiments (ALENEX '10),} pp. 173--187. Society for Industrial and
+  Applied Mathematics.
+
+\bibitem[{Aggarwal(2007)}]{stream:Aggarwal:2007}
+Aggarwal C (ed.) (2007).
+\newblock \emph{Data Streams -- Models and Algorithms}.
+\newblock Springer.
+
+\bibitem[{Aggarwal(2009)}]{stream:Aggarwal:2009}
+Aggarwal C (2009).
+\newblock \enquote{A Framework for Clustering Massive-Domain Data Streams.}
+\newblock In \enquote{Proceedings of the 2009 IEEE International Conference on
+  Data Engineering,} pp. 102--113. IEEE Computer Society, Washington, DC, USA.
+\newblock ISBN 978-0-7695-3545-6.
+\newblock \doi{10.1109/ICDE.2009.13}.
+\newblock
+  \urlprefix\url{http://portal.acm.org/citation.cfm?id=1546683.1547351}.
+
+\bibitem[{Aggarwal \emph{et~al.}(2003)Aggarwal, Han, Wang, and
+  Yu}]{stream:Aggarwal+Han+Wang+Yu:2003}
+Aggarwal CC, Han J, Wang J, Yu PS (2003).
+\newblock \enquote{A framework for clustering evolving data streams.}
+\newblock In \enquote{Proceedings of the 29th international conference on Very
+  large data bases - Volume 29,} VLDB '2003, pp. 81--92. VLDB Endowment.
+\newblock ISBN 0-12-722442-4.
+\newblock
+  \urlprefix\url{http://portal.acm.org/citation.cfm?id=1315451.1315460}.
+
+\bibitem[{Analytics(2010)}]{stream:revolutionR:2010}
+Analytics R (2010).
+\newblock \emph{REvolution R}.
+\newblock \urlprefix\url{http://www.revolutionanalytics.com/}.
+
+\bibitem[{Bifet \emph{et~al.}(2010)Bifet, Holmes, Kirkby, and
+  Pfahringer}]{stream:Bifet+Holmes+Kirkby+Pfahringer:2010}
+Bifet A, Holmes G, Kirkby R, Pfahringer B (2010).
+\newblock \enquote{MOA: Massive Online Analysis.}
+\newblock \emph{J. Mach. Learn. Res.}, \textbf{99}, 1601--1604.
+\newblock ISSN 1532-4435.
+\newblock
+  \urlprefix\url{http://portal.acm.org/citation.cfm?id=1859890.1859903}.
+
+\bibitem[{Cao \emph{et~al.}(2006)Cao, Ester, Qian, and
+  Zhou}]{stream:Cao+Ester+Qian+Zhou:2006}
+Cao F, Ester M, Qian W, Zhou A (2006).
+\newblock \enquote{Density-based clustering over an evolving data stream with
+  noise.}
+\newblock In \enquote{In 2006 SIAM Conference on Data Mining,} pp. 328--339.
+
+\bibitem[{Dunham(2002)}]{stream:Dunham:2002}
+Dunham MH (2002).
+\newblock \emph{Data Mining: Introductory and Advanced Topics}.
+\newblock Prentice Hall PTR, Upper Saddle River, NJ, USA.
+\newblock ISBN 0130888923.
+
+\bibitem[{Fisher(1987)}]{stream:Fisher:1987}
+Fisher DH (1987).
+\newblock \enquote{Knowledge Acquisition Via Incremental Conceptual
+  Clustering.}
+\newblock \emph{Mach. Learn.}, \textbf{2}, 139--172.
+\newblock ISSN 0885-6125.
+\newblock \doi{10.1023/A:1022852608280}.
+\newblock \urlprefix\url{http://portal.acm.org/citation.cfm?id=639960.639990}.
+
+\bibitem[{Fowler(2003)}]{stream:Fowler:2003}
+Fowler M (2003).
+\newblock \emph{UML Distilled: A Brief Guide to the Standard Object Modeling
+  Language}.
+\newblock Addison-Wesley Longman Publishing Co., Inc., Boston, MA, USA, 3
+  edition.
+\newblock ISBN 0321193687.
+
+\bibitem[{Guha \emph{et~al.}(2003)Guha, Meyerson, Mishra, Motwani, and
+  O'Callaghan}]{stream:Guha+Meyerson+Mishra+Motwani+O'Callaghan:2003}
+Guha S, Meyerson A, Mishra N, Motwani R, O'Callaghan L (2003).
+\newblock \enquote{Clustering Data Streams: Theory and Practice.}
+\newblock \emph{IEEE Transactions on Knowledge and Data Engineering},
+  \textbf{15}, 515--528.
+\newblock ISSN 1041-4347.
+\newblock \doi{http://dx.doi.org/10.1109/TKDE.2003.1198387}.
+\newblock \urlprefix\url{http://dx.doi.org/10.1109/TKDE.2003.1198387}.
+
+\bibitem[{Hahsler and Dunham(2010{\natexlab{a}})}]{stream:Hahsler+Dunham:2010}
+Hahsler M, Dunham MH (2010{\natexlab{a}}).
+\newblock \emph{{rEMM}: Extensible Markov Model for Data Stream Clustering in
+  {R}}.
+\newblock R package version 1.0-0., \urlprefix\url{http://CRAN.R-project.org/}.
+
+\bibitem[{Hahsler and Dunham(2010{\natexlab{b}})}]{stream:Hahsler+Dunham:2010b}
+Hahsler M, Dunham MH (2010{\natexlab{b}}).
+\newblock \enquote{{rEMM}: Extensible Markov Model for Data Stream Clustering
+  in {R}.}
+\newblock \emph{Journal of Statistical Software}, \textbf{35}(5), 1--31.
+\newblock \urlprefix\url{http://www.jstatsoft.org/v35/i05/}.
+
+\bibitem[{Hahsler and Dunham(2011)}]{stream:Hahsler+Dunham:2010c}
+Hahsler M, Dunham MH (2011).
+\newblock \enquote{Temporal Structure Learning for Clustering Massive Data
+  Streams in Real-Time.}
+\newblock In \enquote{{SIAM} Conference on Data Mining ({SDM11}),} SIAM.
+\newblock Accepted for presentation.
+
+\bibitem[{Hall \emph{et~al.}(2009)Hall, Frank, Holmes, Pfahringer, Reutemann,
+  and Witten}]{stream:Hall+Frank+Holmes+Pfahringer+Reutemann+Witten:2009}
+Hall M, Frank E, Holmes G, Pfahringer B, Reutemann P, Witten IH (2009).
+\newblock \enquote{The WEKA data mining software: an update.}
+\newblock \emph{SIGKDD Explor. Newsl.}, \textbf{11}, 10--18.
+\newblock ISSN 1931-0145.
+\newblock \doi{http://doi.acm.org/10.1145/1656274.1656278}.
+\newblock \urlprefix\url{http://doi.acm.org/10.1145/1656274.1656278}.
+
+\bibitem[{Kranen \emph{et~al.}(2009)Kranen, Assent, Baldauf, and
+  Seidl}]{stream:Kranen+Assent+Baldauf+Seidl:2009}
+Kranen P, Assent I, Baldauf C, Seidl T (2009).
+\newblock \enquote{Self-Adaptive Anytime Stream Clustering.}
+\newblock In \enquote{Proceedings of the 2009 Ninth IEEE International
+  Conference on Data Mining,} ICDM '09, pp. 249--258. IEEE Computer Society,
+  Washington, DC, USA.
+\newblock ISBN 978-0-7695-3895-2.
+\newblock \doi{http://dx.doi.org/10.1109/ICDM.2009.47}.
+\newblock \urlprefix\url{http://dx.doi.org/10.1109/ICDM.2009.47}.
+
+\bibitem[{Masud \emph{et~al.}(2010)Masud, Chen, Khan, Aggarwal, Gao, Han, and
+  Thuraisingham}]{stream:Masud+Chen+Khan+Aggarwal+Gao+Han+Thuraisingham:2010}
+Masud MM, Chen Q, Khan L, Aggarwal CC, Gao J, Han J, Thuraisingham BM (2010).
+\newblock \enquote{Addressing Concept-Evolution in Concept-Drifting Data
+  Streams.}
+\newblock In \enquote{ICDM'10,} pp. 929--934.
+
+\bibitem[{Meyer and Buchta(2010)}]{stream:Meyer+Buchta:2010}
+Meyer D, Buchta C (2010).
+\newblock \emph{proxy: Distance and Similarity Measures}.
+\newblock R package version 0.4-6,
+  \urlprefix\url{http://CRAN.R-project.org/package=proxy}.
+
+\bibitem[{Qiu and Joe.(2009)}]{stream:Qiu+Joe:2009}
+Qiu W, Joe H (2009).
+\newblock \emph{clusterGeneration: random cluster generation (with specified
+  degree of separation)}.
+\newblock R package version 1.2.7.
+
+\bibitem[{{R Development Core Team}(2005)}]{stream:R:2005}
+{R Development Core Team} (2005).
+\newblock \emph{{R: A language and environment for statistical computing}}.
+\newblock R Foundation for Statistical Computing, Vienna, Austria.
+\newblock {ISBN} 3-900051-07-0, \urlprefix\url{http://www.r-project.org/}.
+
+\bibitem[{Tan \emph{et~al.}(2006)Tan, Steinbach, and
+  Kumar}]{stream:Tan+Steinbach+Kumar:2006}
+Tan PN, Steinbach M, Kumar V (2006).
+\newblock \emph{Introduction to Data Mining}.
+\newblock Pearson Education.
+
+\bibitem[{Urbanek(2010)}]{stream:Urbanek:2010}
+Urbanek S (2010).
+\newblock \emph{rJava: Low-level R to Java interface}.
+\newblock R package version 0.8-8,
+  \urlprefix\url{http://CRAN.R-project.org/package=rJava}.
+
+\bibitem[{Venables and Ripley(2002)}]{stream:Venables+Ripley:2002}
+Venables WN, Ripley BD (2002).
+\newblock \emph{Modern Applied Statistics with S}.
+\newblock Springer, New York, fourth edition.
+\newblock ISBN 0-387-95457-0,
+  \urlprefix\url{http://www.stats.ox.ac.uk/pub/MASS4}.
+
+\bibitem[{Wan \emph{et~al.}(2009)Wan, Ng, Dang, Yu, and
+  Zhang}]{stream:Wan+Ng+Dang+Yu+Zhang:2009}
+Wan L, Ng WK, Dang XH, Yu PS, Zhang K (2009).
+\newblock \enquote{Density-based clustering of data streams at multiple
+  resolutions.}
+\newblock \emph{ACM Trans. Knowl. Discov. Data}, \textbf{3}, 14:1--14:28.
+\newblock ISSN 1556-4681.
+\newblock \doi{http://doi.acm.org/10.1145/1552303.1552307}.
+\newblock \urlprefix\url{http://doi.acm.org/10.1145/1552303.1552307}.
+
+\end{thebibliography}
