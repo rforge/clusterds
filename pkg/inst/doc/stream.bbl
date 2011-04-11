@@ -1,4 +1,4 @@
-\begin{thebibliography}{24}
+\begin{thebibliography}{26}
 \newcommand{\enquote}[1]{``#1''}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
@@ -30,9 +30,6 @@ Aggarwal C (2009).
 \newblock In \enquote{Proceedings of the 2009 IEEE International Conference on
   Data Engineering,} pp. 102--113. IEEE Computer Society, Washington, DC, USA.
 \newblock ISBN 978-0-7695-3545-6.
-\newblock \doi{10.1109/ICDE.2009.13}.
-\newblock
-  \urlprefix\url{http://portal.acm.org/citation.cfm?id=1546683.1547351}.
 
 \bibitem[{Aggarwal \emph{et~al.}(2003)Aggarwal, Han, Wang, and
   Yu}]{stream:Aggarwal+Han+Wang+Yu:2003}
@@ -41,8 +38,6 @@ Aggarwal CC, Han J, Wang J, Yu PS (2003).
 \newblock In \enquote{Proceedings of the 29th international conference on Very
   large data bases - Volume 29,} VLDB '2003, pp. 81--92. VLDB Endowment.
 \newblock ISBN 0-12-722442-4.
-\newblock
-  \urlprefix\url{http://portal.acm.org/citation.cfm?id=1315451.1315460}.
 
 \bibitem[{Analytics(2010)}]{stream:revolutionR:2010}
 Analytics R (2010).
@@ -55,8 +50,6 @@ Bifet A, Holmes G, Kirkby R, Pfahringer B (2010).
 \newblock \enquote{MOA: Massive Online Analysis.}
 \newblock \emph{J. Mach. Learn. Res.}, \textbf{99}, 1601--1604.
 \newblock ISSN 1532-4435.
-\newblock
-  \urlprefix\url{http://portal.acm.org/citation.cfm?id=1859890.1859903}.
 
 \bibitem[{Cao \emph{et~al.}(2006)Cao, Ester, Qian, and
   Zhou}]{stream:Cao+Ester+Qian+Zhou:2006}
@@ -77,8 +70,11 @@ Fisher DH (1987).
   Clustering.}
 \newblock \emph{Mach. Learn.}, \textbf{2}, 139--172.
 \newblock ISSN 0885-6125.
-\newblock \doi{10.1023/A:1022852608280}.
-\newblock \urlprefix\url{http://portal.acm.org/citation.cfm?id=639960.639990}.
+
+\bibitem[{for Statistical~Computing(2010)}]{stream:cran:2010}
+for Statistical~Computing RF (2010).
+\newblock \emph{The Comprehensive R Archive Network}.
+\newblock \urlprefix\url{http://cran.r-project.org/}.
 
 \bibitem[{Fowler(2003)}]{stream:Fowler:2003}
 Fowler M (2003).
@@ -95,8 +91,6 @@ Guha S, Meyerson A, Mishra N, Motwani R, O'Callaghan L (2003).
 \newblock \emph{IEEE Transactions on Knowledge and Data Engineering},
   \textbf{15}, 515--528.
 \newblock ISSN 1041-4347.
-\newblock \doi{http://dx.doi.org/10.1109/TKDE.2003.1198387}.
-\newblock \urlprefix\url{http://dx.doi.org/10.1109/TKDE.2003.1198387}.
 
 \bibitem[{Hahsler and Dunham(2010{\natexlab{a}})}]{stream:Hahsler+Dunham:2010}
 Hahsler M, Dunham MH (2010{\natexlab{a}}).
@@ -124,8 +118,12 @@ Hall M, Frank E, Holmes G, Pfahringer B, Reutemann P, Witten IH (2009).
 \newblock \enquote{The WEKA data mining software: an update.}
 \newblock \emph{SIGKDD Explor. Newsl.}, \textbf{11}, 10--18.
 \newblock ISSN 1931-0145.
-\newblock \doi{http://doi.acm.org/10.1145/1656274.1656278}.
-\newblock \urlprefix\url{http://doi.acm.org/10.1145/1656274.1656278}.
+
+\bibitem[{Hennig(2010)}]{stream:Hennig:2010}
+Hennig C (2010).
+\newblock \emph{fpc: Flexible procedures for clustering}.
+\newblock R package version 2.0-3,
+  \urlprefix\url{http://CRAN.R-project.org/package=fpc}.
 
 \bibitem[{Kranen \emph{et~al.}(2009)Kranen, Assent, Baldauf, and
   Seidl}]{stream:Kranen+Assent+Baldauf+Seidl:2009}
@@ -135,8 +133,6 @@ Kranen P, Assent I, Baldauf C, Seidl T (2009).
   Conference on Data Mining,} ICDM '09, pp. 249--258. IEEE Computer Society,
   Washington, DC, USA.
 \newblock ISBN 978-0-7695-3895-2.
-\newblock \doi{http://dx.doi.org/10.1109/ICDM.2009.47}.
-\newblock \urlprefix\url{http://dx.doi.org/10.1109/ICDM.2009.47}.
 
 \bibitem[{Masud \emph{et~al.}(2010)Masud, Chen, Khan, Aggarwal, Gao, Han, and
   Thuraisingham}]{stream:Masud+Chen+Khan+Aggarwal+Gao+Han+Thuraisingham:2010}
@@ -189,7 +185,5 @@ Wan L, Ng WK, Dang XH, Yu PS, Zhang K (2009).
   resolutions.}
 \newblock \emph{ACM Trans. Knowl. Discov. Data}, \textbf{3}, 14:1--14:28.
 \newblock ISSN 1556-4681.
-\newblock \doi{http://doi.acm.org/10.1145/1552303.1552307}.
-\newblock \urlprefix\url{http://doi.acm.org/10.1145/1552303.1552307}.
 
 \end{thebibliography}

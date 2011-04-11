@@ -10,7 +10,8 @@
 \BOOKMARK [2][-]{subsection.3.4}{Extension}{section.3}% 10
 \BOOKMARK [1][-]{section.4}{Examples}{}% 11
 \BOOKMARK [2][-]{subsection.4.1}{Creating a data stream}{section.4}% 12
-\BOOKMARK [2][-]{subsection.4.2}{Reading \046 writing data streams to disk}{section.4}% 13
+\BOOKMARK [2][-]{subsection.4.2}{Reading and writing data streams}{section.4}% 13
 \BOOKMARK [2][-]{subsection.4.3}{Replaying a data stream}{section.4}% 14
 \BOOKMARK [2][-]{subsection.4.4}{Clustering a data stream}{section.4}% 15
 \BOOKMARK [2][-]{subsection.4.5}{Full experimental comparison}{section.4}% 16
+\BOOKMARK [1][-]{section.5}{Conclusion and Future Work}{}% 17

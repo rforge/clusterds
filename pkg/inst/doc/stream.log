@@ -1,16 +1,11 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (MiKTeX 2.8) (preloaded format=pdflatex 2011.3.1)  6 APR 2011 11:52
+This is pdfTeX, Version 3.1415926-1.40.10 (MiKTeX 2.8) (preloaded format=pdflatex 2011.3.1)  11 APR 2011 13:01
 entering extended mode
-**C:/Users/johnhforrestPC2/My*Dropbox/School/Year*4/s11/cse*5391/tex*-*thesis/s
-tream.tex
-
-("C:/Users/johnhforrestPC2/My Dropbox/School/Year 4/s11/cse 5391/tex - thesis/s
-tream.tex"
+**C:/Users/johnhforrestPC2/Documents/R/clusterds/pkg/inst/doc/stream.tex
+(C:/Users/johnhforrestPC2/Documents/R/clusterds/pkg/inst/doc/stream.tex
 LaTeX2e <2009/09/24>
 Babel <v3.8l> and hyphenation patterns for english, dumylang, nohyphenation, ge
 rman, ngerman, german-x-2009-06-19, ngerman-x-2009-06-19, french, loaded.
-
-("C:\Users\johnhforrestPC2\My Dropbox\School\Year 4\s11\cse 5391\tex - thesis\j
-ss.cls"
+(C:\Users\johnhforrestPC2\Documents\R\clusterds\pkg\inst\doc\jss.cls
 Document Class: jss 2008/04/07 1.8 jss class by Achim Zeileis
 ("C:\Program Files\MiKTeX 2.8\tex\latex\base\article.cls"
 Document Class: article 2007/10/19 v1.4h Standard LaTeX document class
@@ -635,10 +630,10 @@ Package: ifthen 2001/05/26 v1.1c Standard LaTeX ifthen package (DPC)
 \rot@float@box=\box27
 \rot@mess@toks=\toks18
 )
-("C:\Users\johnhforrestPC2\My Dropbox\School\Year 4\s11\cse 5391\tex - thesis\m
-ultirow.sty"
+(C:\Users\johnhforrestPC2\Documents\R\clusterds\pkg\inst\doc\multirow.sty
 \bigstrutjot=\dimen108
-) ("C:\Program Files\MiKTeX 2.8\tex\latex\hanging\hanging.sty"
+)
+("C:\Program Files\MiKTeX 2.8\tex\latex\hanging\hanging.sty"
 Package: hanging 2009/09/02 v1.2b hanging paragraphs and punctuation
 \h@ngcommawd=\skip55
 \h@ngfstopwd=\skip56
@@ -649,28 +644,28 @@ Package: hanging 2009/09/02 v1.2b hanging paragraphs and punctuation
 \h@ngcolonwd=\skip61
 \h@ngscolonwd=\skip62
 )
-("C:\Users\johnhforrestPC2\My Dropbox\School\Year 4\s11\cse 5391\tex - thesis\s
-tream.aux")
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 63.
-LaTeX Font Info:    ... okay on input line 63.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 63.
-LaTeX Font Info:    ... okay on input line 63.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 63.
-LaTeX Font Info:    ... okay on input line 63.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 63.
-LaTeX Font Info:    ... okay on input line 63.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 63.
-LaTeX Font Info:    ... okay on input line 63.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 63.
-LaTeX Font Info:    ... okay on input line 63.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 63.
-LaTeX Font Info:    Try loading font information for TS1+cmr on input line 63.
- ("C:\Program Files\MiKTeX 2.8\tex\latex\base\ts1cmr.fd"
+(C:\Users\johnhforrestPC2\Documents\R\clusterds\pkg\inst\doc\stream.aux)
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 61.
+LaTeX Font Info:    ... okay on input line 61.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 61.
+LaTeX Font Info:    ... okay on input line 61.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 61.
+LaTeX Font Info:    ... okay on input line 61.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 61.
+LaTeX Font Info:    ... okay on input line 61.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 61.
+LaTeX Font Info:    ... okay on input line 61.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 61.
+LaTeX Font Info:    ... okay on input line 61.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 61.
+LaTeX Font Info:    Try loading font information for TS1+cmr on input line 61.
+
+("C:\Program Files\MiKTeX 2.8\tex\latex\base\ts1cmr.fd"
 File: ts1cmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
 )
-LaTeX Font Info:    ... okay on input line 63.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 63.
-LaTeX Font Info:    ... okay on input line 63.
+LaTeX Font Info:    ... okay on input line 61.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 61.
+LaTeX Font Info:    ... okay on input line 61.
 
 ("C:\Program Files\MiKTeX 2.8\tex\context\base\supp-pdf.tex"
 [Loading MPS to PDF converter (version 2006.09.02).]
@@ -686,7 +681,7 @@ LaTeX Font Info:    ... okay on input line 63.
 \everyMPtoPDFconversion=\toks20
 )
 \AtBeginShipoutBox=\box29
-Package hyperref Info: Link coloring ON on input line 63.
+Package hyperref Info: Link coloring ON on input line 61.
  ("C:\Program Files\MiKTeX 2.8\tex\latex\hyperref\nameref.sty"
 Package: nameref 2010/04/30 v2.40 Cross-referencing by name of section
 
@@ -698,29 +693,27 @@ Package: gettitlestring 2009/12/18 v1.3 Cleanup title references (HO)
 )
 \c@section@level=\count106
 )
-LaTeX Info: Redefining \ref on input line 63.
-LaTeX Info: Redefining \pageref on input line 63.
-LaTeX Info: Redefining \nameref on input line 63.
+LaTeX Info: Redefining \ref on input line 61.
+LaTeX Info: Redefining \pageref on input line 61.
+LaTeX Info: Redefining \nameref on input line 61.
 
-("C:\Users\johnhforrestPC2\My Dropbox\School\Year 4\s11\cse 5391\tex - thesis\s
-tream.out")
-("C:\Users\johnhforrestPC2\My Dropbox\School\Year 4\s11\cse 5391\tex - thesis\s
-tream.out")
+(C:\Users\johnhforrestPC2\Documents\R\clusterds\pkg\inst\doc\stream.out)
+(C:\Users\johnhforrestPC2\Documents\R\clusterds\pkg\inst\doc\stream.out)
 \@outlinefile=\write4
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <10.95> on input line 63.
+(Font)              <10.95> on input line 61.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <8> on input line 63.
+(Font)              <8> on input line 61.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <6> on input line 63.
-LaTeX Font Info:    Try loading font information for T1+aess on input line 63.
- ("C:\Program Files\MiKTeX 2.8\tex\latex\ae\t1aess.fd"
+(Font)              <6> on input line 61.
+LaTeX Font Info:    Try loading font information for T1+aess on input line 61.
+
+("C:\Program Files\MiKTeX 2.8\tex\latex\ae\t1aess.fd"
 File: t1aess.fd 1997/11/16 Font definitions for T1/aess.
 ) [1
 
 {C:/Users/johnhforrestPC2/AppData/Local/MiKTeX/2.8/pdftex/config/pdftex.map}]
-("C:\Users\johnhforrestPC2\My Dropbox\School\Year 4\s11\cse 5391\tex - thesis\s
-tream.toc")
+(C:\Users\johnhforrestPC2\Documents\R\clusterds\pkg\inst\doc\stream.toc)
 \tf@toc=\write5
 
 Overfull \hbox (5.47499pt too wide) has occurred while \output is active
@@ -730,24 +723,13 @@ Overfull \hbox (5.47499pt too wide) has occurred while \output is active
 [2
 
 ]
+LaTeX Font Info:    Try loading font information for TS1+aer on input line 76.
+LaTeX Font Info:    No file TS1aer.fd. on input line 76.
 
-Package natbib Warning: Citation `stream:Aggarwal:2009' on page 3 undefined on 
-input line 72.
-
-LaTeX Font Info:    Try loading font information for TS1+aer on input line 78.
-LaTeX Font Info:    No file TS1aer.fd. on input line 78.
 
 LaTeX Font Warning: Font shape `TS1/aer/m/n' undefined
 (Font)              using `TS1/cmr/m/n' instead
-(Font)              for symbol `textbullet' on input line 78.
-
-
-Package natbib Warning: Citation `stream:Masud+Chen+Khan+Aggarwal+Gao+Han+Thura
-isingham:2010' on page 3 undefined on input line 84.
-
-
-Package natbib Warning: Citation `stream:Aggarwal:2007' on page 3 undefined on 
-input line 87.
+(Font)              for symbol `textbullet' on input line 76.
 
 
 Overfull \hbox (5.47499pt too wide) has occurred while \output is active
@@ -757,24 +739,7 @@ Overfull \hbox (5.47499pt too wide) has occurred while \output is active
 [3
 
 ]
-
-Package natbib Warning: Citation `stream:Hall+Frank+Holmes+Pfahringer+Reutemann
-+Witten:2009' on page 4 undefined on input line 93.
-
-
-Package natbib Warning: Citation `stream:R:2005' on page 4 undefined on input l
-ine 93.
-
-
-Package natbib Warning: Citation `stream:Bifet+Holmes+Kirkby+Pfahringer:2010' o
-n page 4 undefined on input line 96.
-
-
-Package natbib Warning: Citation `stream:revolutionR:2010' on page 4 undefined 
-on input line 96.
-
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
+Underfull \vbox (badness 1286) has occurred while \output is active []
 
 
 Overfull \hbox (5.47499pt too wide) has occurred while \output is active
@@ -782,211 +747,96 @@ Overfull \hbox (5.47499pt too wide) has occurred while \output is active
  []
 
 [4]
-
-LaTeX Warning: Reference `sec:conclusion' on page 5 undefined on input line 102
-.
-
-
-Package natbib Warning: Citation `stream:Aggarwal:2007' on page 5 undefined on 
-input line 107.
-
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-
 Overfull \hbox (5.47499pt too wide) has occurred while \output is active
 [] \T1/aer/m/n/10.95 5
  []
 
 [5]
-
-Package natbib Warning: Citation `stream:Dunham:2002' on page 6 undefined on in
-put line 112.
-
-
-Package natbib Warning: Citation `stream:Tan+Steinbach+Kumar:2006' on page 6 un
-defined on input line 112.
-
-
-Package natbib Warning: Citation `stream:Cao+Ester+Qian+Zhou:2006' on page 6 un
-defined on input line 118.
-
-
-Package natbib Warning: Citation `stream:Wan+Ng+Dang+Yu+Zhang:2009' on page 6 u
-ndefined on input line 118.
-
-
-Package natbib Warning: Citation `stream:Guha+Meyerson+Mishra+Motwani+O'Callagh
-an:2003' on page 6 undefined on input line 118.
-
-
-Package natbib Warning: Citation `stream:Aggarwal:2009' on page 6 undefined on 
-input line 118.
-
-
-Package natbib Warning: Citation `stream:Hahsler+Dunham:2010c' on page 6 undefi
-ned on input line 118.
-
-
-Package natbib Warning: Citation `stream:Aggarwal+Han+Wang+Yu:2003' on page 6 u
-ndefined on input line 118.
-
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-
 Overfull \hbox (5.47499pt too wide) has occurred while \output is active
 \T1/aer/m/n/10.95 6 []
  []
 
 [6]
 
-Package natbib Warning: Citation `stream:Dunham:2002' on page 7 undefined on in
-put line 132.
+pdfTeX warning: pdflatex (file C:/Users/johnhforrestPC2/Documents/R/clusterds/p
+kg/inst/doc/architecture.pdf): PDF inclusion: found PDF version <1.5>, but at m
+ost version <1.4> allowed
+<architecture.pdf, id=187, 497.60907pt x 127.22531pt>
+File: architecture.pdf Graphic file (type pdf)
+ <use architecture.pdf>
+LaTeX Font Info:    Try loading font information for T1+aett on input line 164.
 
 
-Package natbib Warning: Citation `stream:Tan+Steinbach+Kumar:2006' on page 7 un
-defined on input line 132.
+("C:\Program Files\MiKTeX 2.8\tex\latex\ae\t1aett.fd"
+File: t1aett.fd 1997/11/16 Font definitions for T1/aett.
+)
+
+LaTeX Warning: Reference `dst_uml' on page 7 undefined on input line 167.
+
+
+Overfull \hbox (8.65411pt too wide) in paragraph at lines 175--176
+\T1/aer/m/n/10.95 data; \T1/aett/m/n/10.95 DSD_MOA\T1/aer/m/n/10.95 , a data ge
+n-er-a-tor from the MOA frame-work with an \T1/aess/m/n/10.95 R \T1/aer/m/n/10.
+95 wrap-per; \T1/aett/m/n/10.95 DSD_ReadStream\T1/aer/m/n/10.95 ,
+ []
 
 
 Overfull \hbox (5.47499pt too wide) has occurred while \output is active
 [] \T1/aer/m/n/10.95 7
  []
 
-[7]
+[7 <C:/Users/johnhforrestPC2/Documents/R/clusterds/pkg/inst/doc/architecture.pd
+f>]
 
-Package natbib Warning: Citation `stream:Bifet+Holmes+Kirkby+Pfahringer:2010' o
-n page 8 undefined on input line 137.
-
-
-Underfull \vbox (badness 2334) has occurred while \output is active []
+pdfTeX warning: pdflatex (file C:/Users/johnhforrestPC2/Documents/R/clusterds/p
+kg/inst/doc/dsd_uml.pdf): PDF inclusion: found PDF version <1.5>, but at most v
+ersion <1.4> allowed
+<dsd_uml.pdf, id=214, 607.51968pt x 118.94438pt>
+File: dsd_uml.pdf Graphic file (type pdf)
+ <use dsd_uml.pdf>
+Overfull \hbox (34.36644pt too wide) in paragraph at lines 190--192
+\T1/aer/m/n/10.95 im-ple-men-ta-tion varies de-pend-ing on the class of \T1/aet
+t/m/n/10.95 x\T1/aer/m/n/10.95 . The way this is done in \T1/aett/m/n/10.95 DSD
+_Gaussian_Static\T1/aer/m/n/10.95 ,
+ []
 
 
 Overfull \hbox (5.47499pt too wide) has occurred while \output is active
 \T1/aer/m/n/10.95 8 []
  []
 
-[8]
+[8 <C:/Users/johnhforrestPC2/Documents/R/clusterds/pkg/inst/doc/dsd_uml.pdf>]
 
-pdfTeX warning: pdflatex (file C:/Users/johnhforrestPC2/My Dropbox/School/Year 
-4/s11/cse 5391/tex - thesis/architecture.pdf): PDF inclusion: found PDF version
- <1.5>, but at most version <1.4> allowed
-<architecture.pdf, id=114, 497.60907pt x 127.22531pt>
-File: architecture.pdf Graphic file (type pdf)
- <use architecture.pdf>
-
-Package natbib Warning: Citation `stream:revolutionR:2010' on page 9 undefined 
-on input line 160.
-
-LaTeX Font Info:    Try loading font information for T1+aett on input line 163.
-
-("C:\Program Files\MiKTeX 2.8\tex\latex\ae\t1aett.fd"
-File: t1aett.fd 1997/11/16 Font definitions for T1/aett.
-)
-Underfull \vbox (badness 7379) has occurred while \output is active []
-
-
+pdfTeX warning: pdflatex (file C:/Users/johnhforrestPC2/Documents/R/clusterds/p
+kg/inst/doc/dst_uml.pdf): PDF inclusion: found PDF version <1.5>, but at most v
+ersion <1.4> allowed
+<dst_uml.pdf, id=232, 596.2275pt x 227.34938pt>
+File: dst_uml.pdf Graphic file (type pdf)
+ <use dst_uml.pdf>
 Overfull \hbox (5.47499pt too wide) has occurred while \output is active
 [] \T1/aer/m/n/10.95 9
  []
 
-[9 <C:/Users/johnhforrestPC2/My Dropbox/School/Year 4/s11/cse 5391/tex - thesis
-/architecture.pdf>]
-
-Package natbib Warning: Citation `stream:Fowler:2003' on page 10 undefined on i
-nput line 171.
-
-
-Underfull \vbox (badness 1661) has occurred while \output is active []
-
-
+[9 <C:/Users/johnhforrestPC2/Documents/R/clusterds/pkg/inst/doc/dst_uml.pdf>]
 Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 \T1/aer/m/n/10.95 10 []
  []
 
 [10]
 
-pdfTeX warning: pdflatex (file C:/Users/johnhforrestPC2/My Dropbox/School/Year 
-4/s11/cse 5391/tex - thesis/dsd_uml.pdf): PDF inclusion: found PDF version <1.5
->, but at most version <1.4> allowed
-<dsd_uml.pdf, id=141, 607.51968pt x 118.94438pt>
-File: dsd_uml.pdf Graphic file (type pdf)
- <use dsd_uml.pdf>
+pdfTeX warning: pdflatex (file C:/Users/johnhforrestPC2/Documents/R/clusterds/p
+kg/inst/doc/interaction.pdf): PDF inclusion: found PDF version <1.5>, but at mo
+st version <1.4> allowed
+<interaction.pdf, id=273, 362.10281pt x 176.91093pt>
+File: interaction.pdf Graphic file (type pdf)
+ <use interaction.pdf>
 Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 [] \T1/aer/m/n/10.95 11
  []
 
-[11 <C:/Users/johnhforrestPC2/My Dropbox/School/Year 4/s11/cse 5391/tex - thesi
-s/dsd_uml.pdf>]
-
-pdfTeX warning: pdflatex (file C:/Users/johnhforrestPC2/My Dropbox/School/Year 
-4/s11/cse 5391/tex - thesis/dst_uml.pdf): PDF inclusion: found PDF version <1.5
->, but at most version <1.4> allowed
-<dst_uml.pdf, id=157, 506.6428pt x 227.34938pt>
-File: dst_uml.pdf Graphic file (type pdf)
- <use dst_uml.pdf>
-Underfull \vbox (badness 1661) has occurred while \output is active []
-
-
-Overfull \hbox (10.94998pt too wide) has occurred while \output is active
-\T1/aer/m/n/10.95 12 []
- []
-
-[12]
-
-Package natbib Warning: Citation `stream:Ackermann+Lammersen+Maertens+Raupach:2
-010' on page 13 undefined on input line 233.
-
-
-Package natbib Warning: Citation `stream:Hahsler+Dunham:2010' on page 13 undefi
-ned on input line 233.
-
-
-Package natbib Warning: Citation `stream:Hahsler+Dunham:2010b' on page 13 undef
-ined on input line 233.
-
-
-Package natbib Warning: Citation `stream:Kranen+Assent+Baldauf+Seidl:2009' on p
-age 13 undefined on input line 233.
-
-
-Package natbib Warning: Citation `stream:Cao+Ester+Qian+Zhou:2006' on page 13 u
-ndefined on input line 233.
-
-
-Package natbib Warning: Citation `stream:Aggarwal+Han+Wang+Yu:2003' on page 13 
-undefined on input line 233.
-
-
-Package natbib Warning: Citation `stream:Fisher:1987' on page 13 undefined on i
-nput line 233.
-
-
-Overfull \hbox (10.94998pt too wide) has occurred while \output is active
-[] \T1/aer/m/n/10.95 13
- []
-
-[13 <C:/Users/johnhforrestPC2/My Dropbox/School/Year 4/s11/cse 5391/tex - thesi
-s/dst_uml.pdf>]
-
-pdfTeX warning: pdflatex (file C:/Users/johnhforrestPC2/My Dropbox/School/Year 
-4/s11/cse 5391/tex - thesis/interaction.pdf): PDF inclusion: found PDF version 
-<1.5>, but at most version <1.4> allowed
-<interaction.pdf, id=180, 312.41719pt x 185.94469pt>
-File: interaction.pdf Graphic file (type pdf)
- <use interaction.pdf>
-Overfull \hbox (10.94998pt too wide) has occurred while \output is active
-\T1/aer/m/n/10.95 14 []
- []
-
-[14]
-Overfull \hbox (10.94998pt too wide) has occurred while \output is active
-[] \T1/aer/m/n/10.95 15
- []
-
-[15 <C:/Users/johnhforrestPC2/My Dropbox/School/Year 4/s11/cse 5391/tex - thesi
-s/interaction.pdf>]
-Overfull \hbox (18.34685pt too wide) in paragraph at lines 289--290
+[11 <C:/Users/johnhforrestPC2/Documents/R/clusterds/pkg/inst/doc/interaction.pd
+f>]
+Overfull \hbox (18.34685pt too wide) in paragraph at lines 291--292
 \T1/aer/m/n/10.95 Cur-rently there are 4 avail-able classes: \T1/aett/m/n/10.95
  DSD_Gaussian_Static\T1/aer/m/n/10.95 , \T1/aett/m/n/10.95 DSD_Gaussian_Dynamic
 \T1/aer/m/n/10.95 , \T1/aett/m/n/10.95 DSD_MOA\T1/aer/m/n/10.95 ,
@@ -994,118 +844,113 @@ Overfull \hbox (18.34685pt too wide) in paragraph at lines 289--290
 
 
 Overfull \hbox (10.94998pt too wide) has occurred while \output is active
+\T1/aer/m/n/10.95 12 []
+ []
+
+[12] <stream-plot1.pdf, id=305, 433.62pt x 433.62pt>
+File: stream-plot1.pdf Graphic file (type pdf)
+ <use stream-plot1.pdf>
+Overfull \hbox (10.94998pt too wide) has occurred while \output is active
+[] \T1/aer/m/n/10.95 13
+ []
+
+[13]
+Overfull \hbox (10.94998pt too wide) has occurred while \output is active
+\T1/aer/m/n/10.95 14 []
+ []
+
+[14 <C:/Users/johnhforrestPC2/Documents/R/clusterds/pkg/inst/doc/stream-plot1.p
+df>]
+Overfull \hbox (10.94998pt too wide) has occurred while \output is active
+[] \T1/aer/m/n/10.95 15
+ []
+
+[15] <stream-plot2.pdf, id=326, 433.62pt x 433.62pt>
+File: stream-plot2.pdf Graphic file (type pdf)
+ <use stream-plot2.pdf>
+Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 \T1/aer/m/n/10.95 16 []
  []
 
-[16]
+[16] <stream-plot3.pdf, id=333, 433.62pt x 433.62pt>
+File: stream-plot3.pdf Graphic file (type pdf)
+ <use stream-plot3.pdf>
 Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 [] \T1/aer/m/n/10.95 17
  []
 
-[17] <stream-plot1.pdf, id=221, 433.62pt x 433.62pt>
-File: stream-plot1.pdf Graphic file (type pdf)
- <use stream-plot1.pdf>
+[17 <C:/Users/johnhforrestPC2/Documents/R/clusterds/pkg/inst/doc/stream-plot2.p
+df>]
 
-Package natbib Warning: Citation `stream:R:2005' on page 18 undefined on input 
-line 364.
+LaTeX Warning: Reference `figure:plot5' on page 18 undefined on input line 564.
+
 
 
 Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 \T1/aer/m/n/10.95 18 []
  []
 
-[18]
+[18 <C:/Users/johnhforrestPC2/Documents/R/clusterds/pkg/inst/doc/stream-plot3.p
+df>] <stream-plot4.pdf, id=365, 433.62pt x 433.62pt>
+File: stream-plot4.pdf Graphic file (type pdf)
+ <use stream-plot4.pdf>
 Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 [] \T1/aer/m/n/10.95 19
  []
 
-[19 <C:/Users/johnhforrestPC2/My Dropbox/School/Year 4/s11/cse 5391/tex - thesi
-s/stream-plot1.pdf>]
+[19 <C:/Users/johnhforrestPC2/Documents/R/clusterds/pkg/inst/doc/stream-plot4.p
+df>] (C:\Users\johnhforrestPC2\Documents\R\clusterds\pkg\inst\doc\stream.bbl
 Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 \T1/aer/m/n/10.95 20 []
  []
 
-[20]
+[20])
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 596.
+
 Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 [] \T1/aer/m/n/10.95 21
  []
 
-[21] <stream-plot2.pdf, id=244, 433.62pt x 433.62pt>
-File: stream-plot2.pdf Graphic file (type pdf)
- <use stream-plot2.pdf>
+[21]
 Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 \T1/aer/m/n/10.95 22 []
  []
 
-[22 <C:/Users/johnhforrestPC2/My Dropbox/School/Year 4/s11/cse 5391/tex - thesi
-s/stream-plot2.pdf>]
-LaTeX Font Info:    Try loading font information for TS1+aett on input line 487
-.
-LaTeX Font Info:    No file TS1aett.fd. on input line 487.
+[22]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 596.
+ (C:\Users\johnhforrestPC2\Documents\R\clusterds\pkg\inst\doc\stream.aux)
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 596.
+Package rerunfilecheck Info: File `stream.out' has not changed.
+(rerunfilecheck)             Checksum: 6BD96D1A6497EE99AD4CF8C3EDEDE39D;1112.
 
 
-LaTeX Font Warning: Font shape `TS1/aett/m/sl' undefined
-(Font)              using `TS1/cmr/m/n' instead
-(Font)              for symbol `textquotesingle' on input line 487.
-
-<stream-plot3.pdf, id=255, 433.62pt x 433.62pt>
-File: stream-plot3.pdf Graphic file (type pdf)
- <use stream-plot3.pdf>
-Overfull \hbox (10.94998pt too wide) has occurred while \output is active
-[] \T1/aer/m/n/10.95 23
- []
-
-[23]
-
-LaTeX Warning: Reference `figure:plot4' on page 24 undefined on input line 506.
+LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
 
+LaTeX Warning: There were undefined references.
 
-Overfull \hbox (10.94998pt too wide) has occurred while \output is active
-\T1/aer/m/n/10.95 24 []
- []
-
-[24 <C:/Users/johnhforrestPC2/My Dropbox/School/Year 4/s11/cse 5391/tex - thesi
-s/stream-plot3.pdf>]
-
-Package natbib Warning: Citation `stream:Meyer+Buchta:2010' on page 25 undefine
-d on input line 520.
-
-
-Package natbib Warning: Citation `stream:Venables+Ripley:2002' on page 25 undef
-ined on input line 520.
-
-
-Package natbib Warning: Citation `stream:Qiu+Joe:2009' on page 25 undefined on 
-input line 520.
-
-
-Package natbib Warning: Citation `stream:Urbanek:2010' on page 25 undefined on 
-input line 520.
-
-<stream-plot4.pdf, id=270, 433.62pt x 433.62pt>
-File: stream-plot4.pdf Graphic file (type pdf)
- <use stream-plot4.pdf>
-! Undefined control sequence.
-<argument> ...es Plotting the results of a \texit 
-                                                  {k-means} operation on eac...
-l.525 ...tion on each stream clustering algorithm}
-                                                  
-? 
-! Emergency stop.
-<argument> ...es Plotting the results of a \texit 
-                                                  {k-means} operation on eac...
-l.525 ...tion on each stream clustering algorithm}
-                                                  
-End of file on the terminal!
-
- 
+ ) 
 Here is how much of TeX's memory you used:
- 6842 strings out of 495285
- 99435 string characters out of 3180314
- 169106 words of memory out of 3000000
- 9801 multiletter control sequences out of 15000+200000
+ 6954 strings out of 495285
+ 103311 string characters out of 3180314
+ 175498 words of memory out of 3000000
+ 9884 multiletter control sequences out of 15000+200000
  43884 words of font info for 81 fonts, out of 3000000 for 9000
  14 hyphenation exceptions out of 8191
- 38i,9n,34p,1328b,461s stack positions out of 5000i,500n,10000p,200000b,50000s
-!  ==> Fatal error occurred, no output PDF file produced!
+ 38i,9n,34p,1311b,461s stack positions out of 5000i,500n,10000p,200000b,50000s
+ <C:\Users\johnhforrestPC2\AppData\Local\MiKTeX\2.8\fonts\pk\ljfour\jknappen\
+ec\dpi600\tcrm1095.pk><C:/Program Files/MiKTeX 2.8/fonts/type1/public/amsfonts/
+cm/cmb10.pfb><C:/Program Files/MiKTeX 2.8/fonts/type1/public/amsfonts/cm/cmbx10
+.pfb><C:/Program Files/MiKTeX 2.8/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C:
+/Program Files/MiKTeX 2.8/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Program 
+Files/MiKTeX 2.8/fonts/type1/public/amsfonts/cm/cmsl10.pfb><C:/Program Files/Mi
+KTeX 2.8/fonts/type1/public/amsfonts/cm/cmsltt10.pfb><C:/Program Files/MiKTeX 2
+.8/fonts/type1/public/amsfonts/cm/cmss10.pfb><C:/Program Files/MiKTeX 2.8/fonts
+/type1/public/amsfonts/cm/cmti10.pfb><C:/Program Files/MiKTeX 2.8/fonts/type1/p
+ublic/amsfonts/cm/cmtt10.pfb>
+Output written on stream.pdf (22 pages, 2297630 bytes).
+PDF statistics:
+ 461 PDF objects out of 1000 (max. 8388607)
+ 74 named destinations out of 1000 (max. 500000)
+ 177 words of extra memory for PDF output out of 10000 (max. 10000000)
+
