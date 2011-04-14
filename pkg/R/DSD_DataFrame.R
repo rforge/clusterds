@@ -14,7 +14,7 @@ DSD_DataFrame <- function(df, k, loop=FALSE) {
 	    d = ncol(df),
 	    k = k,
 		loop = loop)
-    class(l) <- c("DSD","DSD_R","DSD_DataFrame")
+    class(l) <- c("DSD_DataFrame","DSD_R","DSD")
     l
 }
 
@@ -84,4 +84,9 @@ get_points.DSD_DataFrame <- function(x, n=1, ...) {
     }
 
     d
+}
+
+print.DSD_DataFrame <- function(x, ...) {
+	NextMethod() # calling the super classes print()
+	cat(paste('contains', nrow(x$strm), 'data points (currently at position', x$state$counter, 'loop is', x$loop, '\n'))
 }

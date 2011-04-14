@@ -48,7 +48,7 @@ DSD_Gaussian_Static <- function(k=2, d=2, mu, sigma, p, noise = 0) {
 	    sigma = sigma,
 	    p = p,
 	    noise = noise)
-    class(l) <- c("DSD","DSD_R","DSD_Gaussian_Static")
+    class(l) <- c("DSD_Gaussian_Static","DSD_R","DSD")
     l
 }
 

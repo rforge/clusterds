@@ -30,6 +30,6 @@ DSC_CobWeb <- function(acuity=1.0, cutoff=0.002, randomSeed=1) {
             options = cliParams,
             javaObj = clusterer)
 
-  class(l) <- c("DSC", "DSC_MOA", "DSC_CobWeb")
+  class(l) <- c("DSC_CobWeb","DSC_MOA","DSC")
   l
 }

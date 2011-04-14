@@ -22,7 +22,7 @@ DSD_ReadStream <- function(x, sep=",", loop=FALSE) {
 			  con = x,
 	          sep = sep,
 			  loop = loop)
-    class(l) <- c("DSD","DSD_R","DSD_ReadStream")
+    class(l) <- c("DSD_ReadStream","DSD_R","DSD")
     l
 }
 

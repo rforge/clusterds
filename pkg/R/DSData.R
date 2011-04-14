@@ -10,9 +10,6 @@ get_points <- function(x, n=1, ...) UseMethod("get_points")
 
 print.DSD <- function(x, ...) {
     cat(paste('DSD - Data Stream Datasource:', x$description, '\n'))
-	cat(paste('Number of clusters:', x$k, '\n'))
-	cat(paste('Number of dimensions:', x$d, '\n'))
-    
-	### FIXME: print other stats
+	cat(paste('With', x$k, 'clusters', 'in', x$d, 'dimensions', '\n'))
 }
 

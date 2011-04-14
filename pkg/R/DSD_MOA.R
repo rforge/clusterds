@@ -51,7 +51,7 @@ DSD_MOA <- function(k=3, d=2, avgRadius=0, modelSeed=1, instanceSeed=1) {
 	    cliParams = cliParams,
 	    javaObj = strm)
 
-    class(l) <- c("DSD","DSD_MOA","DSD_RandomRBF")
+    class(l) <- c("DSD_RandomRBF","DSD_MOA","DSD")
     l
 }
 

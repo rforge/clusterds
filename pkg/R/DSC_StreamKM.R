@@ -32,6 +32,6 @@ DSC_StreamKM <- function(sizeCoreset=100, k=5, width=1000, randomSeed=1) {
             options = cliParams,
             javaObj = clusterer)
 
-  class(l) <- c("DSC", "DSC_MOA", "DSC_StreamKM")
+  class(l) <- c("DSC_StreamKM","DSC_MOA","DSC")
   l  
 }

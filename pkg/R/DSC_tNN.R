@@ -163,7 +163,7 @@ DSC_tNN <- function(threshold = 0.2, measure = "euclidean",
 	    clusterFun = .cluster_tNN,
 	    RObj = tnn)
 
-    class(l) <- c("DSC", "DSC_R", "DSC_tNN")
+    class(l) <- c("DSC_tNN","DSC_R","DSC")
     l
     l
 }
