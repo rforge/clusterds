@@ -18,7 +18,7 @@ cluster(dsc, dsd, n = 1000)
 
 \details{
 Clusters input data. The underlying clustering in the DSC object is implicitly updated
-as if the object was 'passed by reference' in a traditional programming language.
+as if the object was `passed by reference' in a traditional programming language.
 
 The data points from the DSD object will be extracted one at a time. Although this operation
 is slower, it always allows the clustering of \code{n} to infinity data points, as long as

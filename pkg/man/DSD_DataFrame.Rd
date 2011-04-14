@@ -3,7 +3,7 @@
 \title{DataStreamData: DataFrame (a wrapper for data frames and matrices)}
 \description{
 A DataStreamData class that wraps either a data frame or matrix that was
-created in R. The data can either be looped or replayed manually to give
+created in R, or read in to R. The data can either be looped or replayed manually to give
 the exact same data to 2 different DataStreamTask objects.
 }
 
@@ -25,6 +25,8 @@ The value returned is a \code{list} of class \code{DSD}, and \code{DSD_DataFrame
 }
 
 \value{
+Returns a \code{DSD_DataFrame} object which is a list of the defined parameters. The parameters are either passed in from the function or created internally. They include: 
+
 	\item{description}{The name of the class of the DSD object.}
 	\item{strm}{The data frame or matrix that the stream is wrapping.}
 	\item{state}{The environment variable which holds the counter for the data frame (accessed through state$counter).}

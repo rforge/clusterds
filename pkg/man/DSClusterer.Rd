@@ -1,7 +1,7 @@
 \name{DSClusterer}
 \alias{DSClusterer}
 \title{DSClusterer}
-\description{The abstract base class for all DSC classes.}
+\description{The abstract base class for all DataStreamClusterer (DSC) classes.}
 
 \details{
 The \code{DSClusterer} class cannot be instantiated, but it serves as a base class

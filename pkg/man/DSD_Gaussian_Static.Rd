@@ -3,8 +3,8 @@
 \title{DataStreamData: Static data stream}
 \description{
 A DataStreamData that generates random data based upon either a 
-defined covariance matrix or a randomly generated covariance
-matrix.
+defined list covariance matrices or randomly generated covariance
+matrices.
 }
 
 \usage{
@@ -15,7 +15,7 @@ DSD_Gaussian_Static(k=2, d=2, mu, sigma, p, noise=0, noise_range)
   \item{k}{Determines the number of clusters.}
   \item{d}{Determines the number of dimensions.}
   \item{mu}{A matrix of means for each dimension of each cluster.}
-  \item{sigma}{The covariance matrix.}
+  \item{sigma}{A list of covariance matrices.}
   \item{p}{A vector of probabilities that determines the likelihood of
 		   generated a data point from a particular cluster.}
   \item{noise}{Noise is generated in the stream based on this parameter. 

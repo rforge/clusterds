@@ -8,12 +8,12 @@ DSC_DenStream(epsilon = 0.1, minPoints = 10, lambda = 0.006, beta = 0.001, mu = 
 }
 
 \arguments{
-  \item{epsilon}{-e (defines the epsilon neighborhood, range: 0 to 1)}
-  \item{minPoints}{-p (min. num. points a cluster must have)}
-  \item{lambda}{-l (range: 0 to 1)}
-  \item{beta}{-b (range: 0 to 1)}
-  \item{mu}{-m (range: 0 to max(double))}
-  \item{initPoints}{-i (number of points to use for initialization)}
+  \item{epsilon}{defines the epsilon neighborhood, range: 0 to 1}
+  \item{minPoints}{min. num. points a cluster must have}
+  \item{lambda}{range: 0 to 1}
+  \item{beta}{range: 0 to 1}
+  \item{mu}{range: 0 to max(double)}
+  \item{initPoints}{number of points to use for initialization}
 }
 
 \details{

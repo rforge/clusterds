@@ -48,8 +48,7 @@ Mathematics, 2010.
 }
 
 \examples{
-#dsc <- DSC_StreamKM()
-#dsd <- DSD_Gaussian_Static()
-#cluster(dsc, dsd, 5000)
-#plot(dsc)
+dsc <- DSC_StreamKM()
+dsd <- DSD_Gaussian_Static()
+cluster(dsc, dsd, 5000)
 }

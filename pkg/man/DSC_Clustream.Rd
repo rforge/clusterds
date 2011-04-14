@@ -31,6 +31,9 @@ is analogous to the q micro-clusters that are maintained within the algorithm.
 }
 
 \value{
+A list of class \code{DSC}, \code{DSC_MOA}, and \code{DSC_Clustream}. The list
+contains the following items:
+
 	\item{description}{The name of the algorithm in the DSC object.}
 	\item{options}{The CLI params defined when creating the DSC object.}
 	\item{javaObj}{The underlying Java object associated with DSC_MOA objects.}

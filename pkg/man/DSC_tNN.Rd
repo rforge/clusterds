@@ -22,6 +22,9 @@ The threshold Nearest Neighbor algorithm is used in the rEMM package cited below
 }
 
 \value{
+A list of class \code{DSC}, \code{DSC_R}, and \code{DSC_tNN}. The list
+contains the following items:
+
 	\item{description}{The name of the algorithm in the DSC object.}
 	\item{clusterFun}{The cluster function specific to DSC_tNN}
 	\item{RObj}{The underlying R object associated with DSC_R objects.}

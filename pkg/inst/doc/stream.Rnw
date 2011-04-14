@@ -97,16 +97,16 @@ The names used for these properties vary depending on the algorithm, but the cor
 Common data streams include text streams like Twitter activity, the Facebook news-stream, Internet packet data, stock market activity, output from sensor arrays, etc. The volume of data and its applications will only continue to increase as more techniques are developed to automatically record our day-to-day interactions with technology (credit card transactions, Internet and phone usage) to databases for use in behavioral mining \citep{stream:Aggarwal:2007}. Our goal with \pkg{stream} is provide a framework for experimentation that can generate data streams with specific properties based on the needs of the experiment. We aim to reduce the overhead that researchers spend on the creation of an experimental stream infrastructure so that they may focus more on innovative algorithms that can be used to mine real world data streams.
 
 
-When developing a new technique for any application, a vital step in the development process is the evaluation against existing methods in the field. Although an important step, the evaluation of a stream processing algorithm is often difficult because of the challenging setup. Not only is it difficult to obtain implementations of leading algorithms to benchmark against, there are also many other variables that often change between implementations, for instance: the programming language, the development environment, the expected input and output, etc. Additionally, the same data needs to be used for each experiment in order to accurately benchmark the performance against one another; and more importantly, the size of the data used in data stream processes cannot be trivial because the way the algorithms handle very large streams is a key feature. Both of these tasks make it a formidable challenge to accurately benchmark any new stream processing technique against existing algorithms.
+When developing a new technique for any application, a vital step in the development process is the evaluation against existing methods in the field. Although an important step, the evaluation of a stream processing algorithm is often difficult because of the challenging setup. Not only is it difficult to obtain implementations of leading algorithms to benchmark against, there are also many other variables that often change between implementations, for instance: the programming language, the development environment, the expected input and output, etc. Additionally, the same data needs to be used for each experiment in order to accurately benchmark the performance against one another; and more importantly, the size of the data used in data stream processes cannot be trivial because the the algorithms handle large data sets are an important factor during performance measurement. Both of these tasks make it a formidable challenge to accurately benchmark any new stream processing technique against existing algorithms.
 
 
 The two most well-known tools for the benchmarking of traditional data mining methods are WEKA and \proglang{R} \citep{stream:Hall+Frank+Holmes+Pfahringer+Reutemann+Witten:2009, stream:R:2005}. The WEKA Data Mining Software is developed and maintained by the Machine Learning Group at the University of Waikato and consists of a graphical user interface for users that prefer working with a GUI. It is built in \proglang{Java} and supports easy integration of new techniques through its plug-in interface. At the other end of the spectrum is \proglang{R}, an environment for data mining and statistical computing that is operated solely by writing code from the command line interface or through the input of script files. It supports extension in several forms: through \proglang{R} packages (software applications written in the \proglang{R} programming language), \proglang{Java}, and \proglang{C}/\proglang{C++}. In fact, since \proglang{R} is also extensible by \proglang{Java}, there is a WEKA package available in \proglang{R} that uses the \proglang{Java} code from the standalone WEKA implementation to integrate into the \proglang{R} environment.
 
 
-To solve the problem of benchmarking data stream processes in \proglang{Java}, another team at the University of Waikato has developed Massive Online Analysis (MOA), a framework that has been built in WEKA's image \citep{stream:Bifet+Holmes+Kirkby+Pfahringer:2010}. MOA has a variety of tools that allows researchers to generate streams, perform data stream classification, and to perform data stream clustering. However, MOA only fills in one end of the spectrum, and to correspond to the other end, we have developed \pkg{stream}, an \proglang{R} package that performs many of the required tasks in the \proglang{R} environment but also allows the extensibility of data mining techniques in ways that MOA can't; namely development in \proglang{R} and \proglang{C}/\proglang{C++}. Additionally, \pkg{stream} will be compatible with \textit{REvolution R}, a commercial version of \proglang{R} that is optimized for server environments that deal with terabytes of data. This will allow users that have access to \textit{REvolution R} to compare the performance of data stream applications with data sets that aren't possible in the open source version of \proglang{R} \citep{stream:revolutionR:2010}.
+To solve the problem of benchmarking data stream processes in \proglang{Java}, another team at the University of Waikato has developed Massive Online Analysis (MOA), a framework that has been built in WEKA's image \citep{stream:Bifet+Holmes+Kirkby+Pfahringer:2010}. MOA has a variety of tools that allows researchers to generate streams, perform data stream classification, and to perform data stream clustering. However, MOA only fills in one end of the spectrum, and to correspond to the other end, we have developed \pkg{stream}, an \proglang{R} package that performs many of the same functions, but in the \proglang{R} environment. It also allows the extensibility of data mining techniques in ways that MOA can't; namely development in \proglang{R} and \proglang{C}/\proglang{C++}. Additionally, \pkg{stream} will be compatible with \textit{REvolution R}, a commercial version of \proglang{R} that is optimized for server environments that deal with terabytes of data. This will allow users that have access to \textit{REvolution R} to compare the performance of data stream applications with data sets that aren't possible in the open source version of \proglang{R} \citep{stream:revolutionR:2010}.
 
 
-In this paper we discuss the design of \pkg{stream}, and how it can be used to compare data stream processing techniques. In our current implementation of \pkg{stream}, we have developed two main components: a component for generating stream data, and a component for performing data stream tasks, generally either clustering or classification, using the generated data. Each of these components is accompanied by examples demonstrating the capabilities of the framework. 
+In this paper we discuss the design of \pkg{stream}, and how it can be used as a tool to benchmark the performance of different stream processing techniques. We aim to give researchers the ability to test new algorithmic developments against the existing stream processing techniques without having to spend time setting up an infrastructure to do so. In our current implementation of \pkg{stream}, we have developed two main components: a component for generating stream data, and a component for performing data stream tasks, generally either clustering or classification, using the generated data. The stream data generation module offers users the ability to control specific stream properties such as the number of clusters, the dimensionality of data, the concept drift, and various other properties that may not be easily reproducible with real-world data streams. The other module has implementations of many existing stream processing algorithms to benchmark against. Each of these components is accompanied by examples demonstrating the capabilities of the framework. 
 
 
 The paper is organized as follows. We first provide background information on data streams, as well as common data mining tasks: clustering and classification. This section is followed by the design of the \pkg{stream} package in Section~\ref{sec:design}. The design section covers the design of each component, how they interact with one another, and how to extend the components as a developer. Section~\ref{sec:examples} consists of examples in \proglang{R} that show the generation of data streams, data mining tasks performed on the streams created, and detailed explanations for resulting objects. Section~\ref{sec:conclusion} outlines our future plans for the framework and concludes the paper.
@@ -281,8 +281,10 @@ DSD classes need a way to either generate or retrieve data that can be used as a
 
 For DSD classes, there is only a single function in addition to a constructor that is needed in order to fulfill the interface, and that function is \code{get_points()}. This function simply returns an \proglang{R} matrix of the data created by the DSD. It is used mainly in the \code{cluster()} function to input data into DST objects that will perform data mining operations on them.
 
-%%TODO
-The DST interface requires more work in that there are currently 2 abstract classes that extend directly from the abstract base class, \code{DataStreamClusterer}.
+
+The DST interface requires more work in that there are currently 2 abstract classes that extend directly from the abstract base class, \code{DataStreamClusterer}. Depending on which programming language is used to extend the DST class, the new class must extend from the appropriate direct subclass of DST. For example, all of our DSC objects that are implemented using MOA's \proglang{Java} code, extend from the class \code{DSC_MOA} in addition to the base class \code{DSC}. New classes that are developed in another way should extend the inheritance hierarchy in a similar way. If there is no concept of the subclass already included in the framework, like \code{DSC_C}, it is the job of the developer to create this intermediary class so that others may extend from it in the future. Note that all the extensions are from the DSC class rather than the DST class---new classes will also need to be created for other data stream tasks such as classification.
+
+For DSC subclasses, there are two functions that need be implemented in addition to the constructor. These functions are \code{cluster()} and \code{get_centers()}. The clustering function is used in conjunction with a DSD object and will feed data into the DST object, like a stream. It is responsible for updating the underlying clustering of the object (or returning a copy of the object with the updated clustering) with the data that is being streamed. \code{cluster()} should be able to handle data of any dimensionality. The \code{get_centers()} functions returns a matrix that represents the centers of micro-clusters (if available) from the particular DSC object. If the underlying clustering is an object in \proglang{Java}, the \code{get_centers()} function should convert this to an \proglang{R} object before returning.
 
 \section{Examples}
 \label{sec:examples}
@@ -333,7 +335,7 @@ attr(data, "assignment")
 plot(get_points(dsd, 1000))
 @
 
-We can also create streams with dynamic data by using the \code{DSD_MOA} class. Figure~\ref{figure:moa} shows the concept drift in \code{DSD_MOA} as the initial 3 clusters move around, and finally merge with one another.
+We can also create streams with dynamic data by using the \code{DSD_MOA} class. It is important during the creation of a \code{DSD_MOA} object that values are assigned to the \code{modelSeed} and \code{instanceSeed} parameters. This ensures that new data will be produced with your experiment. Figure~\ref{figure:moa} shows the concept drift in \code{DSD_MOA} as the initial 3 clusters move around, and 2 of the clusters merge in (c). The \code{DSD_MOA} class is useful for testing how algorithms behave with dynamic data, and clusters that may merge with others over time.
 
 <<echo=FALSE>>=
 set.seed(1000)
@@ -389,7 +391,7 @@ Sometimes it is useful to be able to access the data generated by the data strea
 We start by loading the package and creating a DSD object. In our DSD object we are using data with a dimensionality of 5 to demonstrate how large streams are stored on disk.
 
 <<echo=FALSE>>=
-set.seed(2000)
+set.seed(1000)
 @
 
 <<>>=
@@ -424,7 +426,7 @@ An important feature of \pkg{stream} is the ability to replay stream data. This 
 The \code{DSD_DataFrame} class was designed with the intent of being a wrapper class for data that has already been read in or generated in the form of a data frame or matrix. Because of this feature, we are able to use data produced from another data stream and wrap it in a \code{DSD_DataFrame} object to replay the data. Similar to the \code{DSD_ReadStream} class, there is also a \code{loop} parameter in \code{DSD_DataFrame}. The \code{loop} parameter, when set to \code{TRUE}, will loop over the data points within the data stream when all of them have been used. For instance, if there are 10 data points in the object, and the user requests 100 data points in a call to \code{get_points()} with looping enabled, the 10 data points will be returned 10 times to give the user the requested 100 data points. In our example we opt to leave the \code{loop} parameter as its default, \code{FALSE}.
 
 <<echo=FALSE>>=
-set.seed(3000)
+set.seed(1000)
 @
 
 <<>>=
@@ -453,15 +455,16 @@ Again, start by loading \pkg{stream}.
 library("stream")
 @
 
-Next, create the DSC and DSD objects. In this example we use the \code{DSC_DenStream} with its default parameters, and \code{DSD_MOA} with 2 dimensionality data generated from 3 clusters. It is important during the creation of a \code{DSD_MOA} object that values are assigned to the \code{modelSeed} and \code{instanceSeed} parameters. This ensures that new data will be produced with your experiment. We also created a \code{DSD_DataFrame} so that we can use the same data used in the clustering operation to plot the micro-clusters against.
+Next, create the DSC and DSD objects. In this example we use the \code{DSC_DenStream} with its default parameters, and \code{DSD_Gaussian_Static} with 2 dimensionality data generated from 3 clusters. We also created a \code{DSD_DataFrame} so that we can use the same data used in the clustering operation to plot the micro-clusters against. Notice that the \code{noise} parameter is set to \code{0.1}, the enabling of this parameter causes the DSD to generate noise in addition to the configured data points, similar to how a data stream would act in real-world scenarios.
 
 <<echo=FALSE>>=
-set.seed(4000)
+set.seed(1000)
 @
 
+%%TODO: take a look at why the noise is so heavy
 <<>>=
 dsc <- DSC_DenStream()
-d <- get_points(DSD_MOA(k=3, d=2, modelSeed=100, instanceSeed=100), 3000)
+d <- get_points(DSD_Gaussian_Static(k=3, d=2, noise=0.1), 3000)
 head(d)
 
 dsd <- DSD_DataFrame(d, k=3)

@@ -23,8 +23,12 @@ DSD_MOA(k=3, d=2, avgRadius=0, modelSeed=1, instanceSeed=1)
 There are an assortment of parameters available for the underlying MOA data structure,
 however, we have currently limited the available parameters to the arguments above.
 Currently the modelSeed and instanceSeed are set to default values every time a 
-\code{DSD_MOA} is created, therefore the generated data will be the same. Therefore,
+\code{DSD_MOA} is created, therefore the generated data will be the same. Because of this,
 it is important to set the seed manually when different data is needed.
+
+The default behavior of \code{DSD_MOA} is to create a data stream with 3 clusters and concept drift.
+The locations of the clusters will change slightly, and they will merge with one another as time progresses.
+MOA is a good DSD to use for testing an algorithms behavior on dynamic data.
 }
 
 \value{

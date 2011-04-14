@@ -1,7 +1,7 @@
 \name{DSData}
 \alias{DSData}
 \title{DSData}
-\description{The abstract base class for all DataStreamData classes.}
+\description{The abstract base class for all DataStreamData (DSD) classes.}
 
 \details{
 The \code{DSData} class cannot be instantiated, but it serves as a base class

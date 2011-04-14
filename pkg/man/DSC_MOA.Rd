@@ -11,7 +11,7 @@ this class because they have a specific way of operating.
 \details{
 \code{DSC_MOA} classes operate in a different way in that the centers of the
 micro-clusters have to be extracted from the underlying Java object. This is
-done by performing method calls directly in the JRI and unpackaging the 
+done by using rJava to perform method calls directly in the JRI and unpackaging the 
 multi-dimensional Java array into a local R data type.
 }
 

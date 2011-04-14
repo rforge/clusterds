@@ -34,6 +34,7 @@ Returns a matrix of \code{x$d} columns and \code{n} rows.
 	\code{\link{DSD_DataFrame}},
 	\code{\link{DSD_MOA}},
 	\code{\link{write_stream}}
+	\code{\link{cluster}}
 }
 
 \examples{
