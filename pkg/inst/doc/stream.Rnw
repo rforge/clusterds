@@ -361,19 +361,20 @@ plot(get_points(dsd, 3000))
 
 
 \begin{figure}
-\begin{minipage}[b]{.48\linewidth}
+\begin{minipage}{.48\linewidth}
 \centering
-\includegraphics{stream-moa1}
+\includegraphics[width=\linewidth]{stream-moa1}
 \\(a)
 \end{minipage}
-\begin{minipage}[b]{.48\linewidth}
+\begin{minipage}{.48\linewidth}
 \centering
-\includegraphics{stream-moa2}
+\includegraphics[width=\linewidth]{stream-moa2}
 \\(b)
 \end{minipage}
-\begin{minipage}[c]{.48\linewidth}
+\\
+\begin{minipage}{.48\linewidth}
 \centering
-\includegraphics{stream-moa3}
+\includegraphics[width=\linewidth]{stream-moa3}
 \\(c)
 \end{minipage}
 \caption{The concept drift of DSD\_MOA}
@@ -438,7 +439,9 @@ Just like the \code{DSD_ReadStream} object created in the previous example, \cod
 <<>>=
 dsc <- DSC_Clustream()
 cluster(dsc, replayer, 100)
+replayer
 reset_stream(replayer) # resetting the dsd to its original state
+replayer
 @
 
 \subsection{Clustering a data stream}
@@ -500,7 +503,7 @@ set.seed(1000)
 
 <<>>=
 library("stream")
-d <- get_points(DSD_Gaussian_Static(k=3, d=2), 10000)
+d <- get_points(DSD_Gaussian_Static(k=3, d=2, noise=0.01), 10000)
 head(d)
 
 dsd <- DSD_DataFrame(d, k=3)

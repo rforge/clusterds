@@ -8,7 +8,7 @@ matrix.
 }
 
 \usage{
-DSD_Gaussian_Static(k=2, d=2, mu, sigma, p, noise=0)
+DSD_Gaussian_Static(k=2, d=2, mu, sigma, p, noise=0, noise_range)
 }
 
 \arguments{
@@ -18,7 +18,11 @@ DSD_Gaussian_Static(k=2, d=2, mu, sigma, p, noise=0)
   \item{sigma}{The covariance matrix.}
   \item{p}{A vector of probabilities that determines the likelihood of
 		   generated a data point from a particular cluster.}
-  \item{noise}{Noise is generated in the stream based on this parameter.}
+  \item{noise}{Noise is generated in the stream based on this parameter. 
+    Noise is the probability of a data point being noise.}
+  \item{noise_range}{A matrix with d rows and 2 columns. The first column
+    contains the minimum values and the second column contains the maximum
+    values for noise. Noise is uniformly distributed within noise range.}
 }
 
 \details{
@@ -69,17 +73,20 @@ created internally. They include:
 }
 
 \examples{
-# other params will be generated internally
-dsd <- DSD_Gaussian_Static(k=2, d=2)
-dsc <- DSC_DenStream()
+# create data stream with three clusters in 2D
+dsd1 <- DSD_Gaussian_Static(k=3, d=2)
 
 # obtaining some data
-sample <- get_points(dsd, 500)
-
-# clustering some data, this will take some time
-cluster(dsc, dsd, 5000)
+sample <- get_points(dsd1, 500)
 
 # plotting the data
-plot(sample, xlab='x', ylab='y', pch=4, cex=.5)
-points(get_centers(dsc),col='red', cex=3,lwd=2)
+plot(sample)
+
+# create data stream with specified clusters and 20% noise
+dsd2 <- DSD_Gaussian_Static(k=2, d=2, mu=rbind(c(-.5,-.5), c(.5,.5)), 
+    noise=0.2, noise_range=rbind(c(-1,1),c(-1,1)))
+plot(get_points(dsd2, 500))
+
+
+
 }

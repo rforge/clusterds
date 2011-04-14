@@ -3,7 +3,7 @@
 #	- rangeVar (for genPositiveDefMat)
 #	- min/max on runif
 #
-DSD_Gaussian_Static <- function(k=2, d=2, mu, sigma, p, noise = 0) { 
+DSD_Gaussian_Static <- function(k=2, d=2, mu, sigma, p, noise = 0, noise_range) { 
 
     # if p isn't defined, we give all the clusters equal probability
     if (missing(p)) {
@@ -27,6 +27,16 @@ DSD_Gaussian_Static <- function(k=2, d=2, mu, sigma, p, noise = 0) {
 		simplify=F)
     }
 
+    # noise
+    if (noise == 0) noise_range <- NA
+    else {
+	if (missing(noise_range)) noise_range <- matrix(c(0,1), 
+		ncol=2, nrow=d, byrow=TRUE)
+	else if (ncol(noise_range) != 2 || nrow(noise_range) != d) {
+	    stop("noise_range is not correctly specified!")	
+	}
+    }
+
     # error checking
     if (length(p) != k)
 	stop("size of probability vector, p, must equal k")
@@ -47,7 +57,8 @@ DSD_Gaussian_Static <- function(k=2, d=2, mu, sigma, p, noise = 0) {
 	    mu = mu,
 	    sigma = sigma,
 	    p = p,
-	    noise = noise)
+	    noise = noise,
+	    noise_range = noise_range)
     class(l) <- c("DSD_Gaussian_Static","DSD_R","DSD")
     l
 }
@@ -67,7 +78,8 @@ get_points.DSD_Gaussian_Static <- function(x, n=1, assignment = FALSE, ...) {
     ## points outside this range!
     if(x$noise) {
 	repl <- runif(n)<x$noise 
-	data[repl,] <- replicate(x$d, runif(sum(repl)))
+	data[repl,] <- t(replicate(sum(repl),runif(x$d, 
+				min=x$noise_range[,1],max=x$noise_range[,2])))
 	clusterOrder[repl] <- NA
     }
 
