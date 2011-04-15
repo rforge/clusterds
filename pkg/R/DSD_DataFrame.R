@@ -88,5 +88,5 @@ get_points.DSD_DataFrame <- function(x, n=1, ...) {
 
 print.DSD_DataFrame <- function(x, ...) {
 	NextMethod() # calling the super classes print()
-	cat(paste('contains', nrow(x$strm), 'data points (currently at position', x$state$counter, 'loop is', x$loop, '\n'))
+	cat(paste('Contains', nrow(x$strm), 'data points, currently at position', x$state$counter, 'loop is', x$loop, '\n'))
 }

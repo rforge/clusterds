@@ -30,6 +30,7 @@ export(
 S3method(plot, DSC)
 S3method(print, DSC)
 S3method(print, DSD)
+S3method(print, DSD_DataFrame)
 
 S3method(write_stream, DSD)
 
