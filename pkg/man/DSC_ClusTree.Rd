@@ -41,11 +41,11 @@ Washington, DC, USA, 249-258. DOI=10.1109/ICDM.2009.47
 
 \seealso{
 	\code{\link{DSClusterer}},
-	\code{\link{DSC_MOA}},
-	\code{\link{DSC_DenStream}},
-	\code{\link{DSC_CobWeb}},
-	\code{\link{DSC_StreamKM}},
-	\code{\link{DSC_Clustream}}
+	\code{\link{DSC_MOA}}%,
+	%\code{\link{DSC_DenStream}},
+	%\code{\link{DSC_CobWeb}},
+	%\code{\link{DSC_StreamKM}},
+	%\code{\link{DSC_CluStream}}
 }
 
 \examples{

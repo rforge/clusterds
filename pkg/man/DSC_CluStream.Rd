@@ -1,25 +1,25 @@
-\name{DSC_Clustream}
-\alias{DSC_Clustream}
-\title{DataStreamClusterer: Clustream}
-\description{Creates a new DataStreamClusterer with the Clustream algorithm}
+\name{DSC_CluStream}
+\alias{DSC_CluStream}
+\title{DataStreamClusterer: CluStream}
+\description{Creates a new DataStreamClusterer with the CluStream algorithm}
 
 \usage{
-DSC_Clustream(timeWindow = 1000, maxNumKernels = 100)
+DSC_CluStream(timeWindow = 1000, maxNumKernels = 100)
 }
 
 \arguments{
-  \item{timeWindow}{Defines the time window to be used in Clustream}
-  \item{maxNumKernels}{Defines the maximum number of kernels used in Clustream}
+  \item{timeWindow}{Defines the time window to be used in CluStream}
+  \item{maxNumKernels}{Defines the maximum number of kernels used in CluStream}
 }
 
 \details{
-Clustream was originally introduced in Aggarwal's paper cited below. 
-Like most data stream clustering algorithms, Clustream summarizes the 
+CluStream was originally introduced in Aggarwal's paper cited below. 
+Like most data stream clustering algorithms, CluStream summarizes the 
 incoming data points into micro-clusters. At any given time, it can be 
-assumed there are q micro-clusters maintained by Clustream. This means 
+assumed there are q micro-clusters maintained by CluStream. This means 
 that when a new micro-cluster is created, another one must be deleted, 
 and the opposite is true for when two micro-clusters merge with one 
-another. A significant amount of thought in Clustream is given to the 
+another. A significant amount of thought in CluStream is given to the 
 temporal structure of data streams. Snapshots of calculated micro-clusters 
 are stored in a "pyramidal time frame" pattern. This allows the user to 
 turn back to a specific location in the data stream to mine information 
@@ -31,7 +31,7 @@ is analogous to the q micro-clusters that are maintained within the algorithm.
 }
 
 \value{
-A list of class \code{DSC}, \code{DSC_MOA}, and \code{DSC_Clustream}. The list
+A list of class \code{DSC}, \code{DSC_MOA}, and \code{DSC_CluStream}. The list
 contains the following items:
 
 	\item{description}{The name of the algorithm in the DSC object.}
@@ -59,7 +59,7 @@ Clustering." In "Journal of Machine Learning Research (JMLR) Workshop and Confer
 }
 
 \examples{
-dsc <- DSC_Clustream()
+dsc <- DSC_CluStream()
 dsd <- DSD_Gaussian_Static()
 cluster(dsc, dsd, 5000)
 plot(dsc)

@@ -30,11 +30,7 @@ There is no value returned from this operation.
 
 \seealso{
 	\code{\link{write.table}},
-	\code{\link{DSD_Gaussian_Static}},
-	\code{\link{DSD_ReadStream}},
-%%	\code{\link{DSD_Gaussian_Dynamic}},
-	\code{\link{DSD_DataFrame}},
-	\code{\link{DSD_MOA}},
+	\code{\link{DSData}}
 }
 
 \examples{

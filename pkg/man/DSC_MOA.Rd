@@ -28,6 +28,6 @@ Volume 11: Workshop on Applications of Pattern Analysis (2010).
 	\code{\link{DSC_ClusTree}},
 	\code{\link{DSC_StreamKM}},
 	\code{\link{DSC_DenStream}},
-	\code{\link{DSC_Clustream}},
+	\code{\link{DSC_CluStream}},
 	\code{\link{DSData}}
 }

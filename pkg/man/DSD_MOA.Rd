@@ -45,11 +45,7 @@ Volume 11: Workshop on Applications of Pattern Analysis (2010).
 }
 
 \seealso{
-	\code{\link{DSD_Gaussian_Static}},
-	\code{\link{DSD_ReadStream}},
-%%	\code{\link{DSD_Gaussian_Dynamic}},
-	\code{\link{DSD_DataFrame}},
-	\code{\link{write_stream}}
+	\code{\link{DSData}}
 }
 
 \examples{

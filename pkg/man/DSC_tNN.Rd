@@ -39,13 +39,13 @@ Stream Clustering in R, Journal of Statistical Software, 35(5), 1-31, URL \url{h
 }
 
 \seealso{
-	\code{\link{DSClusterer}},
-	\code{\link{DSC_MOA}},
-	\code{\link{DSC_DenStream}},
-	\code{\link{DSC_CobWeb}},
-	\code{\link{DSC_StreamKM}},
-	\code{\link{DSC_Clustream}},
-	\code{\link{DSC_ClusTree}}
+	\code{\link{DSClusterer}}%,
+	%\code{\link{DSC_MOA}},
+	%\code{\link{DSC_DenStream}},
+	%\code{\link{DSC_CobWeb}},
+	%\code{\link{DSC_StreamKM}},
+	%\code{\link{DSC_CluStream}},
+	%\code{\link{DSC_ClusTree}}
 }
 
 \examples{

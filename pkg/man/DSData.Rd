@@ -19,5 +19,5 @@ contain various DSD classes that have been implemented.
 	\code{\link{DSD_Gaussian_Static}},
 %%	\code{\link{DSD_Gaussian_Dynamic}},
 	\code{\link{DSD_ReadStream}},
-	\code{\link{DSD_DataFrame}},
+	\code{\link{DSD_Wrapper}},
 }

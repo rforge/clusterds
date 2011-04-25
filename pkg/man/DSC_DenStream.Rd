@@ -61,11 +61,11 @@ Clustering." In "Journal of Machine Learning Research (JMLR) Workshop and Confer
 
 \seealso{
 	\code{\link{DSClusterer}},
-	\code{\link{DSC_MOA}},
-	\code{\link{DSC_Clustream}},
-	\code{\link{DSC_CobWeb}},
-	\code{\link{DSC_StreamKM}},
-	\code{\link{DSC_ClusTree}}
+	\code{\link{DSC_MOA}}%,
+	%\code{\link{DSC_CluStream}},
+	%\code{\link{DSC_CobWeb}},
+	%\code{\link{DSC_StreamKM}},
+	%\code{\link{DSC_ClusTree}}
 }
 
 \examples{

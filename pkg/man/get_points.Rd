@@ -28,13 +28,7 @@ Returns a matrix of \code{x$d} columns and \code{n} rows.
 }
 
 \seealso{
-	\code{\link{DSD_Gaussian_Static}},
-	\code{\link{DSD_ReadStream}},
-%%	\code{\link{DSD_Gaussian_Dynamic}},
-	\code{\link{DSD_DataFrame}},
-	\code{\link{DSD_MOA}},
-	\code{\link{write_stream}}
-	\code{\link{cluster}}
+	\code{\link{DSData}}
 }
 
 \examples{

@@ -7,7 +7,7 @@ Clusters a number of input points from a data stream into a clustering object.
 }
 
 \usage{
-cluster(dsc, dsd, n = 1000)
+cluster(dsc, dsd, n = 1)
 }
 
 \arguments{
@@ -33,17 +33,7 @@ clustering result, call \code{get_centers()} upon the DSC object.
 
 
 \seealso{
-	\code{\link{DSClusterer}},
-	\code{\link{DSData}},
-	\code{\link{DSC_MOA}},
-	\code{\link{DSC_Clustream}},
-	\code{\link{DSC_CobWeb}},
-	\code{\link{DSC_StreamKM}},
-	\code{\link{DSC_ClusTree}}
-	\code{\link{DSD_MOA}},
-	\code{\link{DSD_ReadStream}},
-	\code{\link{DSD_DataFrame}},
-	\code{\link{get_centers}}
+	\code{\link{DSClusterer}}
 }
 
 \examples{

@@ -37,11 +37,11 @@ The number of columns in the matrix is dependent on the data stream that was use
 
 \seealso{
 	\code{\link{DSClusterer}},
-	\code{\link{DSC_CobWeb}},
-	\code{\link{DSC_ClusTree}},
-	\code{\link{DSC_StreamKM}},
-	\code{\link{DSC_DenStream}},
-	\code{\link{DSC_Clustream}},
+	%\code{\link{DSC_CobWeb}},
+	%\code{\link{DSC_ClusTree}},
+	%\code{\link{DSC_StreamKM}},
+	%\code{\link{DSC_DenStream}},
+	%\code{\link{DSC_CluStream}},
 	\code{\link{DSData}}
 }
 

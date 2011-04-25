@@ -5,7 +5,7 @@
 # Maximum number of micro kernels to use.
 # -M evaluateMicroClustering
 # Evaluate the underlying microclustering instead of the macro clustering
-DSC_Clustream <- function(timeWindow=1000, maxNumKernels=100) {
+DSC_CluStream <- function(timeWindow=1000, maxNumKernels=100) {
   if (timeWindow < 0)
     stop("invalid timeWindow, must be > 0")
 
@@ -25,10 +25,10 @@ DSC_Clustream <- function(timeWindow=1000, maxNumKernels=100) {
   .jcall(clusterer, "V", "prepareForUse")
 
   # initializing the R object
-  l <- list(description = "Clustream",
+  l <- list(description = "CluStream",
             options = cliParams,
             javaObj = clusterer)
 
-  class(l) <- c("DSC_Clustream","DSC_MOA","DSC")
+  class(l) <- c("DSC_CluStream","DSC_MOA","DSC")
   l
 }

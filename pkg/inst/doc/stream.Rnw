@@ -32,6 +32,8 @@
 \newcommand{\set}[1]{\mathcal{#1}}
 
 %\usepackage{Sweave}
+%% \VignetteIndexEntry{Introduction to stream}
+
 
 \author{John Forrest\\Southern Methodist University \And
     Michael Hahsler\\Southern Methodist University}
@@ -125,7 +127,7 @@ Traditional cluster analysis is an unsupervised data mining technique, meaning t
 The data stream properties outlined previously render traditional clustering techniques unusable in their current form. New techniques were introduced to transform data streams so that they can be used by traditional clustering techniques. In general, data stream clustering algorithms consist of an online-offline architecture. The online component refers to the new data stream aspect of the algorithm that summarizes the data points (often known as micro-clusters) so that they can be used in the offline component. The offline part of these algorithms is executed upon the user's command (the real-time property) and uses the micro-clusters as input data into traditional clustering algorithms, such as \textit{k-means} or \textit{DBSCAN}. 
 
 
-The accurate, yet efficient generation of micro-clusters is the goal behind the online component of data stream clustering algorithms. The offline component consists of algorithms that have been around for many years and their performance is well defined. Thus, new techniques in data stream clustering focus on how to summarize the incoming data effectively. Summarizing the incoming data points into micro-clusters ensures that the input to the offline component is constrained to a finite space. Recent algorithms such as DenStream \citep{stream:Cao+Ester+Qian+Zhou:2006} and MR-Stream \citep{stream:Wan+Ng+Dang+Yu+Zhang:2009} use a density-based approach to calculate micro-clusters, but there are a variety of different techniques such as the augmentation of the traditional \textit{k-medians} algorithm \citep{stream:Guha+Meyerson+Mishra+Motwani+O'Callaghan:2003}, CSketch \citep{stream:Aggarwal:2009}, threshold Nearest Neighbor (tNN) \citep{stream:Hahsler+Dunham:2010c}, and Clustream \citep{stream:Aggarwal+Han+Wang+Yu:2003}. 
+The accurate, yet efficient generation of micro-clusters is the goal behind the online component of data stream clustering algorithms. The offline component consists of algorithms that have been around for many years and their performance is well defined. Thus, new techniques in data stream clustering focus on how to summarize the incoming data effectively. Summarizing the incoming data points into micro-clusters ensures that the input to the offline component is constrained to a finite space. Recent algorithms such as DenStream \citep{stream:Cao+Ester+Qian+Zhou:2006} and MR-Stream \citep{stream:Wan+Ng+Dang+Yu+Zhang:2009} use a density-based approach to calculate micro-clusters, but there are a variety of different techniques such as the augmentation of the traditional \textit{k-medians} algorithm \citep{stream:Guha+Meyerson+Mishra+Motwani+O'Callaghan:2003}, CSketch \citep{stream:Aggarwal:2009}, threshold Nearest Neighbor (tNN) \citep{stream:Hahsler+Dunham:2010c}, and CluStream \citep{stream:Aggarwal+Han+Wang+Yu:2003}. 
 
 
 To maintain a finite number of micro-clusters, a pruning function is often associated within the summarization process. The goal of the pruning process is to discard micro-clusters that have become outliers. Outliers can be determined by data points that don't have enough related instances to constitute a micro-cluster, or micro-clusters that have become stale---no new data points have been added to them recently. The latter case occurs when the structure of the data stream changes as a function of time, known as concept drift \citep{stream:Masud+Chen+Khan+Aggarwal+Gao+Han+Thuraisingham:2010}.
@@ -184,7 +186,7 @@ Additionally, we also adhere to other object oriented concepts such as data abst
 \subsection{DataStreamData}
 \label{sec:design:dsd}
 
-The first step in the \pkg{stream} workflow is to select a DataStreamData (DSD) generator. Figure~\ref{figure:dsd} shows the UML relationship of the DSD classes \citep{stream:Fowler:2003}. All DSD classes extend from the abstract base class, \code{DataStreamData}. The current available classes are \code{DSD_Gaussian_Static}, a DSD that generates static cluster data with a random Gaussian distribution; \code{DSD_MOA}, a data generator from the MOA framework with an \proglang{R} wrapper; \code{DSD_ReadStream}, a class designed to read data from \proglang{R} connections; and finally, \code{DSD_DataFrame}, a DSD class that wraps local \proglang{R} data as a data stream. Additional DSD classes will also extend from the base class, as denoted by the ellipsis in the diagram.
+The first step in the \pkg{stream} workflow is to select a DataStreamData (DSD) generator. Figure~\ref{figure:dsd} shows the UML relationship of the DSD classes \citep{stream:Fowler:2003}. All DSD classes extend from the abstract base class, \code{DataStreamData}. The current available classes are \code{DSD_Gaussian_Static}, a DSD that generates static cluster data with a random Gaussian distribution; \code{DSD_MOA}, a data generator from the MOA framework with an \proglang{R} wrapper; \code{DSD_ReadStream}, a class designed to read data from \proglang{R} connections; and finally, \code{DSD_Wrapper}, a DSD class that wraps local \proglang{R} data as a data stream. Additional DSD classes will also extend from the base class, as denoted by the ellipsis in the diagram.
 
 
 The most common input parameters for the creation of DSD classes are \code{k} number of clusters, and \code{d} number of dimensions. We use the term cluster loosely here in that it refers to an area where data points will be generated from rather than a calculated cluster from a clustering algorithm.
@@ -245,7 +247,7 @@ The base DSC class defines several functions that are inherited by each subclass
 \hangpara{0.25in}{0}%
 \code{plot(x, ..., method="pairs")}---plots the centers of the micro-clusters. There are 3 available plot methods: \code{pairs}, \code{plot}, or \code{pc}. \code{pairs} is the default method that produces a matrix of scatter plots that plots the attributes against one another (this method is only available when \code{d > 2}). \code{plot} simply takes the first two attributes of the matrix and plots it as \code{x} and \code{y} on a scatter plot. Lastly, \code{pc} performs Principle Component Analysis (PCA) on the data and projects the data to a 2 dimensional plane and then plots the results.
 
-At the moment, all of our DSC classes that have been developed use MOA implementations of data stream clustering algorithms as their core and use \pkg{rJava} interfaces to communicate with the \proglang{Java} code. Currently, the only exception to this is \code{DSC_tNN} which is written entirely in \proglang{R} and uses some of \proglang{R}'s more advanced features to create mutable objects. The data stream clustering algorithms that are available in \pkg{stream} are StreamKM++ \citep{stream:Ackermann+Lammersen+Maertens+Raupach:2010}, threshold Nearest Neighbor as seen in \citep{stream:Hahsler+Dunham:2010, stream:Hahsler+Dunham:2010b}, ClusTree \citep{stream:Kranen+Assent+Baldauf+Seidl:2009}, DenStream \citep{stream:Cao+Ester+Qian+Zhou:2006}, Clustream \citep{stream:Aggarwal+Han+Wang+Yu:2003}, and CobWeb \citep{stream:Fisher:1987}.
+At the moment, all of our DSC classes that have been developed use MOA implementations of data stream clustering algorithms as their core and use \pkg{rJava} interfaces to communicate with the \proglang{Java} code. Currently, the only exception to this is \code{DSC_tNN} which is written entirely in \proglang{R} and uses some of \proglang{R}'s more advanced features to create mutable objects. The data stream clustering algorithms that are available in \pkg{stream} are StreamKM++ \citep{stream:Ackermann+Lammersen+Maertens+Raupach:2010}, threshold Nearest Neighbor as seen in \citep{stream:Hahsler+Dunham:2010, stream:Hahsler+Dunham:2010b}, ClusTree \citep{stream:Kranen+Assent+Baldauf+Seidl:2009}, DenStream \citep{stream:Cao+Ester+Qian+Zhou:2006}, CluStream \citep{stream:Aggarwal+Han+Wang+Yu:2003}, and CobWeb \citep{stream:Fisher:1987}.
 
 
 It is important to note that many data stream clustering algorithms consist of two parts: an online component that clusters the incoming data points into micro-clusters, and an offline component that performs a traditional clustering algorithm on the micro-clusters. Our DSC implementations only include the online segment of these algorithms. This is to allow the user to choose how they would like to manipulate the micro-clusters during the offline phase. For example, a user may want to only use a single DSC class, but may be interested in how different traditional clustering algorithms perform on the micro-clusters generated. As mentioned before, Appendix A contains all of the details concerning each implemented class.
@@ -300,7 +302,7 @@ The first step in every example is to load the package.
 library("stream")
 @
 
-In this example, we would like to focus on the merits of the DSD class to model data streams. Currently there are 4 available classes: \code{DSD_Gaussian_Static}, \code{DSD_MOA}, \code{DSD_ReadStream}, and \code{DSD_DataFrame}. The syntax of creating an instance of each of the classes is consistent throughout. Below we show the creation of a \code{DSD_Gaussian_Static} object. We would like the data to be 2 dimensional, and to be generated by 3 clusters---these properties are shown as parameters during the creation. 
+In this example, we would like to focus on the merits of the DSD class to model data streams. Currently there are 4 available classes: \code{DSD_Gaussian_Static}, \code{DSD_MOA}, \code{DSD_ReadStream}, and \code{DSD_Wrapper}. The syntax of creating an instance of each of the classes is consistent throughout. Below we show the creation of a \code{DSD_Gaussian_Static} object. We would like the data to be 2 dimensional, and to be generated by 3 clusters---these properties are shown as parameters during the creation. 
 
 <<echo=FALSE>>=
 set.seed(1000)
@@ -329,11 +331,28 @@ Additionally, by setting the parameter \code{assignment} in the \code{get_points
 attr(data, "assignment")
 @
 
-\code{n} can be of any size as long as the created matrix is able to fit into memory. When data is being clustered however, \code{get_points()} is typically called for a single point at a time. This allows us both to simulate a streaming process, and to limit the amount of memory used by the created data at any given time. The data produced can then be used in any choice of application. Because the data is 2 dimensional in this case, we are able to easily plot the dimensions directly on to the x and y plane. Figure~\ref{figure:static} shows 1000 data points from the same DSD object. In the plot there are 3 distinguishable clusters as defined in the creation of \code{dsd}.
+\code{n} can be of any size as long as the created matrix is able to fit into
+memory. When data is being clustered however, \code{get_points()} is typically
+called for a single point at a time. This allows us both to simulate a
+streaming process, and to limit the amount of memory used by the created data
+at any given time. The data produced can then be used in any choice of
+application. Because the data is 2 dimensional in this case, we are able to
+easily plot the dimensions directly on to the x and y plane.
 
 <<static, fig=TRUE, include=FALSE>>=
 plot(get_points(dsd, 1000))
 @
+
+Figure~\ref{figure:static} shows 1000 data points from the same DSD object. In
+the plot there are 3 distinguishable clusters as defined in the creation of
+\code{dsd}.
+
+\begin{figure}
+\centering
+\includegraphics[width=.5\linewidth]{stream-static}
+\caption{Plotting 1000 data points from the data stream}
+\label{figure:static}
+\end{figure}
 
 We can also create streams with dynamic data by using the \code{DSD_MOA} class. It is important during the creation of a \code{DSD_MOA} object that values are assigned to the \code{modelSeed} and \code{instanceSeed} parameters. This ensures that new data will be produced with your experiment. Figure~\ref{figure:moa} shows the concept drift in \code{DSD_MOA} as the initial 3 clusters move around, and 2 of the clusters merge in (c). The \code{DSD_MOA} class is useful for testing how algorithms behave with dynamic data, and clusters that may merge with others over time.
 
@@ -343,23 +362,24 @@ set.seed(1000)
 
 <<moa1, fig=TRUE, include=FALSE>>=
 dsd <- DSD_MOA(k=3, d=2, modelSeed=100, instanceSeed=100)
-plot(get_points(dsd, 3000))
+plot(get_points(dsd, 1000))
 @
 
 <<moa2, fig=TRUE, include=FALSE>>=
-plot(get_points(dsd, 3000))
+ignore <- get_points(dsd, 1000)
+plot(get_points(dsd, 1000))
 @
 
 <<moa3, fig=TRUE, include=FALSE>>=
-plot(get_points(dsd, 3000))
+ignore <- get_points(dsd, 1000)
+plot(get_points(dsd, 1000))
 @
 
-\begin{figure}
-\centering
-\includegraphics[width=.5\linewidth]{stream-static}
-\caption{Plotting 100 data points from the data stream}
-\label{figure:static}
-\end{figure}
+<<moa4, fig=TRUE, include=FALSE>>=
+ignore <- get_points(dsd, 1000)
+plot(get_points(dsd, 1000))
+@
+
 
 
 \begin{figure}
@@ -378,6 +398,11 @@ plot(get_points(dsd, 3000))
 \centering
 \includegraphics[width=\linewidth]{stream-moa3}
 \\(c)
+\end{minipage}
+\begin{minipage}{.48\linewidth}
+\centering
+\includegraphics[width=\linewidth]{stream-moa4}
+\\(d)
 \end{minipage}
 \caption{The concept drift of DSD\_MOA}
 \label{figure:moa}
@@ -421,9 +446,9 @@ It is important that the \code{sep} parameter in \code{DSD_ReadStream} matches e
 \subsection{Replaying a data stream}
 \label{examples:replay}
 
-An important feature of \pkg{stream} is the ability to replay stream data. This ensures that all of the algorithms being experimented on will have the same data set and there won't be any anomalies due to concept drift in the data stream. We start this example is a similar manner, by loading the package and creating a DSD object. There are several ways to replay streams---one of them being to use a combination of \code{write_stream()} and \code{DSD_ReadStream} objects as mentioned in the previous example---but in this example we will discuss the use of the \code{DSD_DataFrame} class.
+An important feature of \pkg{stream} is the ability to replay stream data. This ensures that all of the algorithms being experimented on will have the same data set and there won't be any anomalies due to concept drift in the data stream. We start this example is a similar manner, by loading the package and creating a DSD object. There are several ways to replay streams---one of them being to use a combination of \code{write_stream()} and \code{DSD_ReadStream} objects as mentioned in the previous example---but in this example we will discuss the use of the \code{DSD_Wrapper} class.
 
-The \code{DSD_DataFrame} class was designed with the intent of being a wrapper class for data that has already been read in or generated in the form of a data frame or matrix. Because of this feature, we are able to use data produced from another data stream and wrap it in a \code{DSD_DataFrame} object to replay the data. Similar to the \code{DSD_ReadStream} class, there is also a \code{loop} parameter in \code{DSD_DataFrame}. The \code{loop} parameter, when set to \code{TRUE}, will loop over the data points within the data stream when all of them have been used. For instance, if there are 10 data points in the object, and the user requests 100 data points in a call to \code{get_points()} with looping enabled, the 10 data points will be returned 10 times to give the user the requested 100 data points. In our example we opt to leave the \code{loop} parameter as its default, \code{FALSE}.
+The \code{DSD_Wrapper} class was designed with the intent of being a wrapper class for data that has already been read in or generated in the form of a data frame or matrix. Because of this feature, we are able to use data produced from another data stream and wrap it in a \code{DSD_Wrapper} object to replay the data. Similar to the \code{DSD_ReadStream} class, there is also a \code{loop} parameter in \code{DSD_Wrapper}. The \code{loop} parameter, when set to \code{TRUE}, will loop over the data points within the data stream when all of them have been used. For instance, if there are 10 data points in the object, and the user requests 100 data points in a call to \code{get_points()} with looping enabled, the 10 data points will be returned 10 times to give the user the requested 100 data points. In our example we opt to leave the \code{loop} parameter as its default, \code{FALSE}.
 
 <<echo=FALSE>>=
 set.seed(1000)
@@ -432,16 +457,26 @@ set.seed(1000)
 <<>>=
 library("stream")
 dsd <- DSD_Gaussian_Static(k=3, d=2)
-replayer <- DSD_DataFrame(get_points(dsd, 100), k=3)
+replayer <- DSD_Wrapper(get_points(dsd, 100), k=3)
 replayer
 @
 
-Just like the \code{DSD_ReadStream} object created in the previous example, \code{replayer} can be used like any other DSD object. When all of the data points have been used in the stream, there is a function available called \code{reset_stream()} which returns the \code{DSD_DataFrame} to its original state (\code{reset_stream()} is also available for \code{DSD_ReadStream} objects). 
+Just like the \code{DSD_ReadStream} object created in the previous example,
+\code{replayer} can be used like any other DSD object. 
 
 <<>>=
-dsc <- DSC_Clustream()
+dsc <- DSC_CluStream()
 cluster(dsc, replayer, 100)
 replayer
+@
+
+When all of the data
+points have been used in the stream, there is a function available called
+\code{reset_stream()} which returns the \code{DSD_Wrapper} to the
+begining of the stream (\code{reset_stream()} 
+is also available for \code{DSD_ReadStream} objects). 
+
+<<>>=
 reset_stream(replayer) # resetting the dsd to its original state
 replayer
 @
@@ -449,25 +484,26 @@ replayer
 \subsection{Clustering a data stream}
 \label{examples:clustering_ds}
 
-This example outlines how to cluster data using DSC objects. Again, start by loading \pkg{stream}.
-
-<<>>=
-library("stream")
-@
-
-Next, create the DSC and DSD objects. In this example we use the \code{DSC_DenStream} class with its default parameters, and \code{DSD_Gaussian_Static} with 2 dimensionality data generated from 3 clusters. We also created a \code{DSD_DataFrame} so that we can use the same data used in the clustering operation to plot the micro-clusters against. Notice that the \code{noise} parameter is set to \code{0.05}, the enabling of this parameter causes 5\% of the data points generated by the DSD to be noise.
+This example outlines how to cluster data using DSC objects. 
+First, we create the DSC and DSD objects. In this example we use the
+\code{DSC_DenStream} class with its default parameters, and
+\code{DSD_Gaussian_Static} with 2 dimensionality data generated from 3
+clusters. We also created a \code{DSD_Wrapper} so that we can use the same data
+used in the clustering operation to plot the micro-clusters against. Notice
+that the \code{noise} parameter is set to \code{0.05}, the enabling of this
+parameter causes 5\% of the data points generated by the DSD to be noise.
 
 <<echo=FALSE>>=
 set.seed(1000)
 @
 
 <<>>=
+library("stream")
 dsc <- DSC_DenStream()
 d <- get_points(DSD_Gaussian_Static(k=3, d=2, noise=0.05), 3000)
 head(d)
 
-dsd <- DSD_DataFrame(d, k=3)
-dsd
+dsd <- DSD_Wrapper(d, k=3)
 @
 
 Now, the objects need to interact with one another through the \code{cluster()} function. The clustering operation will implicitly alter \code{dsc} so no reassignment is necessary. By default, \code{DSC_DenStream} is initialized with 1000 points, meaning that no new micro-clusters are created until this threshold has been breached, which is why we cluster 3000 new data points.
@@ -479,8 +515,8 @@ cluster(dsc, dsd, 3000)
 After clustering the data, we are ready to view the results.
 
 <<cluster, fig=TRUE, include=FALSE>>=
-plot(d, col="grey")
-points(get_centers(dsc), col="red", pch=3)
+plot(d, col="grey", pch=3)
+points(get_centers(dsc), col='red', cex=2, lwd=2)
 @
 
 \begin{figure}
@@ -508,11 +544,11 @@ library("stream")
 d <- get_points(DSD_Gaussian_Static(k=3, d=2, noise=0.01), 10000)
 head(d)
 
-dsd <- DSD_DataFrame(d, k=3)
+dsd <- DSD_Wrapper(d, k=3)
 dsd
 
 dsc1 <- DSC_DenStream()
-dsc2 <- DSC_Clustream()
+dsc2 <- DSC_CluStream()
 @
 
 Clustering the data:
@@ -541,21 +577,21 @@ points(get_centers(dsc1), col='red', cex=2, lwd=2)
 \begin{minipage}[b]{.48\linewidth}
 \centering
 \includegraphics{stream-denstream}
-\\(a)
+\\(a) DenStream
 \end{minipage}
 \begin{minipage}[b]{.48\linewidth}
 \centering
 \includegraphics{stream-clustream}
-\\(b)
+\\(b) CluStream
 \end{minipage}
 \caption{Plotting 2 sets of different micro-clusters against the generated data}
 \label{figure:denstream+clustream}
 \end{figure}
 
-The code above creates a \code{DSD_DataFrame} object from a \code{DSD_Gaussian_Static} object so that we can replay the same stream data for both DSC objects. We then use the \code{DSD_DataFrame} to feed the exact data stream into 2 different algorithms, DenStream and Clustream, during the \code{cluster()} operation. Note that after each call to \code{cluster()}, we also have to call \code{reset_stream()} to reset the \code{DSD_DataFrame} back to its original position.
+The code above creates a \code{DSD_Wrapper} object from a \code{DSD_Gaussian_Static} object so that we can replay the same stream data for both DSC objects. We then use the \code{DSD_Wrapper} to feed the exact data stream into 2 different algorithms, DenStream and CluStream, during the \code{cluster()} operation. Note that after each call to \code{cluster()}, we also have to call \code{reset_stream()} to reset the \code{DSD_Wrapper} back to its original position.
 
 
-After the clustering operations, we plot the calculated micro-clusters and the original data. Figure~\ref{figure:denstream+clustream} shows the 2 sets of micro-clusters, in red and blue, over the original data which is in grey. We have plotted the micro-clusters as circles to more closely reflect their nature, however, the circles are merely a representation and the radii haven't been calculated specifically for each micro-cluster. The plot makes it easy to point out differences in the two algorithms. The DenStream micro-clusters, in red, stay true to the nature of the algorithm in that they congregate where there is a large number of data points, or in other words, dense areas. Clustream on the other hand, in blue, is more evenly spread, and the micro-clusters are relatively separated, covering most of the area that the generated data fills.
+After the clustering operations, we plot the calculated micro-clusters and the original data. Figure~\ref{figure:denstream+clustream} shows the 2 sets of micro-clusters, in red and blue, over the original data which is in grey. We have plotted the micro-clusters as circles to more closely reflect their nature, however, the circles are merely a representation and the radii haven't been calculated specifically for each micro-cluster. The plot makes it easy to point out differences in the two algorithms. The DenStream micro-clusters, in red, stay true to the nature of the algorithm in that they congregate where there is a large number of data points, or in other words, dense areas. CluStream on the other hand, in blue, is more evenly spread, and the micro-clusters are relatively separated, covering most of the area that the generated data fills.
 
 <<denstream+kmeans, fig=TRUE, include=FALSE>>=
 plot(d, xlab='x', ylab='y', pch=4, cex=.5, col='grey')
@@ -567,7 +603,7 @@ plot(d, xlab='x', ylab='y', pch=4, cex=.5, col='grey')
 points(kmeans(get_centers(dsc2), centers=3, nstart=5)$centers,col='blue', cex=14, lwd=2)
 @
 
-We can then take this a step further. Figure~\ref{figure:denstream+clustream+kmeans} shows a new plot---in this case, we are plotting the calculated macro-clusters of each algorithm as a result of a \textit{k-means} operation. We use the term ``macro'' here to differentiate the \textit{k-means} clusters from the micro-clusters generated by the stream clustering algorithms. Again, the DenStream clusters are shown in red, and the Clustream clusters are shown in blue. We have enlarged the circle representations for the \textit{k-means} clusters to better show the area they cover.
+We can then take this a step further. Figure~\ref{figure:denstream+clustream+kmeans} shows a new plot---in this case, we are plotting the calculated macro-clusters of each algorithm as a result of a \textit{k-means} operation. We use the term ``macro'' here to differentiate the \textit{k-means} clusters from the micro-clusters generated by the stream clustering algorithms. Again, the DenStream clusters are shown in red, and the CluStream clusters are shown in blue. We have enlarged the circle representations for the \textit{k-means} clusters to better show the area they cover.
 
 
 This last operation is an example of how we use the same offline component for two different algorithms, and the differences that it produces. \proglang{R} contains an assortment of traditional clustering algorithms that are available through the installation of various packages. It is up to the user to decide which clustering algorithm they would like to use as the offline component. Most stream clustering algorithms are developed with a certain offline algorithm in mind, but it is interesting to see the different combinations of algorithms and the results they produce.

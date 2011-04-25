@@ -15,11 +15,12 @@ and \code{plot()}, which will plot the centers of the micro-clusters.
 }
 
 \seealso{
-	\code{\link{DSClusterer}},
+	\code{\link{get_centers}},
+	\code{\link{nclusters}},
 	\code{\link{DSC_CobWeb}},
 	\code{\link{DSC_ClusTree}},
 	\code{\link{DSC_StreamKM}},
 	\code{\link{DSC_DenStream}},
-	\code{\link{DSC_Clustream}},
+	\code{\link{DSC_CluStream}},
 	\code{\link{DSData}}
 }

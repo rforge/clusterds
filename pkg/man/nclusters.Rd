@@ -20,12 +20,12 @@ An integer; the number of micro-clusters in the clustering.
 }
 
 \seealso{
-	\code{\link{DSClusterer}},
-	\code{\link{DSC_CobWeb}},
-	\code{\link{DSC_ClusTree}},
-	\code{\link{DSC_StreamKM}},
-	\code{\link{DSC_DenStream}},
-	\code{\link{DSC_Clustream}},
+	\code{\link{DSClusterer}}%,
+	%\code{\link{DSC_CobWeb}},
+	%\code{\link{DSC_ClusTree}},
+	%\code{\link{DSC_StreamKM}},
+	%\code{\link{DSC_DenStream}},
+	%\code{\link{DSC_CluStream}},
 	\code{\link{get_centers}}
 }
 

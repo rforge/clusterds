@@ -65,11 +65,7 @@ created internally. They include:
 }
 	   
 \seealso{
-	\code{\link{DSD_MOA}},
-	\code{\link{DSD_ReadStream}},
-%%	\code{\link{DSD_Gaussian_Dynamic}},
-	\code{\link{DSD_DataFrame}},
-	\code{\link{write_stream}}
+	\code{\link{DSData}}
 }
 
 \examples{

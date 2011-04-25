@@ -51,7 +51,7 @@ DSD_Gaussian_Static <- function(k=2, d=2, mu, sigma, p, noise = 0, noise_range) 
     # list of length k
     # d x d matrix in the list
 
-    l <- list(description = "Static R Data Stream",
+    l <- list(description = "Static Mixture of Gaussians Data Stream",
 	    k = k,
 	    d = d,
 	    mu = mu,

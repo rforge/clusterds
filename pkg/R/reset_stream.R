@@ -4,7 +4,7 @@ reset_stream.default <- function(x) {
 
 reset_stream <- function(x) UseMethod("reset_stream")
 
-reset_stream.DSD_DataFrame <- function(x) {
+reset_stream.DSD_Wrapper <- function(x) {
     x$state$counter <- 1
 }
 

@@ -10,7 +10,7 @@ DSC_StreamKM(sizeCoreset=100, k=5, width=1000, randomSeed=1)
 \arguments{
 	\item{sizeCoreset}{The size of the coreset tree.}
 	\item{k}{The number of clusters.}
-	\item{width}{}
+	\item{width}{Width parameter.}
 	\item{randomSeed}{The random seed used in the k-means algorithm.}
 }
 
@@ -40,11 +40,11 @@ Mathematics, 2010.
 
 \seealso{
 	\code{\link{DSClusterer}},
-	\code{\link{DSC_MOA}},
-	\code{\link{DSC_DenStream}},
-	\code{\link{DSC_CobWeb}},
-	\code{\link{DSC_Clustream}},
-	\code{\link{DSC_ClusTree}}
+	\code{\link{DSC_MOA}}%,
+	%\code{\link{DSC_DenStream}},
+	%\code{\link{DSC_CobWeb}},
+	%\code{\link{DSC_CluStream}},
+	%\code{\link{DSC_ClusTree}}
 }
 
 \examples{
