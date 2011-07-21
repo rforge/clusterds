@@ -52,5 +52,8 @@ Washington, DC, USA, 249-258. DOI=10.1109/ICDM.2009.47
 dsc <- DSC_ClusTree()
 dsd <- DSD_Gaussian_Static()
 cluster(dsc, dsd, 100)
-get_centers(dsc)
+dsc
+
+plot(get_points(dsd,1000), col="gray")
+points(get_centers(dsc), col="red", cex=5)
 }

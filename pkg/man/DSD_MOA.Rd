@@ -51,6 +51,7 @@ Volume 11: Workshop on Applications of Pattern Analysis (2010).
 \examples{
 dsc <- DSC_DenStream(initPoints=100)
 dsd <- DSD_MOA()
+
 cluster(dsc, dsd, 1000)
 get_centers(dsc)
 }

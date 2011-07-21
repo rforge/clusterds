@@ -12,11 +12,11 @@ nclusters <- function(x) nrow(get_centers(x))
 
 print.DSC <- function(x, ...) {
     cat(paste('DSC - Data Stream Clusterer:', x$description, '\n'))
-    cat(paste('Number of clusters:', nclusters(x), '\n'))
+    cat(paste('Number of micro clusters:', nclusters(x), '\n'))
     ### FIXME: print other stats
 }
 
-plot.DSC <- function(x, ..., method="pairs") {
+plot.DSC <- function(x, main = "Microclusters", ..., method="pairs") {
     ## method can be pairs, plot or pc (projection with PCA)
     centers <- get_centers(x)
     if(ncol(centers)>2 && method=="pairs") pairs(centers, ...)
@@ -25,6 +25,6 @@ plot.DSC <- function(x, ..., method="pairs") {
 	p <- prcomp(centers)
 	plot(p$x)
     
-    } else plot(centers, ...)
+    } else plot(centers, main=main, ...)
 }
 

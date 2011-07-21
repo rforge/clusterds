@@ -4,13 +4,13 @@
 \description{Creates a new DataStreamClusterer with the DenStream algorithm}
 
 \usage{
-DSC_DenStream(epsilon = 0.1, minPoints = 10, lambda = 0.006, beta = 0.001, mu = 1, initPoints = 1000)
+DSC_DenStream(horizon = 1000, epsilon = 0.1, minPoints = 10, beta = 0.001, mu = 1, initPoints = 1000)
 }
 
 \arguments{
+  \item{horizon}{Range of the window, default: 1000}
   \item{epsilon}{defines the epsilon neighborhood, range: 0 to 1}
   \item{minPoints}{min. num. points a cluster must have}
-  \item{lambda}{range: 0 to 1}
   \item{beta}{range: 0 to 1}
   \item{mu}{range: 0 to max(double)}
   \item{initPoints}{number of points to use for initialization}
@@ -71,6 +71,9 @@ Clustering." In "Journal of Machine Learning Research (JMLR) Workshop and Confer
 \examples{
 dsc <- DSC_DenStream(initPoints=100)
 dsd <- DSD_Gaussian_Static()
-cluster(dsc, dsd, 1000)
-get_centers(dsc)
+cluster(dsc, dsd, 500)
+dsc
+
+plot(get_points(dsd,1000), col="gray")
+points(get_centers(dsc), col="red", cex=5)
 }

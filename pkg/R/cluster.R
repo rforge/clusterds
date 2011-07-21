@@ -18,7 +18,10 @@ cluster <- function(dsc, dsd, n=1) {
 
 .cluster.DSC_MOA <- function(dsc, inst) {
     ## data has to be all doubles for MOA clusterers!
-    inst <- .jnew("weka/core/Instance", 1.0, as.double(inst))
+    inst <- .jcast(
+	    .jnew("weka/core/DenseInstance", 1.0, .jarray(as.double(inst))),
+	    "weka/core/Instance"
+	    )
     .jcall(dsc$javaObj, "V", "trainOnInstanceImpl", inst)
 }
 

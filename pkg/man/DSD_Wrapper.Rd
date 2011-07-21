@@ -47,7 +47,7 @@ Returns a \code{DSD_Wrapper} object which is a list of the defined parameters. T
 
 \examples{
 dsd <- DSD_Gaussian_Static(k=3, d=2)
-d <- get_points(dsd, 100)
+d <- get_points(dsd, 500)
 head(d)
 
 # creating the DSD_Wrapper from d
@@ -56,10 +56,10 @@ replayer
 
 # creating 2 clusterers of different algorithms
 dsc1 <- DSC_CluStream()
-dsc2 <- DSC_CobWeb()
+dsc2 <- DSC_DenStream(initPoints=100)
 
 # clustering the same data in 2 DSC objects
-cluster(dsc1, replayer, 100)
+cluster(dsc1, replayer, 500)
 reset_stream(replayer) # resetting the replayer to the first position
-cluster(dsc2, replayer, 100)
+cluster(dsc2, replayer, 500)
 }

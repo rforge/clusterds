@@ -49,8 +49,11 @@ Stream Clustering in R, Journal of Statistical Software, 35(5), 1-31, URL \url{h
 }
 
 \examples{
-dsc <- DSC_tNN()
+dsc <- DSC_tNN(threshold=0.05)
 dsd <- DSD_Gaussian_Static()
-cluster(dsc, dsd, 100)
-get_centers(dsc)
+cluster(dsc, dsd, 500)
+dsc
+
+plot(get_points(dsd,1000), col="gray")
+points(get_centers(dsc), col="red", cex=5)
 }

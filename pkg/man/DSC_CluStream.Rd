@@ -61,6 +61,9 @@ Clustering." In "Journal of Machine Learning Research (JMLR) Workshop and Confer
 \examples{
 dsc <- DSC_CluStream()
 dsd <- DSD_Gaussian_Static()
-cluster(dsc, dsd, 5000)
-plot(dsc)
+cluster(dsc, dsd, 500)
+dsc
+
+plot(get_points(dsd, 1000), col="gray")
+points(get_centers(dsc), col="red", cex=5)
 }

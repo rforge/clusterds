@@ -4,7 +4,7 @@ Date: 2010-09-29
 Title: Infrastructure for Data Streams
 Author: John Forrest, Michael Hahsler
 Maintainer: John Forrest <jhforrest@smu.edu>
-Description: A framework for data stream modelling and
+Description: A framework for data stream modeling and
     associated data mining tasks such as 
     clustering and classification. Development of this
     package was supported in part by NSF IIS-0948893.

@@ -1,20 +1,21 @@
 # denstream options:
+# -h horizon "Range of the window."  1000
 # -e epsilon 	0.01 (defines the epsilon neighborhood, range: 0 to 1)
 # -p minPoints 	10 (min. num. points a cluster must have)
-# -l lambda	0.006 (range: 0 to 1)
 # -b beta	0.001 (range: 0 to 1)
 # -m mu		1 (range: 0 to max(double))
 # -i initPoints	10000 (number of points to use for initialization)
 # -M		false (evaluate micro clustering flag)
-DSC_DenStream <- function(epsilon=0.1, minPoints=10, lambda=0.006, beta=0.001, mu=1, initPoints=1000) {
+DSC_DenStream <- function(horizon=1000, epsilon=0.1, minPoints=10, beta=0.001, mu=1, initPoints=1000) {
+  
+  if (horizon < 1)
+    stop("invalid horizon, range: >= 1")
+  
   if (epsilon <= 0 || epsilon >= 1)
     stop("invalid epsilon, range: 0 to 1 exclusive")
 
   if (minPoints < 10)
     stop("invalid minPoints, must be > 0")
-
-  if (lambda <= 0 || lambda >= 1)
-    stop("invalid lambda, range: 0 to 1 exclusive")
 
   if (beta <= 0 || beta >= 1)
     stop("invalid beta, range: 0 to 1 exclusive")
@@ -25,9 +26,9 @@ DSC_DenStream <- function(epsilon=0.1, minPoints=10, lambda=0.006, beta=0.001, m
   if (initPoints < 0)
     stop("invalid initPoints, must be > 0")
 
-  paramList <- list(e = epsilon,
+  paramList <- list(h = horizon,
+	            e = epsilon,
                     p = minPoints,
-                    l = lambda,
                     b = beta,
                     m = mu,
                     i = initPoints)

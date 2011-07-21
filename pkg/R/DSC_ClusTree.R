@@ -12,8 +12,8 @@ DSC_ClusTree <- function(timeWindow=1000, maxHeight=8) {
     stop("invalid timeWindow")
   }
 
-  paramList <- list(t=timeWindow,
-                    h=maxHeight)
+  paramList <- list(h=timeWindow,
+                    H=maxHeight)
 
   # converting the param list to a cli string to use in java
   cliParams <- convert_params(paramList)
