@@ -4,21 +4,27 @@
 \description{Creates a new DataStreamClusterer with the tNN (threshold Nearest Neighbor) algorithm}
 
 \usage{
-	DSC_tNN(threshold = 0.2, measure = "euclidean",
-	centroids = identical(tolower(measure), "euclidean"), lambda=0)
+	DSC_tNN(threshold = 0.2, minPoints = 2, measure = "euclidean",
+	centroids = identical(tolower(measure), "euclidean"), lambda=0.05)
 }
 
 \arguments{
 	\item{threshold}{The threshold in the nearest neighborhood algorithm.}
+	\item{minPoints}{The minimum number of points a micro-cluster
+	    needs to have.}
 	\item{measure}{The measure used to calculate cluster proximity.}
 	\item{centroids}{A flag that indicates if centroids are used for clusters.}
 	\item{lambda}{The lambda used in the fading function.}
 }
 
 \details{
-The threshold Nearest Neighbor algorithm is used in the rEMM package cited below. For each data point in the incoming stream, if it is below the threshold value of dissimilarity value of any existing clusters (known as states in the EMM algorithm), it joins that cluster. Otherwise, a new cluster is created to accomodate the new data point.
+The threshold Nearest Neighbor algorithm is used in the rEMM package cited
+below. For each data point in the incoming stream, if it is below the threshold
+value of dissimilarity value of any existing clusters (known as states in the
+EMM algorithm), it joins that cluster. Otherwise, a new cluster is created to
+accomodate the new data point.
 
-\code{measure} defines what measure is used to measure the dissimilarity between clusters 
+\code{measure} defines what measure is used to measure the dissimilarity between clusters. See \code{dist} in \pkg{proxy} for a list of available measures. 
 }
 
 \value{
@@ -26,8 +32,7 @@ A list of class \code{DSC}, \code{DSC_R}, and \code{DSC_tNN}. The list
 contains the following items:
 
 	\item{description}{The name of the algorithm in the DSC object.}
-	\item{clusterFun}{The cluster function specific to DSC_tNN}
-	\item{RObj}{The underlying R object associated with DSC_R objects.}
+	\item{RObj}{The underlying R object.}
 }
 
 \references{ 
@@ -39,21 +44,23 @@ Stream Clustering in R, Journal of Statistical Software, 35(5), 1-31, URL \url{h
 }
 
 \seealso{
-	\code{\link{DSClusterer}}%,
-	%\code{\link{DSC_MOA}},
-	%\code{\link{DSC_DenStream}},
-	%\code{\link{DSC_CobWeb}},
-	%\code{\link{DSC_StreamKM}},
-	%\code{\link{DSC_CluStream}},
-	%\code{\link{DSC_ClusTree}}
+	\code{\link{DSClusterer}}
 }
 
 \examples{
-dsc <- DSC_tNN(threshold=0.05)
-dsd <- DSD_Gaussian_Static()
+# 3 clusters with 5% noise
+dsd <- DSD_Gaussian_Static(k=3, noise=0.05)
+
+dsc <- DSC_tNN(threshold=0.05, lambda=.01)
 cluster(dsc, dsd, 500)
 dsc
 
-plot(get_points(dsd,1000), col="gray")
-points(get_centers(dsc), col="red", cex=5)
+# plot micro-clusters
+plot(get_points(dsd,500), col="gray", main= "tNN")
+centers <- get_centers(dsc)
+points(centers, col="red", cex=5)
+
+# reclustering
+cl <- kmeans(centers, centers=3)
+points(cl$centers, col="blue", cex=15)
 }

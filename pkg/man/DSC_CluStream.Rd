@@ -52,18 +52,22 @@ Clustering." In "Journal of Machine Learning Research (JMLR) Workshop and Confer
 \seealso{
 	\code{\link{DSClusterer}},
 	\code{\link{DSC_MOA}},
-	\code{\link{DSC_DenStream}},
-	\code{\link{DSC_CobWeb}},
-	\code{\link{DSC_StreamKM}},
-	\code{\link{DSC_ClusTree}}
 }
 
 \examples{
+dsd <- DSD_Gaussian_Static(k=3, noise=.05)
+
 dsc <- DSC_CluStream()
-dsd <- DSD_Gaussian_Static()
 cluster(dsc, dsd, 500)
 dsc
 
-plot(get_points(dsd, 1000), col="gray")
-points(get_centers(dsc), col="red", cex=5)
+# plot micro-clusters
+plot(get_points(dsd, 500), col="gray", main = "CluStream")
+centers <- get_centers(dsc)
+points(centers, col="red", cex=5)
+
+# reclustering
+cl <- kmeans(centers, centers=3)
+points(cl$centers, col="blue", cex=15)
+
 }

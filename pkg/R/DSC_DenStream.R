@@ -5,7 +5,11 @@
 # -b beta	0.001 (range: 0 to 1)
 # -m mu		1 (range: 0 to max(double))
 # -i initPoints	10000 (number of points to use for initialization)
-# -M		false (evaluate micro clustering flag)
+
+# Reclustering:  variant of DBSCAN
+
+
+
 DSC_DenStream <- function(horizon=1000, epsilon=0.1, minPoints=10, beta=0.001, mu=1, initPoints=1000) {
   
   if (horizon < 1)

@@ -8,72 +8,64 @@ DSC_DenStream(horizon = 1000, epsilon = 0.1, minPoints = 10, beta = 0.001, mu = 
 }
 
 \arguments{
-  \item{horizon}{Range of the window, default: 1000}
-  \item{epsilon}{defines the epsilon neighborhood, range: 0 to 1}
-  \item{minPoints}{min. num. points a cluster must have}
-  \item{beta}{range: 0 to 1}
-  \item{mu}{range: 0 to max(double)}
+  \item{horizon}{Range of the (time) window.}
+  \item{epsilon}{defines the epsilon neighborhood in which the density of each micro-cluster is calculated (i.e.,
+  the radius).}
+  \item{minPoints}{minimum number of points a micro-cluster must have.}
+  \item{beta}{the outlier threshold, used in conjunction with \code{mu}
+  (range: 0 to 1)} \item{mu}{the minimum weight a micro-cluster must have
+  within the \code{epsilon} neighborhood (range: 0 to max(double))}
   \item{initPoints}{number of points to use for initialization}
 }
 
 \details{
-DSC_DenStream is based on the DenStream algorithm. DenStream is a density 
-based clustering algorithm that summarizes the incoming data points into micro-clusters 
-based upon the frequency of data points in a particular location within a defined boundary 
-(i.e., their density). DenStream includes a fading function that causes the weight of 
-data points to decrease exponentially as t increases. This means that temporal structures 
+DSC_DenStream is based on the DenStream algorithm. DenStream is a density
+based clustering algorithm that summarizes the incoming data points into
+micro-clusters based upon the frequency of data points in a particular
+location within a defined boundary (i.e., their density). DenStream
+includes a fading function that causes the weight of data points to
+decrease exponentially as t increases. This means that temporal structures
 within the data stream are also visible using this algorithm. 
 
-The parameters are defined as follows:
-epsilon: refers to the neighborhood in which the density of each micro-cluster is calculated (in other words, the radius).
-
-minPoints: is the minimum number of points a micro-cluster must have.
-
-lambda: alters the fading function: the larger \code{lambda}, the lower the weight of the historic data.
-
-beta: is the outlier threshold, and is used in conjunction with \code{mu}
-
-mu: the minimum weight a micro-cluster must have within the \code{epsilon} neighborhood
-
-epsilon: the neighborhood to be considered a core-micro-cluster (as opposed to an outlier or a potential-micro-cluster).
-
-initPoints: is the number of data points to initialize the algorithm with.
+The creators of DenStream use a dbscan variation to recluster the
+micro-cluster into the final clustering.
 }
-
 \value{
-A list of class \code{DSC}, \code{DSC_MOA}, and \code{DSC_DenStream}. The list
-contains the following items:
-
+A list of class \code{DSC}, \code{DSC_MOA}, and \code{DSC_DenStream}. The
+list contains the following items:
 	\item{description}{The name of the algorithm in the DSC object.}
 	\item{options}{The CLI params defined when creating the DSC object.}
 	\item{javaObj}{The underlying Java object associated with DSC_MOA objects.}
 }
 
 \references{
-Cao F, Ester M, Qian W, Zhou A (2006). "Density-Based Clustering over 
-an Evolving Data Stream with Noise." In "Proceedings of the 2006 SIAM International 
-Conference on Data Mining," pp 326-337. SIAM. 
+Cao F, Ester M, Qian W, Zhou A (2006). Density-Based Clustering over an
+Evolving Data Stream with Noise. In Proceedings of the 2006 SIAM
+International Conference on Data Mining, pp 326-337. SIAM. 
 
-Bifet A, Holmes G, Pfahringer B, Kranen P, Kremer H, Jansen T, Seidl T (2010). 
-"MOA: Massive Online Analysis, a Framework for Stream Classification and 
-Clustering." In "Journal of Machine Learning Research (JMLR) Workshop and Conference Proceedings,"
+Bifet A, Holmes G, Pfahringer B, Kranen P, Kremer H, Jansen T, Seidl T
+(2010).  MOA: Massive Online Analysis, a Framework for Stream
+Classification and Clustering. In Journal of Machine Learning Research
+(JMLR) Workshop and Conference Proceedings.
 }
-
 \seealso{
 	\code{\link{DSClusterer}},
-	\code{\link{DSC_MOA}}%,
-	%\code{\link{DSC_CluStream}},
-	%\code{\link{DSC_CobWeb}},
-	%\code{\link{DSC_StreamKM}},
-	%\code{\link{DSC_ClusTree}}
+	\code{\link{DSC_MOA}}
 }
-
 \examples{
+dsd <- DSD_Gaussian_Static(k=3, noise=.05)
+
 dsc <- DSC_DenStream(initPoints=100)
-dsd <- DSD_Gaussian_Static()
 cluster(dsc, dsd, 500)
 dsc
 
-plot(get_points(dsd,1000), col="gray")
-points(get_centers(dsc), col="red", cex=5)
+# plot micro-clusters
+plot(get_points(dsd, 500), col="gray", main = "DenStream")
+centers <- get_centers(dsc)
+points(centers, col="red", cex=5)
+
+# reclustering with dbscan
+library(fpc)
+cl <- dbscan(centers, eps=0.1, MinPts=2)
+points(centers, col=cl$cluster+1, cex=5)
 }

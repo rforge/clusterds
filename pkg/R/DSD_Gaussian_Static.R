@@ -78,9 +78,12 @@ get_points.DSD_Gaussian_Static <- function(x, n=1, assignment = FALSE, ...) {
     ## points outside this range!
     if(x$noise) {
 	repl <- runif(n)<x$noise 
-	data[repl,] <- t(replicate(sum(repl),runif(x$d, 
-				min=x$noise_range[,1],max=x$noise_range[,2])))
-	clusterOrder[repl] <- NA
+	if(sum(repl)>0) {
+	    data[repl,] <- t(replicate(sum(repl),runif(x$d, 
+				    min=x$noise_range[,1],
+				    max=x$noise_range[,2])))
+	    clusterOrder[repl] <- NA
+	}
     }
 
     if(assignment) attr(data, "assignment") <- clusterOrder

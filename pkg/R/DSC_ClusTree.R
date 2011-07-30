@@ -1,18 +1,21 @@
-# ClusTree options:
-# -t timeWindow (default: 1000)
-# -h the maximal height of the tree (default: 8)
-DSC_ClusTree <- function(timeWindow=1000, maxHeight=8) {
+# ClusTree (anytime clustering) options:
+# IntOption("horizon", 'h', "Range of the window.", 1000)
+# IntOption("maxHeight", 'H', "The maximal height of the tree", 8)
+
+#Reclustering: suggests EM or k-means
+
+DSC_ClusTree <- function(horizon=1000, maxHeight=8) {
 
   # error checking
   if (maxHeight < 0) {
     stop("invalid maxHeight")
   }
 
-  if (timeWindow < 0) {
-    stop("invalid timeWindow")
+  if (horizon < 0) {
+    stop("invalid horizon")
   }
 
-  paramList <- list(h=timeWindow,
+  paramList <- list(h=horizon,
                     H=maxHeight)
 
   # converting the param list to a cli string to use in java

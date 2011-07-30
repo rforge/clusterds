@@ -6,26 +6,26 @@ cluster <- function(dsc, dsd, n=1) {
 
     # looping through the stream, feeding the new datapoints into 
     # the algorithm
-    for (i in 1:n) {
-	.cluster(dsc, get_points(dsd))
-    }
+    for (i in 1:n) .cluster(dsc, get_points(dsd))
     
     # so cl <- cluster(cl, ...) also works
     invisible(dsc)
 }
 
-.cluster <- function(dsc, inst) UseMethod(".cluster")
+.cluster <- function(dsc, x) UseMethod(".cluster")
 
-.cluster.DSC_MOA <- function(dsc, inst) {
+.cluster.DSC_MOA <- function(dsc, x) {
     ## data has to be all doubles for MOA clusterers!
-    inst <- .jcast(
-	    .jnew("weka/core/DenseInstance", 1.0, .jarray(as.double(inst))),
+    x <- .jcast(
+	    .jnew("weka/core/DenseInstance", 1.0, .jarray(as.double(x))),
 	    "weka/core/Instance"
 	    )
-    .jcall(dsc$javaObj, "V", "trainOnInstanceImpl", inst)
+    
+    .jcall(dsc$javaObj, "V", "trainOnInstanceImpl", x)
 }
 
-.cluster.DSC_R <- function(dsc, inst) {
-    dsc <- dsc$clusterFun(dsc, inst)
+.cluster.DSC_R <- function(dsc, x) {
+    ### dsc contains an RObj which is  a reference object with a cluster method
+    dsc$RObj$cluster(x)
 }
 

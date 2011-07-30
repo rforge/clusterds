@@ -4,13 +4,14 @@
 \description{Creates a new DataStreamClusterer with the CobWeb algorithm}
 
 \usage{
-DSC_CobWeb(acuity = 1, cutoff = 0.002, randomSeed = 1)
+DSC_CobWeb(acuity = 1, cutoff = 0.002, randomSeed = NULL)
 }
 
 \arguments{
   \item{acuity}{The acuity used in the underlying implementation.}
   \item{cutoff}{The cut off.}
-  \item{randomSeed}{The random seed used in the MOA implementation.}
+  \item{randomSeed}{The random seed used by the Java implementation 
+  (\code{NULL} creates a random seed).}
 }
 
 \details{
@@ -33,17 +34,13 @@ Clustering. Mach. Learn. 2, 2 (September 1987), 139-172.
 
 \seealso{
 	\code{\link{DSClusterer}},
-	\code{\link{DSC_MOA}}%,
-	%\code{\link{DSC_DenStream}},
-	%\code{\link{DSC_CluStream}},
-	%\code{\link{DSC_StreamKM}},
-	%\code{\link{DSC_ClusTree}}
+	\code{\link{DSC_MOA}}
 }
 
 \examples{
 dsc <- DSC_CobWeb()
 dsd <- DSD_Gaussian_Static()
-cluster(dsc, dsd, 1000)
+cluster(dsc, dsd, 500)
 
 #CobWeb doesn't implement micro-clusters
 }

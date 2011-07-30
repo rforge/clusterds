@@ -19,9 +19,11 @@ DSD_ReadStream <- function(x, sep=",", loop=FALSE) {
 
     # creating the DSD object
     l <- list(description = "File Data Stream",
-			  con = x,
-	          sep = sep,
-			  loop = loop)
+	    d = NA,
+	    k = NA,
+	    con = x,
+	    sep = sep,
+	    loop = loop)
     class(l) <- c("DSD_ReadStream","DSD_R","DSD")
     l
 }

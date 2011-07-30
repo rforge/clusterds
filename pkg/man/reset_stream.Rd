@@ -7,11 +7,11 @@ Resets the counter in a DSD object to the beginning.
 }
 
 \usage{
-	reset_stream(x)
+	reset_stream(dsd)
 }
 
 \arguments{
-	\item{x}{Either a \code{DSD_ReadStream} or \code{DSD_Wrapper} object.}
+	\item{dsd}{Either a \code{DSD_ReadStream} or \code{DSD_Wrapper} object.}
 }
 
 \details{
