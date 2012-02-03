@@ -64,8 +64,7 @@ plot(get_points(dsd, 500), col="gray", main = "DenStream")
 centers <- get_centers(dsc)
 points(centers, col="red", cex=5)
 
-# reclustering with dbscan
-library(fpc)
+# reclustering with dbscan (from package fpc)
 cl <- dbscan(centers, eps=0.1, MinPts=2)
 points(centers, col=cl$cluster+1, cex=5)
 }

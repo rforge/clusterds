@@ -38,8 +38,9 @@ Clustering. Mach. Learn. 2, 2 (September 1987), 139-172.
 }
 
 \examples{
+dsd <- DSD_Gaussian_Static(k=3, noise = .05)
+
 dsc <- DSC_CobWeb()
-dsd <- DSD_Gaussian_Static()
 cluster(dsc, dsd, 500)
 
 #CobWeb doesn't implement micro-clusters

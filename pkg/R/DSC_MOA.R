@@ -34,28 +34,30 @@ get_centers.DSC_MOA <- function(x, ...) {
     mClusters <- .jcall(mClustering, 
 	    "Lmoa/core/AutoExpandVector;", "getClustering")
 
+    
     # length of array
     length <- .jcall(mClusters, "I", "size")
 
-    # prepping before the loop
-    mCluster <- .jcall(mClusters, "Ljava/lang/Object;", "get", 0L)
-    mCluster <- .jcast(mCluster, "Lmoa/cluster/Cluster")
-    center <- .jcall(mCluster, "[D", "getCenter")
+    # empty clustering?
+    if(length<1) {
+	#warning("Clustering has no clusters!")
+	return(data.frame())
+    }
 
-    m <- matrix(ncol=length(center), nrow=length)
-    m[1,] <- center
+    m <- data.frame()
 
     # iterating over the array, extracting data to be plotted
     # the first point has already been used, so start from 2
-    if(length>1) for (i in 2:length) {
+    for (i in 1:length) {
 
 	# will have to cast mCluster as moa/cluster/Cluster
 	mCluster <- .jcall(mClusters, "Ljava/lang/Object;", "get", i-1L)
 	mCluster <- .jcast(mCluster, "Lmoa/cluster/Cluster")
 	center <- .jcall(mCluster, "[D", "getCenter") 
-	m[i,] <- center
+	m <- rbind(m, center)
     }
 
+    colnames(m) <- paste("X", 1:ncol(m), sep="")
     # returning the matrix 
     m
 }

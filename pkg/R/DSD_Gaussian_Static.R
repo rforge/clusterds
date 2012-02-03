@@ -86,6 +86,7 @@ get_points.DSD_Gaussian_Static <- function(x, n=1, assignment = FALSE, ...) {
 	}
     }
 
+    data <- as.data.frame(data)
     if(assignment) attr(data, "assignment") <- clusterOrder
     data
 }

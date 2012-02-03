@@ -1,7 +1,7 @@
 DSD_Wrapper <- function(x, k, loop=FALSE) {
 
     state <- new.env()
-    assign("counter", 1, envir = state)
+    assign("counter", 1L, envir = state)
 
     if (missing(k))
 	k <- NA
@@ -10,7 +10,7 @@ DSD_Wrapper <- function(x, k, loop=FALSE) {
     l <- list(description = "Data Frame/Matrix Wrapper Stream",
 	    strm = x,
 	    state = state,
-	    d = ncol(df),
+	    d = ncol(x),
 	    k = k,
 	    loop = loop)
     class(l) <- c("DSD_Wrapper","DSD_R","DSD")
@@ -18,68 +18,44 @@ DSD_Wrapper <- function(x, k, loop=FALSE) {
 }
 
 get_points.DSD_Wrapper <- function(x, n=1, ...) {
-
-    # this means we will go off the edge, so we need to loop
-    if (x$loop && (x$state$counter + n > nrow(x$strm))) {
-
-	# prep before loop
-	togo <- n
-	in_stream <- nrow(x$strm) - x$state$counter + 1
-	if (in_stream > 0) {
-	    d <- x$strm[x$state$counter:nrow(x$strm),] 
-	}
-
-	# subtracting the amount that was left in the stream
-	togo <- togo - in_stream
-
-	# resetting the counter
-	x$state$counter <- 1
-
-	while (togo > 0) {
-	    in_stream <- nrow(x$strm) - x$state$counter + 1
-
-	    # if there are some left in the stream, left than the total amount needed
-	    if (in_stream > 0 && in_stream < togo) {
-		d <- rbind(d, x$strm[x$state$counter:nrow(x$strm),] )
-		togo <- togo - in_stream
-	    }
-
-	    # if there are some left in the stream, more than the total amount needed
-	    else if (in_stream > 0) {
-		d <- rbind(d, x$strm[x$state$counter:(x$state$counter+togo-1),])
-		x$state$counter <- x$state$counter + togo
-		togo <- 0
-	    }
-
-	    # there are none left in the stream
-	    else {
-		x$state$counter <- 1
-	    }
-	}
+    n <- as.integer(n)
+   
+    if(x$state$counter > nrow(x$strm)) {
+	if(x$loop) x$state$counter <- 1L
+	else stop("The stream is at its end!")
     }
 
-    # we will go of the edge, but no loop, so return as much as possible and warn the user
-    else if (x$state$counter + n - 1 > nrow(x$strm)) {
-	remaining <- nrow(x$strm) - x$state$counter
+    n_left <- nrow(x$strm) - x$state$counter + 1L
+    
+    if(n_left < n && !x$loop) stop("Not enought data points left in stream!")
 
-	if (remaining >= 0) {
-	    d <- x$strm[x$state$counter:nrow(x$strm),]
-	    x$state$counter <- nrow(x$strm)
-	}
-
-	else {
-	    stop("no more data points in the stream")
-	}
-
-	if (nrow(d) != n) {
-	    warning("reached the end of the stream, returned as much as possible")
-	}
-    }
-
-    # otherwise we return like normal
-    else {
-	d <- x$strm[x$state$counter:(x$state$counter+n-1),]
+    if(n_left >= n) {
+	### regular case
+	d <- x$str[x$state$counter:(x$state$counter + n -1L),]	
 	x$state$counter <- x$state$counter + n
+    }else{
+	### we need to loop!
+
+
+	# take what is left and reset counter
+	d <- x$strm[x$state$counter:nrow(x$strm),] 
+	togo <- n-n_left
+	x$state$counter <- 1L
+
+	while(togo > 0L) {
+	    n_left <- nrow(x$strm) - x$state$counter + 1L
+
+	    if(n_left < togo) {
+		# take the whole stream
+		d <- rbind(d, x$strm)
+		togo <- togo - n_left
+	    }else{
+		# take the rest
+		d <- rbind(d, x$strm[1:(x$state$counter+togo-1),])
+		x$state$counter <- x$state$counter + togo
+		togo <- 0L
+	    }
+	}
     }
 
     d
@@ -89,7 +65,7 @@ print.DSD_Wrapper <- function(x, ...) {
     NextMethod() # calling the super classes print()
     pos <- x$state$counter
     if (pos>nrow(x$strm)) 
-	if (!x$loop) pos <- "end" else pos <- 1
+	if (!x$loop) pos <- "'end'" else pos <- 1
     cat(paste('Contains', nrow(x$strm), 
 		    'data points, currently at position', pos, 
 		    'loop is', x$loop, '\n'))

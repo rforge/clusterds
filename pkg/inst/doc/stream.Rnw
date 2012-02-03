@@ -72,7 +72,12 @@ Southern Methodist University\\
 P.O. Box 750122 \\ 
 Dallas, TX 75275-0122\\ 
 E-mail: \email{mhahsler@lyle.smu.edu}\\ 
-URL: \url{http://lyle.smu.edu/~mhahsler} }
+URL: \url{http://lyle.smu.edu/~mhahsler}
+
+John Forrest\\
+Microsoft Corporation\\
+E-mail: \email{jforrest@microsoft.com}
+}
 
 \begin{document}
 \vfill
@@ -894,96 +899,106 @@ and will described in the next example.
 
 \subsection{Replaying a data stream} \label{examples:replay}
 
-An important feature of \pkg{stream} is the ability to replay stream data. This
-ensures that all of the algorithms being experimented on will have the same
-data set and there won't be any anomalies due to concept drift in the data
-stream. We start this example is a similar manner, by loading the package and
-creating a DSD object. There are several ways to replay streams---one of them
-being to use a combination of \code{write_stream()} and \code{DSD_ReadStream}
-objects as mentioned in the previous example---but in this example we will
-discuss the use of the \code{DSD_Wrapper} class.
+An important feature of \pkg{stream} is the ability to replay portions of a 
+data stream. With this feature we can capture a special feature of the
+data (e.g., an anomality) and then change our algorithm and test if the 
+change improved the behavior on exactly that data.
+Also the feature can be used to
+conduct experiments where different algorithms need to 
+see exactly the same data.
 
-The \code{DSD_Wrapper} class was designed with the intent of being a wrapper
-class for data that has already been read in or generated in the form of a data
-frame or matrix. Because of this feature, we are able to use data produced from
-another data stream and wrap it in a \code{DSD_Wrapper} object to replay the
-data. Similar to the \code{DSD_ReadStream} class, there is also a \code{loop}
-parameter in \code{DSD_Wrapper}. The \code{loop} parameter, when set to
-\code{TRUE}, will loop over the data points within the data stream when all of
-them have been used. For instance, if there are 10 data points in the object,
-and the user requests 100 data points in a call to \code{get_points()} with
-looping enabled, the 10 data points will be returned 10 times to give the user
-the requested 100 data points. In our example we opt to leave the \code{loop}
-parameter as its default, \code{FALSE}.
+There are several ways to replay streams. We can write a portion of a stream to
+disk with \code{write_stream()} and then use \code{DSD_ReadStream} to read the
+stream portion back every time it is needed.
+However, often the interesting portion of the stream is small enought to
+fit into memeory or might be already available as a matrix or a data.frame in
+R. In this case we can use the DSD class \code{DSD_Wrapper} which
+provides a stream interface for a matrix/data.frame.
 
-<<echo=FALSE>>= 
-set.seed(1000) 
-@
-
+First we create some data and use \code{get_points()} to store 100
+points as a data.frame in \code{points}.
 <<>>= 
 library("stream") 
+set.seed(1000) 
 dsd <- DSD_Gaussian_Static(k=3, d=2) 
-replayer <- DSD_Wrapper(get_points(dsd, 100), k=3) 
+points <- get_points(dsd, 100)
+head(points)
+@
+
+Next, we create a \code{DSD_Wrapper} object with the points.
+
+<<>>= 
+replayer <- DSD_Wrapper(points) 
 replayer 
 @
 
-Just like the \code{DSD_ReadStream} object created in the previous example,
-\code{replayer} can be used like any other DSD object. 
+Every time we get a point from replayer it moves to the next position.
 
-<<>>= 
-dsc <- DSC_CluStream() 
-cluster(dsc, replayer, 100) 
-replayer 
+<<>>=
+get_points(replayer, n=5)
+replayer
 @
 
-When all of the data points have been used in the stream, there is a function
-available called \code{reset_stream()} which returns the \code{DSD_Wrapper} to
-the beginning of the stream (\code{reset_stream()} is also available for
-\code{DSD_ReadStream} objects). 
+The stream only has 99 points left and requestion more will result in
+an error.
 
-<<>>= 
-reset_stream(replayer) # resetting the dsd to its original state replayer
+<<>>=
+get_points(replayer,n = 1000)
+@
+
+\code{DSD_Wrapper} and \code{DSD_ReadStream} can be created to loop 
+indefinately, i.e., start over once they reach the last data point.
+This is achived by passing \code{loop=TRUE} to the creator function.
+These two types of DSD classes can start over with the first 
+data point by using \code{reset_stream()}.
+
+<<>>=
+reset_stream(replayer)
+replayer
 @
 
 \subsection{Clustering a data stream} \label{examples:clustering_ds}
 
-This example outlines how to cluster data using DSC objects.  First, we create
-the DSC and DSD objects. In this example we use the \code{DSC_DenStream} class
-with its default parameters, and \code{DSD_Gaussian_Static} with 2
-dimensionality data generated from 3 clusters. We also created a
-\code{DSD_Wrapper} so that we can use the same data used in the clustering
-operation to plot the micro-clusters against. Notice that the \code{noise}
-parameter is set to \code{0.05}, the enabling of this parameter causes 5\% of
-the data points generated by the DSD to be noise.
-
-<<echo=FALSE>>= 
-set.seed(1000) 
-@
+In this example we show how to cluster data using DSC objects.  
+First, we create a data stream (two Gaussian clusters in two dimesions
+with 5\% noise).
 
 <<>>= 
 library("stream") 
-dsc <- DSC_DenStream() 
-d <- get_points(DSD_Gaussian_Static(k=3, d=2, noise=0.05), 3000) 
-head(d)
-
-dsd <- DSD_Wrapper(d, k=3) 
+set.seed(1000) 
+dsd <- DSD_Gaussian_Static(k=3, d=2, noise=0.05)
+dsd
 @
 
-Now, the objects need to interact with one another through the \code{cluster()}
-function. The clustering operation will implicitly alter \code{dsc} so no
-reassignment is necessary. By default, \code{DSC_DenStream} is initialized with
-1000 points, meaning that no new micro-clusters are created until this
-threshold has been breached, which is why we cluster 3000 new data points.
+Next, we prepare the clustering algorithm. We use here \code{DenStream}
+and set the number of points used for initialisation to 100.
+
+<<>>=
+dsc <- DSC_DenStream(initPoints = 100) 
+dsc
+@
+
+Now we are ready to cluster data from the stream using
+the \code{cluster()} function. Note, that \code{cluster()}
+will implicitly alter \code{dsc} so no
+reassignment is necessary.
 
 <<>>= 
-cluster(dsc, dsd, 3000) 
+cluster(dsc, dsd, 500) 
+dsc
 @
 
-After clustering the data, we are ready to view the results.
+After clustering 500 data points data the clustering contains
+\Sexpr{nclusters(dsc)} micro clusters. The micro cluster centers
+are:
+<<>>=
+get_centers(dsc)
+@
+
 
 <<cluster, fig=TRUE, include=FALSE>>= 
-plot(d, col="grey", pch=3)
-points(get_centers(dsc), col='red', cex=2, lwd=2) 
+plot(get_points(dsd,500), col="grey", pch=3, main = "DenStream")
+points(get_centers(dsc), col="red", cex=5)
 @
 
 \begin{figure} \centering \includegraphics[width=.5\linewidth]{stream-cluster}
