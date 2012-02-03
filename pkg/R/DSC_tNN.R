@@ -8,7 +8,7 @@ tNN <- setRefClass("tNN",
 		lambda      = "numeric",
 		lambdaFactor   = "numeric",
 
-		centers	    = "matrix",
+		centers	    = "data.frame",
 		counts	    = "numeric",
 		varThresholds = "numeric",
 		last	    = "character"
@@ -34,7 +34,7 @@ tNN <- setRefClass("tNN",
 		    if(!is.null(distFun)) distFun <<- distFun
 		    else distFun <<- pr_DB[[measure]]
 
-		    centers	<<- matrix(nrow=0, ncol=0)
+		    centers	<<- data.frame()
 		    counts	<<- numeric()
 		    varThresholds <<- numeric()
 		    last	<<- as.character(NA)
@@ -129,7 +129,7 @@ tNN$methods(clusters = function() centers[counts>minPoints,])
 
 ### creator    
 DSC_tNN <- function(threshold = 0.2, minPoints = 2, measure = "euclidean",
-	centroids = identical(tolower(measure), "euclidean"), lambda=0.5) {
+	centroids = identical(tolower(measure), "euclidean"), lambda=0) {
 
     tnn <- tNN$new(threshold=threshold, minPoints=minPoints, 
 	    measure=measure, centroids=centroids,
