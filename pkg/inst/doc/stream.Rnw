@@ -776,11 +776,11 @@ plot. Since noise points have an assignemnt value of \code{NA} they are
 not plotted by the \code{plot} and \code{points} is used to add them
 to the plot.
 
-\code{DSD_MOA} creates dynamic data streams where clusters move over time.
+\code{DSD_RandomRBFGeneratorEvents} creates dynamic data streams where clusters move over time.
 
 <<moa1, fig=TRUE, include=FALSE>>= 
 set.seed(1000) 
-dsd <- DSD_MOA(k=3, d=2) 
+dsd <- DSD_RandomRBFGeneratorEvents(k=3, d=2) 
 dsd
 @
 
@@ -942,7 +942,7 @@ replayer
 The stream only has 99 points left and requestion more will result in
 an error.
 
-<<>>=
+<<eval=FALSE>>=
 get_points(replayer,n = 1000)
 @
 

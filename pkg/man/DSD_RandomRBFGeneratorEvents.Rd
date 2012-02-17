@@ -1,5 +1,5 @@
-\name{DSD_MOA}
-\alias{DSD_MOA}
+\name{DSD_RandomRBFGeneratorEvents}
+\alias{DSD_RandomRBFGeneratorEvents}
 \title{DSD_RandomRBFGeneratorEvents}
 
 \description{

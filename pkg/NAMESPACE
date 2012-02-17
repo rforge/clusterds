@@ -37,6 +37,7 @@ S3method(get_centers, DSC_tNN)
 S3method(get_points, DSD_Gaussian_Static)
 S3method(get_points, DSD_ReadStream)
 S3method(get_points, DSD_Wrapper)
+S3method(get_points, DSD_MOA)
 
 S3method(reset_stream, DSD_Wrapper)
 S3method(reset_stream, DSD_ReadStream)
