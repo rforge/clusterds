@@ -32,7 +32,7 @@ environment variable is moved back to 1.
 dsd <- DSD_Gaussian_Static(k=3, d=2)
 replayer <- DSD_Wrapper(get_points(dsd, 100), k=3)
 dsc1 <- DSC_CluStream()
-dsc2 <- DSC_CobWeb()
+dsc2 <- DSC_DenStream()
 
 # clustering the same data in 2 DSC objects
 cluster(dsc1, replayer, 100)

@@ -24,9 +24,9 @@ Volume 11: Workshop on Applications of Pattern Analysis (2010).
 
 \seealso{
 	\code{\link{DSClusterer}},
-	\code{\link{DSC_CobWeb}},
+%	\code{\link{DSC_CobWeb}},
 	\code{\link{DSC_ClusTree}},
-	\code{\link{DSC_StreamKM}},
+%	\code{\link{DSC_StreamKM}},
 	\code{\link{DSC_DenStream}},
 	\code{\link{DSC_CluStream}},
 	\code{\link{DSData}}

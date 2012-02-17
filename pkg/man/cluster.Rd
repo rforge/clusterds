@@ -38,7 +38,7 @@ clustering result, call \code{get_centers()} upon the DSC object.
 
 \examples{
 dsc <- DSC_DenStream(initPoints=100)
-dsd <- DSD_MOA()
+dsd <- DSD_Gaussian_Static()
 cluster(dsc, dsd, 1000)
 get_centers(dsc)
 }

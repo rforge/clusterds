@@ -8,13 +8,28 @@ DSD_RandomRBFGeneratorEvents implemented in MOA.
 }
 
 \usage{
-DSD_RandomRBFGeneratorEvents(k=3, d=2, avgRadius=0, modelSeed=1, instanceSeed=1)
+DSD_RandomRBFGeneratorEvents(k = 3, d = 2, numClusterRange = 3L, 
+    kernelRadius = 0.07, kernelRadiusRange = 0, densityRange = 0, 
+    speed =100L, speedRange = 0L, noiseLevel = 0.1,
+    noiseInCluster = FALSE, eventFrequency = 30000L,
+    eventMergeSplitOption = FALSE, eventDeleteCreate = FALSE, 
+    modelSeed = NULL, instanceSeed = NULL)
 }
 
 \arguments{
 	\item{k}{The number of clusters.}
 	\item{d}{The dimensionality of the data.}
-	\item{avgRadius}{The average radius of the micro-clusters.}
+	\item{numClusterRange}{Numbner of clusters.}
+	\item{kernelRadius}{The average radius of the micro-clusters.}
+	\item{kernelRadiusRange}{Radius range of the micro-clusters.}
+	\item{densityRange}{Density range.}
+	\item{speed}{Speed.}
+	\item{speedRange}{Speed range.}
+	\item{noiseLevel}{Noise level.}
+	\item{noiseInCluster}{Noise in cluster.}
+	\item{eventFrequency}{Frequency of events.}
+	\item{eventMergeSplitOption}{Merge and split?}
+	\item{eventDeleteCreate}{Delete and create?}
 	\item{modelSeed}{Random seed for the model.}
 	\item{instanceSeed}{Random seed for the instances.}
 }

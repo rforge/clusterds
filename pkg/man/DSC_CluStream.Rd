@@ -4,12 +4,13 @@
 \description{Creates a new DataStreamClusterer with the CluStream algorithm}
 
 \usage{
-DSC_CluStream(timeWindow = 1000, maxNumKernels = 100)
+DSC_CluStream(horizon = 1000, maxNumKernels = 100, kernelRadiFactor = 2)
 }
 
 \arguments{
-  \item{timeWindow}{Defines the time window to be used in CluStream}
+  \item{horizon}{Defines the time window to be used in CluStream}
   \item{maxNumKernels}{Defines the maximum number of kernels used in CluStream}
+  \item{kernelRadiFactor}{Kernel radius factor.}
 }
 
 \details{

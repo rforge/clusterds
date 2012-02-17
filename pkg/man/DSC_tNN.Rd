@@ -5,7 +5,7 @@
 
 \usage{
 	DSC_tNN(threshold = 0.2, minPoints = 2, measure = "euclidean",
-	centroids = identical(tolower(measure), "euclidean"), lambda=0.05)
+	centroids = identical(tolower(measure), "euclidean"), lambda=0)
 }
 
 \arguments{
