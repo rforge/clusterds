@@ -1,8 +1,8 @@
 Package: stream
-Version: 0.0-1
+Version: 0.0-2
 Date: 2010-xx-xx
 Title: Infrastructure for Data Streams
-Author: John Forrest, Michael Hahsler
+Author: Matthew, Bolanos, John Forrest, Michael Hahsler
 Maintainer: Michael Hahsler <michael@hahsler.net>
 Description: A framework for data stream modeling and
     associated data mining tasks such as 
