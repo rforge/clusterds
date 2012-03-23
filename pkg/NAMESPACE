@@ -21,7 +21,9 @@ export(
 	get_centers,
 	get_points,
 	nclusters,
-	reset_stream
+	reset_stream,
+	evaluation,
+	recluster
       )
 
 S3method(plot, DSC)

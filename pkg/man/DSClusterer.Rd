@@ -12,6 +12,8 @@ DSC subclasses: \code{get_centers()}, which returns the centers of the
 micro-clusters generated; \code{nclusters()}, which returns the number of
 micro-clusters generated; \code{print()}, which prints general data about the DSC;
 and \code{plot()}, which will plot the centers of the micro-clusters.
+
+If you include a \code{DSD} within \code{plot()}, then it will plot the DSD in light gray.
 }
 
 \seealso{
