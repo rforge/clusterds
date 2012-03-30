@@ -9,6 +9,7 @@ export(
 	
 	# DSC_R
 	DSC_tNN,
+	DSC_Wrapper,
 	
 	# DSD
 	DSD_RandomRBFGeneratorEvents,
@@ -23,7 +24,8 @@ export(
 	nclusters,
 	reset_stream,
 	evaluation,
-	recluster
+	recluster,
+	testClusters
       )
 
 S3method(plot, DSC)
