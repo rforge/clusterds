@@ -11,7 +11,8 @@ tNN <- setRefClass("tNN",
 		centers	    = "data.frame",
 		counts	    = "numeric",
 		varThresholds = "numeric",
-		last	    = "character"
+		last	    = "character",
+		time = "numeric"
 	), 
 
 	methods = list(

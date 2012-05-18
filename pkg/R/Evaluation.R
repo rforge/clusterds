@@ -1,18 +1,28 @@
 #get dsd, dsc and n
 
-evaluation <- function (dsd,dsc,method = "f1",n = 1000, macro = TRUE) {
+get_evaluation <- function (dsc,dsd,method = c("f1","recall","precision","numCluster","numClasses","ssq","rand"),n = 1000, macro = TRUE) {
+	print(dsd)
 	d <- get_points(dsd, n, assignment = TRUE)
 	c <- get_centers(dsc)
-	assignment <- NULL
-	if(macro && !is.null(dsc$assignment))
-		assignment <- dsc$assignment
+	assignment <- get_assignment(dsc)
+	if(length(c) == 0){
+		c <- as.data.frame(rbind(mean(d)))
+		assignment <- 1
+	} 
+	confusion <- get_confusionMatrix(d,c,assignment)
+	x <- lapply(method, function(x) {evaluate(d,c,x,confusion,assignment,dsc)})
+	data.frame(x)
+	names(x) <- method
+	x
+}
+
+evaluate <- function(d,c,method,confusion,assignment,dsc) {
 	#make a vector of all of the methods and then do a lot of if statements
-	methods <- c("f1","recall","precision","numCluster","numClasses","ssq","rand","confusionMatrix")
+	methods <- c("f1","recall","precision","numCluster","numClasses","fpr","ssq","rand")
 	
 	if(nrow(c) > 0) {
 		m <- pmatch(tolower(method),tolower(methods)) #finds index of partial match in array of methods
-		if(m < 6) {
-			confusion <- confusionMatrix(d,c,assignment)
+		if(m < 7) {
 			if(m == 1)
 				x <- f1(confusion)
 			if(m == 2)
@@ -23,13 +33,13 @@ evaluation <- function (dsd,dsc,method = "f1",n = 1000, macro = TRUE) {
 				x <- numCluster(confusion)
 			if(m == 5)
 				x <- numClasses(confusion)
-		} else {
 			if(m == 6)
-				x <- ssq(d,c,assignment)
+				x <- fpr(confusion)
+		} else {
 			if(m == 7)
-				x <- rand(d,c,assignment)
+				x <- ssq(d,c,assignment)
 			if(m == 8)
-				x <- confusionMatrix(d,c,assignment)
+				x <- rand(d,c,assignment)
 		}
 	} else
 		x = -1
@@ -54,6 +64,12 @@ precision <- function(confusion) {
 	mean(precision)
 }
 
+fpr <- function(confusion) {
+	relativeDocs <- apply(confusion[,],1, FUN = sum)
+	recall <- apply(confusion[,],2,function(x) if(sum(relativeDocs[which(x != max(x))])) (sum(x)-max(x))/sum(relativeDocs[which(x != max(x))]) else 0)
+	mean(recall)
+}
+
 numCluster <- function(confusion) {
 	ncol(confusion)
 }
@@ -66,8 +82,8 @@ ssq <- function(d,c,assignment = NULL) {
 	dist = dist(d,c)
 	#Find the minimum distance and save the class
 	predict = apply(dist, 1, min)
-	if(!is.null(assignment))
-		predict <- unlist(lapply(predict, function(y) assignment[y]))
+	#if(!is.null(assignment))
+	#	predict <- unlist(lapply(predict, function(y) assignment[y]))
 	sum(predict)
 }
 
@@ -89,13 +105,12 @@ rand <- function(d,c,assignment = NULL) {
 
 silhouette <- function(d,c,assignment = NULL) {}
 
-confusionMatrix <- function(d,c,assignment) {
+get_confusionMatrix <- function(d,c,assignment) {
 	#Calculate the distance to each cluster. Rdist has a threshold measurement which can be used later.
 	dist <- dist(d,c)
 	#Find the minimum distance and save the class
 	predict <- apply(dist, 1, which.min)
-	if(!is.null(assignment))
-		predict <- unlist(lapply(predict, function(y) assignment[y]))
+	predict <- unlist(lapply(predict, function(y) assignment[y]))
 	#Get the actual class
 	actual <- attr(d, "assignment")
 	result <- cbind(actual,predict)

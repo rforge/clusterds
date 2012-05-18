@@ -1,5 +1,4 @@
 #get dsd, dsc and n
-
 recluster <- function (dsc, method = "kmeans", ...) {
 	c <- get_centers(dsc)
 	methods <- c("kmeans","hierarchical","dbscan")

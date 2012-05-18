@@ -5,6 +5,6 @@ DSC_Wrapper <- function(x) {
     r
 }
 
-nclusters <- function(x, ...) nrow(x$centers)
+nclusters.DSC_Wrapper <- function(x, ...) nrow(x$centers)
 
 get_centers.DSC_Wrapper <- function(x, ...) x$centers

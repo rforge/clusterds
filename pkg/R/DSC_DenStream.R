@@ -18,7 +18,7 @@ DSC_DenStream <- function(horizon=1000, epsilon=0.1, minPoints=10, beta=0.001, m
   if (epsilon <= 0 || epsilon >= 1)
     stop("invalid epsilon, range: 0 to 1 exclusive")
 
-  if (minPoints < 10)
+  if (minPoints < 0)
     stop("invalid minPoints, must be > 0")
 
   if (beta <= 0 || beta >= 1)
@@ -54,3 +54,5 @@ DSC_DenStream <- function(horizon=1000, epsilon=0.1, minPoints=10, beta=0.001, m
   class(l) <- c("DSC_DenStream","DSC_MOA","DSC")
   l
 }
+
+
