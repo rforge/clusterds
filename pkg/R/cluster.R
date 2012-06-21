@@ -6,9 +6,7 @@ cluster <- function(dsc, dsd, n=1) {
 
     # looping through the stream, feeding the new datapoints into 
     # the algorithm
-    time<-system.time(.cluster(dsc, dsd, n))
-    
-    dsc$RObj$time <- time
+    .cluster(dsc, dsd, n)
     
     # so cl <- cluster(cl, ...) also works
     invisible(dsc)

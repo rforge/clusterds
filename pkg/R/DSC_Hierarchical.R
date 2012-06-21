@@ -1,13 +1,12 @@
 hierarchical <- setRefClass("hierarchical", 
 	fields = list(
-		data = "matrix",
+		data = "ANY",
 		d     = "matrix",
 		method   = "character",
 		members	    = "ANY",
 		k = "numeric",
 		assignment = "numeric",
-		details = "ANY",
-		time = "numeric"
+		details = "ANY"
 	), 
 
 	methods = list(
@@ -28,11 +27,15 @@ hierarchical <- setRefClass("hierarchical",
 
 hierarchical $methods(cluster = function(x, ...) {
 	    data <<- x
-		hierarchical <-hclust(d=dist(x), method = method, members= members)
-		memb <- cutree(hierarchical, k = k)
-
-		assignment <<- memb
-		details <<- hierarchical
+	    if(nrow(data)>=2) {
+			hierarchical <-hclust(d=dist(x), method = method, members= members)
+			if(k < length(unlist(hierarchical['height'])))
+				memb <- cutree(hierarchical, k = k)
+			else
+				memb <- 1
+			assignment <<- memb
+			details <<- hierarchical
+		}
 	}
 )
 

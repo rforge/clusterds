@@ -1,16 +1,15 @@
 dbscan <- setRefClass("dbscan", 
 	fields = list(
-		data     = "matrix",
+		data     = "ANY",
 		eps   = "numeric",
 		MinPts	    = "numeric",
 		scale   = "logical",
 		method   = "character",
 		seeds = "logical",
 		showplot = "logical",
-		countmode = "logical",
+		countmode = "ANY",
 		assignment = "numeric",
-		details = "ANY",
-		time = "numeric"
+		details = "ANY"
 	), 
 
 	methods = list(

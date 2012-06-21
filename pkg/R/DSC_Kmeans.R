@@ -1,13 +1,12 @@
 kmeans <- setRefClass("kmeans", 
 	fields = list(
-		x     = "matrix",
+		x     = "ANY",
 		centers   = "ANY",
 		iter.max	    = "numeric",
 		nstart   = "numeric",
 		algorithm   = "character",
-		clusters = "matrix",
-		details = "ANY",
-		time = "numeric"
+		clusters = "ANY",
+		details = "ANY"
 	), 
 
 	methods = list(
@@ -30,15 +29,15 @@ kmeans <- setRefClass("kmeans",
 
 kmeans$methods(cluster = function(x, ...) {
 	    x <<- x
-	    if(nrow(x)>=centers) {
+	    if(nrow(x)>centers) {
 			kmeans<-kmeans(x=x, centers=centers, 
 	    	iter.max = iter.max, nstart = nstart,
 	    	algorithm = algorithm)
 		
-			clusters <<- kmeans$centers
+			clusters <<- kmeans$cluster
 			details <<- kmeans
 		} else
-			clusters <<- x
+			clusters <<- 1:nrow(x)
 	}
 )
 
@@ -61,8 +60,8 @@ DSC_Kmeans <- function(centers, iter.max = 10, nstart = 1,
 }
 
 ### get centers
-get_centers.DSC_Kmeans <- function(x, ...) x$RObj$clusters
+get_centers.DSC_Kmeans <- function(x, ...) x$RObj$x
 
-nclusters.DSC_Kmeans <- function(x) nrow(get_centers(x))
+nclusters.DSC_Kmeans <- function(x) length(unique(x$RObj$clusters))
 
-get_assignment.DSC_Kmeans <- function(x) 1:nrow(get_centers(x))
+get_assignment.DSC_Kmeans <- function(x) x$RObj$clusters

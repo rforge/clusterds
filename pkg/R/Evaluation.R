@@ -1,7 +1,7 @@
 #get dsd, dsc and n
 
 get_evaluation <- function (dsc,dsd,method = c("f1","recall","precision","numCluster","numClasses","ssq","rand"),n = 1000, macro = TRUE) {
-	print(dsd)
+	#print(dsd)
 	d <- get_points(dsd, n, assignment = TRUE)
 	c <- get_centers(dsc)
 	assignment <- get_assignment(dsc)
@@ -111,6 +111,8 @@ get_confusionMatrix <- function(d,c,assignment) {
 	#Find the minimum distance and save the class
 	predict <- apply(dist, 1, which.min)
 	predict <- unlist(lapply(predict, function(y) assignment[y]))
+	predict[is.null(predict)] <- 1
+	predict[is.na(predict)] <- 1
 	#Get the actual class
 	actual <- attr(d, "assignment")
 	result <- cbind(actual,predict)
