@@ -50,6 +50,8 @@ tNN <- setRefClass("tNN",
 tNN$methods(cluster = function(newdata, verbose = FALSE) {
 	    'Cluster new data.' ### online help
 
+	    if(!is(newdata, "data.frame")) newdata <- as.data.frame(newdata)
+	    
 	    nclusters <- function(x) nrow(centers)
 
 	    last <<- character(nrow(newdata))
