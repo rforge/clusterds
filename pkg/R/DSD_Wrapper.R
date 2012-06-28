@@ -1,4 +1,4 @@
-DSD_Wrapper <- function(x, k, loop=FALSE) {
+DSD_Wrapper <- function(x, k, loop=FALSE, assignment = NULL) {
 
     state <- new.env()
     assign("counter", 1L, envir = state)
@@ -12,12 +12,13 @@ DSD_Wrapper <- function(x, k, loop=FALSE) {
 	    state = state,
 	    d = ncol(x),
 	    k = k,
-	    loop = loop)
+	    loop = loop,
+	    assignment = assignment)
     class(l) <- c("DSD_Wrapper","DSD_R","DSD")
     l
 }
 
-get_points.DSD_Wrapper <- function(x, n=1, ...) {
+get_points.DSD_Wrapper <- function(x, n=1, assignment = FALSE,...) {
     n <- as.integer(n)
    
     if(x$state$counter > nrow(x$strm)) {
@@ -57,6 +58,11 @@ get_points.DSD_Wrapper <- function(x, n=1, ...) {
 	    }
 	}
     }
+
+	##FIX ME
+
+	#if(assignment)
+	#	attr(d, "assignment") <- clusterOrder
 
     d
 }

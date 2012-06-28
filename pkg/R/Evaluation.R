@@ -4,7 +4,7 @@ get_evaluation <- function (dsc,dsd,method = c("f1","recall","precision","numClu
 	#print(dsd)
 	d <- get_points(dsd, n, assignment = TRUE)
 	c <- get_centers(dsc)
-	assignment <- get_assignment(dsc)
+	assignment <- get_assignment(dsc,d,n)
 	if(length(c) == 0){
 		c <- as.data.frame(rbind(mean(d)))
 		assignment <- 1
@@ -106,13 +106,7 @@ rand <- function(d,c,assignment = NULL) {
 silhouette <- function(d,c,assignment = NULL) {}
 
 get_confusionMatrix <- function(d,c,assignment) {
-	#Calculate the distance to each cluster. Rdist has a threshold measurement which can be used later.
-	dist <- dist(d,c)
-	#Find the minimum distance and save the class
-	predict <- apply(dist, 1, which.min)
-	predict <- unlist(lapply(predict, function(y) assignment[y]))
-	predict[is.null(predict)] <- 1
-	predict[is.na(predict)] <- 1
+	predict <- assignment
 	#Get the actual class
 	actual <- attr(d, "assignment")
 	result <- cbind(actual,predict)

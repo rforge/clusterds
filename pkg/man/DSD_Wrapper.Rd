@@ -8,13 +8,14 @@ The data can either be looped or replayed manually to give
 the exact same data to 2 different DataStreamTask objects.
 }
 
-\usage{DSD_Wrapper(x, k, loop=FALSE)}
+\usage{DSD_Wrapper(x, k, loop=FALSE, assignment = NULL)}
 
 \arguments{
 	\item{x}{A data frame or matrix with the data to be used in the stream.}
 	\item{k}{Optional: The number of clusters}
 	\item{loop}{A flag that tells the stream to loop or 
 				not to loop over the data frame.}
+	\item{assignment}{A flag that tells the stream to return assignment information.}
 }
 
 \details{

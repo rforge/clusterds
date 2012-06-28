@@ -6,7 +6,8 @@ kmeans <- setRefClass("kmeans",
 		nstart   = "numeric",
 		algorithm   = "character",
 		clusters = "ANY",
-		details = "ANY"
+		details = "ANY",
+		clusterCenters = "ANY"
 	), 
 
 	methods = list(
@@ -35,6 +36,7 @@ kmeans$methods(cluster = function(x, ...) {
 	    	algorithm = algorithm)
 		
 			clusters <<- kmeans$cluster
+			clusterCenters <<- kmeans$centers
 			details <<- kmeans
 		} else
 			clusters <<- 1:nrow(x)
@@ -60,8 +62,6 @@ DSC_Kmeans <- function(centers, iter.max = 10, nstart = 1,
 }
 
 ### get centers
-get_centers.DSC_Kmeans <- function(x, ...) x$RObj$x
+get_centers.DSC_Kmeans <- function(x, ...) x$RObj$clusterCenters
 
-nclusters.DSC_Kmeans <- function(x) length(unique(x$RObj$clusters))
-
-get_assignment.DSC_Kmeans <- function(x) x$RObj$clusters
+nclusters.DSC_Kmeans <- function(x) length(x$RObj$clusterCenters)

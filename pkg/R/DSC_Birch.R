@@ -61,5 +61,3 @@ DSC_Birch <- function(radius, compact=radius, keeptree = FALSE, columns = NULL) 
 get_centers.DSC_Birch <- function(x, ...) x$RObj$x
 
 nclusters.DSC_Birch <- function(x) length(x$RObj$x)
-
-get_assignment.DSC_Birch <- function(x, ...) 1:length(x$RObj$x)

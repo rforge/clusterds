@@ -86,7 +86,7 @@ E-mail: \email{mbolanos@smu.edu}
 
 \begin{document}
 \vfill
-\section*{Acknowledgments} This work is supported in part by the U.S. National
+\section*{Acknowledgments} This  work is supported in part by the U.S. National
 Science Foundation as a research experience for undergraduates (REU) under
 contract number IIS-0948893.
 
@@ -1082,19 +1082,12 @@ Next, you will want to grab the centers of your microclusters and then wrap them
 This will allow you to insert your microclusters into another clustering algorithm. The supported
 macro clustering models that are typically used for reclustering are kmeans, hierarchial, and dbscan.
 
-<<>>= 
-recluster <- DSC_Kmeans(centers=3)
-centers <- get_centers(dsc)
-dsd_temp <- DSD_Wrapper(centers)
-cluster(recluster,dsd_temp,nrow(centers))
-@
+
 
 After running the \code{cluster()} function, your reclustering DSC will then have the standard
 clustering information. This information can later be used to evaluate the performance of the algorithm.
 
-<<>>= 
-get_evaluation(recluster, dsd, method = "f1", n = 1000)
-@
+
 
 In this example the f1 score is computed for the reclustered data.
 
@@ -1226,10 +1219,10 @@ package. These include the \pkg{proxy} package, written by
 JRI from within the \proglang{R} environment.
 
 \begin{figure} \begin{minipage}[b]{.48\linewidth} \centering
-\includegraphics{stream-denstream+kmeans} \\(a) 
+\includegraphics{stream-denstreamkmeans} \\(a) 
 \end{minipage}
 \begin{minipage}[b]{.48\linewidth} \centering
-\includegraphics{stream-clustream+kmeans} \\(b) 
+\includegraphics{stream-clustreamkmeans} \\(b) 
 \end{minipage}
 \caption{Plotting the results of a \textit{k-means} operation on each stream
 clustering algorithm} 
@@ -1240,17 +1233,7 @@ clustering algorithm}
 
 It may be of use to perform a batch job on multiple clusters to evaluate and compare them quickly. The \code{batch_Cluster()} function is used to perform this operation. As inputs, it accepts a list of DSC's, a common DSD for creating the clusters, an optional DSD used for testing the clusters, a list of scores to solve for, a list of reclustering DSC's, and parameters for the DSD size. Below is an example:
 
-<<>>= 
-library("stream") 
-dsd <- DSD_Gaussian_Static(k=3, d=2, mu=rbind(c(1.5,1.3),c(1,1),c(1.2,1)))
 
-dsc1 <- DSC_DenStream() 
-dsc2 <- DSC_CluStream() 
-
-recluster <- DSC_Kmeans(centers=3)
-
-batch_Clusters(list(dsc1,dsc2), dsd, recluster=list(recluster), measures=c("f1","recall","precision"), input_n=1000)
-@
 
 This block of code effectively uses the first 1000 points of the \code{DSD} to construct clusters using both the \code{DSC_DenStream} and the \code{DSC_CluStream} algorithms. It also will recluster both results using \textit{k-means} and will return the evaluation scores of each clustering combination.
 

@@ -13,7 +13,6 @@ export(
 	
 	# DSC_R
 	DSC_tNN,
-	DSC_Wrapper,
 	
 	# DSD
 	DSD_RandomRBFGeneratorEvents,
@@ -29,9 +28,7 @@ export(
 	get_copy,
 	nclusters,
 	reset_stream,
-	get_evaluation,
-	recluster,
-	batch_Clusters
+	get_evaluation
       )
 
 S3method(plot, DSC)
@@ -39,18 +36,11 @@ S3method(print, DSC)
 S3method(print, DSD)
 S3method(print, DSD_Wrapper)
 
-S3method(nclusters, DSC_Wrapper)
-S3method(nclusters, DSC_MOA)
-S3method(nclusters, DSC_R)
-S3method(nclusters, DSC_Kmeans)
-S3method(nclusters, DSC_Dbscan)
-S3method(nclusters, DSC_Birch)
+S3method(nclusters, DSC)
 
-S3method(get_assignment, DSC_Kmeans)
+S3method(get_assignment, DSC)
+S3method(get_assignment, DSC_Hierarchical)
 S3method(get_assignment, DSC_Dbscan)
-S3method(get_assignment, DSC_MOA)
-S3method(get_assignment, DSC_R)
-S3method(get_assignment, DSC_Birch)
 
 S3method(write_stream, DSD)
 

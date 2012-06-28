@@ -8,19 +8,30 @@ get_centers.default <- function(x, ...) {
 
 get_centers <- function(x, ...) UseMethod("get_centers")
 
-get_copy <- function(x, ...) UseMethod("get_copy")
+get_copy <- function(x) UseMethod("get_copy")
 
 nclusters <- function(x) UseMethod("nclusters")
 
-nclusters.DSC_MOA <- function(x) nrow(get_centers(x))
+get_microclusters <- function(x) UseMethod("get_microclusters")
 
-nclusters.DSC_R <- function(x) nrow(get_centers(x))
+nclusters.DSC <- function(x) nrow(get_centers(x))
 
-get_assignment <- function(x) UseMethod("get_assignment")
+get_assignment <- function(dsc,points,n) UseMethod("get_assignment")
 
-get_assignment.DSC_MOA <- function(x) 1:nrow(get_centers(x))
+get_microclusters.default <- function(x) {
+	UseMethod("get_centers")
+}
 
-get_assignment.DSC_R <- function(x) 1:nrow(get_centers(x))
+get_assignment.DSC <- function(dsc,points,n) {
+	d <- points
+	c <- get_centers(dsc)
+	dist <- dist(d,c)
+	#Find the minimum distance and save the class
+	predict <- apply(dist, 1, which.min)
+	#predict <- unlist(lapply(predict, function(y) assignment[y]))
+	predict[is.null(predict)] <- 1
+	predict[is.na(predict)] <- 1	
+}
 
 get_copy.DSC_Macro <- function(x) {
 	temp <- x
