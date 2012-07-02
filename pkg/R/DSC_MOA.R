@@ -54,10 +54,14 @@ get_centers.DSC_MOA <- function(x, ...) {
 	mCluster <- .jcall(mClusters, "Ljava/lang/Object;", "get", i-1L)
 	mCluster <- .jcast(mCluster, "Lmoa/cluster/Cluster")
 	center <- .jcall(mCluster, "[D", "getCenter") 
+	weight <- .jcall(mCluster, "D", "getWeight") 
 	m <- rbind(m, center)
     }
 
     colnames(m) <- paste("X", 1:ncol(m), sep="")
+    
+    m$weight <- weight
+    
     # returning the matrix 
     m
 }

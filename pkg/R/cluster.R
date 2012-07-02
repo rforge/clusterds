@@ -14,6 +14,11 @@ cluster <- function(dsc, dsd, n=1) {
 
 .cluster <- function(dsc, x, n) UseMethod(".cluster")
 
+.cluster.DSC_Sample <- function(dsc, dsd, n) {
+   	x <- get_points(dsd,n=n)
+	dsc$RObj$cluster(x)
+}
+
 .cluster.DSC_MOA <- function(dsc, dsd, n) {
     ## data has to be all doubles for MOA clusterers!
     for (i in 1:n) {
