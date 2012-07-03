@@ -36,7 +36,7 @@
 
 \author{John Forrest\\Southern Methodist University 
 \And Michael Hahsler\\Southern Methodist University
-\And Matthew Bolanos\\Southern Methodist University} 
+\AND Matthew Bolanos\\Southern Methodist University} 
 
 \title{Introduction to \pkg{stream}: A Framework for Data Stream Modeling in R}
 
@@ -67,7 +67,7 @@ from other sources and incorporate them into the framework.  }
 \Plainkeywords{data stream, data mining, cluster, classification} 
 
 \Address{ Michael Hahsler\\ 
-Computer Science and Engineering\\ 
+Engineering Management, Information, and Systems\\ 
 Lyle School of Engineering\\ 
 Southern Methodist University\\ 
 P.O. Box 750122 \\ 
@@ -80,6 +80,8 @@ Microsoft Corporation\\
 E-mail: \email{jforrest@microsoft.com}
 
 Matthew Bolanos\\
+Computer Science and Engineering\\ 
+Lyle School of Engineering\\ 
 Southern Methodist University\\
 E-mail: \email{mbolanos@smu.edu}
 }
@@ -385,7 +387,7 @@ WEKA and that
 it implements several data stream classification and 
 clustering algorithms.
 
-\section{The \pkg{stream} Framework} \label{sec:design}
+\section{The stream Framework} \label{sec:design}
 
 A drawback of MOA for R users is that using its data stream mining
 algorithms together with the advanced capabilities of
@@ -613,7 +615,7 @@ DBSCAN
 Hierarchical
 \end{itemize}
 
-\section{Extending the \pkg{stream} Framework} \label{sec:design:extension}
+\section{Extending the stream Framework} \label{sec:design:extension}
 
 Since stream mining is a relatively young field and many advances are
 expected in the near future,
