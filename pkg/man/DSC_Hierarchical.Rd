@@ -25,10 +25,6 @@ contains the following items:
 	\item{RObj}{The underlying R object.}
 }
 
-\references{ 
-	
-}
-
 \seealso{
 	\code{\link{DSClusterer}}
 }
