@@ -30,7 +30,9 @@ get_assignment.DSC <- function(dsc,points,n) {
 	predict <- apply(dist, 1, which.min)
 	#predict <- unlist(lapply(predict, function(y) assignment[y]))
 	predict[is.null(predict)] <- 1
-	predict[is.na(predict)] <- 1	
+	predict[is.na(predict)] <- 1
+	
+	predict	
 }
 
 get_copy.DSC_Macro <- function(x) {

@@ -60,7 +60,7 @@ get_centers.DSC_MOA <- function(x, ...) {
 
     colnames(m) <- paste("X", 1:ncol(m), sep="")
     
-    m$weight <- weight
+    #m$weight <- weight
     
     # returning the matrix 
     m

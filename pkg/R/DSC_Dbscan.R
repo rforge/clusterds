@@ -67,8 +67,13 @@ DSC_Dbscan <- function(eps, MinPts = 5, scale = FALSE, method = c("hybrid", "raw
 
 ### get centers
 get_centers.DSC_Dbscan <- function(x, ...) {
+	stop("Not implemented for DBSCAN")
 	nclusters <- unique(x$RObj$assignment)
 	do.call(rbind,lapply(nclusters,function(clusters){apply(x$RObj$data[which(x$RObj$assignment==clusters),],2, mean)}))
+}
+
+nclusters.DSC_Dbscan <- function(x)  {
+	length(unique(x$RObj$assignment))
 }
 
 get_microclusters.DSC_Dbscan <- function(x, ...) x$RObj$data 
@@ -82,4 +87,6 @@ get_assignment.DSC_Dbscan <- function(dsc,points,n) {
 	predict <- unlist(lapply(predict, function(y) dsc$RObj$assignment[y]))
 	predict[is.null(predict)] <- 1
 	predict[is.na(predict)] <- 1	
+	
+	predict
 }

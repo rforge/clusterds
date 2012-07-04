@@ -63,5 +63,3 @@ DSC_Kmeans <- function(centers, iter.max = 10, nstart = 1,
 
 ### get centers
 get_centers.DSC_Kmeans <- function(x, ...) x$RObj$clusterCenters
-
-nclusters.DSC_Kmeans <- function(x) length(x$RObj$clusterCenters)

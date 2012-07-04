@@ -20,16 +20,16 @@ Sample <- setRefClass("Sample",
 )
 
 
-Sample$methods(cluster = function(newdata, verbose = FALSE) {
+Sample $methods(cluster = function(x, ...) {
 	     x <<- x
 	     centers <<- x[sample(nrow(x), size=size), ]
-}
+	     }
 )
 
    
 DSC_Sample <- function(size = 100) {
 
-    sample <- sample$new( size = size)
+    sample <- Sample$new( size = size)
 
 
     l <- list(description = "sample",
@@ -42,4 +42,4 @@ DSC_Sample <- function(size = 100) {
 
 
 ### get centers
-get_centers.DSC_Kmeans <- function(x, ...) x$RObj$centers
+get_centers.DSC_Sample <- function(x, ...) x$RObj$centers

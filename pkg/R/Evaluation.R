@@ -3,7 +3,7 @@
 get_evaluation <- function (dsc,dsd,method = c("f1","recall","precision","numCluster","numClasses","ssq","rand"),n = 1000, macro = TRUE) {
 	#print(dsd)
 	d <- get_points(dsd, n, assignment = TRUE)
-	c <- get_centers(dsc)
+	c <- get_microclusters(dsc)
 	assignment <- get_assignment(dsc,d,n)
 	if(length(c) == 0){
 		c <- as.data.frame(rbind(mean(d)))
@@ -109,6 +109,10 @@ get_confusionMatrix <- function(d,c,assignment) {
 	predict <- assignment
 	#Get the actual class
 	actual <- attr(d, "assignment")
+	
+	actual[is.na(actual)]<- 0
+	actual <- actual + 1
+	
 	result <- cbind(actual,predict)
 	#Compute the sparse matrix
 	confusion <- sparseMatrix(i = result[,1],j = result[,2], x = 1)

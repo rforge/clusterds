@@ -56,8 +56,13 @@ DSC_Hierarchical <- function(k, method = "complete", members = NULL) {
 
 ### get centers
 get_centers.DSC_Hierarchical <- function(x, ...) {
+	stop("Not implemented for Hierarchical")
 	nclusters <- unique(x$RObj$assignment)
 	do.call(rbind,lapply(nclusters,function(clusters){apply(x$RObj$data[which(x$RObj$assignment==clusters),],2, mean)}))
+}
+
+nclusters.DSC_Hierarchical <- function(x)  {
+	length(unique(x$RObj$assignment))
 }
 
 get_microclusters.DSC_Hierarchical <- function(x, ...) x$RObj$data
@@ -70,5 +75,7 @@ get_assignment.DSC_Hierarchical <- function(dsc,points,n)  {
 	predict <- apply(dist, 1, which.min)
 	predict <- unlist(lapply(predict, function(y) dsc$RObj$assignment[y]))
 	predict[is.null(predict)] <- 1
-	predict[is.na(predict)] <- 1	
+	predict[is.na(predict)] <- 1
+	
+	predict	
 }
