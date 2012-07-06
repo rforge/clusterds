@@ -66,3 +66,48 @@ get_centers.DSC_MOA <- function(x, ...) {
     m
 }
 
+get_weights.DSC_MOA <- function(x, ...) {
+
+    if (.jcall(x$javaObj, "Z", "implementsMicroClusterer")) {
+	mClustering <- .jcall(x$javaObj, 
+		"Lmoa/cluster/Clustering;", "getMicroClusteringResult")
+    }else{
+	mClustering <- .jcall(x$javaObj, 
+		"Lmoa/cluster/Clustering;", "getClusteringResult")
+    }
+
+    # array of microclusters
+    mClusters <- .jcall(mClustering, 
+	    "Lmoa/core/AutoExpandVector;", "getClustering")
+
+    
+    # length of array
+    length <- .jcall(mClusters, "I", "size")
+
+    # empty clustering?
+    if(length<1) {
+	#warning("Clustering has no clusters!")
+	return(data.frame())
+    }
+
+    m <- data.frame()
+
+    # iterating over the array, extracting data to be plotted
+    # the first point has already been used, so start from 2
+    for (i in 1:length) {
+
+	# will have to cast mCluster as moa/cluster/Cluster
+	mCluster <- .jcall(mClusters, "Ljava/lang/Object;", "get", i-1L)
+	mCluster <- .jcast(mCluster, "Lmoa/cluster/Cluster")
+	weight <- .jcall(mCluster, "D", "getWeight") 
+	m <- rbind(m, weight)
+    }
+
+    colnames(m) <- paste("X", 1:ncol(m), sep="")
+    
+    #m$weight <- weight
+    
+    # returning the matrix 
+    unlist(m)
+}
+
