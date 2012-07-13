@@ -19,11 +19,19 @@ the exact same data to 2 different DataStreamTask objects.
 }
 
 \details{
-The \code{DSD_Wrapper} class is designed to be a wrapper class for data that is held in memory in either a data frame or matrix form.
+The \code{DSD_Wrapper} class is designed to be a wrapper class for data that is
+held in memory in either a data frame or matrix form.
 
-It works like the other DSD classes--by calling \code{get_points()} to retrieve data from the stream. The function \code{reset_stream()} can be used to move the counter back to the beginning of the stream. This is an important feature to be able to replay stream data for multiple clusters as shown in the example below.
+It works like the other DSD classes--by calling \code{get_points()} to retrieve
+data from the stream. The function \code{reset_stream()} can be used to move
+the counter back to the beginning of the stream. This is an important feature
+to be able to replay stream data for multiple clusters as shown in the example
+below.
 
-The value returned is a \code{list} of class \code{DSD}, and \code{DSD_Wrapper}. The important items with the list are \code{strm}, the data being wrapped, \code{state} the environment which contains the counter, and \code{d}, the number of dimensions in the stream.
+The value returned is a \code{list} of class \code{DSD}, and
+\code{DSD_Wrapper}. The important items with the list are \code{strm}, the data
+being wrapped, \code{state} the environment which contains the counter, and
+\code{d}, the number of dimensions in the stream.
 }
 
 \value{

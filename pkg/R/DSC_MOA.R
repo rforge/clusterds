@@ -66,7 +66,7 @@ get_centers.DSC_MOA <- function(x, ...) {
     m
 }
 
-get_weights.DSC_MOA <- function(x, ...) {
+get_weights.DSC_MOA <- function(x, scale=NULL) {
 
     if (.jcall(x$javaObj, "Z", "implementsMicroClusterer")) {
 	mClustering <- .jcall(x$javaObj, 
@@ -108,6 +108,10 @@ get_weights.DSC_MOA <- function(x, ...) {
     #m$weight <- weight
     
     # returning the matrix 
-    unlist(m)
+    m <- unlist(m)
+
+    if(!is.null(scale)) m <- map(m, scale)
+
+    m
 }
 

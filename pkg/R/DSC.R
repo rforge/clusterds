@@ -20,7 +20,7 @@ get_assignment <- function(dsc,points,n) UseMethod("get_assignment")
 
 get_weights <- function(dsc, ...) UseMethod("get_weights")
 
-get_microclusters.default <- function(x) {
+get_microclusters.DSC <- function(x) {
 	UseMethod("get_centers")
 }
 
@@ -43,7 +43,7 @@ get_copy.DSC_Macro <- function(x) {
 	temp
 }
 
-get_weights.DSC <- function(x) {
+get_weights.DSC <- function(x, scale=NULL) {
 	rep(1,nclusters(x))
 }
 

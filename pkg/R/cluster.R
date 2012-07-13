@@ -1,4 +1,4 @@
-## wrapper fo cluster functions
+## wrapper for cluster and recluster functions
 
 cluster <- function(dsc, dsd, n=1, ...) { 
     if (n < 1)
@@ -12,12 +12,17 @@ cluster <- function(dsc, dsd, n=1, ...) {
     invisible(dsc)
 }
 
-.cluster <- function(dsc, x, n, ...) UseMethod(".cluster")
-
-.cluster.DSC_Sample <- function(dsc, dsd, n, ...) {
-   	x <- get_points(dsd,n=n)
-	dsc$RObj$cluster(x)
+recluster <- function(macro, dsc, ...) {
+    if(!is(macro, "DSC_Macro")) stop("macro is not od class DSC_marco")
+    
+    x <- get_centers(dsc)
+    weight <- get_weights(dsc)
+    macro$RObj$cluster(x, weight=weight, ...)
 }
+
+
+### Workers
+.cluster <- function(dsc, x, n, ...) UseMethod(".cluster")
 
 .cluster.DSC_MOA <- function(dsc, dsd, n, ...) {
     ## data has to be all doubles for MOA clusterers!
@@ -32,11 +37,6 @@ cluster <- function(dsc, dsd, n=1, ...) {
     }
 }
 
-.cluster.DSC_Macro <- function(dsc, dsd, n, ...) {
-   	x <- get_points(dsd,n=n)
-	dsc$RObj$cluster(x, ...)
-}
-
 .cluster.DSC_R <- function(dsc, dsd, n, ...) {
     ### dsc contains an RObj which is  a reference object with a cluster method
     for (i in 1:n) {
@@ -44,4 +44,18 @@ cluster <- function(dsc, dsd, n=1, ...) {
     	dsc$RObj$cluster(x, ...)
     }
 }
+
+### FIXME: Sample should be reservoir sampling!
+.cluster.DSC_Sample <- function(dsc, dsd, n, ...) {
+    x <- get_points(dsd,n=n)
+    dsc$RObj$cluster(x)
+}
+
+### FIXME:  macro clusterers get all the data and can only be used once!!!
+### FIXME:we should warn that the old clustering is completely list!
+.cluster.DSC_Macro <- function(dsc, dsd, n, ...) {
+    x <- get_points(dsd,n=n)
+    dsc$RObj$cluster(x, ...)
+}
+
 

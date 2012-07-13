@@ -44,7 +44,7 @@ kmeans$methods(cluster = function(x, ...) {
 )
 
 ### creator    
-DSC_Kmeans <- function(centers, iter.max = 10, nstart = 1,
+DSC_Kmeans <- function(k, iter.max = 10, nstart = 1,
        algorithm = c("Hartigan-Wong", "Lloyd", "Forgy",
                      "MacQueen")) {
 
@@ -52,9 +52,9 @@ DSC_Kmeans <- function(centers, iter.max = 10, nstart = 1,
 	    iter.max = iter.max, nstart = nstart,
 	    algorithm = algorithm)
 
-		kmeans$centers <- centers
+		kmeans$centers <- k
 
-    l <- list(description = "kmeans",
+    l <- list(description = "k-Means",
 	    RObj = kmeans)
 
     class(l) <- c("DSC_Kmeans","DSC_Macro","DSC")

@@ -11,7 +11,11 @@
 	\item{eps}{Reachability Distance.}
 	\item{MinPts}{Reachability minimum no. of points.}
 	\item{scale}{scale the data}
-	\item{method}{"dist" treats data as distance matrix (relatively fast but memory expensive), "raw" treats data as raw data and avoids calculating a distance matrix (saves memory but may be slow), "hybrid" expects also raw data, but calculates partial distance matrices (very fast with moderate memory requirements ).}
+	\item{method}{"dist" treats data as distance matrix (relatively fast
+	but memory expensive), "raw" treats data as raw data and avoids
+	calculating a distance matrix (saves memory but may be slow), "hybrid"
+	expects also raw data, but calculates partial distance matrices (very
+	fast with moderate memory requirements ).}
 	\item{seeds}{FALSE to not include the isseed-vector in the dbscan-object.}
 	\item{showplot}{0 = no plot, 1 = plot per iteration, 2 = plot per subiteration.}
 	\item{countmode}{NULL or vector of point numbers at which to report progress.}
@@ -42,7 +46,7 @@ cluster(dsc, dsd, 500)
 dsc
 
 # plot micro-clusters
-plot(get_points(dsd,500), col="gray", main= "tNN")
+plot(get_points(dsd,500), col="gray", main= "DBSCAN")
 centers <- get_centers(dsc)
 points(centers, col="red", cex=5)
 }

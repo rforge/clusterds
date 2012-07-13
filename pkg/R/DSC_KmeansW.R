@@ -1,11 +1,11 @@
 kmeansW <- setRefClass("kmeansW", 
 	fields = list(
-		x     = "ANY",
-		centers   = "ANY",
-		iter.max	    = "numeric",
-		nstart   = "numeric",
-		clusters = "ANY",
-		details = "ANY",
+		x	    = "ANY",
+		centers	    = "ANY",
+		iter.max    = "numeric",
+		nstart	    = "numeric",
+		clusters    = "ANY",
+		details	    = "ANY",
 		clusterCenters = "ANY"
 	), 
 
@@ -18,11 +18,9 @@ kmeansW <- setRefClass("kmeansW",
 		    iter.max	<<- iter.max 
 		    nstart	<<- nstart
 		    
-		    
 		    .self
 		}
-
-	),
+	)
 )
 
 kmeansW$methods(cluster = function(x, weight = rep(1,nrow(x)), ...) {
@@ -40,14 +38,14 @@ kmeansW$methods(cluster = function(x, weight = rep(1,nrow(x)), ...) {
 )
 
 ### creator    
-DSC_KmeansW <- function(centers, iter.max = 10, nstart = 1) {
+DSC_KmeansW <- function(k, iter.max = 10, nstart = 1) {
 
-    kmeansW <- kmeansW$new( 
+    kmeansW <- new("kmeansW", 
 	    iter.max = iter.max, nstart = nstart)
 
-		kmeansW$centers <- centers
+		kmeansW$centers <- k
 
-    l <- list(description = "kmeansW",
+    l <- list(description = "Weighted k-Means",
 	    RObj = kmeansW)
 
     class(l) <- c("DSC_KmeansW","DSC_Macro","DSC")

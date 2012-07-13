@@ -1,19 +1,27 @@
 #get dsd, dsc and n
 
-get_evaluation <- function (dsc,dsd,method = c("f1","recall","precision","numCluster","numClasses","ssq","rand"),n = 1000, macro = TRUE) {
-	#print(dsd)
-	d <- get_points(dsd, n, assignment = TRUE)
-	c <- get_microclusters(dsc)
-	assignment <- get_assignment(dsc,d,n)
-	if(length(c) == 0){
-		c <- as.data.frame(rbind(mean(d)))
-		assignment <- 1
-	} 
-	confusion <- get_confusionMatrix(d,c,assignment)
-	x <- lapply(method, function(x) {evaluate(d,c,x,confusion,assignment,dsc)})
-	data.frame(x)
-	names(x) <- method
-	x
+get_evaluation <- function (dsc,dsd,
+	method = c("f1","recall","precision",
+		"numCluster","numClasses","ssq","rand"),
+	n = 1000, macro = TRUE) {
+	
+    d <- get_points(dsd, n, assignment = TRUE)
+    c <- get_microclusters(dsc)
+    
+    predict <- get_assignment(dsc,d,n)
+    actual <- attr(d, "assignment")
+    
+    if(length(c) < 1){
+	warning("No Clusters available!")
+	ret <-  rep(NA, length(method))
+	names(ret) <- method
+	return(ret)
+    } 
+
+    confusion <- table(actual, predict)
+
+
+    sapply(method, function(x) evaluate(d,c,x,confusion,assignment,dsc))
 }
 
 evaluate <- function(d,c,method,confusion,assignment,dsc) {
@@ -105,8 +113,7 @@ rand <- function(d,c,assignment = NULL) {
 
 silhouette <- function(d,c,assignment = NULL) {}
 
-get_confusionMatrix <- function(d,c,assignment) {
-	predict <- assignment
+get_confusionMatrix <- function(d,c,predict) {
 	#Get the actual class
 	actual <- attr(d, "assignment")
 	

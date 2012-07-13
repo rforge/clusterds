@@ -149,4 +149,10 @@ DSC_tNN <- function(threshold = 0.2, minPoints = 2, measure = "euclidean",
 ### get centers
 get_centers.DSC_tNN <- function(x, ...) x$RObj$clusters()
 
-get_weights.DSC_tNN <- function(x, ...) x$RObj$counts
+get_weights.DSC_tNN <- function(x, scale)  {
+    weight <- x$RObj$counts
+
+    if(!is.null(scale)) weight <- map(weight, scale)
+    
+    weight
+}

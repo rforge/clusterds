@@ -19,7 +19,7 @@ Sample <- setRefClass("Sample",
 	),
 )
 
-
+### FIXME: We need reservoir sampling here!
 Sample $methods(cluster = function(x, ...) {
 	     x <<- x
 	     centers <<- x[sample(nrow(x), size=size), ]
@@ -32,7 +32,7 @@ DSC_Sample <- function(size = 100) {
     sample <- Sample$new( size = size)
 
 
-    l <- list(description = "sample",
+    l <- list(description = "Sample",
 	    RObj = sample)
 
     class(l) <- c("DSC_Sample","DSC_R","DSC")

@@ -58,7 +58,7 @@ DSC_Dbscan <- function(eps, MinPts = 5, scale = FALSE, method = c("hybrid", "raw
 
 	dbscan$eps <- eps
 
-    l <- list(description = "dbscan",
+    l <- list(description = "DBSCAN",
 	    RObj = dbscan)
 
     class(l) <- c("DSC_Dbscan","DSC_Macro","DSC")
