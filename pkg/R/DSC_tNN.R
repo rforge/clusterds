@@ -87,7 +87,7 @@ tNN$methods(cluster = function(newdata, verbose = FALSE) {
 	    nclusters <- function(x) nrow(centers)
 	    
 	    ##NEW
-	    overlap@counts <- overlap@counts * x@lambda_factor
+	    overlap@counts <- overlap@counts * lambdaFactor
 
 	    last <<- character(nrow(newdata))
 
@@ -153,7 +153,7 @@ tNN$methods(cluster = function(newdata, verbose = FALSE) {
 				##NEW
 				## assign observation to existing node
 				## max 3 clusters can be affected
-				sel_all <- names(d)[which(d <= var_thresholds)]
+				sel_all <- names(inside)[which(inside <= 0)]
 	
 				## FIXME: we only update the count for the winner!
 				counts[sel] <- counts[sel] + 1
