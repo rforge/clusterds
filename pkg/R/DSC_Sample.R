@@ -31,7 +31,7 @@ Sample $methods(cluster = function(x, ...) {
 	     	
 	     
 	     ##centers <<- x[sample(nrow(x), size=size), ]
-	     }
+	     
 )
 
    

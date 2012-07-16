@@ -1,3 +1,27 @@
+
+
+.smc_size <- 10L
+setClass("SimpleMC",
+	representation(
+		unused      = "integer", ## list of unused cols/rows
+		top         = "integer", ## top of unused
+		counts      = "matrix",
+		initial_counts = "numeric" 
+		),
+	
+	prototype(
+		unused	    = .smc_size:1,
+		top	    = .smc_size,
+		counts	    = matrix(0, ncol=.smc_size, nrow=.smc_size),
+		initial_counts = structure(rep(0, .smc_size), 
+			names=rep(NA, .smc_size))  ## also holds cluster names
+		)
+
+	## FIXME: Implement check
+	#validity= function(object) {
+	#}
+	)
+
 tNN <- setRefClass("tNN", 
 	fields = list(
 		measure     = "character",
@@ -44,8 +68,8 @@ tNN <- setRefClass("tNN",
 		    varThresholds <<- numeric()
 		    last	<<- as.character(NA)
 		    
-			overlap	<<- new("SimpleMC"),
-			global_clusters <<- list(),
+			overlap	<<- new("SimpleMC")
+			global_clusters <<- list()
 			gc_ptr <<- character(0)
 		    
 		    .self

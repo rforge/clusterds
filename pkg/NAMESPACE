@@ -36,7 +36,9 @@ export(
 	nclusters,
 	reset_stream,
 	get_evaluation,
-	get_weights
+	get_weights,
+	
+	SimpleMC
       )
 
 S3method(plot, DSC)
