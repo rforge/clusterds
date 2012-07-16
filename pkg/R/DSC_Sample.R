@@ -22,7 +22,15 @@ Sample <- setRefClass("Sample",
 ### FIXME: We need reservoir sampling here!
 Sample $methods(cluster = function(x, ...) {
 	     x <<- x
-	     centers <<- x[sample(nrow(x), size=size), ]
+	     
+	     if(nrow(centers) < size)
+	     	centers <<- rbind(centers,x)
+	     else if(runif(1) < size/(size+1))
+	     	centers[sample(1:size, 1),] <<- x
+	     }
+	     	
+	     
+	     ##centers <<- x[sample(nrow(x), size=size), ]
 	     }
 )
 

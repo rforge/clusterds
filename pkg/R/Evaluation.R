@@ -118,7 +118,9 @@ get_confusionMatrix <- function(d,c,predict) {
 	actual <- attr(d, "assignment")
 	
 	actual[is.na(actual)]<- 0
-	actual <- actual + 1
+	
+	if(0 %in% actual)
+		actual <- actual + 1
 	
 	result <- cbind(actual,predict)
 	#Compute the sparse matrix

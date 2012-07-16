@@ -12,7 +12,11 @@ tNN <- setRefClass("tNN",
 		counts	    = "numeric",
 		varThresholds = "numeric",
 		last	    = "character",
-		time = "numeric"
+		
+		##NEW
+		overlap		= "SimpleMC",
+		global_clusters = "list",
+		gc_ptr		= "character"
 	), 
 
 	methods = list(
@@ -40,6 +44,10 @@ tNN <- setRefClass("tNN",
 		    varThresholds <<- numeric()
 		    last	<<- as.character(NA)
 		    
+			overlap	<<- new("SimpleMC"),
+			global_clusters <<- list(),
+			gc_ptr <<- character(0)
+		    
 		    .self
 		}
 
@@ -53,6 +61,9 @@ tNN$methods(cluster = function(newdata, verbose = FALSE) {
 	    if(!is(newdata, "data.frame")) newdata <- as.data.frame(newdata)
 	    
 	    nclusters <- function(x) nrow(centers)
+	    
+	    ##NEW
+	    overlap@counts <- overlap@counts * x@lambda_factor
 
 	    last <<- character(nrow(newdata))
 
@@ -75,6 +86,12 @@ tNN$methods(cluster = function(newdata, verbose = FALSE) {
 		    counts[sel] <<- 1 
 		    ## initialize variable threshold
 		    varThresholds[sel] <<- threshold
+		    
+		    ##NEW
+		    overlap <- smc_addState(overlap, "1")
+		    global_clusters[["1"]] <- "1"
+		    gc_ptr[sel] <- "1"
+
 
 		}else{
 		    inside <- dist(nd, centers, 
@@ -97,8 +114,65 @@ tNN$methods(cluster = function(newdata, verbose = FALSE) {
 			    counts[sel] <<- 1
 			    ## initialize threshold
 			    varThresholds[sel] <<- threshold
-
+				
+				#NEW
+		  	  	overlap <- smc_addState(overlap, sel)
+	
+				#NEW
+		    	## new states cannot be part of a global cluster
+				global_clusters[[sel]] <- sel
+				gc_ptr[sel] <- sel
+			
 			}else{ 
+				
+				
+				##NEW
+				## assign observation to existing node
+				## max 3 clusters can be affected
+				sel_all <- names(d)[which(d <= var_thresholds)]
+	
+				## FIXME: we only update the count for the winner!
+				counts[sel] <- counts[sel] + 1
+				## update counts
+				#counts[sel_all] <- counts[sel_all] + 1/length(sel_all)
+	
+				if(length(sel_all)>1) {
+				    i <- rep(sel_all, length(sel_all))
+				    j <- as.vector(t(matrix(sel_all, ncol=length(sel_all), length(sel_all))))
+				    overlap <- smc_addTransition(overlap,i,j)
+				
+				    ## check if the cluster should be chained
+				    avg_density <- (cluster_counts(cl)[i]+
+				    	    cluster_counts(cl)[j])/2
+				    ## density of the denser cluster
+				    #avg_density <- max(cluster_counts(cl)[i],
+				    #	    cluster_counts(cl)[j])
+				    ol <- smc_countMatrix(overlap)
+				    ol_density <- sapply(1:length(i), 
+					    FUN=function(l) ol[i[l],j[l]])
+				    
+				    ## hard-coded threshold
+				    ## we could calculate area 
+				    ## (but might not improve results!)
+				    chain <- ol_density > avg_density/4
+				    for(l in which(chain)) {
+					to <- gc_ptr[i[l]]
+					from <- gc_ptr[j[l]]
+					
+					if(to != from) {
+					    gc_ptr[global_clusters[[from]]] <- to
+					    global_clusters[[to]] <- c(global_clusters[[to]], global_clusters[[from]])
+					    global_clusters[[from]] <- NULL
+					}
+				    }
+	
+	
+				    ## FIXME: splitting is missing
+				
+				}
+	
+					
+				
 			    ## assign observation to existing node
 
 			    ## update center (if we use centroids)

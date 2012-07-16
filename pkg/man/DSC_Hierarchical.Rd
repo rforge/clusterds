@@ -36,9 +36,4 @@ dsd <- DSD_Gaussian_Static(k=3, noise=0.05)
 dsc <- DSC_Hierarchical(k = 3)
 cluster(dsc, dsd, 500)
 dsc
-
-# plot micro-clusters
-plot(get_points(dsd,500), col="gray", main= "tNN")
-centers <- get_centers(dsc)
-points(centers, col="red", cex=5)
 }

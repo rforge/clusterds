@@ -46,13 +46,13 @@ recluster <- function(macro, dsc, ...) {
 }
 
 ### FIXME: Sample should be reservoir sampling!
-.cluster.DSC_Sample <- function(dsc, dsd, n, ...) {
-    x <- get_points(dsd,n=n)
-    dsc$RObj$cluster(x)
-}
+#.cluster.DSC_Sample <- function(dsc, dsd, n, ...) {
+#    x <- get_points(dsd,n=n)
+#    dsc$RObj$cluster(x)
+#}
 
-### FIXME:  macro clusterers get all the data and can only be used once!!!
-### FIXME:we should warn that the old clustering is completely list!
+### FIXME: macro clusterers get all the data and can only be used once!!!
+### FIXME: we should warn that the old clustering is completely list!
 .cluster.DSC_Macro <- function(dsc, dsd, n, ...) {
     x <- get_points(dsd,n=n)
     dsc$RObj$cluster(x, ...)

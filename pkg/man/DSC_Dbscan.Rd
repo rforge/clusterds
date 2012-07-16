@@ -44,9 +44,4 @@ dsd <- DSD_Gaussian_Static(k=3, noise=0.05)
 dsc <- DSC_Dbscan(eps = .1)
 cluster(dsc, dsd, 500)
 dsc
-
-# plot micro-clusters
-plot(get_points(dsd,500), col="gray", main= "DBSCAN")
-centers <- get_centers(dsc)
-points(centers, col="red", cex=5)
 }
