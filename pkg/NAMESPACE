@@ -18,6 +18,7 @@ export(
 	
 	# DSC_R
 	DSC_tNN,
+	DSC_tNN_Macro,
 	
 	# DSD
 	DSD_RandomRBFGeneratorEvents,
@@ -36,9 +37,7 @@ export(
 	nclusters,
 	reset_stream,
 	get_evaluation,
-	get_weights,
-	
-	SimpleMC
+	get_weights
       )
 
 S3method(plot, DSC)
