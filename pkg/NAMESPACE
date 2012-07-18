@@ -52,10 +52,12 @@ S3method(nclusters, DSC_Hierarchical)
 S3method(get_assignment, DSC)
 S3method(get_assignment, DSC_Hierarchical)
 S3method(get_assignment, DSC_Dbscan)
+S3method(get_assignment, DSC_tNN_Macro)
 
 S3method(get_microclusters, DSC)
 S3method(get_microclusters, DSC_Hierarchical)
 S3method(get_microclusters, DSC_Dbscan)
+S3method(get_microclusters, DSC_tNN_Macro)
 
 S3method(get_weights, DSC)
 S3method(get_weights, DSC_MOA)

@@ -37,7 +37,6 @@ tNN_Macro <- setRefClass("tNN_Macro",
 		varThresholds = "numeric",
 		last	    = "character",
 		
-		##NEW
 		overlap		= "SimpleMC",
 		global_clusters = "list",
 		gc_ptr		= "character"
@@ -87,7 +86,7 @@ tNN_Macro$methods(cluster = function(newdata, verbose = FALSE) {
 	    nclusters <- function(x) nrow(centers)
 	    
 	    ##NEW
-	    overlap@counts <- overlap@counts * lambdaFactor
+	    
 
 	    last <<- character(nrow(newdata))
 
@@ -99,8 +98,10 @@ tNN_Macro$methods(cluster = function(newdata, verbose = FALSE) {
 			nclusters(x), "clusters.\n")
 
 		## fade cluster structure?
-		if(lambda>0) 
+		if(lambda>0) {
 		    counts <<- counts * lambdaFactor
+		    overlap@counts <<- overlap@counts * lambdaFactor
+		}
 
 		## first cluster
 		if(nclusters(x)<1) {
@@ -110,16 +111,17 @@ tNN_Macro$methods(cluster = function(newdata, verbose = FALSE) {
 		    counts[sel] <<- 1 
 		    ## initialize variable threshold
 		    varThresholds[sel] <<- threshold
-		    
 		    ##NEW
-		    overlap <- smc_addState(overlap, "1")
-		    global_clusters[["1"]] <- "1"
-		    gc_ptr[sel] <- "1"
+		    overlap <<- smc_addState(overlap, "1")
+		    global_clusters[["1"]] <<- "1"
+		    gc_ptr[sel] <<- "1"
 
 
 		}else{
 		    inside <- dist(nd, centers, 
 			    method=distFun) - varThresholds
+			    
+			names(inside) <- rownames(centers)
 		    min <- which.min(inside)
 		    
 		    if(inside[min]<=0) sel <- rownames(centers)[min]
@@ -140,12 +142,12 @@ tNN_Macro$methods(cluster = function(newdata, verbose = FALSE) {
 			    varThresholds[sel] <<- threshold
 				
 				#NEW
-		  	  	overlap <- smc_addState(overlap, sel)
+		  	  	overlap <<- smc_addState(overlap, sel)
 	
 				#NEW
 		    	## new states cannot be part of a global cluster
-				global_clusters[[sel]] <- sel
-				gc_ptr[sel] <- sel
+				global_clusters[[sel]] <<- sel
+				gc_ptr[sel] <<- sel
 			
 			}else{ 
 				
@@ -153,21 +155,27 @@ tNN_Macro$methods(cluster = function(newdata, verbose = FALSE) {
 				##NEW
 				## assign observation to existing node
 				## max 3 clusters can be affected
+				
+				#cat(inside,"\n")
+				
 				sel_all <- names(inside)[which(inside <= 0)]
 	
 				## FIXME: we only update the count for the winner!
-				counts[sel] <- counts[sel] + 1
+				counts[sel] <<- counts[sel] + 1
 				## update counts
 				#counts[sel_all] <- counts[sel_all] + 1/length(sel_all)
+	
 	
 				if(length(sel_all)>1) {
 				    i <- rep(sel_all, length(sel_all))
 				    j <- as.vector(t(matrix(sel_all, ncol=length(sel_all), length(sel_all))))
-				    overlap <- smc_addTransition(overlap,i,j)
+				    
+				    
+				    overlap <<- smc_addTransition(overlap,i,j)
 				
 				    ## check if the cluster should be chained
-				    avg_density <- (cluster_counts(cl)[i]+
-				    	    cluster_counts(cl)[j])/2
+				    avg_density <- (counts[i]+
+				    	    counts[j])/2
 				    ## density of the denser cluster
 				    #avg_density <- max(cluster_counts(cl)[i],
 				    #	    cluster_counts(cl)[j])
@@ -184,9 +192,9 @@ tNN_Macro$methods(cluster = function(newdata, verbose = FALSE) {
 					from <- gc_ptr[j[l]]
 					
 					if(to != from) {
-					    gc_ptr[global_clusters[[from]]] <- to
-					    global_clusters[[to]] <- c(global_clusters[[to]], global_clusters[[from]])
-					    global_clusters[[from]] <- NULL
+					    gc_ptr[global_clusters[[from]]] <<- to
+					    global_clusters[[to]] <<- c(global_clusters[[to]], global_clusters[[from]])
+					    global_clusters[[from]] <<- NULL
 					}
 				    }
 	
@@ -247,15 +255,15 @@ DSC_tNN_Macro <- function(threshold = 0.2, minPoints = 2, measure = "euclidean",
 
 ### get centers
 get_centers.DSC_tNN_Macro <- function(x, ...) {
-	stop("Not implemented for Hierarchical")
+	stop("Not implemented for tNN Macro")
 }
 
 outliers <- function(x) {
 	    # single unconnected micro-cluster
-	    ol <- unlist(x@global_clusters[which(sapply(x@global_clusters, length)==1)])
+	    ol <- unlist(x$RObj$global_clusters[which(sapply(x$RObj$global_clusters, length)==1)])
 
 	    ## in the lowesed .25 quantile 
-	    ol[cluster_counts(x)[ol]<quantile(cluster_counts(x), .25)]
+	    ol[x$RObj$counts[ol]<quantile(x$RObj$counts, .25)]
 
 	    ## low density
 	    #clusters(x)[cluster_counts(x)<quantile(cluster_counts(x), .25)]
