@@ -120,6 +120,7 @@ tNN$methods(cluster = function(newdata, verbose = FALSE) {
 				centers[sel,nas] <<- nd[nas]
 
 			    }
+			
 
 			    ## update counts 
 			    counts[sel] <<- counts[sel] + 1
@@ -127,6 +128,14 @@ tNN$methods(cluster = function(newdata, verbose = FALSE) {
 		    }
 
 		    last[i] <<- sel
+		    
+		    
+		    keep <- which(counts >= 1)
+		   	remove_names <- names(counts[-keep])
+		    
+		    
+		    counts <<- counts[keep]
+		    centers <<- centers[keep,]
 
 		} # end for loop
 

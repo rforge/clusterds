@@ -101,6 +101,9 @@ tNN_Macro$methods(cluster = function(newdata, verbose = FALSE) {
 		if(lambda>0) {
 		    counts <<- counts * lambdaFactor
 		    overlap@counts <<- overlap@counts * lambdaFactor
+		    
+		    
+		    
 		}
 
 		## first cluster
@@ -118,8 +121,10 @@ tNN_Macro$methods(cluster = function(newdata, verbose = FALSE) {
 
 
 		}else{
+			#cat(nrow(centers)," ",length(counts),"\n")
+			
 		    inside <- dist(nd, centers, 
-			    method=distFun) - varThresholds
+			    method=distFun) - threshold
 			    
 			names(inside) <- rownames(centers)
 		    min <- which.min(inside)
@@ -221,10 +226,24 @@ tNN_Macro$methods(cluster = function(newdata, verbose = FALSE) {
 
 			    ## update counts 
 			    counts[sel] <<- counts[sel] + 1
+			    
+			    
+			    
+			
+			lapply(remove_names,function(x){overlap <<- smc_removeState(overlap,x)})
+			    
 			}
 		    }
 
 		    last[i] <<- sel
+		    
+		    
+		    keep <- which(counts >= 1)
+		   	remove_names <- names(counts[-keep])
+		    
+		    
+		    counts <<- counts[keep]
+		    centers <<- centers[keep,]
 
 		} # end for loop
 
