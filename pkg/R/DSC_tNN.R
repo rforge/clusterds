@@ -41,10 +41,6 @@ tNN <- setRefClass("tNN",
 		    varThresholds <<- numeric()
 		    last	<<- as.character(NA)
 		    
-			overlap	<<- new("SimpleMC")
-			global_clusters <<- list()
-			gc_ptr <<- character(0)
-		    
 		    .self
 		}
 

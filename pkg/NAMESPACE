@@ -25,6 +25,8 @@ export(
 	DSD_Gaussian_Static,
 	DSD_ReadStream,
 	DSD_Wrapper,
+	DSD_Target,
+	DSD_Gaussian_Moving,
 	
 	write_stream,
 	cluster,
@@ -44,6 +46,7 @@ S3method(plot, DSC)
 S3method(print, DSC)
 S3method(print, DSD)
 S3method(print, DSD_Wrapper)
+S3method(print, DSD_Gaussian_Moving)
 
 S3method(nclusters, DSC)
 S3method(nclusters, DSC_Dbscan)
@@ -84,6 +87,8 @@ S3method(get_copy,DSC_R)
 S3method(get_points, DSD_Gaussian_Static)
 S3method(get_points, DSD_ReadStream)
 S3method(get_points, DSD_Wrapper)
+S3method(get_points, DSD_Gaussian_Moving)
+S3method(get_points, DSD_Target)
 S3method(get_points, DSD_MOA)
 
 S3method(reset_stream, DSD_Wrapper)
