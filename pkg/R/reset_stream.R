@@ -12,6 +12,10 @@ reset_stream.DSD_Gaussian_Moving <- function(dsd) {
     dsd$state$counter <- 1
 }
 
+reset_stream.DSD_Data <- function(dsd) {
+    dsd$state$counter <- 1
+}
+
 reset_stream.DSD_ReadStream <- function(dsd) {
 	seek(dsd$con, where=0)
 }
