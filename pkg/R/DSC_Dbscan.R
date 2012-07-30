@@ -67,7 +67,7 @@ DSC_Dbscan <- function(eps, MinPts = 5, scale = FALSE, method = c("hybrid", "raw
 
 ### get centers
 get_centers.DSC_Dbscan <- function(x, ...) {
-	stop("Not implemented for DBSCAN")
+	#stop("Not implemented for DBSCAN")
 	nclusters <- unique(x$RObj$assignment)
 	do.call(rbind,lapply(nclusters,function(clusters){apply(x$RObj$data[which(x$RObj$assignment==clusters),],2, mean)}))
 }

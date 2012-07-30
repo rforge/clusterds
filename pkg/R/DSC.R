@@ -67,21 +67,21 @@ plot.DSC <- function(x, dsd = NULL, n = 1000, color=TRUE, main = "Micro clusters
     centers <- get_centers(x)
     if(!is.null(dsd)) {
     	d <- get_points(dsd, n, assignment = TRUE)
-    	plot(d, col="gray", pch=attr(d, "assignment"))
-    	if(color) points(centers, col=get_assignment(x), pch=15)
+    	plot(d, col="gray", pch=attr(d, "assignment"), ...)
+    	if(color) points(centers, col=1, pch=15)
     	else points(centers, pch=15)
     }
     else if(ncol(centers)>2 && method=="pairs") {
-    	if(color) pairs(centers, col=get_assignment(x), main=main, ...)
+    	if(color) pairs(centers,col=1, main=main, ...)
     	else pairs(centers, main=main, ...)
     }
     else if(ncol(centers)>2 && method=="pc") {
 		## we assume Euclidean here
 		p <- prcomp(centers)
-		if(color) plot(p$x, main=main, col=get_assignment(x), ...)
+		if(color) plot(p$x,col=1, main=main, ...)
 		else  plot(p$x, main=main, ...)
     } else {
-    	if(color) plot(centers, col=get_assignment(x), main=main, ...)
+    	if(color) plot(centers,col=1, main=main, ...)
     	else plot(centers, main=main, ...)
     }    
 }

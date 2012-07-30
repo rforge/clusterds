@@ -56,7 +56,7 @@ DSC_Hierarchical <- function(k, method = "complete", members = NULL) {
 
 ### get centers
 get_centers.DSC_Hierarchical <- function(x, ...) {
-	stop("Not implemented for Hierarchical")
+	#stop("Not implemented for Hierarchical")
 	nclusters <- unique(x$RObj$assignment)
 	do.call(rbind,lapply(nclusters,function(clusters){apply(x$RObj$data[which(x$RObj$assignment==clusters),],2, mean)}))
 }
