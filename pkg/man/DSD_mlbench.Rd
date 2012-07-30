@@ -10,7 +10,7 @@ provides access to the data as a data stream.
 
 \arguments{
 	\item{method}{The name of the mlbench datagen.}
-	\item{..,}{Parameters for the mlbench datagen.}
+	\item{...}{Parameters for the mlbench datagen.}
 }
 
 \details{

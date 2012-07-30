@@ -82,7 +82,7 @@ tNN$methods(cluster = function(newdata, verbose = FALSE) {
 
 		}else{
 		    inside <- dist(nd, centers, 
-			    method=distFun) - varThresholds
+			    method=distFun) - threshold
 		    min <- which.min(inside)
 		    
 		    if(inside[min]<=0) sel <- rownames(centers)[min]

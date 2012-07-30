@@ -45,6 +45,7 @@ Stream Clustering in R, Journal of Statistical Software, 35(5), 1-31, URL \url{h
 
 \seealso{
 	\code{\link{DSClusterer}}
+	\code{\link{DSC_tNN_Macro}}
 }
 
 \examples{

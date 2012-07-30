@@ -8,7 +8,7 @@ The data can either be looped or replayed manually to give
 the exact same data to 2 different DataStreamTask objects.
 }
 
-\usage{DSD_Wrapper(data, loop = FALSE)}
+\usage{DSD_Data(data, loop = FALSE)}
 
 \arguments{
 	\item{data}{The name of the dataset from mlbench}
@@ -53,7 +53,7 @@ Returns a \code{DSD_Data} object which is a list of the defined parameters. The 
 
 \examples{
 # creating the DSD_Data
-dsd <- DSD_Wrapper("Shuttle")
+dsd <- DSD_Data("Shuttle")
 dsd
 
 plot(get_points(dsd,n=1000))

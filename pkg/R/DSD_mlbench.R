@@ -77,7 +77,7 @@ get_points.DSD_mlbench <- function(x, n=1, assignment = FALSE,...) {
 		else if(m == 10)
 			d <- mlbench.ringnorm(n,unlist(x$variables))
 		else if(m == 11)
-			d <- mlbench.shapes(n,unlist(x$variables))
+			d <- mlbench.shapes(n)
 		else if(m == 12)
 			d <- mlbench.simplex(n,unlist(x$variables))
 		else if(m == 13)
@@ -89,7 +89,7 @@ get_points.DSD_mlbench <- function(x, n=1, assignment = FALSE,...) {
 		else if(m == 16)
 			d <- mlbench.twonorm(n,unlist(x$variables))
 		else if(m == 17)
-			d <- mlbench.waveform(n,unlist(x$variables))
+			d <- mlbench.waveform(n)
 		else if(m == 18)
 			d <- mlbench.xor(n,unlist(x$variables))
 		else
