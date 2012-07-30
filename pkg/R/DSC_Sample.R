@@ -1,7 +1,8 @@
 Sample <- setRefClass("Sample", 
 	fields = list(
-		x     = "ANY",
-		size     = "numeric",
+		x	    = "ANY",
+		size	    = "numeric",
+		stream_size = "numeric",
 
 		centers	    = "data.frame"
 	), 
@@ -12,6 +13,7 @@ Sample <- setRefClass("Sample",
 			) {
 		    
 		    size	<<- size 
+		    stream_size	<<- 0 
 		    
 		    .self
 		}
@@ -19,20 +21,23 @@ Sample <- setRefClass("Sample",
 	),
 )
 
-### FIXME: We need reservoir sampling here!
+### Reservoir sampling: all values in the stream have the same prob. to
+### be sampled
 Sample $methods(cluster = function(x, ...) {
-	     x <<- x
-	     
-	     if(nrow(centers) < size)
-	     	centers <<- rbind(centers,x)
-	     else if(runif(1) < size/(size+1))
-	     	centers[sample(1:size, 1),] <<- x
-	     }
-	     	
-	     
-	     ##centers <<- x[sample(nrow(x), size=size), ]
-	     
-)
+	    x <<- x
+
+	    ### fill with first values
+	    if(nrow(centers) < size) {
+		centers <<- rbind(centers,x)
+
+	    }else{ ### replace values with decreasing probabilities
+		r <- as.integer(runif(1, min=1, max=stream_size+1))
+		if(r < size) centers[r, ] <<- x
+	    }	 
+
+	    stream_size <<- stream_size+1
+	}
+	)
 
    
 DSC_Sample <- function(size = 100) {

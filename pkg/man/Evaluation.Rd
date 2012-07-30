@@ -7,8 +7,8 @@
 }
 
 \usage{
-	get_evaluation(dsc, dsd, method = c("f1", "recall", "precision",
-                 "numCluster", "numClasses", "ssq", "rand"), n = 1000,
+	get_evaluation(dsc, dsd, method = c("recall", "precision", "f1",
+                 "ssq", "rand", "numCluster", "numClasses"), n = 1000,
                  macro = TRUE)
 }
 

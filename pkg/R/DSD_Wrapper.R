@@ -33,7 +33,9 @@ get_points.DSD_Wrapper <- function(x, n=1, assignment = FALSE,...) {
     if(n_left >= n) {
 	### regular case
 	d <- x$strm[x$state$counter:(x$state$counter + n -1L),]
-	if(assignment) {a <- x$assignment[x$state$counter:(x$state$counter + n -1L),]}
+	if(assignment) {
+	    a <- x$assignment[x$state$counter:(x$state$counter + n -1L)]
+	}
 	x$state$counter <- x$state$counter + n
     }else{
 	### we need to loop!
@@ -41,7 +43,7 @@ get_points.DSD_Wrapper <- function(x, n=1, assignment = FALSE,...) {
 
 	# take what is left and reset counter
 	d <- x$strm[x$state$counter:nrow(x$strm),] 
-	if(assignment) {a <- x$assignment[x$state$counter:nrow(x$strm),]}
+	if(assignment) a <- x$assignment[x$state$counter:nrow(x$strm)]
 	togo <- n-n_left
 	x$state$counter <- 1L
 
@@ -51,19 +53,21 @@ get_points.DSD_Wrapper <- function(x, n=1, assignment = FALSE,...) {
 	    if(n_left < togo) {
 		# take the whole stream
 		d <- rbind(d, x$strm)
-		if(assignment) a <- rbind(a,x$assignment)
+		if(assignment) a <- append(a, x$assignment)
 		togo <- togo - n_left
 	    }else{
 		# take the rest
 		d <- rbind(d, x$strm[1:(x$state$counter+togo-1),])
-		if(assignment) {a <- rbind(a, x$assignment[1:(x$state$counter+togo-1),])}
+		if(assignment) {
+		    a <- append(a, x$assignment[1:(x$state$counter+togo-1)])
+		}
 		x$state$counter <- x$state$counter + togo
 		togo <- 0L
 	    }
 	}
     }
 
-	if(assignment) {attr(d,"assignment")<- a}
+	if(assignment) attr(d,"assignment") <- a
 
     d
 }

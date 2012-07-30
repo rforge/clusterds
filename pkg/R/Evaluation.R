@@ -1,8 +1,8 @@
 #get dsd, dsc and n
 
 get_evaluation <- function (dsc,dsd,
-	method = c("f1","recall","precision",
-		"numCluster","numClasses","ssq","rand"),
+	method = c("recall","precision", "f1", "ssq", "rand",
+		"numCluster", "numClasses"),
 	n = 1000, macro = TRUE) {
 	
     d <- get_points(dsd, n, assignment = TRUE)
@@ -21,10 +21,10 @@ get_evaluation <- function (dsc,dsd,
     confusion <- table(actual, predict)
 
 
-    sapply(method, function(x) evaluate(d,c,x,confusion,assignment,dsc))
+    sapply(method, function(x) evaluate(d, c, x, confusion, predict, dsc))
 }
 
-evaluate <- function(d,c,method,confusion,assignment,dsc) {
+evaluate <- function(d, c, method, confusion, assignment, dsc) {
 	#make a vector of all of the methods and then do a lot of if statements
 	methods <- c("f1","recall","precision","numCluster","numClasses","fpr","ssq","rand")
 	
