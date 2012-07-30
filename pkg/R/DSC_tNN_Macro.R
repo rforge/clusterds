@@ -230,7 +230,6 @@ tNN_Macro$methods(cluster = function(newdata, verbose = FALSE) {
 			    
 			    
 			
-			lapply(remove_names,function(x){overlap <<- smc_removeState(overlap,x)})
 			    
 			}
 		    }
@@ -241,6 +240,7 @@ tNN_Macro$methods(cluster = function(newdata, verbose = FALSE) {
 		    keep <- which(counts >= 1)
 		   	remove_names <- names(counts[-keep])
 		    
+			lapply(remove_names,function(x){overlap <<- smc_removeState(overlap,x)})
 		    
 		    counts <<- counts[keep]
 		    centers <<- centers[keep,]
@@ -274,7 +274,9 @@ DSC_tNN_Macro <- function(threshold = 0.2, minPoints = 2, measure = "euclidean",
 
 ### get centers
 get_centers.DSC_tNN_Macro <- function(x, ...) {
-	stop("Not implemented for tNN Macro")
+	mc <- get_microclusters(x)
+	uni <- unique(x$RObj$gc_ptr)
+	do.call("rbind",lapply(uni,function(y) mean(mc[which(x$RObj$gc_ptr==y),])))
 }
 
 outliers <- function(x) {
@@ -310,7 +312,8 @@ get_assignment.DSC_tNN_Macro <- function(dsc,points,n)  {
 }
 
 get_weights.DSC_tNN_Macro <- function(x, scale)  {
-    weight <- x$RObj$counts
+	uni <- unique(x$RObj$gc_ptr)
+	weight <- unlist(lapply(uni,function(y) mean(x$RObj$counts[which(x$RObj$gc_ptr==y)])))
 
     if(!is.null(scale)) weight <- map(weight, scale)
     

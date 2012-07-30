@@ -556,6 +556,7 @@ and the number of micro-clusters that have been calculated.
 \item
 \code{plot(x, ..., method="pairs")} which plots the centers
 of the micro-clusters. There are 3 available plot methods: \code{pairs},
+\code{plot}, \code{pc}.
 
 \item
 \code{plot(x, dsd)} which plots the centers of the micro-clusters overlayed

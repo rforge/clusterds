@@ -55,6 +55,7 @@ S3method(print, DSD_Data)
 S3method(nclusters, DSC)
 S3method(nclusters, DSC_Dbscan)
 S3method(nclusters, DSC_Hierarchical)
+S3method(nclusters, DSC_tNN_Macro)
 
 S3method(get_assignment, DSC)
 S3method(get_assignment, DSC_Hierarchical)
@@ -81,6 +82,7 @@ S3method(get_centers, DSC_Hierarchical)
 S3method(get_centers, DSC_Dbscan)
 S3method(get_centers, DSC_Birch)
 S3method(get_centers, DSC_Sample)
+S3method(get_centers, DSC_tNN_Macro)
 
 S3method(get_microclusters, DSC)
 

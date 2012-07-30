@@ -60,27 +60,33 @@ print.DSC <- function(x, ...) {
     cat(paste('Number of clusters:', nclusters(x), '\n'))
 }
 
-plot.DSC <- function(x, dsd = NULL, n = 1000, color=TRUE, main = "Micro clusters", ..., method="pairs") {
+plot.DSC <- function(x, dsd = NULL, n = 1000, col="#FF0000", ..., method="pairs") {
     ## method can be pairs, plot or pc (projection with PCA)
     centers <- get_centers(x)
     if(!is.null(dsd)) {
     	d <- get_points(dsd, n, assignment = TRUE)
-    	plot(d, col="gray", pch=attr(d, "assignment"), ...)
-    	if(color) points(centers, col=1, pch=15)
-    	else points(centers, pch=15)
-    }
-    else if(ncol(centers)>2 && method=="pairs") {
-    	if(color) pairs(centers,col=1, main=main, ...)
-    	else pairs(centers, main=main, ...)
-    }
-    else if(ncol(centers)>2 && method=="pc") {
-		## we assume Euclidean here
-		p <- prcomp(centers)
-		if(color) plot(p$x,col=1, main=main, ...)
-		else  plot(p$x, main=main, ...)
+
+    	if(ncol(centers)>2 && method=="pairs") {
+    		pairs(rbind(d,centers),col=c(rep("#DDDDDD",n),rep(col,nrow(centers))), ...)
+    	}
+    	else if(ncol(centers)>2 && method=="pc") {
+			## we assume Euclidean here
+			p <- prcomp(rbind(d,centers))
+			plot(p$x,col=c(rep("#DDDDDD",n),rep(col,nrow(centers))),...)
+    	} else {
+			plot(rbind(d,centers),col=c(rep("#DDDDDD",n),rep(col,nrow(centers))),...)
+    	}
     } else {
-    	if(color) plot(centers,col=1, main=main, ...)
-    	else plot(centers, main=main, ...)
-    }    
+    	if(ncol(centers)>2 && method=="pairs") {
+    		pairs(centers,col=col, ...)
+    	}
+    	else if(ncol(centers)>2 && method=="pc") {
+			## we assume Euclidean here
+			p <- prcomp(centers)
+			plot(p$x,col=col,...)
+    	} else {
+			plot(centers,col=col,...)
+    	}
+    }
 }
 
