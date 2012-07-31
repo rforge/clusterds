@@ -19,9 +19,9 @@ mu <- cbind(
 #)
 
 sd_rho <- cbind(
-       x = c(0.2, 0.15, 0.05),
-       y = c(0.1, 0.08, 0.03),
-       rho = c(0, 0.1, 0.3)
+       x = c(0.2, 0.2, 0.2),
+       y = c(0.1, 0.1, 0.1),
+       rho = c(0.3, 0.3, 0.3)
 )
 
 Sigma <- lapply(1:nrow(sd_rho), FUN = function(i) rbind(
@@ -35,7 +35,7 @@ EMMsim_sequence <- rep(sequence, n)
 library("MASS")
 
 sequ <- c()
-ds <- matrix(NA, ncol=2, nrow=0)
+ds <- data.frame()
 
 # make a for loop
 for (jj in 1:t){

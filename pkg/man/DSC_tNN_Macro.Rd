@@ -5,7 +5,7 @@
 
 \usage{
 	DSC_tNN_Macro(threshold = 0.2, minPoints = 2, measure = "euclidean",
-	centroids = identical(tolower(measure), "euclidean"), lambda=0)
+	centroids = identical(tolower(measure), "euclidean"), lambda=0, horizon=0.5)
 }
 
 \arguments{
@@ -15,6 +15,7 @@
 	\item{measure}{The measure used to calculate cluster proximity.}
 	\item{centroids}{A flag that indicates if centroids are used for clusters.}
 	\item{lambda}{The lambda used in the fading function.}
+	\item{horizon}{The measure used to remove clusters in the fading function.}
 }
 
 \details{
@@ -63,4 +64,10 @@ plot(dsc,dsd)
 
 #location of microclusters in black
 points(get_microclusters(dsc))
+
+#moving data
+dsc <- DSC_tNN_Macro(threshold=.3,lambda=0.02,minPoints=10,horizon=.5)
+dsd <- DSD_Gaussian_Moving(t=100,n=10)
+
+cluster(dsc,dsd,3000,horizon=300,interval=30,sleep=.01, xlim=c(-.5,1.5),ylim=c(-.5,1.5),plot=TRUE,microclusters=TRUE)
 }

@@ -4,13 +4,12 @@
 \description{Get the assignment of points for a particular \code{DSC}.}
 
 \usage{
-	get_assignment(dsc,points,n)
+	get_assignment(dsc,points)
 }
 
 \arguments{
 	\item{dsc}{The DSC object the assignments are being requested from.}
 	\item{points}{A matrix containing a list of points that need to be assigned.}
-	\item{n}{The number of points being assigned to the DSC object}
 }
 
 \details{

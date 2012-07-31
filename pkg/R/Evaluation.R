@@ -8,7 +8,7 @@ get_evaluation <- function (dsc,dsd,
     d <- get_points(dsd, n, assignment = TRUE)
     c <- get_microclusters(dsc)
     
-    predict <- get_assignment(dsc,d,n)
+    predict <- get_assignment(dsc,d)
     actual <- attr(d, "assignment")
     
     if(length(c) < 1){

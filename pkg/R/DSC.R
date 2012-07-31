@@ -16,13 +16,13 @@ get_microclusters <- function(x) UseMethod("get_microclusters")
 
 nclusters.DSC <- function(x) nrow(get_centers(x))
 
-get_assignment <- function(dsc,points,n) UseMethod("get_assignment")
+get_assignment <- function(dsc,points) UseMethod("get_assignment")
 
 get_weights <- function(x, scale) UseMethod("get_weights")
 
 get_microclusters.DSC <- function(x) get_centers(x)
 
-get_assignment.DSC <- function(dsc,points,n) {
+get_assignment.DSC <- function(dsc,points) {
 	d <- points
 	c <- get_centers(dsc)
 	dist <- dist(d,c)

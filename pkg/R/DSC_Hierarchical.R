@@ -67,7 +67,7 @@ nclusters.DSC_Hierarchical <- function(x)  {
 
 get_microclusters.DSC_Hierarchical <- function(x, ...) x$RObj$data
 
-get_assignment.DSC_Hierarchical <- function(dsc,points,n)  {
+get_assignment.DSC_Hierarchical <- function(dsc,points)  {
 	d <- points
 	c <- get_microclusters(dsc)
 	dist <- dist(d,c)

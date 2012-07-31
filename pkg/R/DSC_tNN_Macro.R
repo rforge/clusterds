@@ -39,7 +39,9 @@ tNN_Macro <- setRefClass("tNN_Macro",
 		
 		overlap		= "SimpleMC",
 		global_clusters = "list",
-		gc_ptr		= "character"
+		gc_ptr		= "character",
+		
+		horizon = "numeric"
 	), 
 
 	methods = list(
@@ -49,7 +51,8 @@ tNN_Macro <- setRefClass("tNN_Macro",
 			minPoints   = 2,
 			centroids   = TRUE,
 			threshold   = 0.2,
-			lambda      = 0.01
+			lambda      = 0.01,
+			horizon      = 0.5
 			) {
 		    
 		    measure	<<- measure 
@@ -58,6 +61,7 @@ tNN_Macro <- setRefClass("tNN_Macro",
 		    threshold   <<- threshold
 		    lambda	<<- lambda
 		    lambdaFactor <<- 2^(-lambda)
+		    horizon <<- horizon
 
 		    if(!is.null(distFun)) distFun <<- distFun
 		    else distFun <<- pr_DB[[measure]]
@@ -237,7 +241,7 @@ tNN_Macro$methods(cluster = function(newdata, verbose = FALSE) {
 		    last[i] <<- sel
 		    
 		    
-		    keep <- which(counts >= 1)
+		    keep <- which(counts >= horizon)
 		   	remove_names <- names(counts[-keep])
 		    
 			lapply(remove_names,function(x){overlap <<- smc_removeState(overlap,x)})
@@ -257,11 +261,11 @@ tNN_Macro$methods(clusters = function() centers[counts>minPoints,])
 
 ### creator    
 DSC_tNN_Macro <- function(threshold = 0.2, minPoints = 2, measure = "euclidean",
-	centroids = identical(tolower(measure), "euclidean"), lambda=0) {
+	centroids = identical(tolower(measure), "euclidean"), lambda=0, horizon=.5) {
 
     tNN_Macro <- tNN_Macro$new(threshold=threshold, minPoints=minPoints, 
 	    measure=measure, centroids=centroids,
-	    lambda=lambda)
+	    lambda=lambda,horizon=horizon)
 
     l <- list(description = "tNN_Macro",
 	    RObj = tNN_Macro)
@@ -276,7 +280,7 @@ DSC_tNN_Macro <- function(threshold = 0.2, minPoints = 2, measure = "euclidean",
 get_centers.DSC_tNN_Macro <- function(x, ...) {
 	mc <- get_microclusters(x)
 	uni <- unique(x$RObj$gc_ptr)
-	do.call("rbind",lapply(uni,function(y) mean(mc[which(x$RObj$gc_ptr==y),])))
+	do.call("rbind",lapply(uni,function(y) colMeans(mc[intersect(which(x$RObj$gc_ptr==y),which(!is.na(mc[,1]))),])))
 }
 
 outliers <- function(x) {
@@ -298,7 +302,7 @@ nclusters.DSC_tNN_Macro <- function(x)  {
 
 get_microclusters.DSC_tNN_Macro <- function(x, ...) x$RObj$clusters()
 
-get_assignment.DSC_tNN_Macro <- function(dsc,points,n)  {
+get_assignment.DSC_tNN_Macro <- function(dsc,points)  {
 	d <- points
 	c <- get_microclusters(dsc)
 	dist <- dist(d,c)

@@ -78,7 +78,7 @@ nclusters.DSC_Dbscan <- function(x)  {
 
 get_microclusters.DSC_Dbscan <- function(x, ...) x$RObj$data 
 
-get_assignment.DSC_Dbscan <- function(dsc,points,n) {
+get_assignment.DSC_Dbscan <- function(dsc,points) {
 	d <- points
 	c <- get_microclusters(dsc)
 	dist <- dist(d,c)
