@@ -28,9 +28,11 @@ cluster <- function(dsc, dsd, n=1, plot=FALSE, microclusters=FALSE, horizon=500,
    	
    	 		if(i %% interval ==0) {
    	 			plot(points,col=col[horizon-nrow(points)+1: horizon],...)
-    			points(get_centers(dsc),col=2,pch=16)
+   	 			if(nrow(get_centers(dsc))>0)
+    				points(get_centers(dsc),col=2,pch=16)
     			if(microclusters)
-    				points(get_microclusters(dsc))
+   	 				if(nrow(get_microclusters(dsc))>0)
+    					points(get_microclusters(dsc))
     			Sys.sleep(sleep)
     		}
     	}
