@@ -6,5 +6,5 @@ prune_clusters <- function(dsc,prop=.05) {
 	 
 	o <- o[w[o] > quantile(w[o],prob=(1-prop))]
 
-	 DSC_Static(get_centers(dsc)[o,],get_microclusters(dsc)[o,],w[o])
+	 DSC_Static(get_centers(dsc)[o,],get_microclusters(dsc),w[o])
 }
