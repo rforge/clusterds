@@ -42,7 +42,11 @@ get_copy.DSC_Macro <- function(x) {
 }
 
 get_weights.DSC <- function(x, scale=NULL) {
-	rep(1,nclusters(x))
+	m <- rep(1,nclusters(x))
+	
+	if(!is.null(scale)) m <- map(m, scale)
+	
+	m
 }
 
 get_copy.DSC_R <- function(x) {

@@ -152,7 +152,7 @@ get_points.DSD_Data <- function(x, n=1, assignment = FALSE,...) {
     if(n_left >= n) {
 	### regular case
 	d <- x$strm[x$state$counter:(x$state$counter + n -1L),]
-	if(assignment && !is.null(a)) {a <- x$assignment[x$state$counter:(x$state$counter + n -1L),]}
+	if(assignment && !is.null(a)) {a <- x$assignment[x$state$counter:(x$state$counter + n -1L)]}
 	x$state$counter <- x$state$counter + n
     }else{
 	### we need to loop!
@@ -160,7 +160,7 @@ get_points.DSD_Data <- function(x, n=1, assignment = FALSE,...) {
 
 	# take what is left and reset counter
 	d <- x$strm[x$state$counter:nrow(x$strm),] 
-	if(assignment && !is.null(a)) {a <- x$assignment[x$state$counter:nrow(x$strm),]}
+	if(assignment && !is.null(a)) {a <- x$assignment[x$state$counter:nrow(x$strm)]}
 	togo <- n-n_left
 	x$state$counter <- 1L
 
@@ -175,7 +175,7 @@ get_points.DSD_Data <- function(x, n=1, assignment = FALSE,...) {
 	    }else{
 		# take the rest
 		d <- rbind(d, x$strm[1:(x$state$counter+togo-1),])
-		if(assignment && !is.null(a)) {a <- rbind(a, x$assignment[1:(x$state$counter+togo-1),])}
+		if(assignment && !is.null(a)) {a <- rbind(a, x$assignment[1:(x$state$counter+togo-1)])}
 		x$state$counter <- x$state$counter + togo
 		togo <- 0L
 	    }

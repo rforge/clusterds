@@ -1,12 +1,13 @@
 hierarchical <- setRefClass("hierarchical", 
 	fields = list(
-		data = "ANY",
+		data = "data.frame",
 		d     = "matrix",
 		method   = "character",
 		members	    = "ANY",
 		k = "numeric",
 		assignment = "numeric",
-		details = "ANY"
+		details = "ANY",
+		weights = "ANY"
 	), 
 
 	methods = list(
@@ -15,6 +16,7 @@ hierarchical <- setRefClass("hierarchical",
 			members   = NULL
 			) {
 		    
+		    data <<- data.frame()
 		    method	<<- method 
 		    members	<<- members
 		    
@@ -25,7 +27,9 @@ hierarchical <- setRefClass("hierarchical",
 	),
 )
 
-hierarchical $methods(cluster = function(x, ...) {
+hierarchical $methods(cluster = function(x,  weight = rep(1,nrow(x)), ...) {
+		if(length(data)>0) {warning("Hierarchical: Previous data is being overridden")}
+		weights <<- weight
 	    data <<- x
 	    if(nrow(data)>=2) {
 			hierarchical <-hclust(d=dist(x), method = method, members= members)
@@ -79,3 +83,14 @@ get_assignment.DSC_Hierarchical <- function(dsc,points)  {
 	
 	predict	
 }
+
+get_weights.DSC_Hierarchical <- function(x, scale=NULL) {
+		
+	nclusters <- unique(x$RObj$assignment)
+	m <- unlist(lapply(nclusters,function(clusters){sum(x$RObj$weights[which(x$RObj$assignment==clusters)])}))
+	
+	if(!is.null(scale)) m <- map(m, scale)
+	
+	m
+}
+

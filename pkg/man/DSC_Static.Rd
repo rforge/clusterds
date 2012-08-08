@@ -4,7 +4,7 @@
 \description{Creates a new DataStreamClusterer with fixed attributes}
 
 \usage{
-	DSC_Static(centers = NULL, microclusters = 2, weights = NULL)
+	DSC_Static(centers = NULL, microclusters = NULL, weights = NULL)
 }
 
 \arguments{

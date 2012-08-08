@@ -1,6 +1,6 @@
 dbscan <- setRefClass("dbscan", 
 	fields = list(
-		data     = "ANY",
+		data     = "data.frame",
 		eps   = "numeric",
 		MinPts	    = "numeric",
 		scale   = "logical",
@@ -9,7 +9,8 @@ dbscan <- setRefClass("dbscan",
 		showplot = "logical",
 		countmode = "ANY",
 		assignment = "numeric",
-		details = "ANY"
+		details = "ANY",
+		weights = "ANY"
 	), 
 
 	methods = list(
@@ -22,6 +23,7 @@ dbscan <- setRefClass("dbscan",
 			countmode = NULL
 			) {
 		    
+		    data <<- data.frame()
 		    MinPts	<<- MinPts
 		    scale   <<- scale
 		    method <<- method
@@ -35,7 +37,9 @@ dbscan <- setRefClass("dbscan",
 	),
 )
 
-dbscan$methods(cluster = function(x, ...) {
+dbscan$methods(cluster = function(x, weight = rep(1,nrow(x)), ...) {
+		if(length(data)>0) {warning("DBSCAN: Previous data is being overridden")}
+		weights <<- weight
 	    data <<- x
 		dbscan <- dbscan(data, eps, MinPts = 5, scale = FALSE, method = c("hybrid", "raw",
     "dist"), seeds = TRUE, showplot = FALSE, countmode = NULL)
@@ -89,4 +93,14 @@ get_assignment.DSC_Dbscan <- function(dsc,points) {
 	predict[is.na(predict)] <- 1	
 	
 	predict
+}
+
+get_weights.DSC_Dbscan <- function(x, scale=NULL) {
+		
+	nclusters <- unique(x$RObj$assignment)
+	m <- unlist(lapply(nclusters,function(clusters){sum(x$RObj$weights[which(x$RObj$assignment==clusters)])}))
+	
+	if(!is.null(scale)) m <- map(m, scale)
+	
+	m
 }

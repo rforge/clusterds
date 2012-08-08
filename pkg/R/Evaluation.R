@@ -26,7 +26,7 @@ get_evaluation <- function (dsc,dsd,
 
 evaluate <- function(d, c, method, confusion, assignment, dsc) {
 	#make a vector of all of the methods and then do a lot of if statements
-	methods <- c("f1","recall","precision","numCluster","numClasses","fpr","ssq","rand")
+	methods <- c("f1","recall","precision","numCluster","numClasses","fpr","ssq","rand","jaccard")
 	
 	if(nrow(c) > 0) {
 		m <- pmatch(tolower(method),tolower(methods)) #finds index of partial match in array of methods
@@ -45,9 +45,11 @@ evaluate <- function(d, c, method, confusion, assignment, dsc) {
 				x <- fpr(confusion)
 		} else {
 			if(m == 7)
-				x <- ssq(d,c,assignment)
+				x <- ssq(d,c)
 			if(m == 8)
-				x <- rand(d,c,assignment)
+				x <- rand(d,assignment)
+			if(m == 9)
+				x <- jaccard(d,assignment)
 		}
 	} else
 		x = -1
@@ -86,29 +88,24 @@ numClasses <- function(confusion) {
 	nrow(confusion)
 }
 
-ssq <- function(d,c,assignment = NULL) {
+ssq <- function(d,c) {
 	dist = dist(d,c)
-	#Find the minimum distance and save the class
-	predict = apply(dist, 1, min)
-	#if(!is.null(assignment))
-	#	predict <- unlist(lapply(predict, function(y) assignment[y]))
-	sum(predict)
+	mindistance = apply(dist, 1, min)
+	sum(mindistance)
 }
 
-rand <- function(d,c,assignment = NULL) {
-	dist <- dist(d,c)
-	#Find the minimum distance and save the class
-	predict <- apply(dist, 1, which.min)
-	if(!is.null(assignment))
-		predict <- unlist(lapply(predict, function(y) assignment[y]))
-	#Get the actual class
+rand <- function(d,assignment = NULL) {
+	predict <- assignment
 	actual <- attr(d, "assignment")
-	predictPairs <- unlist(do.call(rbind,lapply(predict,function(x) lapply(predict,function(y) x==y))))
-	actualPairs <- unlist(do.call(rbind,lapply(actual,function(x) lapply(actual,function(y) x==y))))
 	
-	ab <- sum(predictPairs == actualPairs)
-	rand <- ab/length(predictPairs)
-	rand
+	adjustedRand(predict,actual,"Rand")
+}
+
+jaccard <- function(d,assignment = NULL) {
+	predict <- assignment
+	actual <- attr(d, "assignment")
+	
+	adjustedRand(predict,actual,"Jaccard")
 }
 
 silhouette <- function(d,c,assignment = NULL) {}

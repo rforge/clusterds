@@ -1,6 +1,6 @@
 ## wrapper for cluster and recluster functions
 
-cluster <- function(dsc, dsd, n=1, plot=FALSE, microclusters=FALSE, horizon=500, interval=100, sleep=.5, ...) { 
+cluster <- function(dsc, dsd, n=1, plot=FALSE, microclusters=FALSE, horizon=500, interval=100, sleep= 0.5, ...) { 
     if (n < 1)
 	stop("numPoints must be >= 1")
 
@@ -43,7 +43,7 @@ cluster <- function(dsc, dsd, n=1, plot=FALSE, microclusters=FALSE, horizon=500,
 }
 
 recluster <- function(macro, dsc, ...) {
-    if(!is(macro, "DSC_Macro")) stop("macro is not od class DSC_marco")
+    if(!is(macro, "DSC_Macro")) stop("macro is not of class DSC_marco")
     
     x <- get_centers(dsc)
     weight <- get_weights(dsc)
@@ -72,6 +72,7 @@ recluster <- function(macro, dsc, ...) {
 .cluster.DSC_R <- function(dsc, dsd, n, ...) {
     ### dsc contains an RObj which is  a reference object with a cluster method
     	d <- get_points(dsd)
+    	
     	dsc$RObj$cluster(d, ...)
     	
     	d
