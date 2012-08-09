@@ -6,8 +6,10 @@ DSD_Wrapper <- function(x, k, loop=FALSE, assignment = NULL) {
     if (missing(k))
 	k <- NA
 
+    if(is.null(assignment)) assignment <-attr(x, "assignment")
+
     # creating the DSD object
-    l <- list(description = "Data Frame/Matrix Wrapper Stream",
+    l <- list(description = "Data Frame/Matrix Stream Wrapper",
 	    strm = x,
 	    state = state,
 	    d = ncol(x),

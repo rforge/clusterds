@@ -47,7 +47,7 @@ DSC_Birch <- function(radius, compact=radius, keeptree = FALSE, columns = NULL) 
 }
 
 ### get centers, etc.
-get_centers.DSC_Birch <- function(x, ...) x$RObj$birch$sumXi/x$RObj$birch$N
+get_centers.DSC_Birch <- function(x, ...) as.data.frame(x$RObj$birch$sumXi/x$RObj$birch$N)
 
 get_weights.DSC_Birch <- function(x, scale=NULL) {
     weight <- x$RObj$birch$N

@@ -1,9 +1,7 @@
 #get dsd, dsc and n
 
-get_evaluation <- function (dsc,dsd,
-	method = c("recall","precision", "f1", "ssq", "rand",
-		"numCluster", "numClasses"),
-	n = 1000, macro = TRUE) {
+get_evaluation <- function (dsc, dsd,
+	method, n = 1000, macro = TRUE) {
 	
     d <- get_points(dsd, n, assignment = TRUE)
     c <- get_microclusters(dsc)
@@ -89,8 +87,8 @@ numClasses <- function(confusion) {
 }
 
 ssq <- function(d,c) {
-	dist = dist(d,c)
-	mindistance = apply(dist, 1, min)
+	dist <- dist(d,c)
+	mindistance <- apply(dist, 1, min)
 	sum(mindistance)
 }
 
@@ -108,13 +106,14 @@ jaccard <- function(d,assignment = NULL) {
 	adjustedRand(predict,actual,"Jaccard")
 }
 
-silhouette <- function(d,c,assignment = NULL) {}
+### FIXME
+###silhouette <- function(d,c,assignment = NULL) {}
 
-get_confusionMatrix <- function(d,c,predict) {
+get_confusionMatrix <- function(d, c, predict) {
 	#Get the actual class
 	actual <- attr(d, "assignment")
 	
-	actual[is.na(actual)]<- 0
+	actual[is.na(actual)] <- 0
 	
 	if(0 %in% actual)
 		actual <- actual + 1
