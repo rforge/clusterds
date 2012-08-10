@@ -8,11 +8,11 @@ get_assignment.DSC_Macro <- function(dsc,points) {
 	c <- get_microclusters(dsc)
 	if(length(c)>0) {
 		dist <- dist(d,c)
-		dist <- dist(d,c)
 		#Find the minimum distance and save the class
 		predict <- apply(dist, 1, which.min)
-		predict <- unlist(lapply(predict, function(y) dsc$RObj$assignment[y]))+1
-		predict[is.null(predict)] <- 1
+		predict <- dsc$RObj$assignment[predict]+1
+
+		#predict <- unlist(lapply(predict, function(y) dsc$RObj$assignment[y]))+1
 		predict[is.na(predict)] <- 1	
 	} else {
 		warning(paste(class(x)[1],": There are no clusters",sep=""))

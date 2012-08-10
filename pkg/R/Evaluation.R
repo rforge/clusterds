@@ -5,9 +5,9 @@ get_evaluation <- function (dsc,dsd,
 	n = 1000) {
 	
     d <- get_points(dsd, n, assignment = TRUE)
-    c <- get_centers(dsc)
+    c <- get_centers(dsc) ### these are macro centers (for macro clusterers)
     
-    predict <- get_assignment(dsc,d)
+    predict <- get_assignment(dsc,d) ### uses micro cluster centers
     actual <- attr(d, "assignment")
 
     sapply(method, function(x) evaluate(x, predict, actual, d, c))
@@ -16,7 +16,9 @@ get_evaluation <- function (dsc,dsd,
 evaluate <- function(method, predict, actual, points, centers) {
 	#make a vector of all of the methods and then do a lot of if statements
 	methods <- c("f1","recall","precision","numCluster","numClasses","fpr","ssq","rand","jaccard")
-	
+
+	### FIXME: add regular RAND
+
 	
 	m <- pmatch(tolower(method),tolower(methods)) #finds index of partial match in array of methods
 	
@@ -101,7 +103,7 @@ jaccard <- function(predict,actual) {
 	adjustedRand(predict,actual,"Jaccard")
 }
 
-silhouette <- function(d,c,assignment = NULL) {}
+### silhouette <- function(d,c,assignment = NULL) {}
 
 get_confusionMatrix <- function(d,c,predict) {
 	#Get the actual class
