@@ -10,7 +10,7 @@
 
 
 
-DSC_DenStream <- function(horizon=1000, epsilon=0.1, minPoints=10, beta=0.001, mu=1, initPoints=1000) {
+DSC_DenStream <- function(horizon=1000, epsilon=0.1, minPoints=10, beta=0.001, mu=1, initPoints=1000, lambda=NULL) {
   
   if (horizon < 1)
     stop("invalid horizon, range: >= 1")
@@ -45,6 +45,9 @@ DSC_DenStream <- function(horizon=1000, epsilon=0.1, minPoints=10, beta=0.001, m
   options <- .jcall(clusterer, "Lmoa/options/Options;", "getOptions")
   .jcall(options, "V", "setViaCLIString", cliParams)
   .jcall(clusterer, "V", "prepareForUse")
+
+  if(!is.null(lambda))
+  	.jfield(clusterer,"lambda")<-lambda
 
   # initializing the R object
   l <- list(description = "DenStream",

@@ -7,12 +7,13 @@ Creates a new DataStreamClusterer with the ClusTree algorithm
 }
 
 \usage{
-	DSC_ClusTree(horizon = 1000, maxHeight=8)
+	DSC_ClusTree(horizon = 1000, maxHeight = 8, negLambda = NULL)
 }
 
 \arguments{
 	\item{horizon}{Range of the (time) window.}
 	\item{maxHeight}{The maximum height of the tree.}
+ 	\item{negLambda}{number used to override computed lambda}
 }
 
 \details{

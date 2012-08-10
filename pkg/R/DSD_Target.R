@@ -37,5 +37,5 @@ get_points.DSD_Target <- function(x, n=1, assignment = FALSE,...) {
 		attr(dat,"assignment")<-c(ab,ar)[rand]
 	}
 	
-	dat
+	data.frame(dat)
 }

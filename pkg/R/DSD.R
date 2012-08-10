@@ -13,3 +13,9 @@ print.DSD <- function(x, ...) {
 	cat(paste('With', x$k, 'clusters', 'in', x$d, 'dimensions', '\n'))
 }
 
+reset_stream.DSD <- function(dsd) {
+    stop(gettextf("reset_stream not implemented for class '%s'.", class(dsd)))
+}
+
+reset_stream <- function(dsd) UseMethod("reset_stream")
+

@@ -7,7 +7,7 @@ hierarchical <- setRefClass("hierarchical",
 		k = "numeric",
 		assignment = "numeric",
 		details = "ANY",
-		weights = "ANY"
+		weights = "numeric"
 	), 
 
 	methods = list(
@@ -17,6 +17,7 @@ hierarchical <- setRefClass("hierarchical",
 			) {
 		    
 		    data <<- data.frame()
+		    weights <<- numeric()
 		    method	<<- method 
 		    members	<<- members
 		    
@@ -54,43 +55,7 @@ DSC_Hierarchical <- function(k, method = "complete", members = NULL) {
     l <- list(description = paste("Hierarchical -", method),
 	    RObj = hierarchical)
 
-    class(l) <- c("DSC_Hierarchical","DSC_Macro","DSC")
+    class(l) <- c("DSC_Hierarchical","DSC_Macro","DSC_R","DSC")
     l
-}
-
-### get centers
-get_centers.DSC_Hierarchical <- function(x, ...) {
-	#stop("Not implemented for Hierarchical")
-	nclusters <- unique(x$RObj$assignment)
-	do.call(rbind,lapply(nclusters,function(clusters){apply(x$RObj$data[which(x$RObj$assignment==clusters),],2, mean)}))
-}
-
-nclusters.DSC_Hierarchical <- function(x)  {
-	length(unique(x$RObj$assignment))
-}
-
-get_microclusters.DSC_Hierarchical <- function(x, ...) x$RObj$data
-
-get_assignment.DSC_Hierarchical <- function(dsc,points)  {
-	d <- points
-	c <- get_microclusters(dsc)
-	dist <- dist(d,c)
-	#Find the minimum distance and save the class
-	predict <- apply(dist, 1, which.min)
-	predict <- unlist(lapply(predict, function(y) dsc$RObj$assignment[y]))
-	predict[is.null(predict)] <- 1
-	predict[is.na(predict)] <- 1
-	
-	predict	
-}
-
-get_weights.DSC_Hierarchical <- function(x, scale=NULL) {
-		
-	nclusters <- unique(x$RObj$assignment)
-	m <- unlist(lapply(nclusters,function(clusters){sum(x$RObj$weights[which(x$RObj$assignment==clusters)])}))
-	
-	if(!is.null(scale)) m <- map(m, scale)
-	
-	m
 }
 

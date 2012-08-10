@@ -71,7 +71,7 @@ get_points.DSD_Wrapper <- function(x, n=1, assignment = FALSE,...) {
 
 	if(assignment) attr(d,"assignment") <- a
 
-    d
+    data.frame(d)
 }
 
 print.DSD_Wrapper <- function(x, ...) {
@@ -82,4 +82,8 @@ print.DSD_Wrapper <- function(x, ...) {
     cat(paste('Contains', nrow(x$strm), 
 		    'data points, currently at position', pos, 
 		    'loop is', x$loop, '\n'))
+}
+
+reset_stream.DSD_Wrapper <- function(dsd) {
+    dsd$state$counter <- 1
 }

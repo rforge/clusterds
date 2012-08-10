@@ -66,5 +66,9 @@ get_points.DSD_ReadStream <- function(x, n=1, ...) {
 	}
 	
 	# if enough data was read, return like normal
-	return(d)
+	return(data.frame(d))
+}
+
+reset_stream.DSD_ReadStream <- function(dsd) {
+	seek(dsd$con, where=0)
 }

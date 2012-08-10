@@ -1,14 +1,14 @@
 kmeans <- setRefClass("kmeans", 
 	fields = list(
 		data     = "data.frame",
-		centers   = "ANY",
+		centers   = "numeric",
 		iter.max	    = "numeric",
 		nstart   = "numeric",
 		algorithm   = "character",
-		clusters = "ANY",
+		assignment = "numeric",
 		details = "ANY",
-		clusterCenters = "ANY",
-		weights = "ANY"
+		clusterCenters = "data.frame",
+		weights = "numeric"
 	), 
 
 	methods = list(
@@ -19,6 +19,10 @@ kmeans <- setRefClass("kmeans",
 			) {
 		    
 		    iter.max	<<- iter.max 
+		    centers	<<- numeric() 
+		    assignment	<<- numeric() 
+		    weights	<<- numeric() 
+		    clusterCenters <<- data.frame()
 		    nstart	<<- nstart
 		    algorithm   <<- algorithm
 		    data <<- data.frame()
@@ -38,28 +42,13 @@ kmeans$methods(cluster = function(x, weight = rep(1,nrow(x)), ...) {
 	    	iter.max = iter.max, nstart = nstart,
 	    	algorithm = algorithm)
 		
-			clusters <<- kmeans$cluster
-			clusterCenters <<- kmeans$centers
+			assignment <<- kmeans$cluster
+			clusterCenters <<- data.frame(kmeans$centers)
 			details <<- kmeans
 		} else
-			clusters <<- 1:nrow(data)
+			assignment <<- 1:nrow(data)
 	}
 )
-
-get_microclusters.DSC_Kmeans <- function(x, ...) x$RObj$data
-
-get_assignment.DSC_Kmeans <- function(dsc,points)  {
-	d <- points
-	c <- get_microclusters(dsc)
-	dist <- dist(d,c)
-	#Find the minimum distance and save the class
-	predict <- apply(dist, 1, which.min)
-	predict <- unlist(lapply(predict, function(y) dsc$RObj$clusters[y]))
-	predict[is.null(predict)] <- 1
-	predict[is.na(predict)] <- 1
-	
-	predict	
-}
 
 ### creator    
 DSC_Kmeans <- function(k, iter.max = 10, nstart = 1,
@@ -75,20 +64,12 @@ DSC_Kmeans <- function(k, iter.max = 10, nstart = 1,
     l <- list(description = "k-Means",
 	    RObj = kmeans)
 
-    class(l) <- c("DSC_Kmeans","DSC_Macro","DSC")
+    class(l) <- c("DSC_Kmeans","DSC_Macro","DSC_R","DSC")
     l
 }
 
 ### get centers
-get_centers.DSC_Kmeans <- function(x, ...) x$RObj$clusterCenters
-
-get_weights.DSC_Kmeans <- function(x, scale=NULL) {
-		
-	nclusters <- unique(x$RObj$clusters)
-	m <- unlist(lapply(nclusters,function(clusters){sum(x$RObj$weights[which(x$RObj$clusters==clusters)])}))
-	
-	if(!is.null(scale)) m <- map(m, scale)
-	
-	m
-}
-
+get_centers.DSC_Kmeans <- function(x, ...) {
+	if(length(x$RObj$clusterCenters) == 0) warning(paste(class(x)[1],": There are no clusters",sep=""))
+	x$RObj$clusterCenters
+} 

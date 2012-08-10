@@ -160,11 +160,18 @@ DSC_tNN <- function(threshold = 0.2, minPoints = 2, measure = "euclidean",
 }
 
 ### get centers
-get_centers.DSC_tNN <- function(x, ...) x$RObj$clusters()
+get_centers.DSC_tNN <- function(x, ...) {
+	centers <- x$RObj$clusters()
+	
+	if(length(centers) == 0) warning(paste(class(x)[1],": There are no centers",sep=""))
+	
+	centers
+}
 
 get_weights.DSC_tNN <- function(x, scale)  {
     weight <- x$RObj$counts
 
+	if(length(weight) == 0) warning(paste(class(x)[1],": There are no centers",sep=""))
     if(!is.null(scale)) weight <- map(weight, scale)
     
     weight

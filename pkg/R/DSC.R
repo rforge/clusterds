@@ -14,49 +14,44 @@ nclusters <- function(x) UseMethod("nclusters")
 
 get_microclusters <- function(x) UseMethod("get_microclusters")
 
-nclusters.DSC <- function(x) nrow(get_centers(x))
-
 get_assignment <- function(dsc,points) UseMethod("get_assignment")
 
 get_weights <- function(x, scale = NULL) UseMethod("get_weights")
 
-get_microclusters.DSC <- function(x) get_centers(x)
+nclusters.DSC <- function(x) {
+	options(warn=-1)
+	nclusters <- nrow(get_centers(x))
+	options(warn=1)
+	
+	nclusters
+}
+
+get_microclusters.DSC <- function(x) {
+	warning(paste(class(x)[1],": There are no microclusters, returning centers instead",sep=""))
+	get_centers(x)
+}
 
 get_assignment.DSC <- function(dsc,points) {
 	d <- points
 	c <- get_centers(dsc)
-	dist <- dist(d,c)
-	#Find the minimum distance and save the class
-	predict <- apply(dist, 1, which.min)
-	#predict <- unlist(lapply(predict, function(y) assignment[y]))
-	predict[is.null(predict)] <- 1
-	predict[is.na(predict)] <- 1
-	
+	if(length(c)>0) {
+		dist <- dist(d,c)
+		#Find the minimum distance and save the class
+		predict <- apply(dist, 1, which.min)+1
+		predict[is.null(predict)] <- 1
+		predict[is.na(predict)] <- 1
+	} else {
+		warning(paste(class(x)[1],": There are no clusters",sep=""))
+		predict <- rep(1,nrow(d))
+	}
 	predict	
 }
 
-get_copy.DSC_Macro <- function(x) {
-	temp <- x
-	temp$RObj <- x$RObj$copy(TRUE)
-	temp
-}
-
 get_weights.DSC <- function(x, scale=NULL) {
+	warning(paste(class(x)[1],": Weights are not implemented, returning equal weights",sep=""))
 	m <- rep(1,nclusters(x))
-	
 	if(!is.null(scale)) m <- map(m, scale)
-	
 	m
-}
-
-get_copy.DSC_R <- function(x) {
-	temp <- x
-	temp$RObj <- x$RObj$copy(TRUE)
-	temp
-}
-
-get_copy.DSC_MOA <- function(x) {
-	stop("Copy not yet implemented for MOA")
 }
 
 print.DSC <- function(x, ...) {
@@ -69,6 +64,7 @@ plot.DSC <- function(x, dsd = NULL, n = 1000, col="#FF0000", ..., method="pairs"
     centers <- get_centers(x)
     if(!is.null(dsd)) {
     	d <- get_points(dsd, n, assignment = TRUE)
+		names(d) <- names(centers)
 
     	if(ncol(centers)>2 && method=="pairs") {
     		pairs(rbind(d,centers),col=c(rep("#DDDDDD",n),rep(col,nrow(centers))), ...)

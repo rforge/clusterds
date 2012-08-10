@@ -4,7 +4,7 @@
 \description{Creates a new DataStreamClusterer with the Birch algorithm}
 
 \usage{
-	DSC_Birch(radius, compact=radius, keeptree = FALSE, columns = NULL)
+	DSC_Birch(radius, compact = radius, keeptree = TRUE, columns = NULL)
 }
 
 \arguments{

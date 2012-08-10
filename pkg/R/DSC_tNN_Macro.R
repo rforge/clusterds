@@ -270,7 +270,7 @@ DSC_tNN_Macro <- function(threshold = 0.2, minPoints = 2, measure = "euclidean",
     l <- list(description = "tNN_Macro",
 	    RObj = tNN_Macro)
 
-    class(l) <- c("DSC_tNN_Macro","DSC_R","DSC")
+    class(l) <- c("DSC_tNN_Macro","DSC_Macro","DSC_R","DSC")
     l
     l
 }
@@ -280,7 +280,9 @@ DSC_tNN_Macro <- function(threshold = 0.2, minPoints = 2, measure = "euclidean",
 get_centers.DSC_tNN_Macro <- function(x, ...) {
 	mc <- get_microclusters(x)
 	uni <- unique(x$RObj$gc_ptr)
-	do.call("rbind",lapply(uni,function(y) colMeans(mc[intersect(which(x$RObj$gc_ptr==y),which(!is.na(mc[,1]))),])))
+	uni <- setdiff(uni,outliers(x))
+	df <- data.frame(do.call("rbind",lapply(uni,function(y) colMeans(mc[intersect(which(x$RObj$gc_ptr==y),which(!is.na(mc[,1]))),]))))
+	df[!is.na(df[,1]),]
 }
 
 outliers <- function(x) {
@@ -315,7 +317,7 @@ get_assignment.DSC_tNN_Macro <- function(dsc,points)  {
 	predict	
 }
 
-get_weights.DSC_tNN_Macro <- function(x, scale)  {
+get_weights.DSC_tNN_Macro <- function(x, scale=NULL)  {
 	uni <- unique(x$RObj$gc_ptr)
 	weight <- unlist(lapply(uni,function(y) mean(x$RObj$counts[which(x$RObj$gc_ptr==y)])))
 

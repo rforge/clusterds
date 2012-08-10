@@ -1,6 +1,6 @@
 Sample <- setRefClass("Sample", 
 	fields = list(
-		x	    = "ANY",
+		data	    = "data.frame",
 		size	    = "numeric",
 		stream_size = "numeric",
 
@@ -12,6 +12,7 @@ Sample <- setRefClass("Sample",
 			size	    = 100
 			) {
 		    
+		    data <<- data.frame()
 		    size	<<- size 
 		    stream_size	<<- 0 
 		    
@@ -24,7 +25,7 @@ Sample <- setRefClass("Sample",
 ### Reservoir sampling: all values in the stream have the same prob. to
 ### be sampled
 Sample $methods(cluster = function(x, ...) {
-	    x <<- x
+	    data <<- rbind(data,x)
 
 	    ### fill with first values
 	    if(nrow(centers) < size) {
@@ -55,4 +56,7 @@ DSC_Sample <- function(size = 100) {
 
 
 ### get centers
-get_centers.DSC_Sample <- function(x, ...) x$RObj$centers
+get_centers.DSC_Sample <- function(x, ...) {
+    if(length(x$RObj$centers) == 0) warning(paste(class(x)[1],": There are no clusters",sep=""))
+    x$RObj$centers
+} 

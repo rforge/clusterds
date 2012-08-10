@@ -1,4 +1,3 @@
-
 get_points.DSD_MOA <- function(x, n=1, ...) {
 	
 	if (n < 1)
@@ -14,5 +13,5 @@ get_points.DSD_MOA <- function(x, n=1, ...) {
 		data[i,] <- row[1:x$d]
 	}
 	
-	data
+	data.frame(data)
 }

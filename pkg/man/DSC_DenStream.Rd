@@ -4,7 +4,7 @@
 \description{Creates a new DataStreamClusterer with the DenStream algorithm}
 
 \usage{
-DSC_DenStream(horizon = 1000, epsilon = 0.1, minPoints = 10, beta = 0.001, mu = 1, initPoints = 1000)
+DSC_DenStream(horizon = 1000, epsilon = 0.1, minPoints = 10, beta = 0.001, mu = 1, initPoints = 1000, lambda = NULL)
 }
 
 \arguments{
@@ -16,6 +16,7 @@ DSC_DenStream(horizon = 1000, epsilon = 0.1, minPoints = 10, beta = 0.001, mu = 
   (range: 0 to 1)} \item{mu}{the minimum weight a micro-cluster must have
   within the \code{epsilon} neighborhood (range: 0 to max(double))}
   \item{initPoints}{number of points to use for initialization}
+  \item{lambda}{number used to override computed lambda}
 }
 
 \details{

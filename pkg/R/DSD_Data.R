@@ -3,96 +3,100 @@ DSD_Data <- function(data, loop=FALSE) {
     state <- new.env()
     assign("counter", 1L, envir = state)
 
-	methods <- c("BostonHousing", "BostonHousing2", "BreastCancer", "DNA", "Glass", "Ionosphere", "LetterRecognition", "Ozone", "PimaIndiansDiabetes", "Satellite", "Servo", "Shuttle", "Sonar", "Soybean", "Vehicle", "Vowel", "Zoo", "HouseVotes84")
+	datas <- c("BostonHousing", "BostonHousing2", "BreastCancer", "DNA", "Glass", "Ionosphere", "LetterRecognition", "Ozone", "PimaIndiansDiabetes", "Satellite", "Servo", "Shuttle", "Sonar", "Soybean", "Vehicle", "Vowel", "Zoo", "HouseVotes84")
 	
-	m <- pmatch(tolower(data),tolower(methods)) #finds index of partial match in array of methods
+	m <- pmatch(tolower(data),tolower(datas)) #finds index of partial match in array of datas
+	
+	
+	if(is.na(m))
+		stop("DSD_Data: Invalid data name")
 	
 	if(m == 1) {
-		data(BostonHousing)
+		do.call("data",list(data))
 		d <- BostonHousing
 		a <- NULL
 	}
 	else if(m == 2) {
-		data(BostonHousing2)
+		do.call("data",list(data))
 		d <- BostonHousing2
 		a <- NULL
 	}
 	else if(m == 3) {
-		data(BreastCancer)
+		do.call("data",list(data))
 		d <- BreastCancer[,2:10]
 		a <- BreastCancer[,11]
 	}
 	else if(m == 4) {
-		data(DNA)
+		do.call("data",list(data))
 		d <- DNA[,1:180]
 		a <- DNA[,181]
 		levels(a)<-1:3
 		a <- as.numeric(a)
 	}
 	else if(m == 5) {
-		data(Glass)
+		do.call("data",list(data))
 		d <- Glass[,1:9]
 		a <- Glass[,10]
 	}
 	else if(m == 6) {
-		data(Ionosphere)
+		do.call("data",list(data))
 		d <- Ionosphere[,1:34]
 		a <- as.numeric(Ionosphere[,35])
 	}
 	else if(m == 7) {
-		data(LetterRecognition)
+		do.call("data",list(data))
 		d <- LetterRecognition[,2:17]
 		a <- as.numeric(LetterRecognition[,1])
 	}
 	else if(m == 8) {
-		data(Ozone)
+		do.call("data",list(data))
 		d <- Ozone
 		a <- NULL
 	}
 	else if(m == 9) {
-		data(PimaIndiansDiabetes)
+		do.call("data",list(data))
 		d <- PimaIndiansDiabetes[,1:8]
 		a <- as.numeric(PimaIndiansDiabetes[,9])
 	}
 	else if(m == 10) {
-		data(Satellite)
+		do.call("data",list(data))
 		d <- Satellite[,1:36]
 		a <- as.numeric(Satellite[,37])
 	}
 	else if(m == 11) {
-		data(Servo)
+		do.call("data",list(data))
 		d <- Servo[,1:4]
 		d[,1] <- as.numeric(d[,1])
 		d[,2] <- as.numeric(d[,2])
 		a <- Servo[,5]
 	}
 	else if(m == 12) {
-		data(Shuttle)
+		do.call("data",list(data))
 		d <- Shuttle[,1:9]
 		a <- as.numeric(Shuttle[,10])
 	}
 	else if(m == 13) {
-		data(Sonar)
+		do.call("data",list(data))
 		d <- Sonar[,1:60]
 		a <- as.numeric(Sonar[,61])
 	}
 	else if(m == 14) {
-		data(Soybean)
+		do.call("data",list(data))
 		d <- Soybean[,2:36]
 		a <- as.numeric(Soybean[,1])
 	}
 	else if(m == 15) {
-		data(Vehicle)
+		do.call("data",list(data))
 		d <- Vehicle[,1:18]
 		a <- as.numeric(Vehicle[,19])
 	}
 	else if(m == 16) {
-		data(Vowel)
+		do.call("data",list(data))
 		d <- Vowel[,1:10]
 		a <- as.numeric(Vowel[,11])
 	}
 	else if(m == 17) {
-		data(Zoo)
+		do.call("data",list(data))
 		d <- Zoo[,1:16]
 		d[,1] <- as.numeric(d[,1])
 		d[,2] <- as.numeric(d[,2])
@@ -112,7 +116,7 @@ DSD_Data <- function(data, loop=FALSE) {
 		a <- as.numeric(Zoo[,17])
 	}
 	else if(m == 18) {
-		data(HouseVotes84)
+		do.call("data",list(data))
 		d <- matrix(0,nrow(HouseVotes84),ncol(HouseVotes84))
 		d[which(is.na(HouseVotes84[,2:17]))]<--1
 		d[which(HouseVotes84[,2:17]=='n')]<-0
@@ -120,8 +124,6 @@ DSD_Data <- function(data, loop=FALSE) {
 		a <- rep(0,nrow(HouseVotes84))
 		a[which(HouseVotes84[,1]=='democrat')] <- 1
 	}
-	else
-		stop("Invalid data")
 	
 
 	# creating the DSD object
@@ -132,67 +134,6 @@ DSD_Data <- function(data, loop=FALSE) {
 	    k = length(unique(a)),
 	    loop = loop,
 	    assignment = a)
-    class(l) <- c("DSD_Wrapper","DSD_R","DSD")
+    class(l) <- c("DSD_Data","DSD_Wrapper","DSD_R","DSD")
     l
-}
-
-
-get_points.DSD_Data <- function(x, n=1, assignment = FALSE,...) {
-    n <- as.integer(n)
-   
-    if(x$state$counter > nrow(x$strm)) {
-	if(x$loop) x$state$counter <- 1L
-	else stop("The stream is at its end!")
-    }
-
-    n_left <- nrow(x$strm) - x$state$counter + 1L
-    
-    if(n_left < n && !x$loop) stop("Not enought data points left in stream!")
-
-    if(n_left >= n) {
-	### regular case
-	d <- x$strm[x$state$counter:(x$state$counter + n -1L),]
-	if(assignment && !is.null(a)) {a <- x$assignment[x$state$counter:(x$state$counter + n -1L)]}
-	x$state$counter <- x$state$counter + n
-    }else{
-	### we need to loop!
-
-
-	# take what is left and reset counter
-	d <- x$strm[x$state$counter:nrow(x$strm),] 
-	if(assignment && !is.null(a)) {a <- x$assignment[x$state$counter:nrow(x$strm)]}
-	togo <- n-n_left
-	x$state$counter <- 1L
-
-	while(togo > 0L) {
-	    n_left <- nrow(x$strm) - x$state$counter + 1L
-
-	    if(n_left < togo) {
-		# take the whole stream
-		d <- rbind(d, x$strm)
-		if(assignment && !is.null(a)) a <- rbind(a,x$assignment)
-		togo <- togo - n_left
-	    }else{
-		# take the rest
-		d <- rbind(d, x$strm[1:(x$state$counter+togo-1),])
-		if(assignment && !is.null(a)) {a <- rbind(a, x$assignment[1:(x$state$counter+togo-1)])}
-		x$state$counter <- x$state$counter + togo
-		togo <- 0L
-	    }
-	}
-    }
-
-	if(assignment && !is.null(a)) {attr(d,"assignment")<- a}
-
-    d
-}
-
-print.DSD_Data <- function(x, ...) {
-    NextMethod() # calling the super classes print()
-    pos <- x$state$counter
-    if (pos>nrow(x$strm)) 
-	if (!x$loop) pos <- "'end'" else pos <- 1
-    cat(paste('Contains', nrow(x$strm), 
-		    'data points, currently at position', pos, 
-		    'loop is', x$loop, '\n'))
 }

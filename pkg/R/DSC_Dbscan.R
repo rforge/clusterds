@@ -10,7 +10,7 @@ dbscan <- setRefClass("dbscan",
 		countmode = "ANY",
 		assignment = "numeric",
 		details = "ANY",
-		weights = "ANY"
+		weights = "numeric"
 	), 
 
 	methods = list(
@@ -24,6 +24,7 @@ dbscan <- setRefClass("dbscan",
 			) {
 		    
 		    data <<- data.frame()
+		    weights <<- numeric()
 		    MinPts	<<- MinPts
 		    scale   <<- scale
 		    method <<- method
@@ -65,42 +66,6 @@ DSC_Dbscan <- function(eps, MinPts = 5, scale = FALSE, method = c("hybrid", "raw
     l <- list(description = "DBSCAN",
 	    RObj = dbscan)
 
-    class(l) <- c("DSC_Dbscan","DSC_Macro","DSC")
+    class(l) <- c("DSC_Dbscan","DSC_Macro","DSC_R","DSC")
     l
-}
-
-### get centers
-get_centers.DSC_Dbscan <- function(x, ...) {
-	#stop("Not implemented for DBSCAN")
-	nclusters <- unique(x$RObj$assignment)
-	do.call(rbind,lapply(nclusters,function(clusters){apply(x$RObj$data[which(x$RObj$assignment==clusters),],2, mean)}))
-}
-
-nclusters.DSC_Dbscan <- function(x)  {
-	length(unique(x$RObj$assignment))
-}
-
-get_microclusters.DSC_Dbscan <- function(x, ...) x$RObj$data 
-
-get_assignment.DSC_Dbscan <- function(dsc,points) {
-	d <- points
-	c <- get_microclusters(dsc)
-	dist <- dist(d,c)
-	#Find the minimum distance and save the class
-	predict <- apply(dist, 1, which.min)
-	predict <- unlist(lapply(predict, function(y) dsc$RObj$assignment[y]))
-	predict[is.null(predict)] <- 1
-	predict[is.na(predict)] <- 1	
-	
-	predict
-}
-
-get_weights.DSC_Dbscan <- function(x, scale=NULL) {
-		
-	nclusters <- unique(x$RObj$assignment)
-	m <- unlist(lapply(nclusters,function(clusters){sum(x$RObj$weights[which(x$RObj$assignment==clusters)])}))
-	
-	if(!is.null(scale)) m <- map(m, scale)
-	
-	m
 }

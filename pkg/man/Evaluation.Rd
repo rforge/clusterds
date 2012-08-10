@@ -7,9 +7,7 @@
 }
 
 \usage{
-	get_evaluation(dsc, dsd, method = c("recall", "precision", "f1",
-                 "ssq", "rand", "numCluster", "numClasses"), n = 1000,
-                 macro = TRUE)
+	get_evaluation(dsc, dsd, method = c("f1","recall","precision","numCluster","numClasses","fpr","ssq","rand","jaccard"), n = 1000)
 }
 
 \arguments{
@@ -17,7 +15,6 @@
 	\item{dsd}{The DSD object that holds the initial training data for the DSC.}
 	\item{method}{The requested measure.}
 	\item{n}{The number of data points being requested.}
-	\item{macro}{If this is set to false then \code{get_evaluation} will only measure the micro-clusters. If there are no macro-clusters then the micro-clusters will be measured.}
 }
 
 \details{

@@ -31,16 +31,20 @@ get_centers.DSC_MOA <- function(x, ...) {
     }
 
     # array of microclusters
-    mClusters <- .jcall(mClustering, 
-	    "Lmoa/core/AutoExpandVector;", "getClustering")
+    error <- tryCatch(mClusters <- .jcall(mClustering, 
+	    "Lmoa/core/AutoExpandVector;", "getClustering"),error=function(err){
+	    	return(1)
+	    })
 
     
     # length of array
-    length <- .jcall(mClusters, "I", "size")
+    if(error != 1) {
+    	length <- .jcall(mClusters, "I", "size")
+    } else {length <- 0}
 
     # empty clustering?
     if(length<1) {
-	#warning("Clustering has no clusters!")
+	warning(paste(class(x)[1],": There are no clusters",sep=""))
 	return(data.frame())
     }
 
@@ -60,7 +64,6 @@ get_centers.DSC_MOA <- function(x, ...) {
 
     colnames(m) <- paste("X", 1:ncol(m), sep="")
     
-    #m$weight <- weight
     
     # returning the matrix 
     m
@@ -77,16 +80,20 @@ get_weights.DSC_MOA <- function(x, scale=NULL) {
     }
 
     # array of microclusters
-    mClusters <- .jcall(mClustering, 
-	    "Lmoa/core/AutoExpandVector;", "getClustering")
+  	error <- tryCatch(mClusters <- .jcall(mClustering, 
+	    "Lmoa/core/AutoExpandVector;", "getClustering"),error=function(err){
+	    	return(1)
+	    })
 
     
     # length of array
-    length <- .jcall(mClusters, "I", "size")
+    if(error != 1) {
+    	length <- .jcall(mClusters, "I", "size")
+    } else {length <- 0}
 
     # empty clustering?
     if(length<1) {
-	#warning("Clustering has no clusters!")
+	warning(paste(class(x)[1],": There are no clusters",sep=""))
 	return(data.frame())
     }
 
@@ -112,6 +119,11 @@ get_weights.DSC_MOA <- function(x, scale=NULL) {
 
     if(!is.null(scale)) m <- map(m, scale)
 
+    
     m
 }
 
+get_copy.DSC_MOA <- function(x) {
+	#TODO
+	stop("Copy not yet implemented for MOA")
+}
