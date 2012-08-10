@@ -66,7 +66,7 @@ get_centers.DSC_Birch <- function(x, ...) {
 	 centers <- x$RObj$birch$sumXi/x$RObj$birch$N
 	 if(length(centers)==0) warning(paste(class(x)[1],": There are no clusters",sep=""))
 	 
-	 centers
+	 as.data.frame(centers)
 }
 
 get_weights.DSC_Birch <- function(x, scale=NULL) {
