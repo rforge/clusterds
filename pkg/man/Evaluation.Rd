@@ -7,7 +7,7 @@
 }
 
 \usage{
-	get_evaluation(dsc, dsd, method = c("f1","recall","precision","numCluster","numClasses","fpr","ssq","rand","jaccard"), n = 1000)
+	get_evaluation(dsc, dsd, method, n = 1000)
 }
 
 \arguments{
