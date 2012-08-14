@@ -1057,7 +1057,7 @@ cluster(dsc,dsd,500)
 get_evaluation(dsc,dsd, method = "f1", n = 500)
 
 
-get_evaluation( dsc,dsd, method = "recall", n = 500)
+get_evaluation(dsc,dsd, method = "recall", n = 500)
 @
 
 This produces the f1 score and the recall of the \code{DSD} object. The other evaluation

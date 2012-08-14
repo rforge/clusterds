@@ -22,19 +22,24 @@ convert_params <- function(paramList=list()) {
 
 get_centers.DSC_MOA <- function(x, ...) {
 
-    if (.jcall(x$javaObj, "Z", "implementsMicroClusterer")) {
-	mClustering <- .jcall(x$javaObj, 
-		"Lmoa/cluster/Clustering;", "getMicroClusteringResult")
-    }else{
-	mClustering <- .jcall(x$javaObj, 
-		"Lmoa/cluster/Clustering;", "getClusteringResult")
-    }
-
-    # array of microclusters
-    error <- tryCatch(mClusters <- .jcall(mClustering, 
-	    "Lmoa/core/AutoExpandVector;", "getClustering"),error=function(err){
-	    	return(1)
-	    })
+    error <- tryCatch( {
+    
+    	if (.jcall(x$javaObj, "Z", "implementsMicroClusterer")) {
+		mClustering <- .jcall(x$javaObj, 
+			"Lmoa/cluster/Clustering;", "getMicroClusteringResult")
+    	}else{
+		mClustering <- .jcall(x$javaObj, 
+			"Lmoa/cluster/Clustering;", "getClusteringResult")
+    	}
+	
+	    # array of microclusters
+	    mClusters <- .jcall(mClustering, 
+		"Lmoa/core/AutoExpandVector;", "getClustering")
+	}
+	
+	,error=function(err){
+	    return(1)
+	})
 
     
     # length of array
@@ -94,7 +99,7 @@ get_weights.DSC_MOA <- function(x, scale=NULL) {
     # empty clustering?
     if(length<1) {
 	warning(paste(class(x)[1],": There are no clusters",sep=""))
-	return(data.frame())
+	return(numeric())
     }
 
     m <- data.frame()

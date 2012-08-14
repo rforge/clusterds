@@ -1,45 +1,32 @@
 ## wrapper for cluster and recluster functions
 
-cluster <- function(dsc, dsd, n=1, plot=FALSE, microclusters=FALSE, horizon=500, interval=100, sleep= 0.5, ...) { 
+cluster <- function(dsc, dsd, n=1, animate=FALSE, interval=0.5, title="Cluster", outdir = getwd(), ...) { 
     if (n < 1)
 	stop("numPoints must be >= 1")
 
     # looping through the stream, feeding the new datapoints into 
     # the algorithm
     
-    i <- 0
     
-    if(plot)
-    	points <- data.frame()
-    
-    if(plot)
-    	col <- gray.colors(horizon, start = 1, end = .7, gamma = 2.2)
-    
-    while (i<n) {
-    	new_points <- .cluster(dsc, dsd, n)
-    	i <- i + nrow(new_points)
-    	
-    	if(plot) {
-    		points <- rbind(points, new_points)
+    	if(animate) {
+    		options(warn=-1)
+		saveMovie({
+			
+		cluster.ani(dsc,dsd,n, ...)
+	   }, nmax = n, interval = interval, title = title, outdir = outdir)
+    		options(warn=1)
+    	} else {
     		
-    		if(nrow(points) > horizon) {
-    			points <- points[(nrow(points)-horizon +1):nrow(points),]
-    		}
-   	
-   	 		if(i %% interval ==0) {
-   	 			plot(points,col=col[horizon-nrow(points)+1: horizon],...)
-   	 			if(nrow(get_centers(dsc))>0)
-    				points(get_centers(dsc),col=2,pch=16)
-    			if(microclusters)
-   	 				if(nrow(get_microclusters(dsc))>0)
-    					points(get_microclusters(dsc))
-    			Sys.sleep(sleep)
+   			i <- 0
+    		while(i < n) {
+    			new_points <- .cluster(dsc, dsd, n)
+    			i <- i + nrow(new_points)
     		}
     	}
-    }
     
-    # so cl <- cluster(cl, ...) also works
-    invisible(dsc)
+        
+    	# so cl <- cluster(cl, ...) also works
+    	invisible(dsc)
 }
 
 recluster <- function(macro, dsc, ...) {
@@ -49,6 +36,36 @@ recluster <- function(macro, dsc, ...) {
     weight <- get_weights(dsc)
     macro$RObj$cluster(x, weight=weight, ...)
 }
+
+cluster.ani <- function(dsc, dsd, n, microclusters=FALSE, horizon=500, pointInterval=100, weights=FALSE, scale=c(1,10),...) {
+	points <- data.frame()
+	col <- gray.colors(horizon, start = 1, end = .7, gamma = 2.2)
+	i <- 1
+	j <- 0
+	
+	while (i <= ani.options("nmax") & j <= n) {
+		new_points <- .cluster(dsc, dsd, n)
+		j <- j + nrow(new_points)
+		
+		points <- rbind(points, new_points)
+		if(nrow(points) > horizon) { points <- points[(nrow(points)-horizon +1):nrow(points),] }
+		
+		if(j %% pointInterval ==0) {
+			plot(points,col=col[horizon-nrow(points)+1: horizon],...)
+			if(microclusters)
+				if(length(get_microclusters(dsc))>0)
+					points(get_microclusters(dsc))
+			if(length(get_centers(dsc))>0)
+				if(weights)
+					points(get_centers(dsc),col=2,pch=10,cex=get_weights(dsc,scale))
+				else
+					points(get_centers(dsc),col=2,pch=10)
+			ani.pause()
+			i <- i + 1
+		}
+	}
+}
+
 
 
 ### Workers

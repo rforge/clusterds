@@ -1,4 +1,4 @@
-Birch <- setRefClass("Birch", 
+birch <- setRefClass("Birch", 
 	fields = list(
 		data 		= "data.frame",
 		weights 	= "numeric",
@@ -51,13 +51,13 @@ Birch <- setRefClass("Birch",
 DSC_Birch <- function(radius, compact=radius, keeptree = TRUE, columns = NULL) {
 
     l <- list(description = "Birch",
-	    RObj = new("Birch", keeptree = keeptree, columns = columns)
+	    RObj = birch$new(keeptree = keeptree, columns = columns)
 	    )
 	    
 	    l$RObj$radius <- radius
 	    l$RObj$compact <- compact
 
-    class(l) <- c("DSC_Birch","DSC_Macro","DSC_R","DSC")
+    class(l) <- c("DSC_Birch","DSC_R","DSC")
     l
 }
 

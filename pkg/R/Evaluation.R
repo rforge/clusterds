@@ -9,13 +9,21 @@ get_evaluation <- function (dsc,dsd,
     
     predict <- get_assignment(dsc,d) ### uses micro cluster centers
     actual <- attr(d, "assignment")
-
+    
+    noise <- which(is.na(actual))
+    
+    if(length(noise)>0) {
+    	predict <- predict[-noise]
+    	actual <- actual[-noise]
+    	d <- d[-noise,]
+	}
+	
     sapply(method, function(x) evaluate(x, predict, actual, d, c))
 }
 
 evaluate <- function(method, predict, actual, points, centers) {
 	#make a vector of all of the methods and then do a lot of if statements
-	methods <- c("f1","recall","precision","numCluster","numClasses","fpr","ssq","rand","jaccard")
+	methods <- c("f1","recall","precision","numCluster","numClasses","fpr","ssq","rand","jaccard","rand_HA","rand_MA","rand_FM")
 
 	### FIXME: add regular RAND
 
@@ -44,6 +52,12 @@ evaluate <- function(method, predict, actual, points, centers) {
 		x <- rand(predict,actual)
 	else if(m == 9)
 		x <- jaccard(predict,actual)
+	else if(m == 10)
+		x <- HA(predict,actual)
+	else if(m == 11)
+		x <- MA(predict,actual)
+	else if(m == 12)
+		x <- FM(predict,actual)
 	else
 		stop(paste(method,"is not a valid evaluation method."))
 	x
@@ -97,6 +111,18 @@ ssq <- function(points,centers) {
 
 rand <- function(predict,actual) {
 	adjustedRand(predict,actual,"Rand")
+}
+
+HA <- function(predict,actual) {
+	adjustedRand(predict,actual,"HA")
+}
+
+MA <- function(predict,actual) {
+	adjustedRand(predict,actual,"MA")
+}
+
+FM <- function(predict,actual) {
+	adjustedRand(predict,actual,"FM")
 }
 
 jaccard <- function(predict,actual) {

@@ -137,6 +137,7 @@ S3method(get_weights, DSC_MOA)
 S3method(get_weights, DSC_Static)
 S3method(get_weights, DSC_tNN)
 S3method(get_weights, DSC_tNN_Macro)
+S3method(get_weights, DSC_Birch)
 
 S3method(nclusters, DSC)
 S3method(nclusters, DSC_Macro)

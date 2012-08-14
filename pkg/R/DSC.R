@@ -48,7 +48,6 @@ get_assignment.DSC <- function(dsc,points) {
 }
 
 get_weights.DSC <- function(x, scale=NULL) {
-	warning(paste(class(x)[1],": Weights are not implemented, returning equal weights",sep=""))
 	m <- rep(1,nclusters(x))
 	if(!is.null(scale)) m <- map(m, scale)
 	m
