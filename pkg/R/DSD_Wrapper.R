@@ -81,8 +81,8 @@ print.DSD_Wrapper <- function(x, ...) {
     if (pos>nrow(x$strm)) 
 	if (!x$loop) pos <- "'end'" else pos <- 1
     cat(paste('Contains', nrow(x$strm), 
-		    'data points, currently at position', pos, 
-		    'loop is', x$loop, '\n'))
+		    'data points - currently at position', pos, 
+		    '- loop is', x$loop, '\n'))
 }
 
 reset_stream.DSD_Wrapper <- function(dsd) {
