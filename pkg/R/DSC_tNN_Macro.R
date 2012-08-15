@@ -246,6 +246,8 @@ tNN_Macro$methods(cluster = function(newdata, verbose = FALSE) {
 		    
 			lapply(remove_names,function(x){overlap <<- smc_removeState(overlap,x)})
 		    
+		    
+		    
 		    counts <<- counts[keep]
 		    centers <<- centers[keep,]
 
