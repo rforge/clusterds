@@ -8,21 +8,21 @@ cluster <- function(dsc, dsd, n=1, animate=FALSE, interval=0.5, title="Cluster",
     # the algorithm
     
     
-    	if(animate) {
-    		options(warn=-1)
-		saveMovie({
+    	#if(animate) {
+    	#	options(warn=-1)
+		#saveMovie({
 			
-		cluster.ani(dsc,dsd,n, ...)
-	   }, nmax = n, interval = interval, title = title, outdir = outdir)
-    		options(warn=1)
-    	} else {
+		#cluster.ani(dsc,dsd,n, ...)
+	   #}, nmax = n, interval = interval, title = title, outdir = outdir)
+    	#	options(warn=1)
+    	#} else {
     		
    			i <- 0
     		while(i < n) {
     			new_points <- .cluster(dsc, dsd, n)
     			i <- i + nrow(new_points)
-    		}
-    	}
+    	#	}
+    	#}
     
         
     	# so cl <- cluster(cl, ...) also works

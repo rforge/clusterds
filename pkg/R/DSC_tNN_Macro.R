@@ -104,7 +104,7 @@ tNN_Macro$methods(cluster = function(newdata, verbose = FALSE) {
 		## fade cluster structure?
 		if(lambda>0) {
 		    counts <<- counts * lambdaFactor
-		    overlap@counts <<- overlap@counts * lambdaFactor
+		    smc_fade(overlap, lambdaFactor)
 		    
 		    
 		    
