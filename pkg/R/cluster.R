@@ -21,7 +21,7 @@ cluster <- function(dsc, dsd, n=1, animate=FALSE, interval=0.5, title="Cluster",
     		while(i < n) {
     			new_points <- .cluster(dsc, dsd, n)
     			i <- i + nrow(new_points)
-    	#	}
+    		}
     	#}
     
         
