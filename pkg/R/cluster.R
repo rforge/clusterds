@@ -1,32 +1,15 @@
 ## wrapper for cluster and recluster functions
 
-cluster <- function(dsc, dsd, n=1, animate=FALSE, interval=0.5, title="Cluster", outdir = getwd(), ...) { 
+cluster <- function(dsc, dsd, n=1, ...) { 
     if (n < 1)
 	stop("numPoints must be >= 1")
 
     # looping through the stream, feeding the new datapoints into 
     # the algorithm
+    .cluster(dsc, dsd, n, ...)
     
-    
-    	#if(animate) {
-    	#	options(warn=-1)
-		#saveMovie({
-			
-		#cluster.ani(dsc,dsd,n, ...)
-	   #}, nmax = n, interval = interval, title = title, outdir = outdir)
-    	#	options(warn=1)
-    	#} else {
-    		
-   			i <- 0
-    		while(i < n) {
-    			new_points <- .cluster(dsc, dsd, n)
-    			i <- i + nrow(new_points)
-    		}
-    	#}
-    
-        
-    	# so cl <- cluster(cl, ...) also works
-    	invisible(dsc)
+    # so cl <- cluster(cl, ...) also works
+    invisible(dsc)
 }
 
 recluster <- function(macro, dsc, ...) {
@@ -73,6 +56,8 @@ cluster.ani <- function(dsc, dsd, n, microclusters=FALSE, horizon=500, pointInte
 
 .cluster.DSC_MOA <- function(dsc, dsd, n, ...) {
     ## data has to be all doubles for MOA clusterers!
+    for (i in 1:n) {
+
     	d <- get_points(dsd)
 		x <- d
     	x <- .jcast(
@@ -81,18 +66,17 @@ cluster.ani <- function(dsc, dsd, n, microclusters=FALSE, horizon=500, pointInte
 		    )
     
     	.jcall(dsc$javaObj, "V", "trainOnInstanceImpl", x)
-    
-    	d
-    	
+    }	
 }
 
 .cluster.DSC_R <- function(dsc, dsd, n, ...) {
     ### dsc contains an RObj which is  a reference object with a cluster method
+    for (i in 1:n) {
+
     	d <- get_points(dsd)
     	
     	dsc$RObj$cluster(d, ...)
-    	
-    	d
+    }
 }
 
 ### FIXME: macro clusterers get all the data and can only be used once!!!
@@ -100,8 +84,6 @@ cluster.ani <- function(dsc, dsd, n, microclusters=FALSE, horizon=500, pointInte
 .cluster.DSC_Macro <- function(dsc, dsd, n, ...) {
     d <- get_points(dsd,n=n)
     dsc$RObj$cluster(d, ...)
-    
-    d
 }
 
 
