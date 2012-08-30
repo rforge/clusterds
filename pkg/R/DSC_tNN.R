@@ -168,7 +168,7 @@ get_centers.DSC_tNN <- function(x, ...) {
 	centers
 }
 
-get_weights.DSC_tNN <- function(x, scale)  {
+get_weights.DSC_tNN <- function(x, scale=NULL)  {
     weight <- x$RObj$counts
 
 	if(length(weight) == 0) warning(paste(class(x)[1],": There are no centers",sep=""))

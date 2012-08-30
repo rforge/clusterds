@@ -41,7 +41,7 @@ tNN_Macro <- setRefClass("tNN_Macro",
 		global_clusters = "list",
 		gc_ptr		= "character",
 		
-		horizon = "numeric"
+		beta = "numeric"
 	), 
 
 	methods = list(
@@ -52,7 +52,7 @@ tNN_Macro <- setRefClass("tNN_Macro",
 			centroids   = TRUE,
 			threshold   = 0.2,
 			lambda      = 0.01,
-			horizon      = 0.5
+			beta      = 0.5
 			) {
 		    
 		    measure	<<- measure 
@@ -61,7 +61,7 @@ tNN_Macro <- setRefClass("tNN_Macro",
 		    threshold   <<- threshold
 		    lambda	<<- lambda
 		    lambdaFactor <<- 2^(-lambda)
-		    horizon <<- horizon
+		    beta <<- beta
 
 		    if(!is.null(distFun)) distFun <<- distFun
 		    else distFun <<- pr_DB[[measure]]
@@ -170,12 +170,12 @@ tNN_Macro$methods(cluster = function(newdata, verbose = FALSE) {
 				sel_all <- names(inside)[which(inside <= 0)]
 	
 				## FIXME: we only update the count for the winner!
-				counts[sel] <<- counts[sel] + 1
+				counts[sel_all] <<- counts[sel_all] + 1
 				## update counts
 				#counts[sel_all] <- counts[sel_all] + 1/length(sel_all)
 	
 	
-				if(length(sel_all)>1) {
+				#if(length(sel_all)>1) {
 				    i <- rep(sel_all, length(sel_all))
 				    j <- as.vector(t(matrix(sel_all, ncol=length(sel_all), length(sel_all))))
 				    
@@ -210,7 +210,7 @@ tNN_Macro$methods(cluster = function(newdata, verbose = FALSE) {
 	
 				    ## FIXME: splitting is missing
 				
-				}
+				#}
 	
 					
 				
@@ -228,9 +228,6 @@ tNN_Macro$methods(cluster = function(newdata, verbose = FALSE) {
 
 			    }
 
-			    ## update counts 
-			    counts[sel] <<- counts[sel] + 1
-			    
 			    
 			    
 			
@@ -241,15 +238,20 @@ tNN_Macro$methods(cluster = function(newdata, verbose = FALSE) {
 		    last[i] <<- sel
 		    
 		    
-		    keep <- which(counts >= horizon)
+		    keep <- which(counts >= beta)
 		   	remove_names <- names(counts[-keep])
 		    
 			lapply(remove_names,function(x){overlap <<- smc_removeState(overlap,x)})
 		    
-		    
-		    
 		    counts <<- counts[keep]
 		    centers <<- centers[keep,]
+		    
+		    sapply(gc_ptr[keep],function(x){global_clusters[[x]] <<- global_clusters[[x]][keep]})
+		    gc_ptr[keep]
+		    
+		    transitions <- which(overlap@counts > 0 & overlap@counts < rep(c(counts,rep(NA,nrow(overlap@counts)-length(counts))),nrow(overlap@counts))/4)
+		 
+		    
 
 		} # end for loop
 
@@ -263,11 +265,11 @@ tNN_Macro$methods(clusters = function() centers[counts>minPoints,])
 
 ### creator    
 DSC_tNN_Macro <- function(threshold = 0.2, minPoints = 2, measure = "euclidean",
-	centroids = identical(tolower(measure), "euclidean"), lambda=0, horizon=.5) {
+	centroids = identical(tolower(measure), "euclidean"), lambda=0, beta=.5) {
 
     tNN_Macro <- tNN_Macro$new(threshold=threshold, minPoints=minPoints, 
 	    measure=measure, centroids=centroids,
-	    lambda=lambda,horizon=horizon)
+	    lambda=lambda,beta=beta)
 
     l <- list(description = "tNN_Macro",
 	    RObj = tNN_Macro)

@@ -1,4 +1,4 @@
-DSD_Data <- function(data, loop=FALSE, random=FALSE) {
+DSD_Data <- function(data, loop=FALSE, random=FALSE, scale = FALSE) {
 
     state <- new.env()
     assign("counter", 1L, envir = state)
@@ -115,6 +115,7 @@ DSD_Data <- function(data, loop=FALSE, random=FALSE) {
 	a <- a[complete]
 	d <- d[complete,]
 	
+	
 	if(random) {
 		rand <- sample(1:length(a),length(a),replace=F)
 		a <- a[rand]
@@ -123,6 +124,9 @@ DSD_Data <- function(data, loop=FALSE, random=FALSE) {
 
 	d <- apply(d,2,as.numeric)
 	a <- as.numeric(a)
+
+	if(scale)
+		d <- scale(d)
 
 	# creating the DSD object
     l <- list(description = paste("mlbench",data),

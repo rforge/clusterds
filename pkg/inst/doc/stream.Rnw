@@ -449,16 +449,21 @@ data streams and generators.
 \begin{itemize}
 \item \code{DSD_Gaussian_Static}, a DSD that generates static cluster data with a
 random Gaussian distribution; 
+\item \code{DSD_Gaussian_Moving}, a DSD that generates moving cluster data with a
+Gaussian distribution;
 \item \code{DSD_Wrapper}, a
 DSD class that wraps local static data (e.g., a data.frame or a matrix) 
 as a data stream; and
-\item
-\code{DSD_ReadStream}, a class designed
+\item\code{DSD_ReadStream}, a class designed
 to read data from files or open connections.
+\item\code{DSD_Data}, a DSD that wraps datasets found within the \code{mlbench} package.
+\item\code{DSD_mlbench}, a class that generates the artificial datasets defined in the \code{mlbench} package.
+\item\code{DSD_Target}, a DSD that generates the target shape.
+
 \end{itemize}
 
 From MOA currently only
-\code{DSD_RandomRBF}, a data generator for moving clusters,
+\code{DSD_RandomRBFGeneratorEvents}, a data generator for moving clusters,
 is interfaced. 
 As depicted in the class diagram, 
 other data steam implementations can be easily added in the future.
@@ -496,7 +501,7 @@ to save a part of a data stream to disk are provided.
 %to store a stream
 Different data stream implementation might have additional functions
 implemented. For example, \code{DSD_Wrapper} and \code{DSD_ReadStream}
-have \code{reset()} implemented to reset the stream to its beginning.
+have \code{reset_stream()} implemented to reset the stream to its beginning.
 
 \subsection{Data Stream Task (DST)} \label{sec:design:dst}
 
@@ -525,10 +530,8 @@ data stream clustering (DSC).
 
 \subsection{Data Stream Clustering (DSC)} \label{sec:design:dsc}
 Data stream clustering algorithms are implemented 
-as subclasses of the DSC class. Here only the online component 
-which has to be performed in real-time is implemented since the offline
-component uses a traditional clustering method which can be easily performed
-using R.
+as subclasses of the DSC class. Here both the online and offline component s
+are implemented.
 
 For DSC class the following function can be used:
 \begin{itemize}
@@ -542,16 +545,25 @@ from the DSD object to cluster into the DSC object.
 \item
 \code{get_centers(x, ...)} which returns the centers, 
 either the centroids or the medoids, of the
-micro-clusters of the DSC object.
+clusters of the DSC object.
+
+\item
+\code{get_microclusters(x, ...)} which returns the micro-clusters, 
+either the centroids or the medoids, when a macro-cluster is used.
+If the DSC is a micro-clusterer then the centers are returned.
 
 \item
 \code{nclusters(x)} which returns the number of
-micro-clusters in the DSC object.
+clusters in the DSC object.
+
+\item
+\code{get_weights(x)} which returns the weights of the
+clusters in the DSC object.
 
 \item
 \code{print(x, ...)} which prints common attributes of the
 DSC object. Currently it prints a small description of the underlying algorithm
-and the number of micro-clusters that have been calculated.
+and the number of clusters that have been calculated.
 
 \item
 \code{plot(x, ..., method="pairs")} which plots the centers
@@ -588,24 +600,25 @@ The implementations for DSC are split again into R-based implementations
 Currently most available algorithms 
 use MOA implementations.
 \begin{itemize}
-\item
-StreamKM++~\citep{stream:Ackermann+Lammersen+Maertens+Raupach:2010}
+%\item
+%StreamKM++~\citep{stream:Ackermann+Lammersen+Maertens+Raupach:2010}
 \item
 ClusTree~\citep{stream:Kranen+Assent+Baldauf+Seidl:2009}
 \item
 DenStream~\citep{stream:Cao+Ester+Qian+Zhou:2006}
 \item
 CluStream~\citep{stream:Aggarwal+Han+Wang+Yu:2003}
-\item
-CobWeb~\citep{stream:Fisher:1987}
+%\item
+%CobWeb~\citep{stream:Fisher:1987}
 \end{itemize}
 
-The only R implementation
-is threshold Nearest
+Currently there are two R implemented micro-clusterers,
+threshold Nearest
 Neighbor~\citep{stream:Hahsler+Dunham:2010,stream:Hahsler+Dunham:2010b}
-as class \code{DSC_tNN}.
+as class \code{DSC_tNN} and BIRCH as class \code{DSC_Birch}.
 
-There are three traditional clustering algorithms that can be compared to data stream clustering methods or can be used to recluster results.
+There are three traditional clustering algorithms that can be compared to data stream clustering methods or can be used to recluster results. They are all of the class \code{DSC_Macro} because they typically generate macro-clusters unlike
+their online counterparts.
 
 \begin{itemize}
 \item
@@ -665,7 +678,7 @@ similar to the hierarchy in Figure~\ref{figure:dst} for data stream
 clustering (DSC) can be easily added.
 
 To implement a new clustering algorithm, a creator function 
-(typically named after the algorithm) and a \code{get_clustering()} function
+(typically named after the algorithm) and a \code{cluster()} function
 is needed. The clustering algorithm itself is part 
 of the object created by the creator. To understand this slightly complicated
 approach consider again Figure~\ref{figure:interaction}.
@@ -1066,10 +1079,7 @@ measures can be called in a similar fashion.
 
 \subsection{Reclustering DSC objects with another DSC} \label{examples:recluster}
 
-This examples show how to recluster a \code{DSC} object after creating it. This example
-will also show how to utilize the \code{DSC_Wrapper} in conjunction with the reclustering
-function in order to run and evaluate classical models like kmeans as a \code{DSC} object.
-
+This examples show how to recluster a \code{DSC} object after creating it. 
 To begin, first create a \code{DSC} object and run the clustering algorithm.
 
 <<>>= 
@@ -1077,22 +1087,29 @@ library("stream")
 
 dsd <- DSD_Gaussian_Static(k=3, d=2, mu=rbind(c(1.5,1.3),c(1,1),c(1.2,1)))
 
-dsc <- DSC_tNN(, threshold=.1)
+dsc <- DSC_tNN(, threshold=.04)
 cluster(dsc,dsd,1000)
 @
 
-Next, you will want to grab the centers of your microclusters and then wrap them as a DSD.
-This will allow you to insert your microclusters into another clustering algorithm. The supported
-macro clustering models that are typically used for reclustering are kmeans, hierarchial, and dbscan.
+This will produce microclusters which can then be reclustered. To achieve this,
+simply use the \code{recluster()} method with a macro cluster. The supported
+macro clustering models that are typically used for reclustering are kmeans, a weighted
+kmeans, hierarchial, and dbscan.
 
+<<>>= 
+macro <- DSC_KmeansW(3)
+recluster(macro,dsc)
 
+@
 
 After running the \code{cluster()} function, your reclustering DSC will then have the standard
 clustering information. This information can later be used to evaluate the performance of the algorithm.
 
+<<>>= 
+get_evaluation(macro,dsd,"f1",1000)
+@
 
-
-In this example the f1 score is computed for the reclustered data.
+In this example the f1 score was computed for the reclustered data.
 
 
 \subsection{Full experimental comparison} \label{examples:full}
@@ -1113,7 +1130,7 @@ set.seed(1000)
 
 <<>>= 
 library("stream") 
-d <- get_points(DSD_Gaussian_Static(k=3, d=2, noise=0.01), 10000) 
+d <- get_points(DSD_Gaussian_Static(k=3, d=2, noise=0.01), 10000,assignment=TRUE) 
 head(d)
 
 dsd <- DSD_Wrapper(d, k=3) 
@@ -1157,6 +1174,8 @@ against the generated data}
 \label{figure:denstream+clustream} 
 \end{figure}
 
+
+
 The code above creates a \code{DSD_Wrapper} object from a
 \code{DSD_Gaussian_Static} object so that we can replay the same stream data
 for both DSC objects. We then use the \code{DSD_Wrapper} to feed the exact data
@@ -1179,17 +1198,7 @@ CluStream on the other hand, in blue, is more evenly spread, and the
 micro-clusters are relatively separated, covering most of the area that the
 generated data fills.
 
-<<denstream+kmeans, fig=TRUE, include=FALSE>>= 
-plot(d, xlab='x', ylab='y', pch=4, cex=.5, col='grey') 
-points(kmeans(get_centers(dsc1), centers=3, nstart=5)$centers,
-    col='red', cex=14, lwd=2) 
-@
 
-<<clustream+kmeans, fig=TRUE, include=FALSE>>= 
-plot(d, xlab='x', ylab='y', pch=4, cex=.5, col='grey') 
-points(kmeans(get_centers(dsc2), centers=3, nstart=5)$centers,
-    col='blue', cex=14, lwd=2) 
-@
 
 We can then take this a step further.
 Figure~\ref{figure:denstream+clustream+kmeans} shows a new plot---in this case,
@@ -1197,10 +1206,32 @@ we are plotting the calculated macro-clusters of each algorithm as a result of
 a \textit{k-means} operation. We use the term ``macro'' here to differentiate
 the \textit{k-means} clusters from the micro-clusters generated by the stream
 clustering algorithms. Again, the DenStream clusters are shown in red, and the
-CluStream clusters are shown in blue. We have enlarged the circle
+CluStream clusters are shown in blue.
+
+To achieve this we will create a \code{DSC_KmeansW} object and then use the
+\code{recluster} method. This will produce the centers as seen in~\ref{figure:denstream+clustream+kmeans}
+We have enlarged the circle
 representations for the \textit{k-means} clusters to better show the area they
 cover.
 
+<<>>= 
+macro1 <- DSC_KmeansW(3)
+macro2 <- DSC_KmeansW(3)
+recluster(macro1,dsc1)
+recluster(macro2,dsc2)
+@
+
+<<denstream+kmeans, fig=TRUE, include=FALSE>>= 
+plot(d, xlab='x', ylab='y', pch=4, cex=.5, col='grey') 
+points(get_centers(macro1),
+    col='red', cex=14, lwd=2) 
+@
+
+<<clustream+kmeans, fig=TRUE, include=FALSE>>= 
+plot(d, xlab='x', ylab='y', pch=4, cex=.5, col='grey') 
+points(get_centers(macro2),
+    col='blue', cex=14, lwd=2) 
+@
 
 This last operation is an example of how we use the same offline component for
 two different algorithms, and the differences that it produces. \proglang{R}
@@ -1211,6 +1242,16 @@ Most stream clustering algorithms are developed with a certain offline
 algorithm in mind, but it is interesting to see the different combinations of
 algorithms and the results they produce.
 
+Lastly, the two results can be compared to each other by running the
+\code{get_evaluation} method to determine which clustering combination
+performed better.
+
+<<>>= 
+reset_stream(dsd)
+get_evaluation(macro1,dsd,c("f1","precision","recall","rand"),1000)
+reset_stream(dsd)
+get_evaluation(macro2,dsd,c("f1","precision","recall","rand"),1000)
+@
 
 There are several external packages that are required to use the \pkg{stream}
 package. These include the \pkg{proxy} package, written by
@@ -1231,14 +1272,6 @@ JRI from within the \proglang{R} environment.
 clustering algorithm} 
 \label{figure:denstream+clustream+kmeans} 
 \end{figure}
-
-\subsection{Batch processing of clustering algorithms} \label{examples:batch}
-
-It may be of use to perform a batch job on multiple clusters to evaluate and compare them quickly. The \code{batch_Cluster()} function is used to perform this operation. As inputs, it accepts a list of DSC's, a common DSD for creating the clusters, an optional DSD used for testing the clusters, a list of scores to solve for, a list of reclustering DSC's, and parameters for the DSD size. Below is an example:
-
-
-
-This block of code effectively uses the first 1000 points of the \code{DSD} to construct clusters using both the \code{DSC_DenStream} and the \code{DSC_CluStream} algorithms. It also will recluster both results using \textit{k-means} and will return the evaluation scores of each clustering combination.
 
 \section{Conclusion and Future Work} \label{sec:conclusion}
 

@@ -29,6 +29,9 @@ birch <- setRefClass("Birch",
 		},
 		
 		cluster = function(points,  weight = rep(1,nrow(points)), ...) {
+			if(any(is.na(points))) {
+				warning("Birch: Throwing out point with NA.")
+			} else {
 			data <<- rbind(data,points)
 			weights <<- c(weights,weight)
 		    if(is.null(birch)) {
@@ -42,7 +45,8 @@ birch <- setRefClass("Birch",
 		    }
 		    
 		    i<-1
-		    lapply(dsc$RObj$birch$members,function(x){assignment[x]<<-i;i<<-i+1})
+		    lapply(birch$members,function(x){assignment[x]<<-i;i<<-i+1})
+		    }
 		    }
 	)
 )

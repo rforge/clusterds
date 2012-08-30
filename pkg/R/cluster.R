@@ -16,7 +16,7 @@ recluster <- function(macro, dsc, ...) {
     if(!is(macro, "DSC_Macro")) stop("macro is not of class DSC_marco")
     
     x <- as.data.frame(get_centers(dsc))
-    weight <- get_weights(dsc)
+    weight <- get_weights(dsc,scale=NULL)
     macro$RObj$cluster(x, weight=weight, ...)
 }
 

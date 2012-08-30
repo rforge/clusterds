@@ -81,6 +81,8 @@ smc_addState <- function(x, state) {
     x@top <- x@top-length(state)
 
     names(x@initial_counts)[pos] <- state
+    
+    x@counts[pos] <- 1
         
     ## we don't need to clean up counts. removeState does it!
     ## we don't need to initialize x@initial_counts[pos] <- 0
