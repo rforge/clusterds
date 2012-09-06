@@ -20,6 +20,10 @@ recluster <- function(macro, dsc, ...) {
     macro$RObj$cluster(x, weight=weight, ...)
 }
 
+plot_cluster <- function(dsc,dsd,n=1, microclusters=FALSE, horizon=500, pointInterval=100, weights=FALSE, scale=c(1,10),...) {
+	saveMovie(jitter.ani(), interval = 0.5, outdir = getwd())
+}
+
 cluster.ani <- function(dsc, dsd, n, microclusters=FALSE, horizon=500, pointInterval=100, weights=FALSE, scale=c(1,10),...) {
 	points <- data.frame()
 	col <- gray.colors(horizon, start = 1, end = .7, gamma = 2.2)
@@ -27,6 +31,7 @@ cluster.ani <- function(dsc, dsd, n, microclusters=FALSE, horizon=500, pointInte
 	j <- 0
 	
 	while (i <= ani.options("nmax") & j <= n) {
+		d <- get_points(dsd)
 		new_points <- .cluster(dsc, dsd, n)
 		j <- j + nrow(new_points)
 		

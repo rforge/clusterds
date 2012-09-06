@@ -8,12 +8,14 @@ The data can either be looped or replayed manually to give
 the exact same data to 2 different DataStreamTask objects.
 }
 
-\usage{DSD_Data(data, loop = FALSE)}
+\usage{DSD_Data(data, loop = FALSE, random = FALSE, scale = FALSE)}
 
 \arguments{
 	\item{data}{The name of the dataset from mlbench}
 	\item{loop}{A flag that tells the stream to loop or 
 				not to loop over the data frame.}
+	\item{random}{A flag that determines if the data should be in a random order.}
+	\item{scale}{A flag that determines if the data should be scaled.}
 }
 
 \details{

@@ -15,8 +15,8 @@ DSC_DenStream <- function(horizon=1000, epsilon=0.1, minPoints=10, beta=0.001, m
   if (horizon < 1)
     stop("invalid horizon, range: >= 1")
   
-  if (epsilon <= 0 || epsilon >= 1)
-    stop("invalid epsilon, range: 0 to 1 exclusive")
+  if (epsilon <= 0)
+    stop("invalid epsilon")
 
   if (minPoints < 0)
     stop("invalid minPoints, must be > 0")

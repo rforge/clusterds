@@ -7,19 +7,14 @@ Clusters a number of input points from a data stream into a clustering object.
 }
 
 \usage{
-cluster(dsc, dsd, n = 1, plot=FALSE, microclusters=FALSE, horizon=500, interval=100, sleep=0.5, ...)
+cluster(dsc, dsd, n = 1, ...)
 }
 
 \arguments{
   \item{dsc}{a DSC object}
   \item{dsd}{a DSD object}
   \item{n}{number of points to cluster}
-  \item{plot}{whether or not a plot should be generated}
-  \item{microclusters}{display microclusters on the plot}
-  \item{horizon}{max number of points to be displayed from the dsd}
-  \item{interval}{the rate of refreshing the plot}
-  \item{sleep}{the length of time between each refresh}
-  \item{...}{extra information needed by plot}
+  \item{...}{extra arguments for clusterer.}
 }
 
 \details{
