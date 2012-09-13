@@ -20,35 +20,48 @@ recluster <- function(macro, dsc, ...) {
     macro$RObj$cluster(x, weight=weight, ...)
 }
 
-plot_cluster <- function(dsc,dsd,n=1, microclusters=FALSE, horizon=500, pointInterval=100, weights=FALSE, scale=c(1,10),...) {
-	saveMovie(jitter.ani(), interval = 0.5, outdir = getwd())
+cluster_animation <- function(dsc,dsd,n=1,interval=.1, horizon=500, pointInterval=100, weights=FALSE, scale=c(1,10), outdir=NULL,...) {
+	if(is.null(outdir)) {
+		cluster.ani(dsc, dsd, n, pointInterval, horizon, weights, scale,save=FALSE,interval=interval,...)
+	} else {
+		saveMovie(cluster.ani(dsc, dsd, n, pointInterval, horizon, weights, scale,save=TRUE,...), interval = interval, outdir = outdir)
+	}
 }
 
-cluster.ani <- function(dsc, dsd, n, microclusters=FALSE, horizon=500, pointInterval=100, weights=FALSE, scale=c(1,10),...) {
+plot_animation <- function(dsd,n=1,interval=.1, horizon=500, pointInterval=100, outdir=NULL,...) {
+	if(is.null(outdir)) {
+		cluster.ani(, dsd, n, pointInterval, horizon,save=FALSE,interval=interval,...)
+	} else {
+		saveMovie(cluster.ani(, dsd, n, pointInterval, horizon,save=TRUE,...), interval = interval, outdir = outdir)
+	}
+}
+
+cluster.ani <- function(dsc=NULL, dsd, n, pointInterval=100, horizon=5*pointInterval, weights=FALSE, scale=c(1,10),save=TRUE,interval=.1,...) {
 	points <- data.frame()
 	col <- gray.colors(horizon, start = 1, end = .7, gamma = 2.2)
 	i <- 1
 	j <- 0
 	
-	while (i <= ani.options("nmax") & j <= n) {
+	while ( j <= n) {
 		d <- get_points(dsd)
-		new_points <- .cluster(dsc, dsd, n)
-		j <- j + nrow(new_points)
+		if(!is.null(dsc)) {
+			.cluster(dsc, DSD_Wrapper(d,0),1)}
+		j <- j + nrow(d)
 		
-		points <- rbind(points, new_points)
+		points <- rbind(points, d)
 		if(nrow(points) > horizon) { points <- points[(nrow(points)-horizon +1):nrow(points),] }
 		
-		if(j %% pointInterval ==0) {
+		if(j %% pointInterval == 0) {
 			plot(points,col=col[horizon-nrow(points)+1: horizon],...)
-			if(microclusters)
-				if(length(get_microclusters(dsc))>0)
-					points(get_microclusters(dsc))
-			if(length(get_centers(dsc))>0)
+			if(!is.null(dsc) && length(get_centers(dsc))>0)
 				if(weights)
 					points(get_centers(dsc),col=2,pch=10,cex=get_weights(dsc,scale))
 				else
 					points(get_centers(dsc),col=2,pch=10)
-			ani.pause()
+			if(save)
+				ani.pause()
+			else
+				Sys.sleep(interval)
 			i <- i + 1
 		}
 	}
