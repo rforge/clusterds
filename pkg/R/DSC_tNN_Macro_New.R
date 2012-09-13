@@ -291,8 +291,8 @@ depth_search <- function(x, current) {
 get_centers.DSC_tNN_Macro_New <- function(x, ...) {
 	mc <- get_microclusters(x)
 	macro <-get_macroclusters(x)
-	df <- t(sapply(macro,function(x){temp <- sapply(x,function(y){as.numeric(mc[y,])});rowMeans(as.matrix(temp[,!is.na(temp[1,])]))}))
-	data.frame(df[!is.na(df[,1]),])
+	df <- data.frame(t(sapply(macro,function(x){temp <- sapply(x,function(y){as.numeric(mc[y,])});rowMeans(as.matrix(temp[,!is.na(temp[1,])]))})))
+	df[!is.na(df[,1]),]
 }
 
 outliers <- function(x) {

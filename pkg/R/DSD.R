@@ -23,11 +23,11 @@ plot.DSD <- function(dsd = NULL, n = 1000, ..., method="pairs") {
     ## method can be pairs, plot or pc (projection with PCA)
     d <- get_points(dsd, n, assignment = TRUE)
     
-	names(d) <- names(centers)
-    if(ncol(centers)>2 && method=="pairs") {
+	names(d)
+    if(ncol(d)>2 && method=="pairs") {
    		pairs(d, ...)
     }
-    else if(ncol(centers)>2 && method=="pc") {
+    else if(ncol(d)>2 && method=="pc") {
 		## we assume Euclidean here
 		p <- prcomp(d)
 		plot(p$x,...)
