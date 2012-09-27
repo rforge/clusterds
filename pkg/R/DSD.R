@@ -32,6 +32,6 @@ plot.DSD <- function(dsd = NULL, n = 1000, ..., method="pairs") {
 		p <- prcomp(d)
 		plot(p$x,...)
     } else {
-		plot(d,...)
+		plot(d,col=attr(d,"assignment"),...)
     }
 }

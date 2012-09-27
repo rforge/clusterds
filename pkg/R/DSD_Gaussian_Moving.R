@@ -19,9 +19,9 @@ mu <- cbind(
 #)
 
 sd_rho <- cbind(
-       x = c(0.2, 0.2, 0.2),
-       y = c(0.1, 0.1, 0.1),
-       rho = c(0.3, 0.3, 0.3)
+       x = c(0.08, 0.08, 0.08),
+       y = c(0.08, 0.08, 0.08),
+       rho = c(0, 0, 0)
 )
 
 Sigma <- lapply(1:nrow(sd_rho), FUN = function(i) rbind(

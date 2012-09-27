@@ -8,6 +8,6 @@ Description: A framework for data stream modeling and
     associated data mining tasks such as 
     clustering and classification. Development of this
     package was supported in part by NSF IIS-0948893.
-Depends: R (>= 2.13.0), clusterGeneration, proxy (>= 0.4-7), fpc, methods, Matrix, birch, MASS, clues, animation, mlbench, rJava (>= 0.6-3)
+Depends: R (>= 2.13.0), clusterGeneration, proxy (>= 0.4-7), fpc, methods, Matrix, birch, MASS, clues, animation, mlbench, rJava (>= 0.6-3), igraph
 SystemRequirements: Java (>= 5.0)
 License: GPL-2

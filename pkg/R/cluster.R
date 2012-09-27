@@ -42,7 +42,7 @@ cluster.ani <- function(dsc=NULL, dsd, n, pointInterval=100, horizon=5*pointInte
 	i <- 1
 	j <- 0
 	
-	while ( j <= n) {
+	while ( j < n) {
 		d <- get_points(dsd)
 		if(!is.null(dsc)) {
 			.cluster(dsc, DSD_Wrapper(d,0),1)}
