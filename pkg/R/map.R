@@ -19,6 +19,7 @@
 ## mapping helper
 
 map <- function(x, range = c(0,1), from.range=NA) {
+	x <- c(x,0)
     if(any(is.na(from.range))) from.range <- range(x, na.rm=TRUE)
     
     ## check if all values are the same
@@ -45,6 +46,8 @@ map <- function(x, range = c(0,1), from.range=NA) {
     
     x[x<min(range) | x>max(range)] <- NA
     
+	x <- x[1:(length(x)-1)]
+	
     x
 }
 

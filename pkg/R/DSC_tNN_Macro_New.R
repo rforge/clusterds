@@ -3,18 +3,24 @@ tNN_Macro_New <- setRefClass("tNN_Macro_New",
 		relations 		= "list",
 		lambda			= "numeric",
 		threshold		= "numeric",
-		visited			= "numeric"),
+		weights			= "numeric",
+		centers			= "list",
+		minweight		= "numeric"), #add weight and center vectors
+		
 		
 		methods = list(
 		initialize = function(
 				threshold	= 0.05,
-				lambda		= 0.01
+				lambda		= 0.01,
+				minweight	= 0.5
 			) {
 		    
 		    relations 	<<- list()
 		    lambda		<<- 1 - lambda^2
 		    threshold	<<- threshold
-		    visited		<<- numeric()
+		    minweight	<<- minweight
+		    weights		<<- numeric()
+		    centers		<<- list()
 		    
 		    
 		    .self
@@ -23,9 +29,9 @@ tNN_Macro_New <- setRefClass("tNN_Macro_New",
 	),
 )
 
-DSC_tNN_Macro_New <- function(threshold = 0.05, lambda = 0.01) {
+DSC_tNN_Macro_New <- function(threshold = 0.2, lambda = 0.2, minweight = .5) {
 
-    tNN_Macro_New <- tNN_Macro_New$new(threshold, lambda)
+    tNN_Macro_New <- tNN_Macro_New$new(threshold, lambda, minweight)
 
     l <- list(description = "tNN_Macro_New",
 	    RObj = tNN_Macro_New)
@@ -44,64 +50,73 @@ tNN_Macro_New$methods(cluster = function(newdata, verbose = FALSE) {
 	    	point <- newdata[i,,drop = FALSE]
 	    	
 	    	if(lambda>0) {
-	    		relations <<- lapply(relations,function(x) {
-	    			weight <- attr(x,"weight") * lambda
-	    			
-	    			if(weight > 0.5) {
-	    				center <- attr(x,"center")
-	    				x <- lapply(x, function(y) {y <- y*lambda})
-	    					attr(x,"weight") <- weight
-	    				attr(x,"center") <- center
-	    			} else {
-	    				x <- NULL
+	    		
+	    		weights <<- weights * lambda
+	    		remove <- numeric()
+	    		
+	    		if(length(weights)>0)
+	    			for(i in 1:length(weights)) {
+	    				if(weights[i] > minweight) { 
+	    					relations[[i]] <<- lapply(relations[[i]], function(x){
+	    						x <- x*lambda
+	    						if(x < minweight/10)
+	    							return(NULL)
+	    						x
+	    					})
+	    					relations[[i]] <<- Filter(Negate(is.null), relations[[i]])
+	    				}
 	    			}
-	    			
-	    			x
+	    		
+	    		sapply(remove,function(x) {
+	    			relations[[x]] <<- NULL
+	    			centers[[x]] <<- NULL
+	    			relations <<- Filter(Negate(is.null), relations)
 	    		})
-	    		relations <<- Filter(Negate(is.null), relations)
-
+	    		if(length(remove)>0)
+	    			weights <<- weights[-remove]
 	    	}
 	    	
 	    	if(length(relations)<1) {
-	    		relations[[1]]					<<-list()
-	    		attr(relations[[1]],"weight")	<<- 1
-	    		attr(relations[[1]],"center")	<<- point
+	    		relations[[as.character(1)]] <<- list()
+	    		weights 					 <<- 1
+	    		centers						 <<- append(centers,list(point))
 	    	} else {
-	    		
-	    		inside <- which(dist(point,as.data.frame(do.call(rbind, lapply(relations,function(x){attr(x,"center")}))))<threshold, arr.ind=TRUE)[,2]
-	    		
-	    		if(length(inside)>0) {
-	    			partialweight <- 1/length(inside)
+	    		inside <- which(dist(point,as.data.frame(do.call(rbind, centers)))<threshold)
+	    		if(length(inside)>0) { 
+	    			
+	    			partialweight <- 1 #/length(inside) #if a new data points belongs to several clusters then split evenenly
 	    			lapply(1:length(inside), function(i) {
-	    				attr(relations[[inside[i]]],"center") <<- 
-	    					(attr(relations[[inside[i]]],"center")*attr(relations[[inside[i]]],"weight") + point*partialweight) /
-	    					(partialweight + attr(relations[[inside[i]]],"weight"))
-	    				attr(relations[[inside[i]]],"weight") <<- attr(relations[[inside[i]]],"weight") + partialweight
+	    				name <- names(relations)[inside[i]]
+	    				centers[[inside[i]]] <<- (centers[[inside[i]]]*weights[inside[i]] + point*partialweight) / (partialweight + weights[inside[i]]) #update center
+	    				weights[inside[i]] <<- weights[inside[i]] + partialweight #weight
 	    				
 	    				lapply(i:length(inside), function(j) {
 	    					if(i!=j) {
-	    						if(is.null(unlist(relations[[inside[i]]][as.character(inside[j])]))) {
-	    							relations[[inside[i]]][[as.character(inside[j])]] <<- 0
+	    						name2 <- names(relations)[inside[j]]
+	    						if(is.null(relations[[name]][[name2]])) {
+	    							relations[[name]][[name2]] <<- 0
 	    						}
-	    						relations[[inside[i]]][[as.character(inside[j])]] <<-
-	    						relations[[inside[i]]][[as.character(inside[j])]] + partialweight
+	    						relations[[name]][[name2]] <<-
+	    						relations[[name]][[name2]] + partialweight
+	    						
+	    						#FIXME: figure out what to add to the edges
+	    						#play around with using full weight
 	    					}
 	    				})
 	    			})
-	    			
 	    		} else {
 	    			newcluster <- list()
-	    			attr(newcluster,"weight") <- 1
-	    			attr(newcluster,"center") <- point
+	    			weights <<- c(weights,1)
+	    			centers <<- append(centers, list(point))
 	    			
-	    			relations <<- c(relations, list(newcluster))
+	    			relations[[as.character(as.integer(names(tail(relations, 1)))+1)]] <<-newcluster
 	    		}
 	    	}
 	    }
 	}	    
 )
 
-get_microclusters.DSC_tNN_Macro_New <- function(x, ...) as.data.frame(do.call(rbind, lapply(x$RObj$relations,function(x){attr(x,"center")})))
+get_microclusters.DSC_tNN_Macro_New <- function(x, ...) as.data.frame(do.call(rbind, x$RObj$centers))
 
 get_centers.DSC_tNN_Macro_New <- function(x, ...) {
 	assignment <- get_membership(x)
@@ -112,13 +127,17 @@ get_centers.DSC_tNN_Macro_New <- function(x, ...) {
 		warning(paste(class(x)[1],": There are no clusters",sep=""))
 		return(data.frame())
 	}
-	data.frame(do.call("rbind",lapply(uni,function(y) colMeans(mc[intersect(which(assignment==y),which(!is.na(mc[,1]))),]))))
+	data <- data.frame(do.call("rbind",lapply(uni,function(y) colMeans(mc[intersect(which(assignment==y),which(!is.na(mc[,1]))),]))))
+	
+	weights <- get_weights(x)
+	
+	data[which(weights>1),]
 	
 }
 
 get_weights.DSC_tNN_Macro_New <- function(x, scale=NULL) {
 	assignment <- get_membership(x)
-	weights <- do.call(rbind, lapply(dsc$RObj$relations,function(x){attr(x,"weight")}))
+	weights <- x$RObj$weights
 	
 	nclusters <- unique(assignment)
 	if(length(nclusters) == 0)  {
@@ -133,22 +152,34 @@ get_weights.DSC_tNN_Macro_New <- function(x, scale=NULL) {
 }
 
 get_membership <- function(dsc) {
+	#FIXME: make edgelist max length to avoid copying
 	edgelist <- numeric()
 	r <- dsc$RObj$relations
+	
+	i <- 0
+	lookup <- sapply(names(dsc$RObj$relations),function(name) {
+		i <<- i + 1
+	})
 	
 	if(length(r)==0) return(numeric())
 	
 	(lapply(1:length(r),function(x) {
 		edgelist <<- c(edgelist,x,x)
-		lapply(names(sapply(r[[x]], names)),function(y) {
-			if(r[[x]][[y]] > attr(r[[x]],"weight")/4) {
-				edgelist <<- c(edgelist,x,y)
+		lapply(names(r[[x]]),function(y) {
+			if(!is.null(r[[y]])) {
+				yIndex <- lookup[y]
+				if(r[[x]][[y]] > dsc$RObj$weights[x]/4 || r[[x]][[y]] > dsc$RObj$weights[yIndex]/4) {
+					edgelist <<- c(edgelist,x,yIndex)
+				}
 			}
 		})
 	}))
 	
 	if(length(edgelist)>1) {
-		return(clusters(graph(edgelist,directed=FALSE))$membership)
+		
+		assignment <- clusters(graph(edgelist,directed=FALSE))$membership
+		
+		return(assignment)
 	}
 	
 	1:length(r)
@@ -169,7 +200,6 @@ get_assignment.DSC_tNN_Macro_New <- function(dsc,points) {
 		predict <- apply(dist, 1, which.min)
 		predict <- assignment[predict]+1
 
-		#predict <- unlist(lapply(predict, function(y) dsc$RObj$assignment[y]))+1
 		predict[is.na(predict)] <- 1	
 	} else {
 		warning(paste(class(x)[1],": There are no clusters",sep=""))
