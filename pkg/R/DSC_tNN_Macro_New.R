@@ -64,6 +64,8 @@ tNN_Macro_New$methods(cluster = function(newdata, verbose = FALSE) {
 	    						x
 	    					})
 	    					relations[[i]] <<- Filter(Negate(is.null), relations[[i]])
+	    				} else {
+	    					remove <- c(remove,i)
 	    				}
 	    			}
 	    		
@@ -87,7 +89,8 @@ tNN_Macro_New$methods(cluster = function(newdata, verbose = FALSE) {
 	    			partialweight <- 1 #/length(inside) #if a new data points belongs to several clusters then split evenenly
 	    			lapply(1:length(inside), function(i) {
 	    				name <- names(relations)[inside[i]]
-	    				centers[[inside[i]]] <<- (centers[[inside[i]]]*weights[inside[i]] + point*partialweight) / (partialweight + weights[inside[i]]) #update center
+	    				if(length(inside) == 1)
+	    					centers[[inside[i]]] <<- (centers[[inside[i]]]*weights[inside[i]] + point*partialweight) / (partialweight + weights[inside[i]]) #update center #remove this when inside length is greater than 1 to prevent centers from overlapping
 	    				weights[inside[i]] <<- weights[inside[i]] + partialweight #weight
 	    				
 	    				lapply(i:length(inside), function(j) {

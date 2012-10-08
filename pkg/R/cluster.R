@@ -36,7 +36,7 @@ plot_animation <- function(dsd,n=1,interval=.1, horizon=500, pointInterval=100, 
 	}
 }
 
-cluster.ani <- function(dsc=NULL, dsd, n, pointInterval=100, horizon=5*pointInterval, weights=FALSE, scale=c(1,10),save=TRUE,interval=.1,...) {
+cluster.ani <- function(dsc=NULL, dsd, n, pointInterval=100, horizon=5*pointInterval, weights=FALSE, scale=c(1,10),save=TRUE,interval=.1, microclusters=FALSE, ...) {
 	points <- data.frame()
 	col <- gray.colors(horizon, start = 1, end = .7, gamma = 2.2)
 	i <- 1
@@ -53,11 +53,15 @@ cluster.ani <- function(dsc=NULL, dsd, n, pointInterval=100, horizon=5*pointInte
 		
 		if(j %% pointInterval == 0) {
 			plot(points,col=col[horizon-nrow(points)+1: horizon],...)
-			if(!is.null(dsc) && length(get_centers(dsc))>0)
+			if(!is.null(dsc) && microclusters && length(get_microclusters(dsc))>0) {
+				points(get_microclusters(dsc))
+			}
+			if(!is.null(dsc) && length(get_centers(dsc))>0) {
 				if(weights)
 					points(get_centers(dsc),col=2,pch=10,cex=get_weights(dsc,scale))
 				else
 					points(get_centers(dsc),col=2,pch=10)
+			}
 			if(save)
 				ani.pause()
 			else

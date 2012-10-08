@@ -25,12 +25,16 @@ get_points.DSD_mlbench <- function(x, n=1, assignment = FALSE,...) {
 	rand <- sample(1:n,n,replace=F)
 	
 	dat <- d$x[rand,]
+
+	df <- data.frame()
+	
+	df <- rbind(df,dat)
 	
 	if(assignment) {
-		attr(dat,"assignment")<-d$classes[rand]
+		attr(df,"assignment")<-d$classes[rand]
 	}
 	
-	data.frame(dat)
+	df
 }
 
 print.DSD_mlbench <- function(x, ...) {
