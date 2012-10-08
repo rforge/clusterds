@@ -110,23 +110,23 @@ ssq <- function(points,centers) {
 }
 
 rand <- function(predict,actual) {
-	adjustedRand(predict,actual,"Rand")
+	as.numeric(adjustedRand(predict,actual,"Rand"))
 }
 
 HA <- function(predict,actual) {
-	adjustedRand(predict,actual,"HA")
+	as.numeric(adjustedRand(predict,actual,"HA"))
 }
 
 MA <- function(predict,actual) {
-	adjustedRand(predict,actual,"MA")
+	as.numeric(adjustedRand(predict,actual,"MA"))
 }
 
 FM <- function(predict,actual) {
-	adjustedRand(predict,actual,"FM")
+	as.numeric(adjustedRand(predict,actual,"FM"))
 }
 
 jaccard <- function(predict,actual) {
-	adjustedRand(predict,actual,"Jaccard")
+	as.numeric(adjustedRand(predict,actual,"Jaccard"))
 }
 
 ### silhouette <- function(d,c,assignment = NULL) {}

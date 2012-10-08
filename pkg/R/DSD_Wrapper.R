@@ -69,7 +69,7 @@ get_points.DSD_Wrapper <- function(x, n=1, assignment = FALSE,...) {
 	}
     }
     
-	data.frame(d)
+	d <- data.frame(d)
 	if(assignment) attr(d,"assignment") <- a
 	
 	d
