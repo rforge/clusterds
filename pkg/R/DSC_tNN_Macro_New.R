@@ -6,14 +6,16 @@ tNN_Macro_New <- setRefClass("tNN_Macro_New",
 		weights			= "numeric",
 		alpha			= "numeric",
 		centers			= "list",
-		minweight		= "numeric"), #add weight and center vectors
+		minweight		= "numeric",
+		microweight		= "numeric"), #add weight and center vectors
 		
 		
 		methods = list(
 		initialize = function(
 				threshold	= 0.05,
 				lambda		= 0.01,
-				minweight	= 0.5,
+				minweight	= 1,
+				microweight = minweight*.5
 				alpha 		= 0.4
 			) {
 		    
@@ -21,6 +23,7 @@ tNN_Macro_New <- setRefClass("tNN_Macro_New",
 		    lambda		<<- 2^-lambda
 		    threshold	<<- threshold
 		    minweight	<<- minweight
+		    microweight <<- microweight
 		    alpha		<<- alpha
 		    weights		<<- numeric()
 		    centers		<<- list()
@@ -32,9 +35,9 @@ tNN_Macro_New <- setRefClass("tNN_Macro_New",
 	),
 )
 
-DSC_tNN_Macro_New <- function(threshold = 0.2, lambda = 0.2, minweight = .5, alpha = .4) {
+DSC_tNN_Macro_New <- function(threshold = 0.2, lambda = 0.01, minweight = 1, microweight = minweight*.5, alpha = .4) {
 
-    tNN_Macro_New <- tNN_Macro_New$new(threshold, lambda, minweight, alpha)
+    tNN_Macro_New <- tNN_Macro_New$new(threshold, lambda, minweight, microweight, alpha)
 
     l <- list(description = "tNN_Macro_New",
 	    RObj = tNN_Macro_New)
@@ -59,10 +62,10 @@ tNN_Macro_New$methods(cluster = function(newdata, verbose = FALSE) {
 	    		
 	    		if(length(weights)>0)
 	    			for(i in 1:length(weights)) {
-	    				if(weights[i] >= minweight) { 
+	    				if(weights[i] >= microweight) { 
 	    					relations[[i]] <<- lapply(relations[[i]], function(x){
 	    						x <- x*lambda
-	    						if(x < minweight*alpha)
+	    						if(x < microweight*alpha)
 	    							return(NULL)
 	    						x
 	    					})
@@ -143,7 +146,7 @@ get_centers.DSC_tNN_Macro_New <- function(x, ...) {
 	weights <- get_weights(x)
 	data <- data/weights
 	
-	data[which(weights>1),]
+	data[which(weights>minweight),]
 	
 }
 
@@ -198,7 +201,7 @@ get_membership <- function(dsc) {
 }
 
 nclusters.DSC_tNN_Macro_New <- function(x) {
-	length(unique(get_membership(x)))
+	nrow(get_centers)
 }
 
 get_assignment.DSC_tNN_Macro_New <- function(dsc,points) {
