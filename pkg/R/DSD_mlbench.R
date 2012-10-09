@@ -31,7 +31,7 @@ get_points.DSD_mlbench <- function(x, n=1, assignment = FALSE,...) {
 	df <- rbind(df,dat)
 	
 	if(assignment) {
-		attr(df,"assignment")<-d$classes[rand]
+		attr(df,"assignment")<-as.numeric(d$classes[rand])
 	}
 	
 	names(df) <- 1:ncol(df)

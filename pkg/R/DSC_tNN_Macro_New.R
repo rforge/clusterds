@@ -32,9 +32,9 @@ tNN_Macro_New <- setRefClass("tNN_Macro_New",
 	),
 )
 
-DSC_tNN_Macro_New <- function(threshold = 0.2, lambda = 0.2, minweight = .5) {
+DSC_tNN_Macro_New <- function(threshold = 0.2, lambda = 0.2, minweight = .5, alpha = .4) {
 
-    tNN_Macro_New <- tNN_Macro_New$new(threshold, lambda, minweight)
+    tNN_Macro_New <- tNN_Macro_New$new(threshold, lambda, minweight, alpha)
 
     l <- list(description = "tNN_Macro_New",
 	    RObj = tNN_Macro_New)
@@ -59,7 +59,7 @@ tNN_Macro_New$methods(cluster = function(newdata, verbose = FALSE) {
 	    		
 	    		if(length(weights)>0)
 	    			for(i in 1:length(weights)) {
-	    				if(weights[i] > minweight) { 
+	    				if(weights[i] >= minweight) { 
 	    					relations[[i]] <<- lapply(relations[[i]], function(x){
 	    						x <- x*lambda
 	    						if(x < minweight*alpha)
@@ -72,13 +72,14 @@ tNN_Macro_New$methods(cluster = function(newdata, verbose = FALSE) {
 	    				}
 	    			}
 	    		
-	    		sapply(remove,function(x) {
+	    		sapply(rev(remove),function(x) {
 	    			relations[[x]] <<- NULL
 	    			centers[[x]] <<- NULL
 	    			relations <<- Filter(Negate(is.null), relations)
 	    		})
-	    		if(length(remove)>0)
+	    		if(length(remove)>0) {
 	    			weights <<- weights[-remove]
+	    		}
 	    	}
 	    	
 	    	if(length(relations)<1) {
@@ -179,7 +180,7 @@ get_membership <- function(dsc) {
 		lapply(names(r[[x]]),function(y) {
 			if(!is.null(r[[y]])) {
 				yIndex <- lookup[y]
-				if(r[[x]][[y]] > (dsc$RObj$weights[x]+dsc$RObj$weights[yIndex])*alpha) {
+				if(r[[x]][[y]] > (dsc$RObj$weights[x]+dsc$RObj$weights[yIndex])*dsc$RObj$alpha) {
 					edgelist <<- c(edgelist,x,yIndex)
 				}
 			}
