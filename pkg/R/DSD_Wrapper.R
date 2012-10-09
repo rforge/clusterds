@@ -1,5 +1,7 @@
 DSD_Wrapper <- function(x, k, loop=FALSE, assignment = NULL) {
 
+    x <- as.data.frame(x)
+    
     state <- new.env()
     assign("counter", 1L, envir = state)
 
