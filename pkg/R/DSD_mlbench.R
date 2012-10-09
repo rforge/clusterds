@@ -18,11 +18,11 @@ DSD_mlbench <- function(method,...) {
 get_points.DSD_mlbench <- function(x, n=1, assignment = FALSE,...) {
 	
 	if(is.null(unlist(x$variables)))
-		d <- do.call(paste("mlbench.",x$method,sep=""),list(n))
+		d <- do.call(paste("mlbench.",x$method,sep=""),list(n*20))
 	else
-		d <- do.call(paste("mlbench.",x$method,sep=""),list(n,unlist(x$variables)))
+		d <- do.call(paste("mlbench.",x$method,sep=""),list(n*20,unlist(x$variables)))
 		
-	rand <- sample(1:n,n,replace=F)
+	rand <- sample(1:n*20,n,replace=F)
 	
 	dat <- d$x[rand,]
 
@@ -33,6 +33,8 @@ get_points.DSD_mlbench <- function(x, n=1, assignment = FALSE,...) {
 	if(assignment) {
 		attr(df,"assignment")<-d$classes[rand]
 	}
+	
+	names(df) <- 1:ncol(df)
 	
 	df
 }

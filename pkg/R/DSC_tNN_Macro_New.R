@@ -4,6 +4,7 @@ tNN_Macro_New <- setRefClass("tNN_Macro_New",
 		lambda			= "numeric",
 		threshold		= "numeric",
 		weights			= "numeric",
+		alpha			= "numeric",
 		centers			= "list",
 		minweight		= "numeric"), #add weight and center vectors
 		
@@ -12,13 +13,15 @@ tNN_Macro_New <- setRefClass("tNN_Macro_New",
 		initialize = function(
 				threshold	= 0.05,
 				lambda		= 0.01,
-				minweight	= 0.5
+				minweight	= 0.5,
+				alpha 		= 0.4
 			) {
 		    
 		    relations 	<<- list()
-		    lambda		<<- 1 - lambda^2
+		    lambda		<<- 2^-lambda
 		    threshold	<<- threshold
 		    minweight	<<- minweight
+		    alpha		<<- alpha
 		    weights		<<- numeric()
 		    centers		<<- list()
 		    
@@ -59,7 +62,7 @@ tNN_Macro_New$methods(cluster = function(newdata, verbose = FALSE) {
 	    				if(weights[i] > minweight) { 
 	    					relations[[i]] <<- lapply(relations[[i]], function(x){
 	    						x <- x*lambda
-	    						if(x < minweight/10)
+	    						if(x < minweight*alpha)
 	    							return(NULL)
 	    						x
 	    					})
@@ -130,9 +133,14 @@ get_centers.DSC_tNN_Macro_New <- function(x, ...) {
 		warning(paste(class(x)[1],": There are no clusters",sep=""))
 		return(data.frame())
 	}
-	data <- data.frame(do.call("rbind",lapply(uni,function(y) colMeans(mc[intersect(which(assignment==y),which(!is.na(mc[,1]))),]))))
+	data <- data.frame(do.call("rbind",lapply(uni,function(y) {
+		micro <- mc[which(assignment==y),]
+		weight <- x$RObj$weights[which(assignment==y)]
+		colSums(micro*weight)
+	})))#colMeans(mc[intersect(which(assignment==y),which(!is.na(mc[,1]))),]))))
 	
 	weights <- get_weights(x)
+	data <- data/weights
 	
 	data[which(weights>1),]
 	
@@ -171,7 +179,7 @@ get_membership <- function(dsc) {
 		lapply(names(r[[x]]),function(y) {
 			if(!is.null(r[[y]])) {
 				yIndex <- lookup[y]
-				if(r[[x]][[y]] > dsc$RObj$weights[x]/4 || r[[x]][[y]] > dsc$RObj$weights[yIndex]/4) {
+				if(r[[x]][[y]] > (dsc$RObj$weights[x]+dsc$RObj$weights[yIndex])*alpha) {
 					edgelist <<- c(edgelist,x,yIndex)
 				}
 			}
@@ -189,7 +197,7 @@ get_membership <- function(dsc) {
 }
 
 nclusters.DSC_tNN_Macro_New <- function(x) {
-	unique(get_membership(x))
+	length(unique(get_membership(x)))
 }
 
 get_assignment.DSC_tNN_Macro_New <- function(dsc,points) {

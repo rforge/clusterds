@@ -54,6 +54,14 @@ cluster.ani <- function(dsc=NULL, dsd, n, pointInterval=100, horizon=5*pointInte
 		if(j %% pointInterval == 0) {
 			plot(points,col=col[horizon-nrow(points)+1: horizon],...)
 			if(!is.null(dsc) && microclusters && length(get_microclusters(dsc))>0) {
+				if(class(dsc)[1] == "DSC_tNN_Macro_New") {
+					library(sfsmisc)
+					p <- get_microclusters(dsc)
+						for(i in 1:nrow(points)){
+							lines(ellipsePoints(dsc$RObj$threshold, dsc$RObj$threshold, loc=as.numeric(p[i,])),col = "grey", lty=2)
+						}
+				}
+				
 				points(get_microclusters(dsc))
 			}
 			if(!is.null(dsc) && length(get_centers(dsc))>0) {
