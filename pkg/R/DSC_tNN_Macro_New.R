@@ -15,7 +15,7 @@ tNN_Macro_New <- setRefClass("tNN_Macro_New",
 				threshold	= 0.05,
 				lambda		= 0.01,
 				minweight	= 1,
-				microweight = minweight*.5
+				microweight = minweight*.5,
 				alpha 		= 0.4
 			) {
 		    
@@ -146,7 +146,7 @@ get_centers.DSC_tNN_Macro_New <- function(x, ...) {
 	weights <- get_weights(x)
 	data <- data/weights
 	
-	data[which(weights>minweight),]
+	data[which(weights>dsc$RObj$minweight),]
 	
 }
 

@@ -13,11 +13,11 @@ DSD_Target <- function() {
 get_points.DSD_Target <- function(x, n=1, assignment = FALSE,...) {
     ## ball
 	sd <- .05
-	nc <- n/2 + 1
+	nc <- n*20/2 + 1
 	datb <- cbind(x=rnorm(nc, sd=sd),y=rnorm(nc, sd=sd))
 
 	## ring
-	nr <- n/2 + 1
+	nr <- n*20/2 + 1
 	sdr <- .01
 	avgr <- .3
 	r <- avgr+rnorm(nr, sd=sdr)
@@ -27,15 +27,21 @@ get_points.DSD_Target <- function(x, n=1, assignment = FALSE,...) {
 
 	dat <- rbind(datb, datr)
 	
-	rand <- sample(1:n,n,replace=F)
+	rand <- sample(1:n*20,n,replace=F)
 	
 	dat <- dat[rand,]
+	
+	df <- data.frame()
+	
+	df <- rbind(df,dat)
 	
 	if(assignment) {
 		ab <- rep(1,nc)
 		ar <- rep(2,nr)
-		attr(dat,"assignment")<-c(ab,ar)[rand]
+		attr(df,"assignment")<-as.numeric(c(ab,ar)[rand])
 	}
 	
-	data.frame(dat)
+	names(df) <- 1:ncol(df)
+	
+	df
 }
