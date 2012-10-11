@@ -154,7 +154,7 @@ wmean <- function(w) {
 get_centers.DSC_tNN_Macro_New <- function(x, ...) {
 	assignment <- get_membership(x)
 	
-	mc <- get_microclusters(dsc)
+	mc <- get_microclusters(x)
 	uni <- unique(assignment)
 	if(length(uni) == 0)  {
 		warning(paste(class(x)[1],": There are no clusters",sep=""))
@@ -169,30 +169,30 @@ get_centers.DSC_tNN_Macro_New <- function(x, ...) {
 	weights <- get_all_weights(x)
 	data <- data/weights
 	
-	if(dsc$RObj$k==0) {
+	if(x$RObj$k==0) {
 		totalweight <- sum(weights)
-		return(data[which(weights>dsc$RObj$minweight*totalweight),])
+		return(data[which(weights>x$RObj$minweight*totalweight),])
 	} else {
-		if(nrow(data)<dsc$RObj$k)
+		if(nrow(data)<x$RObj$k)
 			return(data)
 		else {
 			data <-data[order(weights,decreasing=TRUE),]
-			return(data[1:dsc$RObj$k,])
+			return(data[1:x$RObj$k,])
 		}
 	}
 }
 
 get_weights.DSC_tNN_Macro_New <- function(x, scale=NULL) {
 	m <- get_all_weights(x,scale)
-	if(dsc$RObj$k==0) {
+	if(x$RObj$k==0) {
 		totalweight <- sum(m)
-		m[which(m>dsc$RObj$minweight*totalweight)]
+		m[which(m>x$RObj$minweight*totalweight)]
 	} else {
-		if(length(m)<dsc$RObj$k)
+		if(length(m)<x$RObj$k)
 			return(m)
 		else {
 			m <- sort(m,decreasing=TRUE)
-			return(m[1:dsc$RObj$k])
+			return(m[1:x$RObj$k])
 		}
 	}
 }
@@ -281,7 +281,7 @@ get_assignment.DSC_tNN_Macro_New <- function(dsc,points) {
 
 		predict[is.na(predict)] <- 1	
 	} else {
-		warning(paste(class(x)[1],": There are no clusters",sep=""))
+		warning(paste(class(dsc)[1],": There are no clusters",sep=""))
 		predict <- rep(1,nrow(d))
 	}
 	predict
