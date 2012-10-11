@@ -90,17 +90,18 @@ plot.DSC <- function(x, dsd = NULL, n = 1000, col="#FF0000", ..., method="pairs"
     	}
     }
     
-    if(!is.null(dsc) && microclusters && length(get_microclusters(dsc))>0) {
-		if(class(dsc)[1] == "DSC_tNN_Macro_New") {
+    if(!is.null(x) && microclusters && length(get_microclusters(x))>0) {
+		if(class(x)[1] == "DSC_tNN_Macro_New") {
 			library(sfsmisc)
-			p <- get_microclusters(dsc)
+			p <- get_microclusters(x)
 			for(i in 1:nrow(p)){
-				lines(ellipsePoints(dsc$RObj$threshold, dsc$RObj$threshold, loc=as.numeric(p[i,])),col = "grey", lty=2)
+				lines(ellipsePoints(x$RObj$threshold, x$RObj$threshold, loc=as.numeric(p[i,])),col = "grey", lty=2)
 			}
-			edgelist <- get_edgelist(dsc)
+			edgelist <- get_edgelist(x)
 			for(i in (1:(length(edgelist)/2))*2-1){lines(rbind(p[edgelist[i],],p[edgelist[i+1],]),col="black")}
 		}
-		points(get_microclusters(dsc))
+		points(get_microclusters(x))
+		points(centers,col="red")
 	}
 }
 

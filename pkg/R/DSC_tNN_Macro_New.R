@@ -7,7 +7,7 @@ tNN_Macro_New <- setRefClass("tNN_Macro_New",
 		alpha			= "numeric",
 		centers			= "list",
 		minweight		= "numeric",
-		microweight		= "numeric",
+		noise			= "numeric",
 		killweight		= "numeric"), #add weight and center vectors
 		
 		
@@ -16,7 +16,7 @@ tNN_Macro_New <- setRefClass("tNN_Macro_New",
 				threshold	= 0.05,
 				lambda		= 0.01,
 				minweight	= .1,
-				microweight = minweight*.5,
+				noise		= 0,
 				alpha 		= 0.4
 			) {
 		    
@@ -24,8 +24,8 @@ tNN_Macro_New <- setRefClass("tNN_Macro_New",
 		    lambda		<<- 2^-lambda
 		    threshold	<<- threshold
 		    minweight	<<- minweight
-		    microweight <<- microweight
-		    killweight  <<- microweight*lambda^(10)
+		    noise		<<- noise
+		    killweight  <<- noise*2*lambda^(10)
 		    alpha		<<- alpha
 		    weights		<<- numeric()
 		    centers		<<- list()
@@ -37,9 +37,9 @@ tNN_Macro_New <- setRefClass("tNN_Macro_New",
 	),
 )
 
-DSC_tNN_Macro_New <- function(threshold = 0.2, lambda = 0.01, minweight = .1, microweight = minweight*.5, alpha = .4) {
+DSC_tNN_Macro_New <- function(threshold = 0.2, lambda = 0.01, minweight = .1, noise = 0, alpha = .4) {
 
-    tNN_Macro_New <- tNN_Macro_New$new(threshold, lambda, minweight, microweight, alpha)
+    tNN_Macro_New <- tNN_Macro_New$new(threshold, lambda, minweight, noise, alpha)
 
     l <- list(description = "tNN_Macro_New",
 	    RObj = tNN_Macro_New)
@@ -55,6 +55,7 @@ tNN_Macro_New$methods(cluster = function(newdata, verbose = FALSE) {
 	    if(!is(newdata, "data.frame")) newdata <- as.data.frame(newdata)
 	    
 	    for(i in 1:nrow(newdata)) {
+	    	killweight <- killweight*wmean(weights)
 	    	point <- newdata[i,,drop = FALSE]
 	    	
 	    	if(lambda>0) {
@@ -132,13 +133,17 @@ get_microclusters.DSC_tNN_Macro_New <- function(x, ...) {
 	
 	mc <- as.data.frame(do.call(rbind, x$RObj$centers))
 	row.names(mc) <- 1:nrow(mc)
-	mc <- mc[x$RObj$weights>x$RObj$microweight,]
-	
-	mc
+	mc[which(x$RObj$weights>quantile(x$RObj$weights,probs=x$RObj$noise)),]
+
 	}
 
 #get rid of micro clusters that have weight less
 
+wmean <- function(w) {
+	if(length(w)==0)
+		return(0)
+	mean(w)
+}
 
 get_centers.DSC_tNN_Macro_New <- function(x, ...) {
 	assignment <- get_membership(x)
@@ -205,19 +210,17 @@ get_edgelist.DSC_tNN_Macro_New <- function(dsc) {
 	if(length(r)==0) return(numeric())
 	
 	(lapply(1:nrow(mc),function(x) {
-		if(dsc$RObj$weights[lookupx[x]]>dsc$RObj$microweight) {
-			edgelist <<- c(edgelist,x,x)
-			lapply(names(r[[lookupx[x]]]),function(y) {
-				if(!is.null(r[[y]])) {
-					yIndex <- lookupy[y]
-					if(dsc$RObj$weights[yIndex]>dsc$RObj$microweight) {
-						if(r[[lookupx[x]]][[y]] > (dsc$RObj$weights[lookupx[x]]+dsc$RObj$weights[yIndex])/2*dsc$RObj$alpha) {
-							edgelist <<- c(edgelist,x,which(lookupx==yIndex))
-						}
+		edgelist <<- c(edgelist,x,x)
+		lapply(names(r[[lookupx[x]]]),function(y) {
+			if(!is.null(r[[y]])) {
+				yIndex <- lookupy[y]
+				if(yIndex %in% lookupx) {
+					if(r[[lookupx[x]]][[y]] > (dsc$RObj$weights[lookupx[x]]+dsc$RObj$weights[yIndex])/2*dsc$RObj$alpha) {
+						edgelist <<- c(edgelist,x,which(lookupx==yIndex))
 					}
 				}
-			})
-		}
+			}
+		})
 	}))
 
 	edgelist
