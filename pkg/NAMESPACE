@@ -51,6 +51,7 @@ export(
 	prune_clusters,
 	
 	get_evaluation,
+	get_edgelist,
 	cluster_animation,
 	plot_animation
       )
@@ -93,6 +94,8 @@ S3method(get_assignment, DSC)
 S3method(get_assignment, DSC_Macro)
 S3method(get_assignment, DSC_tNN_Macro)
 S3method(get_assignment, DSC_tNN_Macro_New)
+
+S3method(get_edgelist, DSC_tNN_Macro_New)
 
 S3method(get_copy, DSC_Macro)
 S3method(get_copy, DSC_MOA)

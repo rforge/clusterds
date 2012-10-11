@@ -128,7 +128,17 @@ tNN_Macro_New$methods(cluster = function(newdata, verbose = FALSE) {
 	}	    
 )
 
-get_microclusters.DSC_tNN_Macro_New <- function(x, ...) as.data.frame(do.call(rbind, x$RObj$centers))
+get_microclusters.DSC_tNN_Macro_New <- function(x, ...) {
+	
+	mc <- as.data.frame(do.call(rbind, x$RObj$centers))
+	mc <- mc[x$RObj$weights>x$RObj$microweight,]
+	row.names(mc) <- 1:nrow(mc)
+	
+	mc
+	}
+
+#get rid of micro clusters that have weight less
+
 
 get_centers.DSC_tNN_Macro_New <- function(x, ...) {
 	assignment <- get_membership(x)
@@ -176,31 +186,42 @@ get_all_weights <- function(x, scale=NULL) {
 	m
 }
 
-get_membership <- function(dsc) {
+get_edgelist.DSC_tNN_Macro_New <- function(dsc) {
 	#FIXME: make edgelist max length to avoid copying
 	edgelist <- numeric()
 	r <- dsc$RObj$relations
-	
+	mc <- get_microclusters(dsc)
+
 	i <- 0
-	lookup <- sapply(names(dsc$RObj$relations),function(name) {
+	lookupy <- sapply(names(dsc$RObj$relations),function(name) {
+		i <<- i + 1
+	})
+	
+	lookupx <- sapply(names(mc),function(name) {
 		i <<- i + 1
 	})
 	
 	if(length(r)==0) return(numeric())
 	
 	(lapply(1:length(r),function(x) {
-		if(dsc$RObj$weights[x]>dsc$RObj$microweight) {
+		if(dsc$RObj$weights[lookupx[x]]>dsc$RObj$microweight) {
 			edgelist <<- c(edgelist,x,x)
-			lapply(names(r[[x]]),function(y) {
+			lapply(names(r[[lookupx[x]]]),function(y) {
 				if(!is.null(r[[y]])) {
-					yIndex <- lookup[y]
-					if(r[[x]][[y]] > (dsc$RObj$weights[x]+dsc$RObj$weights[yIndex])/2*dsc$RObj$alpha) {
+					yIndex <- lookupy[y]
+					if(r[[x]][[y]] > (dsc$RObj$weights[lookupx[x]]+dsc$RObj$weights[yIndex])/2*dsc$RObj$alpha) {
 						edgelist <<- c(edgelist,x,yIndex)
 					}
 				}
 			})
 		}
 	}))
+
+	edgelist
+}
+
+get_membership <- function(dsc) {
+	edgelist <- get_edgelist(dsc)
 	
 	if(length(edgelist)>1) {
 		
@@ -220,7 +241,10 @@ get_assignment.DSC_tNN_Macro_New <- function(dsc,points) {
 	assignment <- get_membership(dsc)
 	
 	d <- points
-	c <- get_microclusters(dsc)
+	c <- get_microclusters(dsc) 
+	
+	
+	
 	if(length(c)>0) {
 		dist <- dist(d,c)
 		#Find the minimum distance and save the class

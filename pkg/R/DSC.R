@@ -16,6 +16,8 @@ get_microclusters <- function(x) UseMethod("get_microclusters")
 
 get_assignment <- function(dsc,points) UseMethod("get_assignment")
 
+get_edgelist <- function(dsc) UseMethod("get_edgelist")
+
 get_weights <- function(x, scale = NULL) UseMethod("get_weights")
 
 nclusters.DSC <- function(x) {
@@ -58,7 +60,7 @@ print.DSC <- function(x, ...) {
     cat(paste('Number of clusters:', nclusters(x), '\n'))
 }
 
-plot.DSC <- function(x, dsd = NULL, n = 1000, col="#FF0000", ..., method="pairs") {
+plot.DSC <- function(x, dsd = NULL, n = 1000, col="#FF0000", ..., method="pairs", microclusters=FALSE) {
     ## method can be pairs, plot or pc (projection with PCA)
     centers <- get_centers(x)
     if(!is.null(dsd)) {
@@ -87,5 +89,16 @@ plot.DSC <- function(x, dsd = NULL, n = 1000, col="#FF0000", ..., method="pairs"
 			plot(centers,col=col,...)
     	}
     }
+    
+    if(!is.null(dsc) && microclusters && length(get_microclusters(dsc))>0) {
+		if(class(dsc)[1] == "DSC_tNN_Macro_New") {
+			library(sfsmisc)
+			p <- get_microclusters(dsc)
+			for(i in 1:nrow(points)){
+				lines(ellipsePoints(dsc$RObj$threshold, dsc$RObj$threshold, loc=as.numeric(p[i,])),col = "grey", lty=2)
+			}
+		}
+		points(get_microclusters(dsc))
+	}
 }
 
