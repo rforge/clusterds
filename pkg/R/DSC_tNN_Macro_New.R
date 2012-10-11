@@ -131,8 +131,8 @@ tNN_Macro_New$methods(cluster = function(newdata, verbose = FALSE) {
 get_microclusters.DSC_tNN_Macro_New <- function(x, ...) {
 	
 	mc <- as.data.frame(do.call(rbind, x$RObj$centers))
-	mc <- mc[x$RObj$weights>x$RObj$microweight,]
 	row.names(mc) <- 1:nrow(mc)
+	mc <- mc[x$RObj$weights>x$RObj$microweight,]
 	
 	mc
 	}
@@ -197,20 +197,23 @@ get_edgelist.DSC_tNN_Macro_New <- function(dsc) {
 		i <<- i + 1
 	})
 	
-	lookupx <- sapply(names(mc),function(name) {
-		i <<- i + 1
+	i <- 0
+	lookupx <- sapply(row.names(mc),function(name) {
+		as.numeric(name)
 	})
 	
 	if(length(r)==0) return(numeric())
 	
-	(lapply(1:length(r),function(x) {
+	(lapply(1:nrow(mc),function(x) {
 		if(dsc$RObj$weights[lookupx[x]]>dsc$RObj$microweight) {
 			edgelist <<- c(edgelist,x,x)
 			lapply(names(r[[lookupx[x]]]),function(y) {
 				if(!is.null(r[[y]])) {
 					yIndex <- lookupy[y]
-					if(r[[x]][[y]] > (dsc$RObj$weights[lookupx[x]]+dsc$RObj$weights[yIndex])/2*dsc$RObj$alpha) {
-						edgelist <<- c(edgelist,x,yIndex)
+					if(dsc$RObj$weights[yIndex]>dsc$RObj$microweight) {
+						if(r[[lookupx[x]]][[y]] > (dsc$RObj$weights[lookupx[x]]+dsc$RObj$weights[yIndex])/2*dsc$RObj$alpha) {
+							edgelist <<- c(edgelist,x,which(lookupx==yIndex))
+						}
 					}
 				}
 			})

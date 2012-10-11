@@ -94,9 +94,11 @@ plot.DSC <- function(x, dsd = NULL, n = 1000, col="#FF0000", ..., method="pairs"
 		if(class(dsc)[1] == "DSC_tNN_Macro_New") {
 			library(sfsmisc)
 			p <- get_microclusters(dsc)
-			for(i in 1:nrow(points)){
+			for(i in 1:nrow(p)){
 				lines(ellipsePoints(dsc$RObj$threshold, dsc$RObj$threshold, loc=as.numeric(p[i,])),col = "grey", lty=2)
 			}
+			edgelist <- get_edgelist(dsc)
+			for(i in (1:(length(edgelist)/2))*2-1){lines(rbind(p[edgelist[i],],p[edgelist[i+1],]),col="black")}
 		}
 		points(get_microclusters(dsc))
 	}
