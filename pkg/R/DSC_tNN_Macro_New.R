@@ -8,25 +8,31 @@ tNN_Macro_New <- setRefClass("tNN_Macro_New",
 		centers			= "list",
 		minweight		= "numeric",
 		noise			= "numeric",
-		killweight		= "numeric"), #add weight and center vectors
+		killweight		= "numeric",
+		k				= "numeric"), #add weight and center vectors
 		
 		
 		methods = list(
 		initialize = function(
 				threshold	= 0.05,
+				k			= 0,
 				lambda		= 0.01,
 				minweight	= .1,
 				noise		= 0,
 				alpha 		= 0.4
 			) {
 		    
-		    relations 	<<- list()
-		    lambda		<<- 2^-lambda
-		    threshold	<<- threshold
-		    minweight	<<- minweight
-		    noise		<<- noise
-		    killweight  <<- noise*2*lambda^(10)
-		    alpha		<<- alpha
+		    relations 		<<- list()
+		    lambda			<<- 2^-lambda
+		    threshold		<<- threshold
+		    minweight		<<- minweight
+		    noise			<<- noise
+		    killweight 	<<- noise*2*lambda^(10)
+		    alpha			<<- alpha
+		    if(is.null(k))
+		    	k			<<- 0
+		    else
+		    	k			<<- k
 		    weights		<<- numeric()
 		    centers		<<- list()
 		    
@@ -37,9 +43,9 @@ tNN_Macro_New <- setRefClass("tNN_Macro_New",
 	),
 )
 
-DSC_tNN_Macro_New <- function(threshold = 0.2, lambda = 0.01, minweight = .1, noise = 0, alpha = .4) {
+DSC_tNN_Macro_New <- function(threshold = 0.2, k=NULL, lambda = 0.01, minweight = .1, noise = 0, alpha = .4) {
 
-    tNN_Macro_New <- tNN_Macro_New$new(threshold, lambda, minweight, noise, alpha)
+    tNN_Macro_New <- tNN_Macro_New$new(threshold, k, lambda, minweight, noise, alpha)
 
     l <- list(description = "tNN_Macro_New",
 	    RObj = tNN_Macro_New)
@@ -161,18 +167,34 @@ get_centers.DSC_tNN_Macro_New <- function(x, ...) {
 	})))#colMeans(mc[intersect(which(assignment==y),which(!is.na(mc[,1]))),]))))
 	
 	weights <- get_all_weights(x)
-	totalweight <- sum(weights)
 	data <- data/weights
 	
-	data[which(weights>dsc$RObj$minweight*totalweight),]
-	
+	if(dsc$RObj$k==0) {
+		totalweight <- sum(weights)
+		return(data[which(weights>dsc$RObj$minweight*totalweight),])
+	} else {
+		if(nrow(data)<dsc$RObj$k)
+			return(data)
+		else {
+			data <-data[order(weights,decreasing=TRUE),]
+			return(data[1:dsc$RObj$k,])
+		}
+	}
 }
 
 get_weights.DSC_tNN_Macro_New <- function(x, scale=NULL) {
 	m <- get_all_weights(x,scale)
-	totalweight <- sum(m)
-	
-	m[which(m>dsc$RObj$minweight*totalweight)]
+	if(dsc$RObj$k==0) {
+		totalweight <- sum(m)
+		m[which(m>dsc$RObj$minweight*totalweight)]
+	} else {
+		if(length(m)<dsc$RObj$k)
+			return(m)
+		else {
+			m <- sort(m,decreasing=TRUE)
+			return(m[1:dsc$RObj$k])
+		}
+	}
 }
 
 get_all_weights <- function(x, scale=NULL) {
