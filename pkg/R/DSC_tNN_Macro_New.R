@@ -7,14 +7,15 @@ tNN_Macro_New <- setRefClass("tNN_Macro_New",
 		alpha			= "numeric",
 		centers			= "list",
 		minweight		= "numeric",
-		microweight		= "numeric"), #add weight and center vectors
+		microweight		= "numeric",
+		killweight		= "numeric"), #add weight and center vectors
 		
 		
 		methods = list(
 		initialize = function(
 				threshold	= 0.05,
 				lambda		= 0.01,
-				minweight	= 1,
+				minweight	= .1,
 				microweight = minweight*.5,
 				alpha 		= 0.4
 			) {
@@ -24,6 +25,7 @@ tNN_Macro_New <- setRefClass("tNN_Macro_New",
 		    threshold	<<- threshold
 		    minweight	<<- minweight
 		    microweight <<- microweight
+		    killweight  <<- microweight*lambda^(10)
 		    alpha		<<- alpha
 		    weights		<<- numeric()
 		    centers		<<- list()
@@ -35,7 +37,7 @@ tNN_Macro_New <- setRefClass("tNN_Macro_New",
 	),
 )
 
-DSC_tNN_Macro_New <- function(threshold = 0.2, lambda = 0.01, minweight = 1, microweight = minweight*.5, alpha = .4) {
+DSC_tNN_Macro_New <- function(threshold = 0.2, lambda = 0.01, minweight = .1, microweight = minweight*.5, alpha = .4) {
 
     tNN_Macro_New <- tNN_Macro_New$new(threshold, lambda, minweight, microweight, alpha)
 
@@ -62,10 +64,10 @@ tNN_Macro_New$methods(cluster = function(newdata, verbose = FALSE) {
 	    		
 	    		if(length(weights)>0)
 	    			for(i in 1:length(weights)) {
-	    				if(weights[i] >= microweight) { 
+	    				if(weights[i] >= killweight) { #micro weight needs to be the turn thing
 	    					relations[[i]] <<- lapply(relations[[i]], function(x){
 	    						x <- x*lambda
-	    						if(x < microweight*alpha)
+	    						if(x < killweight*alpha)
 	    							return(NULL)
 	    						x
 	    					})
@@ -143,14 +145,22 @@ get_centers.DSC_tNN_Macro_New <- function(x, ...) {
 		colSums(micro*weight)
 	})))#colMeans(mc[intersect(which(assignment==y),which(!is.na(mc[,1]))),]))))
 	
-	weights <- get_weights(x)
+	weights <- get_all_weights(x)
+	totalweight <- sum(weights)
 	data <- data/weights
 	
-	data[which(weights>dsc$RObj$minweight),]
+	data[which(weights>dsc$RObj$minweight*totalweight),]
 	
 }
 
 get_weights.DSC_tNN_Macro_New <- function(x, scale=NULL) {
+	m <- get_all_weights(x,scale)
+	totalweight <- sum(m)
+	
+	m[which(m>dsc$RObj$minweight*totalweight)]
+}
+
+get_all_weights <- function(x, scale=NULL) {
 	assignment <- get_membership(x)
 	weights <- x$RObj$weights
 	
@@ -179,15 +189,17 @@ get_membership <- function(dsc) {
 	if(length(r)==0) return(numeric())
 	
 	(lapply(1:length(r),function(x) {
-		edgelist <<- c(edgelist,x,x)
-		lapply(names(r[[x]]),function(y) {
-			if(!is.null(r[[y]])) {
-				yIndex <- lookup[y]
-				if(r[[x]][[y]] > (dsc$RObj$weights[x]+dsc$RObj$weights[yIndex])*dsc$RObj$alpha) {
-					edgelist <<- c(edgelist,x,yIndex)
+		if(dsc$RObj$weights[x]>dsc$RObj$microweight) {
+			edgelist <<- c(edgelist,x,x)
+			lapply(names(r[[x]]),function(y) {
+				if(!is.null(r[[y]])) {
+					yIndex <- lookup[y]
+					if(r[[x]][[y]] > (dsc$RObj$weights[x]+dsc$RObj$weights[yIndex])/2*dsc$RObj$alpha) {
+						edgelist <<- c(edgelist,x,yIndex)
+					}
 				}
-			}
-		})
+			})
+		}
 	}))
 	
 	if(length(edgelist)>1) {
@@ -201,7 +213,7 @@ get_membership <- function(dsc) {
 }
 
 nclusters.DSC_tNN_Macro_New <- function(x) {
-	nrow(get_centers)
+	nrow(get_centers(x))
 }
 
 get_assignment.DSC_tNN_Macro_New <- function(dsc,points) {

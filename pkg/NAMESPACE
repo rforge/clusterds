@@ -30,6 +30,7 @@ export(
 	DSD_Gaussian_Moving,
 	DSD_mlbench,
 	DSD_Data,
+	DSD_Test,
 	
 	# DSD
 	write_stream,
@@ -66,6 +67,7 @@ S3method(write_stream, DSD)
 
 S3method(get_points, DSD_Gaussian_Static)
 S3method(get_points, DSD_mlbench)
+S3method(get_points, DSD_Test)
 S3method(get_points, DSD_MOA)
 S3method(get_points, DSD_ReadStream)
 S3method(get_points, DSD_Target)
