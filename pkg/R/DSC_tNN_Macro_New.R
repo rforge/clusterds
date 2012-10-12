@@ -64,7 +64,7 @@ tNN_Macro_New$methods(cluster = function(newdata, verbose = FALSE) {
 	    	killweight <- killweight*wmean(weights)
 	    	point <- newdata[i,,drop = FALSE]
 	    	
-	    	if(lambda>0) {
+	    	if(lambda<1) {
 	    		
 	    		weights <<- weights * lambda
 	    		remove <- numeric()

@@ -19,19 +19,32 @@ reset_stream.DSD <- function(dsd) {
 
 reset_stream <- function(dsd) UseMethod("reset_stream")
 
-plot.DSD <- function(dsd = NULL, n = 1000, ..., method="pairs") {
+plot.DSD <- function(dsd = NULL, n = 1000, col= NULL, pch= NULL, 
+	..., method="pairs") {
     ## method can be pairs, plot or pc (projection with PCA)
     d <- get_points(dsd, n, assignment = TRUE)
+   
+    ### make sure to plot noise
+    assignment <- attr(d,"assignment")
     
-	names(d)
+    if(is.null(col)) {
+	col <- attr(d,"assignment")
+	col[assignment==0 | is.na(assignment)] <- "gray"
+    }
+    
+    if(is.null(pch)) {
+	pch <- rep(1, n)
+	pch[assignment==0 | is.na(assignment)] <- 3
+    }
+    
     if(ncol(d)>2 && method=="pairs") {
-   		pairs(d, ...)
+   		pairs(d, col=col, pch=pch, ...)
     }
     else if(ncol(d)>2 && method=="pc") {
 		## we assume Euclidean here
 		p <- prcomp(d)
-		plot(p$x,...)
+		plot(p$x, col=col, pch=pch, ...)
     } else {
-		plot(d,col=attr(d,"assignment"),...)
+		plot(d,col=col, pch=pch, ...)
     }
 }

@@ -13,7 +13,7 @@ DSD_Gaussian_Static <- function(k=2, d=2, mu, sigma, p, noise = 0, noise_range) 
     # for each d, random value between 0 and 1
     # we create a matrix of d columns and k rows
     if (missing(mu)) {
-	mu <- matrix(runif(d*k, min=0, max=1), ncol=d)
+	mu <- matrix(runif(d*k, min=0.2, max=0.8), ncol=d)
     } else {
 	mu <- as.matrix(mu)
     }
