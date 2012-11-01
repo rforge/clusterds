@@ -103,7 +103,7 @@ plot.DSC <- function(x, dsd = NULL, n = 1000,
 	    library(sfsmisc)
 	    p <- get_microclusters(x)
 	    for(i in 1:nrow(p)){
-		lines(ellipsePoints(x$RObj$threshold, x$RObj$threshold, 
+		lines(ellipsePoints(x$RObj$r, x$RObj$r, 
 				loc=as.numeric(p[i,]), n=90),
 			col = col_micro, lty=3)
 	    }

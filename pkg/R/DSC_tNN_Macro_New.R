@@ -5,9 +5,6 @@
 #TODO have if statement that shuts off Macro ability. Just call this
 #DSC_tNN. Get rid of tNN_Macro
 
-#at the core it is micro. It's just a micro
-
-#make the reclustering part its own macro cluster?
 
 #change get_centers to get_macroclusters
 #throw error if it is a microcluster
@@ -20,7 +17,7 @@ tNN_Macro_New <- setRefClass("tNN_Macro_New",
 	fields = list(
 		relations 		= "hash",
 		lambda			= "numeric",
-		threshold		= "numeric",
+		r				= "numeric",
 		weights			= "numeric",
 		alpha			= "numeric",
 		centers			= "data.frame",
@@ -29,29 +26,31 @@ tNN_Macro_New <- setRefClass("tNN_Macro_New",
 		killweight		= "numeric",
 		k				= "numeric",
 		measure			= "character",
-		distFun			= "ANY"), #add weight and center vectors
-		##TODO macro yes/no
+		distFun			= "ANY",
+		macro			= "logical"),
 		
 		
 		methods = list(
 		initialize = function(
-				threshold	= 0.05,
+				r	= 0.05,
 				k			= 0,
 				lambda		= 0.01,
 				minweight	= .1,
 				noise		= 0,
 				alpha 		= 0.4,
-				measure		= "Euclidean"
+				measure		= "Euclidean",
+				macro		= TRUE
 			) {
 				
 		    relations 		<<- hash()
 		    lambda			<<- 2^-lambda
-		    threshold		<<- threshold
+		    r				<<- r
 		    minweight		<<- minweight
 		    noise			<<- noise
 		    killweight 		<<- noise*2*lambda^(10)
 		    alpha			<<- alpha
 		    measure			<<- measure
+		    macro			<<- macro
 		    
 		    if(is.null(k))
 		    	k			<<- 0
@@ -69,14 +68,14 @@ tNN_Macro_New <- setRefClass("tNN_Macro_New",
 	),
 )
 
-DSC_tNN_Macro_New <- function(threshold = 0.2, k=NULL, lambda = 0.01, minweight = .1, noise = 0, alpha = .4, measure = "Euclidean") {
+DSC_tNN_Macro_New <- function(r = 0.2, k=NULL, lambda = 0.01, minweight = .1, noise = 0, alpha = .4, measure = "Euclidean", macro = TRUE) {
 
-    tNN_Macro_New <- tNN_Macro_New$new(threshold, k, lambda, minweight, noise, alpha, measure)
+    tNN_Macro_New <- tNN_Macro_New$new(r, k, lambda, minweight, noise, alpha, measure, macro)
 
     l <- list(description = "tNN_Macro_New",
 	    RObj = tNN_Macro_New)
 
-    class(l) <- c("DSC_tNN_Macro_New","DSC_Macro","DSC_R","DSC")
+    class(l) <- c("DSC_tNN_Macro_New","DSC_R","DSC")
     
     l
 }
@@ -88,7 +87,7 @@ tNN_Macro_New$methods(cluster = function(newdata, verbose = FALSE) {
 	    
 	    for(i in 1:nrow(newdata)) {
 	    	killweight <- killweight*wmean(weights)
-	    	point <- newdata[i,,drop = FALSE]
+	    	point <- newdata[i,]
 	    	
 	    	
 	    	if(lambda<1) {
@@ -110,21 +109,15 @@ tNN_Macro_New$methods(cluster = function(newdata, verbose = FALSE) {
 	    				}
 	    		}
 	    		
-	    		#remove dead relations
-	    		#sapply(keys,function(x){
-	    		#	relations[[x]] <- relations[[x]]*lambda
-	    		#	if(relations[[x]] < killweight*alpha) {
-	    		#		relations[[x]] <- NULL
-	    		#	}
-	    		#})
-	    		
-	    		relationWeights <- values(relations,keys)
-	    		if(length(relationWeights) > 0) {
-	    			relationWeights <- relationWeights * lambda
-	    			if(length(which(relationWeights < killweight*alpha)))
-	    				relations[keys[which(relationWeights < killweight*alpha)]] <- NULL
-	    			if(length(which(relationWeights >= killweight*alpha)))
-	    				relations[keys[which(relationWeights >= killweight*alpha)]] <- relationWeights[which(relationWeights >= killweight*alpha)]
+	    		if(macro) {
+	    			relationWeights <- values(relations,keys)
+	    			if(length(relationWeights) > 0) {
+	    				relationWeights <- relationWeights * lambda
+	    				if(length(which(relationWeights < killweight*alpha)))
+	    					relations[keys[which(relationWeights < killweight*alpha)]] <- NULL
+	    				if(length(which(relationWeights >= killweight*alpha)))
+	    					relations[keys[which(relationWeights >= killweight*alpha)]] <- relationWeights[which(relationWeights >= killweight*alpha)]
+	    			}
 	    		}
 	    	}
 	    	
@@ -133,7 +126,7 @@ tNN_Macro_New$methods(cluster = function(newdata, verbose = FALSE) {
 	    		weights 					 <<- 1
 	    		centers						 <<- rbind(centers,point)
 	    	} else {
-	    		inside <- which(dist(point,centers,method=distFun)<threshold)
+	    		inside <- which(dist(point,centers,method=distFun)<r)
 	    		
 	    		
 	    		if(length(inside)>0) {
@@ -144,20 +137,30 @@ tNN_Macro_New$methods(cluster = function(newdata, verbose = FALSE) {
 	    					rep(partialweight+weights[inside],ncol(point)),ncol=ncol(point)),
 	    					row.names=rownames(centers[inside,]))
 	    			
+	    			distance <- dist(newCenters,newCenters,method=distFun)
+	    			
+	    			test <- apply(distance,1,function(x){all(x>r|x==0)})
+	    				if(length(which(test)) > 0) {
+	    					centers[inside[which(test)],] <<- newCenters[which(test),]
+	    			}
+	    				
 	    			weights[inside] <<- weights[inside] + partialweight
 	    			
 	    			if(length(inside)>1) {
-	    				relationUpdate <- outer(inside, inside, function(x,y){paste(x,y,sep="-")})
-	    				relationUpdate <- relationUpdate[upper.tri(relationUpdate)]
+	    				if(macro) {
+	    					relationUpdate <- outer(inside, inside, function(x,y){paste(x,y,sep="-")})
+	    					relationUpdate <- relationUpdate[upper.tri(relationUpdate)]
 	    				
-	    				existingRelations <- has.key(relationUpdate,relations)
-	    				if(length(which(existingRelations))>0)
-	    					relations[relationUpdate[which(existingRelations)]] <- values(relations,relationUpdate[which(existingRelations)]) + 1	
-	    				if(length(which(!existingRelations))>0)
-	    					relations[relationUpdate[which(!existingRelations)]] <- 1
+	    					existingRelations <- has.key(relationUpdate,relations)
+	    					if(length(which(existingRelations))>0)
+	    						relations[relationUpdate[which(existingRelations)]] <- values(relations,relationUpdate[which(existingRelations)]) + 1	
+	    					if(length(which(!existingRelations))>0)
+	    						relations[relationUpdate[which(!existingRelations)]] <- 1
+	    				}
 	    			}
 	    		} else {
 	    			weights <<- c(weights,1)
+	    			
 	    			centers <<- rbind(centers,point)
 	    		}
 	    	}
@@ -171,10 +174,8 @@ get_microclusters.DSC_tNN_Macro_New <- function(x, ...) {
 	row.names(mc) <- 1:nrow(mc)
 	mc[which(x$RObj$weights>quantile(x$RObj$weights,probs=x$RObj$noise)),]
 
-	}
-
-#get rid of micro clusters that have weight less
-
+}
+	
 wmean <- function(w) {
 	if(length(w)==0)
 		return(0)
@@ -182,6 +183,8 @@ wmean <- function(w) {
 }
 
 get_centers.DSC_tNN_Macro_New <- function(x, ...) {
+	if(!dsc$RObj$macro)
+		error("Macro not enabled")
 	assignment <- get_membership(x)
 	
 	mc <- get_microclusters(x)
@@ -194,7 +197,7 @@ get_centers.DSC_tNN_Macro_New <- function(x, ...) {
 		micro <- mc[which(assignment==y),]
 		weight <- x$RObj$weights[which(assignment==y)]
 		colSums(micro*weight)
-	})))#colMeans(mc[intersect(which(assignment==y),which(!is.na(mc[,1]))),]))))
+	})))
 	
 	weights <- get_all_weights(x)
 	data <- data/weights
