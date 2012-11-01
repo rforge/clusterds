@@ -1,3 +1,21 @@
+#TODO get shared point as a matrix. This will allow us todo other clustering on it.
+#TODO go through the paper and change the name of the variables
+#TODO remove tNN_Macro and replace with this
+
+#TODO have if statement that shuts off Macro ability. Just call this
+DSC_tNN. Get rid of tNN_Macro
+
+#at the core it is micro. It's just a micro
+
+#make the reclustering part its own macro cluster?
+
+#change get_centers to get_macroclusters
+#throw error if it is a microcluster
+
+#move points then check if move too close. Commit changes
+
+
+
 tNN_Macro_New <- setRefClass("tNN_Macro_New",
 	fields = list(
 		relations 		= "list",
@@ -5,11 +23,12 @@ tNN_Macro_New <- setRefClass("tNN_Macro_New",
 		threshold		= "numeric",
 		weights			= "numeric",
 		alpha			= "numeric",
-		centers			= "list",
+		centers			= "data.frame",
 		minweight		= "numeric",
 		noise			= "numeric",
 		killweight		= "numeric",
 		k				= "numeric"), #add weight and center vectors
+		##TODO macro yes/no
 		
 		
 		methods = list(
@@ -21,6 +40,9 @@ tNN_Macro_New <- setRefClass("tNN_Macro_New",
 				noise		= 0,
 				alpha 		= 0.4
 			) {
+		    
+		    #take the measure and find measure for pr_DB[[measure]]
+		    #dist(method=measure)
 		    
 		    relations 		<<- list()
 		    lambda			<<- 2^-lambda
@@ -34,7 +56,7 @@ tNN_Macro_New <- setRefClass("tNN_Macro_New",
 		    else
 		    	k			<<- k
 		    weights		<<- numeric()
-		    centers		<<- list()
+		    centers		<<- data.frame()
 		    
 		    
 		    .self
@@ -68,17 +90,22 @@ tNN_Macro_New$methods(cluster = function(newdata, verbose = FALSE) {
 	    		
 	    		weights <<- weights * lambda
 	    		remove <- numeric()
+	    		count <- numeric()
 	    		
 	    		if(length(weights)>0)
 	    			for(i in 1:length(weights)) {
 	    				if(weights[i] >= killweight) { #micro weight needs to be the turn thing
+	    					count <- 0
 	    					relations[[i]] <<- lapply(relations[[i]], function(x){
 	    						x <- x*lambda
-	    						if(x < killweight*alpha)
+	    						if(x < killweight*alpha) {
+	    							count <<- count + 1
 	    							return(NULL)
+	    						}
 	    						x
 	    					})
-	    					relations[[i]] <<- Filter(Negate(is.null), relations[[i]])
+	    					if(count > 0)
+	    						relations[[i]] <<- Filter(Negate(is.null), relations[[i]])
 	    				} else {
 	    					remove <- c(remove,i)
 	    				}
@@ -86,27 +113,29 @@ tNN_Macro_New$methods(cluster = function(newdata, verbose = FALSE) {
 	    		
 	    		sapply(rev(remove),function(x) {
 	    			relations[[x]] <<- NULL
-	    			centers[[x]] <<- NULL
-	    			relations <<- Filter(Negate(is.null), relations)
 	    		})
+	    		
 	    		if(length(remove)>0) {
 	    			weights <<- weights[-remove]
+	    			centers <<- centers[-remove]
+	    			relations <<- Filter(Negate(is.null), relations)
 	    		}
 	    	}
 	    	
 	    	if(length(relations)<1) {
 	    		relations[[as.character(1)]] <<- list()
 	    		weights 					 <<- 1
-	    		centers						 <<- append(centers,list(point))
+	    		centers						 <<- rbind(centers,point)
 	    	} else {
-	    		inside <- which(dist(point,as.data.frame(do.call(rbind, centers)))<threshold)
+	    		#
+	    		inside <- which(dist(point,centers)<threshold)
 	    		if(length(inside)>0) { 
 	    			
 	    			partialweight <- 1 #/length(inside) #if a new data points belongs to several clusters then split evenenly
 	    			lapply(1:length(inside), function(i) {
 	    				name <- names(relations)[inside[i]]
 	    				if(length(inside) == 1)
-	    					centers[[inside[i]]] <<- (centers[[inside[i]]]*weights[inside[i]] + point*partialweight) / (partialweight + weights[inside[i]]) #update center #remove this when inside length is greater than 1 to prevent centers from overlapping
+	    					centers[inside[i],] <<- (centers[inside[i],]*weights[inside[i]] + point*partialweight) / (partialweight + weights[inside[i]]) #update center #remove this when inside length is greater than 1 to prevent centers from overlapping
 	    				weights[inside[i]] <<- weights[inside[i]] + partialweight #weight
 	    				
 	    				lapply(i:length(inside), function(j) {
@@ -126,7 +155,7 @@ tNN_Macro_New$methods(cluster = function(newdata, verbose = FALSE) {
 	    		} else {
 	    			newcluster <- list()
 	    			weights <<- c(weights,1)
-	    			centers <<- append(centers, list(point))
+	    			centers <<- rbind(centers,point)
 	    			
 	    			relations[[as.character(as.integer(names(tail(relations, 1)))+1)]] <<-newcluster
 	    		}
@@ -137,7 +166,7 @@ tNN_Macro_New$methods(cluster = function(newdata, verbose = FALSE) {
 
 get_microclusters.DSC_tNN_Macro_New <- function(x, ...) {
 	
-	mc <- as.data.frame(do.call(rbind, x$RObj$centers))
+	mc <- x$RObj$centers
 	row.names(mc) <- 1:nrow(mc)
 	mc[which(x$RObj$weights>quantile(x$RObj$weights,probs=x$RObj$noise)),]
 

@@ -7,6 +7,9 @@ get_evaluation <- function (dsc,dsd,
     d <- get_points(dsd, n, assignment = TRUE)
     c <- get_centers(dsc) ### these are macro centers (for macro clusterers)
     
+    if(nrow(c)==0)
+    	return(0)
+    
     predict <- get_assignment(dsc,d) ### uses micro cluster centers
     actual <- attr(d, "assignment")
     
