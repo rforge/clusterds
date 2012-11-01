@@ -3,7 +3,7 @@
 #TODO remove tNN_Macro and replace with this
 
 #TODO have if statement that shuts off Macro ability. Just call this
-DSC_tNN. Get rid of tNN_Macro
+#DSC_tNN. Get rid of tNN_Macro
 
 #at the core it is micro. It's just a micro
 
@@ -18,7 +18,7 @@ DSC_tNN. Get rid of tNN_Macro
 
 tNN_Macro_New <- setRefClass("tNN_Macro_New",
 	fields = list(
-		relations 		= "list",
+		relations 		= "hash",
 		lambda			= "numeric",
 		threshold		= "numeric",
 		weights			= "numeric",
@@ -27,7 +27,9 @@ tNN_Macro_New <- setRefClass("tNN_Macro_New",
 		minweight		= "numeric",
 		noise			= "numeric",
 		killweight		= "numeric",
-		k				= "numeric"), #add weight and center vectors
+		k				= "numeric",
+		measure			= "character",
+		distFun			= "ANY"), #add weight and center vectors
 		##TODO macro yes/no
 		
 		
@@ -38,26 +40,28 @@ tNN_Macro_New <- setRefClass("tNN_Macro_New",
 				lambda		= 0.01,
 				minweight	= .1,
 				noise		= 0,
-				alpha 		= 0.4
+				alpha 		= 0.4,
+				measure		= "Euclidean"
 			) {
-		    
-		    #take the measure and find measure for pr_DB[[measure]]
-		    #dist(method=measure)
-		    
-		    relations 		<<- list()
+				
+		    relations 		<<- hash()
 		    lambda			<<- 2^-lambda
 		    threshold		<<- threshold
 		    minweight		<<- minweight
 		    noise			<<- noise
-		    killweight 	<<- noise*2*lambda^(10)
+		    killweight 		<<- noise*2*lambda^(10)
 		    alpha			<<- alpha
+		    measure			<<- measure
+		    
 		    if(is.null(k))
 		    	k			<<- 0
 		    else
 		    	k			<<- k
+		    	
 		    weights		<<- numeric()
 		    centers		<<- data.frame()
 		    
+		    distFun <<- pr_DB[[measure]]
 		    
 		    .self
 		}
@@ -65,9 +69,9 @@ tNN_Macro_New <- setRefClass("tNN_Macro_New",
 	),
 )
 
-DSC_tNN_Macro_New <- function(threshold = 0.2, k=NULL, lambda = 0.01, minweight = .1, noise = 0, alpha = .4) {
+DSC_tNN_Macro_New <- function(threshold = 0.2, k=NULL, lambda = 0.01, minweight = .1, noise = 0, alpha = .4, measure = "Euclidean") {
 
-    tNN_Macro_New <- tNN_Macro_New$new(threshold, k, lambda, minweight, noise, alpha)
+    tNN_Macro_New <- tNN_Macro_New$new(threshold, k, lambda, minweight, noise, alpha, measure)
 
     l <- list(description = "tNN_Macro_New",
 	    RObj = tNN_Macro_New)
@@ -86,78 +90,75 @@ tNN_Macro_New$methods(cluster = function(newdata, verbose = FALSE) {
 	    	killweight <- killweight*wmean(weights)
 	    	point <- newdata[i,,drop = FALSE]
 	    	
+	    	
 	    	if(lambda<1) {
-	    		
+	    		#decrease weight for microclusters
 	    		weights <<- weights * lambda
-	    		remove <- numeric()
-	    		count <- numeric()
+	    		keys <- keys(relations)
 	    		
-	    		if(length(weights)>0)
-	    			for(i in 1:length(weights)) {
-	    				if(weights[i] >= killweight) { #micro weight needs to be the turn thing
-	    					count <- 0
-	    					relations[[i]] <<- lapply(relations[[i]], function(x){
-	    						x <- x*lambda
-	    						if(x < killweight*alpha) {
-	    							count <<- count + 1
-	    							return(NULL)
-	    						}
-	    						x
-	    					})
-	    					if(count > 0)
-	    						relations[[i]] <<- Filter(Negate(is.null), relations[[i]])
-	    				} else {
-	    					remove <- c(remove,i)
-	    				}
-	    			}
-	    		
-	    		sapply(rev(remove),function(x) {
-	    			relations[[x]] <<- NULL
-	    		})
+	    		#find dead microclusters
+	    		remove <- which(weights < killweight)
 	    		
 	    		if(length(remove)>0) {
+	    			#remove microclusters
 	    			weights <<- weights[-remove]
-	    			centers <<- centers[-remove]
-	    			relations <<- Filter(Negate(is.null), relations)
+	    			centers <<- centers[-remove,]
+	    			removekeys <- grep(paste("^",remove,"-",sep="",collapse="|"),keys)
+	    				if(length(removekeys)) {
+	    				relations[keys[removekeys]]<-NULL
+	    				keys <- keys[-removekeys]
+	    				}
+	    		}
+	    		
+	    		#remove dead relations
+	    		#sapply(keys,function(x){
+	    		#	relations[[x]] <- relations[[x]]*lambda
+	    		#	if(relations[[x]] < killweight*alpha) {
+	    		#		relations[[x]] <- NULL
+	    		#	}
+	    		#})
+	    		
+	    		relationWeights <- values(relations,keys)
+	    		if(length(relationWeights) > 0) {
+	    			relationWeights <- relationWeights * lambda
+	    			if(length(which(relationWeights < killweight*alpha)))
+	    				relations[keys[which(relationWeights < killweight*alpha)]] <- NULL
+	    			if(length(which(relationWeights >= killweight*alpha)))
+	    				relations[keys[which(relationWeights >= killweight*alpha)]] <- relationWeights[which(relationWeights >= killweight*alpha)]
 	    		}
 	    	}
 	    	
-	    	if(length(relations)<1) {
-	    		relations[[as.character(1)]] <<- list()
+	    	if(nrow(centers)==0) {
+	    		#create first microcluster
 	    		weights 					 <<- 1
 	    		centers						 <<- rbind(centers,point)
 	    	} else {
-	    		#
-	    		inside <- which(dist(point,centers)<threshold)
-	    		if(length(inside)>0) { 
+	    		inside <- which(dist(point,centers,method=distFun)<threshold)
+	    		
+	    		
+	    		if(length(inside)>0) {
+	    			partialweight <- 1 
+	    		
+	    			newCenters <- data.frame(matrix((as.numeric(as.matrix(centers[inside,])*
+	    					rep(weights[inside])+rep(as.numeric(point)*partialweight,each=length(inside))))/
+	    					rep(partialweight+weights[inside],ncol(point)),ncol=ncol(point)),
+	    					row.names=rownames(centers[inside,]))
 	    			
-	    			partialweight <- 1 #/length(inside) #if a new data points belongs to several clusters then split evenenly
-	    			lapply(1:length(inside), function(i) {
-	    				name <- names(relations)[inside[i]]
-	    				if(length(inside) == 1)
-	    					centers[inside[i],] <<- (centers[inside[i],]*weights[inside[i]] + point*partialweight) / (partialweight + weights[inside[i]]) #update center #remove this when inside length is greater than 1 to prevent centers from overlapping
-	    				weights[inside[i]] <<- weights[inside[i]] + partialweight #weight
+	    			weights[inside] <<- weights[inside] + partialweight
+	    			
+	    			if(length(inside)>1) {
+	    				relationUpdate <- outer(inside, inside, function(x,y){paste(x,y,sep="-")})
+	    				relationUpdate <- relationUpdate[upper.tri(relationUpdate)]
 	    				
-	    				lapply(i:length(inside), function(j) {
-	    					if(i!=j) {
-	    						name2 <- names(relations)[inside[j]]
-	    						if(is.null(relations[[name]][[name2]])) {
-	    							relations[[name]][[name2]] <<- 0
-	    						}
-	    						relations[[name]][[name2]] <<-
-	    						relations[[name]][[name2]] + partialweight
-	    						
-	    						#FIXME: figure out what to add to the edges
-	    						#play around with using full weight
-	    					}
-	    				})
-	    			})
+	    				existingRelations <- has.key(relationUpdate,relations)
+	    				if(length(which(existingRelations))>0)
+	    					relations[relationUpdate[which(existingRelations)]] <- values(relations,relationUpdate[which(existingRelations)]) + 1	
+	    				if(length(which(!existingRelations))>0)
+	    					relations[relationUpdate[which(!existingRelations)]] <- 1
+	    			}
 	    		} else {
-	    			newcluster <- list()
 	    			weights <<- c(weights,1)
 	    			centers <<- rbind(centers,point)
-	    			
-	    			relations[[as.character(as.integer(names(tail(relations, 1)))+1)]] <<-newcluster
 	    		}
 	    	}
 	    }
@@ -247,32 +248,20 @@ get_edgelist.DSC_tNN_Macro_New <- function(dsc) {
 	edgelist <- numeric()
 	r <- dsc$RObj$relations
 	mc <- get_microclusters(dsc)
-
 	i <- 0
-	lookupy <- sapply(names(dsc$RObj$relations),function(name) {
+	
+	lookup <- sapply(rownames(mc),function(name) {
 		i <<- i + 1
-	})
+	 })
 	
-	i <- 0
-	lookupx <- sapply(row.names(mc),function(name) {
-		as.numeric(name)
-	})
-	
-	if(length(r)==0) return(numeric())
-	
-	(lapply(1:nrow(mc),function(x) {
-		edgelist <<- c(edgelist,x,x)
-		lapply(names(r[[lookupx[x]]]),function(y) {
-			if(!is.null(r[[y]])) {
-				yIndex <- lookupy[y]
-				if(yIndex %in% lookupx) {
-					if(r[[lookupx[x]]][[y]] > (dsc$RObj$weights[lookupx[x]]+dsc$RObj$weights[yIndex])/2*dsc$RObj$alpha) {
-						edgelist <<- c(edgelist,x,which(lookupx==yIndex))
-					}
-				}
+	sapply(keys(dsc$RObj$relations),function(x){
+		microclusters <- unlist(strsplit(x,'-'))
+		if(all(!is.na(lookup[microclusters]))) {
+			if(dsc$RObj$relations[[x]] > (dsc$RObj$weights[lookup[microclusters[1]]]+dsc$RObj$weights[lookup[microclusters[2]]])/2*dsc$RObj$alpha) {
+				edgelist <<- c(edgelist,lookup[microclusters[1]],lookup[microclusters[2]])
 			}
-		})
-	}))
+		}
+	})
 
 	edgelist
 }
