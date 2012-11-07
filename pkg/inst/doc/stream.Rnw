@@ -1,7 +1,7 @@
 %\documentclass[10pt,a4paper]{article}
 \documentclass[nojss]{jss}
 
-\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
 
 %\usepackage{a4wide} 
 %\setlength{\parskip}{0.5ex plus0.1ex minus0.1ex}
