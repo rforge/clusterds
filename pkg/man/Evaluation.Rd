@@ -33,7 +33,7 @@
 	d <- get_points(dsd,1000, assignment = TRUE)
 	
 	#Create cluster
-	x <-DSC_tNN(, threshold=.4)
+	x <-DSC_tNN(, r=.4)
 	cluster(x, dsd, 1000)
 	
 	#Evaluates for the f1 score

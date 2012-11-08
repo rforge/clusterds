@@ -1064,7 +1064,7 @@ library("stream")
 
 dsd <- DSD_Gaussian_Static(k=3, d=2, mu=rbind(c(1.5,1.3),c(1,1),c(1.2,1)))
 
-dsc <- DSC_tNN(, threshold=.1)
+dsc <- DSC_tNN(, r=.1)
 cluster(dsc,dsd,500)
 
 get_evaluation(dsc,dsd, method = "f1", n = 500)
@@ -1087,7 +1087,7 @@ library("stream")
 
 dsd <- DSD_Gaussian_Static(k=3, d=2, mu=rbind(c(1.5,1.3),c(1,1),c(1.2,1)))
 
-dsc <- DSC_tNN(, threshold=.04)
+dsc <- DSC_tNN(, r=.04)
 cluster(dsc,dsd,1000)
 @
 

@@ -15,7 +15,7 @@ get_assignment.DSC_Macro <- function(dsc,points) {
 		#predict <- unlist(lapply(predict, function(y) dsc$RObj$assignment[y]))+1
 		predict[is.na(predict)] <- 1	
 	} else {
-		warning(paste(class(x)[1],": There are no clusters",sep=""))
+		warning(paste(class(dsc)[1],": There are no clusters",sep=""))
 		predict <- rep(1,nrow(d))
 	}
 	predict

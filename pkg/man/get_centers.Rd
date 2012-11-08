@@ -47,8 +47,8 @@ The number of columns in the matrix is dependent on the data stream that was use
 
 \examples{
 # setting up the objects
-dsd <- DSD_Gaussian_Static()
-dsc <- DSC_DenStream(initPoints=100)
+dsd <- DSD_Gaussian_Static(k=3)
+dsc <- DSC_Kmeans(k=3)
 cluster(dsc, dsd, 500)
 
 # getting the centers

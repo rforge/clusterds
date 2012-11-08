@@ -36,7 +36,7 @@ contains the following items:
 # 3 clusters with 5% noise
 dsd <- DSD_Gaussian_Static(k=3, noise=0.05)
 
-dsc <- DSC_tNN(threshold=0.05, lambda=.01)
+dsc <- DSC_tNN(r=0.05, lambda=.01, macro=FALSE)
 cluster(dsc, dsd, 500)
 dsc
 
@@ -44,5 +44,5 @@ dsc
 dsc_static <- prune_clusters(dsc)
 
 #plot the results
-plot(get_centers(dsc_static))
+plot(get_microclusters(dsc_static))
 }

@@ -64,12 +64,14 @@ cluster.ani <- function(dsc=NULL, dsd, n, pointInterval=100, horizon=5*pointInte
 				
 				points(get_microclusters(dsc))
 			}
-			if(!is.null(dsc) && length(get_centers(dsc))>0) {
+			
+			tryCatch(if(!is.null(dsc) && length(get_centers(dsc))>0) {
 				if(weights)
 					points(get_centers(dsc),col=2,pch=10,cex=get_weights(dsc,scale))
 				else
 					points(get_centers(dsc),col=2,pch=10)
-			}
+			}, error = function(e){})
+			
 			if(save)
 				ani.pause()
 			else

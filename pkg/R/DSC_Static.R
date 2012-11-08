@@ -30,7 +30,9 @@ static$methods(cluster = function(newdata, verbose = FALSE) {
 )
 
 DSC_Static <- function(centers=NULL,microclusters=NULL,weights=NULL) {
-
+	
+	if(is.null(centers)) centers <- data.frame()
+	if(is.null(microclusters)) microclusters <- data.frame()
     static <- static$new(centers=centers,microclusters=microclusters,weights=weights)
 
     l <- list(description = "Static",

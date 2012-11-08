@@ -51,7 +51,7 @@ dsc
 
 # plot micro-clusters
 plot(get_points(dsd, 500), col="gray", main="ClusTree")
-centers <- get_centers(dsc)
+centers <- get_microclusters(dsc)
 points(centers, col="red", cex=5)
 
 # reclustering

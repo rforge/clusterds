@@ -1,45 +1,68 @@
+#release?
+
+#documentation
+#R CMD CHECK
+#look at vignette
+
+#noise is NA and 0?! Choose NA
+#class(NA) is logical, may make whole vector a number
+#NA_real_ <- use this or as.numeric(NA)
+
+#We don't have anything with datastream moves.
+
+#higher dimensional stuff
+
+#real dataset that shows classification
 
 
-tNN <- setRefClass("tNN", 
+tNN <- setRefClass("tNN",
 	fields = list(
-		measure     = "character",
-		minPoints   = "numeric",
-		distFun	    = "ANY",
-		centroids   = "logical",
-		threshold   = "numeric",
-		lambda      = "numeric",
-		lambdaFactor   = "numeric",
-
-		centers	    = "data.frame",
-		counts	    = "numeric",
-		varThresholds = "numeric",
-		last	    = "character"
-	), 
-
-	methods = list(
+		relations 		= "hash",
+		lambda			= "numeric",
+		r				= "numeric",
+		weights			= "numeric",
+		alpha			= "numeric",
+		centers			= "data.frame",
+		minweight		= "numeric",
+		noise			= "numeric",
+		killweight		= "numeric",
+		k				= "numeric",
+		measure			= "character",
+		distFun			= "ANY",
+		macro			= "logical"),
+		
+		
+		methods = list(
 		initialize = function(
-			measure	    = "Euclidean",
-			distFun	    = NULL,
-			minPoints   = 2,
-			centroids   = TRUE,
-			threshold   = 0.2,
-			lambda      = 0.01
+				r	= 0.05,
+				k			= 0,
+				lambda		= 0.01,
+				minweight	= .1,
+				noise		= 0,
+				alpha 		= 0.4,
+				measure		= "Euclidean",
+				macro		= TRUE
 			) {
+				
+		    relations 		<<- hash()
+		    lambda			<<- 2^-lambda
+		    r				<<- r
+		    minweight		<<- minweight
+		    noise			<<- noise
+		    killweight 		<<- noise*2*lambda^(10)
+		    alpha			<<- alpha
+		    measure			<<- measure
+		    macro			<<- macro
 		    
-		    measure	<<- measure 
-		    minPoints	<<- minPoints
-		    centroids   <<- centroids
-		    threshold   <<- threshold
-		    lambda	<<- lambda
-		    lambdaFactor <<- 2^(-lambda)
-
-		    if(!is.null(distFun)) distFun <<- distFun
-		    else distFun <<- pr_DB[[measure]]
-
-		    centers	<<- data.frame()
-		    counts	<<- numeric()
-		    varThresholds <<- numeric()
-		    last	<<- as.character(NA)
+		    if(is.null(k))
+		    	k			<<- 0
+		    else
+		    	k			<<- k
+		    	
+		    weights		<<- numeric()
+		    centers		<<- data.frame()
+		    
+		    distFun <<- pr_DB[[measure]]
 		    
 		    .self
 		}
@@ -47,132 +70,270 @@ tNN <- setRefClass("tNN",
 	),
 )
 
+DSC_tNN <- function(r = 0.2, k=NULL, lambda = 0.01, minweight = .1, noise = 0, alpha = .4, measure = "Euclidean", macro = TRUE) {
+
+    tNN <- tNN$new(r, k, lambda, minweight, noise, alpha, measure, macro)
+
+    l <- list(description = "tNN",
+	    RObj = tNN)
+
+    class(l) <- c("DSC_tNN","DSC_R","DSC")
+    
+    l
+}
 
 tNN$methods(cluster = function(newdata, verbose = FALSE) {
 	    'Cluster new data.' ### online help
 
 	    if(!is(newdata, "data.frame")) newdata <- as.data.frame(newdata)
 	    
-	    nclusters <- function(x) nrow(centers)
-	    
-
-	    last <<- character(nrow(newdata))
-
 	    for(i in 1:nrow(newdata)) {
-
-		nd <- newdata[i,, drop = FALSE]
-		if(verbose && i%%50==0) 
-		    cat("Added", i, "observations - ",
-			nclusters(x), "clusters.\n")
-
-		## fade cluster structure?
-		if(lambda>0) 
-		    counts <<- counts * lambdaFactor
-
-		## first cluster
-		if(nclusters(x)<1) {
-		    sel <- "1"
-		    rownames(nd) <- sel
-		    centers <<- nd
-		    counts[sel] <<- 1 
-		    ## initialize variable threshold
-		    varThresholds[sel] <<- threshold
-		    
-
-
-		}else{
-		    inside <- dist(nd, centers, 
-			    method=distFun) - threshold
-		    min <- which.min(inside)
-		    
-		    if(inside[min]<=0) sel <- rownames(centers)[min]
-		    else sel <- NA
-
-			## NA means no match -> create a new node
-			if(is.na(sel)) {
-			    ## New node
-			    ## get new node name (highest node 
-			    ## number is last entry in count)
-			    sel <- as.character(as.integer(
-					    tail(names(counts),1)) + 1)
-
-			    rownames(nd) <- sel
-			    centers <<- rbind(centers, nd)
-			    counts[sel] <<- 1
-			    ## initialize threshold
-			    varThresholds[sel] <<- threshold
-			
-			}else{ 
-				## assign observation to existing node
-
-			    ## update center (if we use centroids)
-			    if(centroids) {
-
-				nnas <- !is.na(nd)
-				centers[sel,nnas] <<- 
-				(centers[sel,nnas] * counts[sel] 
-					+ nd[nnas])/(counts[sel]+1)
-				nas <- is.na(centers[sel,])
-				centers[sel,nas] <<- nd[nas]
-
-			    }
-			
-
-			    ## update counts 
-			    counts[sel] <<- counts[sel] + 1
-			}
-		    }
-
-		    last[i] <<- sel
-		    
-		    
-		    keep <- which(counts >= 1)
-		   	remove_names <- names(counts[-keep])
-		    
-		    
-		    counts <<- counts[keep]
-		    centers <<- centers[keep,]
-
-		} # end for loop
-
-		if(verbose) cat ("Done -", nclusters(x), "clusters.\n")
-
-
+	    	killweight <- killweight*wmean(weights)
+	    	point <- newdata[i,]
+	    	
+	    	
+	    	if(lambda<1) {
+	    		#decrease weight for microclusters
+	    		weights <<- weights * lambda
+	    		keys <- keys(relations)
+	    		
+	    		#find dead microclusters
+	    		remove <- which(weights < killweight)
+	    		
+	    		if(length(remove)>0) {
+	    			#remove microclusters
+	    			weights <<- weights[-remove]
+	    			centers <<- centers[-remove,]
+	    			removekeys <- grep(paste("^",remove,"-",sep="",collapse="|"),keys)
+	    				if(length(removekeys)) {
+	    				relations[keys[removekeys]]<-NULL
+	    				keys <- keys[-removekeys]
+	    				}
+	    		}
+	    		
+	    		if(macro) {
+	    			relationWeights <- values(relations,keys)
+	    			if(length(relationWeights) > 0) {
+	    				relationWeights <- relationWeights * lambda
+	    				if(length(which(relationWeights < killweight*alpha)))
+	    					relations[keys[which(relationWeights < killweight*alpha)]] <- NULL
+	    				if(length(which(relationWeights >= killweight*alpha)))
+	    					relations[keys[which(relationWeights >= killweight*alpha)]] <- relationWeights[which(relationWeights >= killweight*alpha)]
+	    			}
+	    		}
+	    	}
+	    	
+	    	if(nrow(centers)==0) {
+	    		#create first microcluster
+	    		weights 					 <<- 1
+	    		centers						 <<- rbind(centers,point)
+	    	} else {
+	    		inside <- which(dist(point,centers,method=distFun)<r)
+	    		
+	    		
+	    		if(length(inside)>0) {
+	    			partialweight <- 1 
+	    		
+	    			newCenters <- data.frame(matrix((as.numeric(as.matrix(centers[inside,])*
+	    					rep(weights[inside])+rep(as.numeric(point)*partialweight,each=length(inside))))/
+	    					rep(partialweight+weights[inside],ncol(point)),ncol=ncol(point)),
+	    					row.names=rownames(centers[inside,]))
+	    			
+	    			distance <- dist(newCenters,newCenters,method=distFun)
+	    			
+	    			test <- apply(distance,1,function(x){all(x>r|x==0)})
+	    				if(length(which(test)) > 0) {
+	    					centers[inside[which(test)],] <<- newCenters[which(test),]
+	    			}
+	    				
+	    			weights[inside] <<- weights[inside] + partialweight
+	    			
+	    			if(length(inside)>1) {
+	    				if(macro) {
+	    					relationUpdate <- outer(inside, inside, function(x,y){paste(x,y,sep="-")})
+	    					relationUpdate <- relationUpdate[upper.tri(relationUpdate)]
+	    				
+	    					existingRelations <- has.key(relationUpdate,relations)
+	    					if(length(which(existingRelations))>0)
+	    						relations[relationUpdate[which(existingRelations)]] <- values(relations,relationUpdate[which(existingRelations)]) + 1	
+	    					if(length(which(!existingRelations))>0)
+	    						relations[relationUpdate[which(!existingRelations)]] <- 1
+	    				}
+	    			}
+	    		} else {
+	    			weights <<- c(weights,1)
+	    			
+	    			centers <<- rbind(centers,point)
+	    		}
+	    	}
 	    }
+	}	    
 )
 
-tNN$methods(clusters = function() centers[counts>minPoints,])
-
-### creator    
-DSC_tNN <- function(threshold = 0.2, minPoints = 2, measure = "euclidean",
-	centroids = identical(tolower(measure), "euclidean"), lambda=0) {
-
-    tnn <- tNN$new(threshold=threshold, minPoints=minPoints, 
-	    measure=measure, centroids=centroids,
-	    lambda=lambda)
-
-    l <- list(description = "tNN",
-	    RObj = tnn)
-
-    class(l) <- c("DSC_tNN","DSC_R","DSC")
-    l
-    l
+get_microclusters.DSC_tNN <- function(x, ...) {
+	mc <- x$RObj$centers
+	row.names(mc) <- 1:nrow(mc)
+	mc[which(x$RObj$weights>quantile(x$RObj$weights,probs=x$RObj$noise)),]
+}
+	
+wmean <- function(w) {
+	if(length(w)==0)
+		return(0)
+	mean(w)
 }
 
-### get centers
 get_centers.DSC_tNN <- function(x, ...) {
-	centers <- x$RObj$clusters()
+	if(!x$RObj$macro) {
+   		stop(gettextf("get_centers not implemented for class '%s'. Macro is not enabled", class(x)))
+	}
+	assignment <- get_membership(x)
 	
-	if(length(centers) == 0) warning(paste(class(x)[1],": There are no centers",sep=""))
+	mc <- get_microclusters(x)
+	uni <- unique(assignment)
+	if(length(uni) == 0)  {
+		warning(paste(class(x)[1],": There are no clusters",sep=""))
+		return(data.frame())
+	}
+	data <- data.frame(do.call("rbind",lapply(uni,function(y) {
+		micro <- mc[which(assignment==y),]
+		weight <- x$RObj$weights[which(assignment==y)]
+		colSums(micro*weight)
+	})))
 	
-	centers
+	weights <- get_all_weights(x)
+	data <- data/weights
+	
+	if(x$RObj$k==0) {
+		totalweight <- sum(weights)
+		return(data[which(weights>x$RObj$minweight*totalweight),])
+	} else {
+		if(nrow(data)<x$RObj$k)
+			return(data)
+		else {
+			data <-data[order(weights,decreasing=TRUE),]
+			return(data[1:x$RObj$k,])
+		}
+	}
 }
 
-get_weights.DSC_tNN <- function(x, scale=NULL)  {
-    weight <- x$RObj$counts
+get_weights.DSC_tNN <- function(x, scale=NULL) {
+	if(x$RObj$macro) {
+		m <- get_all_weights(x,scale)
+		if(x$RObj$k==0) {
+			totalweight <- sum(m)
+			m[which(m>x$RObj$minweight*totalweight)]
+		} else {
+			if(length(m)<x$RObj$k)
+				return(m)
+			else {
+				m <- sort(m,decreasing=TRUE)
+				return(m[1:x$RObj$k])
+			}
+		}
+	} else {
+		return(x$RObj$weights[which(x$RObj$weights>quantile(x$RObj$weights,probs=x$RObj$noise))])
+	}
+}
 
-	if(length(weight) == 0) warning(paste(class(x)[1],": There are no centers",sep=""))
-    if(!is.null(scale)) weight <- map(weight, scale)
-    
-    weight
+get_matrix <- function(dsc) {
+	#FIXME: make edgelist max length to avoid copying
+	r <- dsc$RObj$relations
+	mc <- get_microclusters(dsc)
+	matrix <- Matrix(0,nrow(mc),nrow(mc),sparse=TRUE)
+
+	i <- 0
+	
+	lookup <- sapply(rownames(mc),function(name) {
+		i <<- i + 1
+	 })
+	
+	sapply(keys(dsc$RObj$relations),function(x){
+		microclusters <- unlist(strsplit(x,'-'))
+		if(all(!is.na(lookup[microclusters]))) {
+			matrix[lookup[microclusters[1]],lookup[microclusters[2]]] <<- dsc$RObj$relations[[x]]
+		}
+	})
+
+	matrix
+}
+
+get_all_weights <- function(x, scale=NULL) {
+	assignment <- get_membership(x)
+	weights <- x$RObj$weights
+	
+	nclusters <- unique(assignment)
+	if(length(nclusters) == 0)  {
+		warning(paste(class(x)[1],": There are no clusters",sep=""))
+		return(data.frame())
+	}
+	m <- unlist(lapply(nclusters,function(clusters){sum(weights[which(assignment==clusters)])}))
+	
+	if(!is.null(scale)) m <- map(m, scale)
+	
+	m
+}
+
+get_edgelist <- function(dsc) {
+	#FIXME: make edgelist max length to avoid copying
+	edgelist <- numeric()
+	r <- dsc$RObj$relations
+	mc <- get_microclusters(dsc)
+	i <- 0
+	
+	lookup <- sapply(rownames(mc),function(name) {
+		i <<- i + 1
+	 })
+	
+	sapply(keys(dsc$RObj$relations),function(x){
+		microclusters <- unlist(strsplit(x,'-'))
+		if(all(!is.na(lookup[microclusters]))) {
+			if(dsc$RObj$relations[[x]] > (dsc$RObj$weights[lookup[microclusters[1]]]+dsc$RObj$weights[lookup[microclusters[2]]])/2*dsc$RObj$alpha) {
+				edgelist <<- c(edgelist,lookup[microclusters[1]],lookup[microclusters[2]])
+			}
+		}
+	})
+
+	edgelist
+}
+
+get_membership <- function(dsc) {
+	edgelist <- get_edgelist(dsc)
+	
+	if(length(edgelist)>1) {
+		
+		assignment <- clusters(graph(edgelist,directed=FALSE))$membership
+		
+		return(assignment)
+	}
+	
+	1:length(dsc$RObj$relations)
+}
+
+nclusters.DSC_tNN <- function(x) {
+	if(x$RObj$macro)
+		nrow(get_centers(x))
+	else
+		nrow(get_microclusters(x))
+}
+
+get_assignment.DSC_tNN <- function(dsc,points) {
+	assignment <- get_membership(dsc)
+	
+	d <- points
+	c <- get_microclusters(dsc) 
+	
+	
+	
+	if(length(c)>0) {
+		dist <- dist(d,c)
+		#Find the minimum distance and save the class
+		predict <- apply(dist, 1, which.min)
+		predict <- assignment[predict]+1
+
+		predict[is.na(predict)] <- 1	
+	} else {
+		warning(paste(class(dsc)[1],": There are no clusters",sep=""))
+		predict <- rep(1,nrow(d))
+	}
+	predict
 }

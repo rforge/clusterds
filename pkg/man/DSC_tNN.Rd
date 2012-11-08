@@ -4,17 +4,22 @@
 \description{Creates a new DataStreamClusterer with the tNN (threshold Nearest Neighbor) algorithm}
 
 \usage{
-	DSC_tNN(threshold = 0.2, minPoints = 2, measure = "euclidean",
-	centroids = identical(tolower(measure), "euclidean"), lambda=0)
+	DSC_tNN(r = 0.2, k = NULL, lambda = 0.01, minweight = 0.1,
+                 noise = 0, alpha = 0.4, measure = "Euclidean", macro =
+                 TRUE)
 }
 
 \arguments{
-	\item{threshold}{The threshold in the nearest neighborhood algorithm.}
-	\item{minPoints}{The minimum number of points a micro-cluster
-	    needs to have.}
-	\item{measure}{The measure used to calculate cluster proximity.}
-	\item{centroids}{A flag that indicates if centroids are used for clusters.}
+	\item{r}{The threshold in the nearest neighborhood algorithm.}
+	\item{k}{The number of macro clusters to be returned if macro is true.}
 	\item{lambda}{The lambda used in the fading function.}
+	\item{minweight}{The minimum number of weight a micro-cluster
+	    needs to have.}
+	\item{noise}{The amount of noise that should be removed while clustering.}
+	\item{alpha}{The minimum proportion of shared points between to clusters to warrant 
+		combining them.}
+	\item{measure}{The measure used to calculate cluster proximity.}
+	\item{macro}{A flag that indicates if the macro clusters should be computed.}
 }
 
 \details{
@@ -45,20 +50,20 @@ Stream Clustering in R, Journal of Statistical Software, 35(5), 1-31, URL \url{h
 
 \seealso{
 	\code{\link{DSClusterer}}
-	\code{\link{DSC_tNN_Macro}}
+	\code{\link{DSC_tNN}}
 }
 
 \examples{
 # 3 clusters with 5% noise
 dsd <- DSD_Gaussian_Static(k=3, noise=0.05)
 
-dsc <- DSC_tNN(threshold=0.05, lambda=.01)
+dsc <- DSC_tNN(r=0.05, lambda=.01, macro=FALSE)
 cluster(dsc, dsd, 500)
 dsc
 
 # plot micro-clusters
 plot(get_points(dsd,500), col="gray", main= "tNN")
-centers <- get_centers(dsc)
+centers <- get_microclusters(dsc)
 points(centers, col="red", cex=5)
 
 # reclustering

@@ -41,5 +41,5 @@ clustering result, call \code{get_centers()} upon the DSC object.
 dsc <- DSC_DenStream(initPoints=100)
 dsd <- DSD_Gaussian_Static()
 cluster(dsc, dsd, 1000)
-get_centers(dsc)
+get_microclusters(dsc)
 }

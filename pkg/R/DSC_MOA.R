@@ -20,7 +20,20 @@ convert_params <- function(paramList=list()) {
     cliParams <- substr(cliParams, 1, nchar(cliParams)-1)
 }
 
-get_centers.DSC_MOA <- function(x, ...) {
+nclusters.DSC_MOA <- function(x) {
+	options(warn=-1)
+	nclusters <- nrow(get_microclusters(x))
+	options(warn=1)
+	
+	nclusters
+}
+
+get_centers.DSC_MOA <- function(x,...) {
+	warning(paste(class(x)[1],": There are no centers, returning microclusters instead",sep=""))
+	get_microclusters(x)
+}
+
+get_microclusters.DSC_MOA <- function(x, ...) {
 
     error <- tryCatch( {
     

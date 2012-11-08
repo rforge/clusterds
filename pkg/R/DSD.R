@@ -19,10 +19,10 @@ reset_stream.DSD <- function(dsd) {
 
 reset_stream <- function(dsd) UseMethod("reset_stream")
 
-plot.DSD <- function(dsd = NULL, n = 1000, col= NULL, pch= NULL, 
+plot.DSD <- function(x = NULL, n = 1000, col= NULL, pch= NULL, 
 	..., method="pairs") {
     ## method can be pairs, plot or pc (projection with PCA)
-    d <- get_points(dsd, n, assignment = TRUE)
+    d <- get_points(x, n, assignment = TRUE)
    
     ### make sure to plot noise
     assignment <- attr(d,"assignment")

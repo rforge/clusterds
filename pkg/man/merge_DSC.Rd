@@ -32,8 +32,8 @@ microclusters, and the weights of the returned centers.
 # 3 clusters with 5% noise
 dsd <- DSD_Gaussian_Static(k=3, noise=0.05)
 
-dsc1 <- DSC_tNN(threshold=0.05, lambda=.01)
-dsc2 <- DSC_tNN(threshold=0.05, lambda=.01)
+dsc1 <- DSC_Kmeans(k=3)
+dsc2 <- DSC_Kmeans(k=3)
 cluster(dsc1, dsd, 500)
 cluster(dsc1, dsd, 500)
 dsc1

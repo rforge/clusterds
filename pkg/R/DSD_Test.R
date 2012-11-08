@@ -57,8 +57,11 @@ get_points.DSD_Test <- function(x, n=1, assignment = FALSE,...) {
 		p <- p+cen
 	}
 	
-	if(assignment)
-		a <- c(a,type)
+	if(assignment) {
+		if(type==0) a <- c(a,as.numeric(NA))
+		else a <- c(a,type)
+	}
+	
 	df <- rbind(df,p)
 	
 	}
