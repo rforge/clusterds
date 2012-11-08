@@ -1,14 +1,16 @@
+### write data from a stream to a file
+
+write_stream <- function(dsd, con, n=100, sep=",",
+	col.names=FALSE, row.names=FALSE, ...) UseMethod("write_stream")
+
 write_stream.default <- function(dsd, con, n=100, sep=",", 
 	col.names=FALSE, row.names=FALSE, ...) {
     stop(gettextf("write_stream not implemented for class '%s'.", class(dsd)))
 }
 
-write_stream <- function(dsd, con, n=100, sep=",",
-	col.names=FALSE, row.names=FALSE, ...) UseMethod("write_stream")
-
 write_stream.DSD <- function(dsd, con, n=100, sep=",",
 	col.names=FALSE, row.names=FALSE, ...) {	
-    
+
     # string w/ file name (clears the file)
     if (is(con, "character")) con <- file(con, open="w")
 

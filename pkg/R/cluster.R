@@ -112,7 +112,7 @@ cluster.ani <- function(dsc=NULL, dsd, n, pointInterval=100, horizon=5*pointInte
 }
 
 ### FIXME: macro clusterers get all the data and can only be used once!!!
-### FIXME: we should warn that the old clustering is completely list!
+### FIXME: we should warn that the old clustering is completely lost!
 .cluster.DSC_Macro <- function(dsc, dsd, n, ...) {
     d <- get_points(dsd,n=n)
     dsc$RObj$cluster(d, ...)

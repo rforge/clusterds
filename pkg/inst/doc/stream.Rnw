@@ -1,6 +1,7 @@
 %\documentclass[10pt,a4paper]{article}
 \documentclass[nojss]{jss}
 
+\usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
 
 %\usepackage{a4wide} 
@@ -94,8 +95,8 @@ contract number IIS-0948893.
 
 %\maketitle
 
-%% Add TOC
-\clearpage \tableofcontents \clearpage
+%% Add TOC (not with jss style)
+%\clearpage \tableofcontents \clearpage
 
 \section{Introduction}
 Typical statistical and data mining methods (e.g.,

@@ -1,25 +1,36 @@
-# DSClusterer - DataStreamClusterer interface
-# all DSC classes have these methods
-# and an additional function to create the DSC
+### DSC - Data Stream Clusterer interface
 
+### all DSC classes have these interface methods
+
+get_centers <- function(x, ...) UseMethod("get_centers")
 get_centers.default <- function(x, ...) {
    stop(gettextf("get_centers not implemented for class '%s'.", class(x)))
 }
 
-get_centers <- function(x, ...) UseMethod("get_centers")
-
-get_copy <- function(x) UseMethod("get_copy")
-
-nclusters <- function(x) UseMethod("nclusters")
-
 get_microclusters <- function(x) UseMethod("get_microclusters")
+get_microclusters.DSC <- function(x) {
+	warning(paste(class(x)[1],": There are no microclusters, returning centers instead",sep=""))
+	get_centers(x)
+}
 
-get_assignment <- function(dsc,points) UseMethod("get_assignment")
-
-get_edgelist <- function(dsc) UseMethod("get_edgelist")
-
+### get MC weights. In case it is not implemented it returns 1 for each MC
 get_weights <- function(x, scale = NULL) UseMethod("get_weights")
+get_weights.DSC <- function(x, scale=NULL) {
+	m <- rep(1,nclusters(x))
+	if(!is.null(scale)) m <- map(m, scale)
+	m
+}
 
+### make a deep copy of the 
+get_copy <- function(x) UseMethod("get_copy")
+get_copy.default <- function(x, ...) {
+   stop(gettextf("get_copy not implemented for class '%s'.", class(x)))
+}
+
+### End of interface
+#####################################################################3
+### derived functions, plot and print
+nclusters <- function(x) UseMethod("nclusters")
 nclusters.DSC <- function(x) {
 	options(warn=-1)
 	nclusters <- nrow(get_centers(x))
@@ -28,11 +39,7 @@ nclusters.DSC <- function(x) {
 	nclusters
 }
 
-get_microclusters.DSC <- function(x) {
-	warning(paste(class(x)[1],": There are no microclusters, returning centers instead",sep=""))
-	get_centers(x)
-}
-
+get_assignment <- function(dsc,points) UseMethod("get_assignment")
 get_assignment.DSC <- function(dsc,points) {
 	d <- points
 	c <- get_centers(dsc)
@@ -47,12 +54,6 @@ get_assignment.DSC <- function(dsc,points) {
 		predict <- rep(1,nrow(d))
 	}
 	predict	
-}
-
-get_weights.DSC <- function(x, scale=NULL) {
-	m <- rep(1,nclusters(x))
-	if(!is.null(scale)) m <- map(m, scale)
-	m
 }
 
 print.DSC <- function(x, ...) {
