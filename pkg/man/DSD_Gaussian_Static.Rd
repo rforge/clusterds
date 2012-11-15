@@ -57,16 +57,13 @@ created internally. They include:
 # create data stream with three clusters in 2D
 dsd1 <- DSD_Gaussian_Static(k=3, d=2)
 
-# obtaining some data
-sample <- get_points(dsd1, 500)
-
 # plotting the data
-plot(sample)
+plot(dsd1)
 
 # create data stream with specified clusters and 20% noise
 dsd2 <- DSD_Gaussian_Static(k=2, d=2, mu=rbind(c(-.5,-.5), c(.5,.5)), 
     noise=0.2, noise_range=rbind(c(-1,1),c(-1,1)))
-plot(get_points(dsd2, 500))
+plot(dsd2)
 
 
 

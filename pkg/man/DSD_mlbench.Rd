@@ -32,7 +32,6 @@ Returns a \code{DSD_Wrapper} object which is a list of the defined parameters. T
 
 \examples{
 dsd <- DSD_mlbench(method="cassini")
-points <- get_points(dsd,n=1000,assignment=TRUE)
 
-plot(points,col=attr(points,"assignment"))
+plot(dsd)
 }

@@ -30,12 +30,10 @@
 	#Create stream
 	dsd <- DSD_Gaussian_Static(k=3, d=2)
 	
-	d <- get_points(dsd,1000, assignment = TRUE)
-	
 	#Create cluster
-	x <-DSC_tNN(, r=.4)
+	x <-DSC_Kmeans(2)
 	cluster(x, dsd, 1000)
 	
-	#Evaluates for the f1 score
-	get_evaluation(x,dsd,"f1")
+	#Evaluates for the f1 and rand score
+	get_evaluation(x,dsd,c("f1","rand"))
 }

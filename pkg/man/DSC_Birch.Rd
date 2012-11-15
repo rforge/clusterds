@@ -16,11 +16,12 @@ variables)}
 }
 
 \details{
-Please refer to package \code{birch} for more details.
+Please refer to package \code{birch} for more details. It is treated as a micro clusterer within
+the \code{stream} package.
 }
 
 \value{
-A list of class \code{DSC}, \code{DSC_R}, and \code{DSC_Birch}. The list
+A list of class \code{DSC}, \code{DSC_R}, \code{DSC_Micro}, and \code{DSC_Birch}. The list
 contains the following items:
 
 	\item{description}{The name of the algorithm in the DSC object.}
@@ -35,16 +36,16 @@ contains the following items:
 # 3 clusters with 5% noise
 dsd <- DSD_Gaussian_Static(k=3, noise=0.05)
 
-dsc <- DSC_Birch(radius = .2)
-cluster(dsc, dsd, 500)
+dsc <- DSC_Birch(radius = .05)
+cluster(dsc, dsd, 1000)
 dsc
 
 # plot micro-clusters
-plot(get_points(dsd,500), col="gray", main= "tNN")
-centers <- get_centers(dsc)
-points(centers, col="red", cex=5)
+plot(dsc,dsd)
 
 # reclustering
-cl <- kmeans(centers, centers=3)
-points(cl$centers, col="blue", cex=15)
+kmeans <- DSC_KmeansW(3)
+recluster(kmeans,dsc)
+plot(kmeans,dsd,microclusters=TRUE)
+
 }

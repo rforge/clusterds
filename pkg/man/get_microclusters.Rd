@@ -29,8 +29,8 @@ A matrix containing the points of all of the micro-clusters that generated the c
 # 3 clusters with 5% noise
 dsd <- DSD_Gaussian_Static(k=3, noise=0.05)
 
-dsc <- DSC_Dbscan(eps = .1)
-cluster(dsc, dsd, 500)
+dsc <- DSC_CluStream()
+cluster(dsc, dsd, 1000)
 
 get_microclusters(dsc)
 

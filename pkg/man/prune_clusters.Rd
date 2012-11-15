@@ -45,5 +45,5 @@ dsc
 dsc_static <- prune_clusters(dsc)
 
 #plot the results
-plot(get_centers(dsc_static))
+plot(dsc_static,dsd)
 }

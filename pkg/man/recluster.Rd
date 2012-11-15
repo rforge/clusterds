@@ -40,9 +40,5 @@ recluster(macro, micro)
 
 
 ### plot clustering
-plot(get_points(dsd, 1000), col="gray", cex=.5)
-### show micro-clusters (size is proportianal to each  cluster's weight)
-points(get_centers(micro), col="blue", cex=get_weights(micro, c(2,5)), lwd=2)
-### show macro-clusters
-points(get_centers(macro), col="red", cex=10, lwd=2)
+plot(macro,dsd,microclusters=TRUE)
 }

@@ -28,11 +28,6 @@ nclusters.DSC_MOA <- function(x) {
 	nclusters
 }
 
-get_centers.DSC_MOA <- function(x,...) {
-	warning(paste(class(x)[1],": There are no centers, returning microclusters instead",sep=""))
-	get_microclusters(x)
-}
-
 get_microclusters.DSC_MOA <- function(x, ...) {
 
     error <- tryCatch( {

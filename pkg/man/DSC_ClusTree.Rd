@@ -24,7 +24,7 @@ outliers in the stream being operated upon.
 }
 
 \value{
-A list of class \code{DSC}, \code{DSC_MOA}, and \code{DSC_ClusTree}. The list
+A list of class \code{DSC}, \code{DSC_MOA}, \code{DSC_Micro}, and \code{DSC_ClusTree}. The list
 contains the following items:
 
 	\item{description}{The name of the algorithm in the DSC object.}
@@ -43,19 +43,19 @@ Society, Washington, DC, USA, 249-258. DOI=10.1109/ICDM.2009.47
 	\code{\link{DSC_MOA}}
 }
 \examples{
-dsd <- DSD_Gaussian_Static(k=3, noise=.05)
+# 3 clusters with 5% noise
+dsd <- DSD_Gaussian_Static(k=3, noise=0.05)
 
 dsc <- DSC_ClusTree()
-cluster(dsc, dsd, 500)
+cluster(dsc, dsd, 1000)
 dsc
 
 # plot micro-clusters
-plot(get_points(dsd, 500), col="gray", main="ClusTree")
-centers <- get_microclusters(dsc)
-points(centers, col="red", cex=5)
+plot(dsc,dsd)
 
 # reclustering
-cl <- kmeans(centers, centers=3)
-points(cl$centers, col="blue", cex=15)
+kmeans <- DSC_KmeansW(3)
+recluster(kmeans,dsc)
+plot(kmeans,dsd,microclusters=TRUE)
 
 }

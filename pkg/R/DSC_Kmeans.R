@@ -64,12 +64,12 @@ DSC_Kmeans <- function(k, iter.max = 10, nstart = 1,
     l <- list(description = "k-Means",
 	    RObj = kmeans)
 
-    class(l) <- c("DSC_Kmeans","DSC_Macro","DSC_R","DSC")
+    class(l) <- c("DSC_Kmeans","DSC_R","DSC_Macro","DSC")
     l
 }
 
 ### get centers
-get_centers.DSC_Kmeans <- function(x, ...) {
+get_macroclusters.DSC_Kmeans <- function(x, ...) {
 	if(length(x$RObj$clusterCenters) == 0) warning(paste(class(x)[1],": There are no clusters",sep=""))
 	x$RObj$clusterCenters
 } 

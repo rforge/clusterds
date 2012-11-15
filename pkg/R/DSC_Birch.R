@@ -61,12 +61,12 @@ DSC_Birch <- function(radius, compact=radius, keeptree = TRUE, columns = NULL) {
 	    l$RObj$radius <- radius
 	    l$RObj$compact <- compact
 
-    class(l) <- c("DSC_Birch","DSC_R","DSC")
+    class(l) <- c("DSC_Birch","DSC_R","DSC_Micro","DSC")
     l
 }
 
 ### get centers, etc.
-get_centers.DSC_Birch <- function(x, ...) {
+get_microclusters.DSC_Birch <- function(x, ...) {
 	 centers <- x$RObj$birch$sumXi/x$RObj$birch$N
 	 if(length(centers)==0) warning(paste(class(x)[1],": There are no clusters",sep=""))
 	 

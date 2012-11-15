@@ -7,12 +7,6 @@ get_centers.default <- function(x, ...) {
    stop(gettextf("get_centers not implemented for class '%s'.", class(x)))
 }
 
-get_microclusters <- function(x) UseMethod("get_microclusters")
-get_microclusters.DSC <- function(x) {
-	warning(paste(class(x)[1],": There are no microclusters, returning centers instead",sep=""))
-	get_centers(x)
-}
-
 ### get MC weights. In case it is not implemented it returns 1 for each MC
 get_weights <- function(x, scale = NULL) UseMethod("get_weights")
 get_weights.DSC <- function(x, scale=NULL) {
@@ -25,6 +19,16 @@ get_weights.DSC <- function(x, scale=NULL) {
 get_copy <- function(x) UseMethod("get_copy")
 get_copy.default <- function(x, ...) {
    stop(gettextf("get_copy not implemented for class '%s'.", class(x)))
+}
+
+get_microclusters <- function(x) UseMethod("get_microclusters")
+get_microclusters.DSC <- function(x) {
+	stop(gettextf("get_microclusters not implemented for class '%s'.", class(x)))
+}
+
+get_macroclusters <- function(x) UseMethod("get_macroclusters")
+get_macroclusters.DSC <- function(x) {
+	stop(gettextf("get_macroclusters not implemented for class '%s'.", class(x)))
 }
 
 ### End of interface
@@ -65,6 +69,8 @@ plot.DSC <- function(x, dsd = NULL, n = 1000,
 	col_points="gray",  
 	col_macro="red", 
 	col_micro="black",
+	weights=FALSE,
+	scale=c(1,10),
 	..., 
 	method="pairs", microclusters=FALSE) {
     ## method can be pairs, plot or pc (projection with PCA)
@@ -80,27 +86,40 @@ plot.DSC <- function(x, dsd = NULL, n = 1000,
 	else if(ncol(centers)>2 && method=="pc") {
 	    ## we assume Euclidean here
 	    p <- prcomp(rbind(d,centers))
-	    plot(p$x,
-		    col=c(rep(col_points,n),rep(col_macro,nrow(centers))),...)
+	    if(weights)
+	    	plot(p$x,col=c(rep(col_points,n),rep(col_macro,nrow(centers))),cex=c(rep(1,n),get_weights(x,scale)),...)
+	    else
+	    	plot(p$x,col=c(rep(col_points,n),rep(col_macro,nrow(centers))),...)
 	} else {
-	    plot(rbind(d,centers),
-		    col=c(rep(col_points,n),rep(col_macro,nrow(centers))),...)
+	    if(weights)
+	 		plot(rbind(d,centers),col=c(rep(col_points,n),rep(col_macro,nrow(centers))),cex=c(rep(1,n),get_weights(x,scale)),...)
+	 	else
+	 		plot(rbind(d,centers),col=c(rep(col_points,n),rep(col_macro,nrow(centers))),...)
 	}
     } else {
 	if(ncol(centers)>2 && method=="pairs") {
-	    pairs(centers,col=col_macro, ...)
+	    if(weights)
+	   		pairs(centers,col=col_macro,cex=get_weights(x,scale), ...)
+	   	else
+	   		pairs(centers,col=col_macro, ...)
 	}
 	else if(ncol(centers)>2 && method=="pc") {
 	    ## we assume Euclidean here
 	    p <- prcomp(centers)
-	    plot(p$x,col=col_macro,...)
+	    if(weights)
+	    	plot(p$x,col=col_macro,cex=get_weights(x,scale),...)
+	    else
+	    	plot(p$x,col=col_macro,...)
 	} else {
-	    plot(centers,col=col_macro,...)
+	    if(weights)
+	    	plot(centers,col=col_macro,cex=get_weights(x,scale),...)
+	    else
+	    	plot(centers,col=col_macro,...)
 	}
     }
 
     if(!is.null(x) && microclusters && length(get_microclusters(x))>0) {
-	if(class(x)[1] == "DSC_tNN_Macro_New") {
+	if(class(x)[1] == "DSC_tNN") {
 	    library(sfsmisc)
 	    p <- get_microclusters(x)
 	    for(i in 1:nrow(p)){

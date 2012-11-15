@@ -4,7 +4,7 @@
 \description{Creates a new DataStreamClusterer with the DenStream algorithm}
 
 \usage{
-DSC_DenStream(horizon = 1000, epsilon = 0.1, minPoints = 10, beta = 0.001, mu = 1, initPoints = 1000, lambda = NULL)
+DSC_DenStream(horizon = 1000, epsilon = 0.1, minPoints = 10, beta = 0.001, mu = 1, initPoints = 100, lambda = NULL)
 }
 
 \arguments{
@@ -32,7 +32,7 @@ The creators of DenStream use a dbscan variation to recluster the
 micro-cluster into the final clustering.
 }
 \value{
-A list of class \code{DSC}, \code{DSC_MOA}, and \code{DSC_DenStream}. The
+A list of class \code{DSC}, \code{DSC_MOA}, \code{DSC_Micro}, and \code{DSC_DenStream}. The
 list contains the following items:
 	\item{description}{The name of the algorithm in the DSC object.}
 	\item{options}{The CLI params defined when creating the DSC object.}
@@ -54,18 +54,19 @@ Classification and Clustering. In Journal of Machine Learning Research
 	\code{\link{DSC_MOA}}
 }
 \examples{
-dsd <- DSD_Gaussian_Static(k=3, noise=.05)
+# 3 clusters with 5% noise
+dsd <- DSD_Gaussian_Static(k=3, noise=0.05)
 
-dsc <- DSC_DenStream(initPoints=100)
-cluster(dsc, dsd, 500)
+dsc <- DSC_DenStream(epsilon=.05,minPoints=3,initPoints=100)
+cluster(dsc, dsd, 1000)
 dsc
 
 # plot micro-clusters
-plot(get_points(dsd, 500), col="gray", main = "DenStream")
-centers <- get_microclusters(dsc)
-points(centers, col="red", cex=5)
+plot(dsc,dsd)
 
-# reclustering with dbscan (from package fpc)
-cl <- dbscan(centers, eps=0.1, MinPts=2)
-points(centers, col=cl$cluster+1, cex=5)
+# reclustering
+kmeans <- DSC_KmeansW(3)
+recluster(kmeans,dsc)
+plot(kmeans,dsd,microclusters=TRUE)
+
 }

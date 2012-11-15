@@ -10,7 +10,7 @@
 
 
 
-DSC_DenStream <- function(horizon=1000, epsilon=0.1, minPoints=10, beta=0.001, mu=1, initPoints=1000, lambda=NULL) {
+DSC_DenStream <- function(horizon=1000, epsilon=0.1, minPoints=10, beta=0.001, mu=1, initPoints=100, lambda=NULL) {
   
   if (horizon < 1)
     stop("invalid horizon, range: >= 1")
@@ -54,7 +54,7 @@ DSC_DenStream <- function(horizon=1000, epsilon=0.1, minPoints=10, beta=0.001, m
             options = cliParams,
             javaObj = clusterer)
 
-  class(l) <- c("DSC_DenStream","DSC_MOA","DSC")
+  class(l) <- c("DSC_DenStream","DSC_MOA","DSC_Micro","DSC")
   l
 }
 

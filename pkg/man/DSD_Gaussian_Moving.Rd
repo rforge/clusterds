@@ -52,13 +52,10 @@ created internally. They include:
 
 \examples{
 # create data stream with three clusters in 2D
-dsd1 <- DSD_Gaussian_Moving()
-
-# obtaining some data
-sample <- get_points(dsd1, 500)
+dsd <- DSD_Gaussian_Moving()
 
 # plotting the data
-plot(sample)
+plot_animation(dsd,600)
 
 
 }

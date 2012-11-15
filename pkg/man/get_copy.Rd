@@ -17,6 +17,9 @@ Gets the centers of micro-clusters (if available) from a DSC object
 \details{
 Each DSC object is passed by reference. To create a new DSC object this method
 needs to be used to create an individual DSC object.
+
+This is helpful when dealing with a macro clusterer because it allows you to avoid
+overriding useful data.
 }
 
 \value{

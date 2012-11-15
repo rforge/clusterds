@@ -35,6 +35,6 @@ DSC_ClusTree <- function(horizon=1000, maxHeight=8, negLambda=NULL) {
             options = cliParams,
             javaObj = clusterer)
 
-  class(l) <- c("DSC_ClusTree","DSC_MOA","DSC")
+  class(l) <- c("DSC_ClusTree","DSC_MOA","DSC_Micro","DSC")
   l  
 }

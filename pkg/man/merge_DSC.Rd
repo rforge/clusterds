@@ -35,7 +35,7 @@ dsd <- DSD_Gaussian_Static(k=3, noise=0.05)
 dsc1 <- DSC_Kmeans(k=3)
 dsc2 <- DSC_Kmeans(k=3)
 cluster(dsc1, dsd, 500)
-cluster(dsc1, dsd, 500)
+cluster(dsc2, dsd, 500)
 dsc1
 dsc2
 

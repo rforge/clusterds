@@ -20,6 +20,9 @@ Each DSC object has a unique way for returning data points, but they all are
 called through the generic function, \code{get_centers()}. This is done by
 using the S3 class system. 
 
+Macro clusterers will return the macro clusters while micro clusterers will
+return the micro clusters of the \code{DSC}.
+
 All of the \code{DSC_MOA} classes use the same
 function that first checks for the existence of micro-clusters (as deemed in
 the MOA framework), extracts those micro-clusters, then manually extracts the

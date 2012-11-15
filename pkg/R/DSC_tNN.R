@@ -77,7 +77,11 @@ DSC_tNN <- function(r = 0.2, k=NULL, lambda = 0.01, minweight = .1, noise = 0, a
     l <- list(description = "tNN",
 	    RObj = tNN)
 
-    class(l) <- c("DSC_tNN","DSC_R","DSC")
+	class <- c("DSC_tNN","DSC_R")
+	
+	if(macro) class <- c(class,"DSC_Macro")
+
+    class(l) <- c(class,"DSC_Micro","DSC")
     
     l
 }
@@ -142,8 +146,8 @@ tNN$methods(cluster = function(newdata, verbose = FALSE) {
 	    			distance <- dist(newCenters,newCenters,method=distFun)
 	    			
 	    			test <- apply(distance,1,function(x){all(x>r|x==0)})
-	    				if(length(which(test)) > 0) {
-	    					centers[inside[which(test)],] <<- newCenters[which(test),]
+	    			if(length(which(test)) > 0) {
+	    				centers[inside[which(test)],] <<- newCenters[which(test),]
 	    			}
 	    				
 	    			weights[inside] <<- weights[inside] + partialweight
@@ -182,10 +186,7 @@ wmean <- function(w) {
 	mean(w)
 }
 
-get_centers.DSC_tNN <- function(x, ...) {
-	if(!x$RObj$macro) {
-   		stop(gettextf("get_centers not implemented for class '%s'. Macro is not enabled", class(x)))
-	}
+get_macroclusters.DSC_tNN <- function(x, ...) {
 	assignment <- get_membership(x)
 	
 	mc <- get_microclusters(x)

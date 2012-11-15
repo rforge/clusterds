@@ -18,7 +18,7 @@ Please refer to package \code{Hierarchical} for more details on the behavior of 
 }
 
 \value{
-A list of class \code{DSC}, \code{DSC_R}, and \code{DSC_Hierarchical}. The list
+A list of class \code{DSC}, \code{DSC_R}, \code{DSC_Macro}, and \code{DSC_Hierarchical}. The list
 contains the following items:
 
 	\item{description}{The name of the algorithm in the DSC object.}
@@ -30,10 +30,18 @@ contains the following items:
 }
 
 \examples{
-# 3 clusters with 5% noise
-dsd <- DSD_Gaussian_Static(k=3, noise=0.05)
+# Cassini dataset
+dsd <- DSD_mlbench("cassini")
 
-dsc <- DSC_Hierarchical(k = 3)
-cluster(dsc, dsd, 500)
-dsc
+hierarchical <- DSC_Hierarchical(3,"single")
+cluster(hierarchical, dsd, 1000)
+plot(hierarchical,dsd)
+
+# Hierarchical can also recluster microclusters
+dsc <- DSC_ClusTree()
+cluster(dsc, dsd, 1000)
+
+recluster(hierarchical,dsc)
+plot(hierarchical,dsd,microclusters=TRUE)
+
 }

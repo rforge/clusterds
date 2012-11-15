@@ -18,13 +18,26 @@ called through the generic function, \code{get_weights()}. This is done by
 using the S3 class system. 
 
 This function ensures weights are properly returned to be used with objects like
-\code{DSC_KmeansW}
+\code{DSC_KmeansW}.
+
+It will return the weight of the points \code{get_centers()} returns.
 }
 
 \value{
-A vector containing the weight of each micro-cluster.
+A vector containing the weight of each micro-cluster or macro-cluster.
 }
 
 \seealso{
 	\code{\link{DSClusterer}}
+}
+
+\examples{
+# 3 clusters with 5% noise
+dsd <- DSD_Gaussian_Static(k=3, noise=0.05)
+
+dsc <- DSC_CluStream()
+cluster(dsc, dsd, 1000)
+
+get_weights(dsc)
+
 }

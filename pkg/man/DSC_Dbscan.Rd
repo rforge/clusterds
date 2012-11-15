@@ -26,7 +26,7 @@ Please refer to package \code{dbscan} for more details on the behavior of \code{
 }
 
 \value{
-A list of class \code{DSC}, \code{DSC_R}, and \code{DSC_Dbscan}. The list
+A list of class \code{DSC}, \code{DSC_R}, \code{DSC_Macro}, and \code{DSC_Dbscan}. The list
 contains the following items:
 
 	\item{description}{The name of the algorithm in the DSC object.}
@@ -41,7 +41,15 @@ contains the following items:
 # 3 clusters with 5% noise
 dsd <- DSD_Gaussian_Static(k=3, noise=0.05)
 
-dsc <- DSC_Dbscan(eps = .1)
-cluster(dsc, dsd, 500)
-dsc
+dbscan <- DSC_Dbscan(eps = .05)
+cluster(dbscan, dsd, 1000)
+plot(dbscan,dsd)
+
+# DBSCAN can also recluster microclusters
+dsc <- DSC_ClusTree()
+cluster(dsc, dsd, 1000)
+
+recluster(dbscan,dsc)
+plot(dbscan,dsd,microclusters=TRUE)
+
 }

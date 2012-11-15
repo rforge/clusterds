@@ -53,7 +53,7 @@ DSC_CluStream <- function(
             options = cliParams,
             javaObj = clusterer)
 
-  class(l) <- c("DSC_CluStream","DSC_MOA","DSC")
+  class(l) <- c("DSC_CluStream","DSC_MOA","DSC_Micro","DSC")
   
   l
 }

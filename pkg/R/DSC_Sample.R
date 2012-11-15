@@ -49,14 +49,14 @@ DSC_Sample <- function(size = 100) {
     l <- list(description = "Sample",
 	    RObj = sample)
 
-    class(l) <- c("DSC_Sample","DSC_R","DSC")
+    class(l) <- c("DSC_Sample","DSC_R","DSC_Micro","DSC")
     l
 }
 
 
 
 ### get centers
-get_centers.DSC_Sample <- function(x, ...) {
+get_microclusters.DSC_Sample <- function(x, ...) {
     if(length(x$RObj$centers) == 0) warning(paste(class(x)[1],": There are no clusters",sep=""))
     x$RObj$centers
 } 

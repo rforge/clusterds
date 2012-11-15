@@ -4,7 +4,7 @@
 
 \description{
 Clusters a number of input points from a data stream into a clustering object and then
-produces an animation.
+produces an animation as an animated gif.
 }
 
 \usage{
@@ -34,8 +34,9 @@ is slower, it always allows the clustering of \code{n} to infinity data points, 
 the underlying stream clustering algorithm is capable of summarizing \code{n} amount of
 data points.
 
-After clustering the function generates an animated gif. If no \code{outdir} is specified
-the function will animate the progress while clustering.
+After clustering the function generates an animated gif. If no \code{outdir} is specified,
+the function will animate the progress while clustering. This can be particularly useful
+to tune clustering algorithms on moving or evolving datasets.
 }
 
 \value{
@@ -46,10 +47,11 @@ clustering result, call \code{get_centers()} upon the DSC object.
 
 \seealso{
 	\code{\link{DSClusterer}}
+	\code{\link{cluster}}
 }
 
 \examples{
-dsc <- DSC_DenStream(initPoints=100)
-dsd <- DSD_Gaussian_Static()
-cluster_animation(dsc, dsd, 1000, microclusters=TRUE)
+dsc <- DSC_tNN(.1,alpha=.3,lambda=.01)
+dsd <- DSD_Gaussian_Moving(t=20,n=20)
+cluster_animation(dsc, dsd, 1100,interval=.01,pointInterval=10,microclusters=TRUE,outdir=getwd(),xlim=c(-.5,1.5),ylim=c(-.5,1.5))
 }

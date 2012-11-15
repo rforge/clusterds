@@ -55,7 +55,7 @@ DSC_Hierarchical <- function(k, method = "complete", members = NULL) {
     l <- list(description = paste("Hierarchical -", method),
 	    RObj = hierarchical)
 
-    class(l) <- c("DSC_Hierarchical","DSC_Macro","DSC_R","DSC")
+    class(l) <- c("DSC_Hierarchical","DSC_R","DSC_Macro","DSC")
     l
 }
 

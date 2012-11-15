@@ -66,6 +66,6 @@ DSC_Dbscan <- function(eps, MinPts = 5, scale = FALSE, method = c("hybrid", "raw
     l <- list(description = "DBSCAN",
 	    RObj = dbscan)
 
-    class(l) <- c("DSC_Dbscan","DSC_Macro","DSC_R","DSC")
+    class(l) <- c("DSC_Dbscan","DSC_R","DSC_Macro","DSC")
     l
 }

@@ -22,7 +22,7 @@ for ech microcluster more accurate results can be obtained.
 }
 
 \value{
-A list of class \code{DSC}, \code{DSC_R}, and \code{DSC_Kmeans}. The list
+A list of class \code{DSC}, \code{DSC_R}, \code{DSC_Macro}, \code{DSC_Kmeans}, and \code{DSC_Kmeans}. The list
 contains the following items:
 
 	\item{description}{The name of the algorithm in the DSC object.}
@@ -31,18 +31,21 @@ contains the following items:
 
 \seealso{
 	\code{\link{DSClusterer}}
+	\code{\link{DSC_Kmeans}}
 }
 
 \examples{
 # 3 clusters with 5% noise
 dsd <- DSD_Gaussian_Static(k=3, noise=0.05)
 
-dsc <- DSC_Kmeans(k = 3)
-cluster(dsc, dsd, 500)
-dsc
+kmeans <- DSC_KmeansW(3)
+cluster(kmeans, dsd, 1000)
+plot(kmeans,dsd)
 
-# plot micro-clusters
-plot(get_points(dsd,500), col="gray", main= "k-means")
-centers <- get_centers(dsc)
-points(centers, col="red", cex=5)
+# KmeansW can also recluster microclusters
+dsc <- DSC_ClusTree()
+cluster(dsc, dsd, 1000)
+
+recluster(kmeans,dsc)
+plot(kmeans,dsd,microclusters=TRUE)
 }

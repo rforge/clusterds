@@ -33,7 +33,8 @@ accomodate the new data point.
 }
 
 \value{
-A list of class \code{DSC}, \code{DSC_R}, and \code{DSC_tNN}. The list
+A list of class \code{DSC}, \code{DSC_R}, and \code{DSC_tNN}. Depending on whether or not the \code{macro} flag
+is set, the class list also includes  \code{DSC_Micro} or  \code{DSC_Macro}. The list
 contains the following items:
 
 	\item{description}{The name of the algorithm in the DSC object.}
@@ -54,19 +55,21 @@ Stream Clustering in R, Journal of Statistical Software, 35(5), 1-31, URL \url{h
 }
 
 \examples{
-# 3 clusters with 5% noise
-dsd <- DSD_Gaussian_Static(k=3, noise=0.05)
+# Cassini
+dsd <- DSD_mlbench("cassini")
 
-dsc <- DSC_tNN(r=0.05, lambda=.01, macro=FALSE)
-cluster(dsc, dsd, 500)
-dsc
+tnn_macro <- DSC_tNN(k=3,alpha=.08)
+cluster(tnn_macro, dsd, 1000)
+plot(tnn_macro,dsd)
 
-# plot micro-clusters
-plot(get_points(dsd,500), col="gray", main= "tNN")
-centers <- get_microclusters(dsc)
-points(centers, col="red", cex=5)
+get_evaluation(tnn_macro,dsd,"rand")
 
-# reclustering
-cl <- kmeans(centers, centers=3)
-points(cl$centers, col="blue", cex=15)
+
+# tNN can also be used as just a microclusterer
+hierarchical <- DSC_Hierarchical(3,"single")
+dsc <- DSC_tNN(r=.1,macro=FALSE)
+cluster(dsc, dsd, 1000)
+
+recluster(hierarchical,dsc)
+plot(hierarchical,dsd,microclusters=TRUE)
 }

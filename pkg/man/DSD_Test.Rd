@@ -36,13 +36,10 @@ created internally. They include:
 
 \examples{
 # create data stream with three clusters in 2D
-dsd1 <- DSD_Test()
-
-# obtaining some data
-sample <- get_points(dsd1, 500)
+dsd <- DSD_Test()
 
 # plotting the data
-plot(sample)
+plot(dsd)
 
 
 }

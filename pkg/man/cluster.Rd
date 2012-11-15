@@ -35,11 +35,12 @@ clustering result, call \code{get_centers()} upon the DSC object.
 
 \seealso{
 	\code{\link{DSClusterer}}
+	\code{\link{cluster_animation}}
 }
 
 \examples{
-dsc <- DSC_DenStream(initPoints=100)
+dsc <- DSC_CluStream()
 dsd <- DSD_Gaussian_Static()
 cluster(dsc, dsd, 1000)
-get_microclusters(dsc)
+plot(dsc,dsd)
 }

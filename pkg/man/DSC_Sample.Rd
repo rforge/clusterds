@@ -18,7 +18,7 @@ of the original data set.
 }
 
 \value{
-A list of class \code{DSC}, \code{DSC_R}, and \code{DSC_Sample}. The list
+A list of class \code{DSC}, \code{DSC_R}, \code{DSC_Micro}, and \code{DSC_Sample}. The list
 contains the following items:
 
 	\item{description}{The name of the algorithm in the DSC object.}
@@ -33,12 +33,16 @@ contains the following items:
 # 3 clusters with 5% noise
 dsd <- DSD_Gaussian_Static(k=3, noise=0.05)
 
-dsc <- DSC_Sample(size = 100)
-cluster(dsc, dsd, 500)
+dsc <- DSC_Sample(100)
+cluster(dsc, dsd, 1000)
 dsc
 
 # plot micro-clusters
-plot(get_points(dsd,500), col="gray", main= "k-means")
-centers <- get_centers(dsc)
-points(centers, col="red", cex=5)
+plot(dsc,dsd)
+
+# reclustering (Kmeans is sufficient because DSC_Sample does not return weights)
+kmeans <- DSC_Kmeans(3)
+recluster(kmeans,dsc)
+plot(kmeans,dsd,microclusters=TRUE)
+
 }

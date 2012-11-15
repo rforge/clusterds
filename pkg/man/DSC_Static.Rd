@@ -4,11 +4,11 @@
 \description{Creates a new DataStreamClusterer with fixed attributes}
 
 \usage{
-	DSC_Static(centers = NULL, microclusters = NULL, weights = NULL)
+	DSC_Static(macroclusters = NULL, microclusters = NULL, weights = NULL)
 }
 
 \arguments{
-	\item{centers}{The centers of the clusters.}
+	\item{macroclusters}{The centers of the macroclusters.}
 	\item{microclusters}{The centers of the microclusters.}
 	\item{weights}{The weights of the centers.}
 }
@@ -20,7 +20,8 @@ Once it has been generated it cannot change.
 }
 
 \value{
-A list of class \code{DSC}, \code{DSC_R}, and \code{DSC_tNN}. The list
+A list of class \code{DSC}, \code{DSC_R}, and \code{DSC_Static}. The list also contains either
+ \code{DSC_Micro} or  \code{DSC_Macro} depending on what type of DSC was used to create it. The list
 contains the following items:
 
 	\item{description}{The name of the algorithm in the DSC object.}
@@ -42,7 +43,8 @@ dsc
 
 # prune the data and collect the DSC_Static
 dsc_static <- prune_clusters(dsc)
+dsc_static
 
 #plot the results
-plot(get_microclusters(dsc_static))
+plot(dsc_static,dsd)
 }
