@@ -74,7 +74,7 @@ get_points.DSD_Gaussian_Static <- function(x, n=1, assignment = FALSE, ...) {
 		    mvrnorm(1, mu=x$mu[i,], Sigma=x$sigma[[i]])))			
 			
     ## Replace some points by random noise
-    ## FIXME: [0,1]^d might not be a good choice. Some clusters can have
+    ## TODO: [0,1]^d might not be a good choice. Some clusters can have
     ## points outside this range!
     if(x$noise) {
 	repl <- runif(n)<x$noise 

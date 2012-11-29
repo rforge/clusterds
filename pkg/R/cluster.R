@@ -12,9 +12,6 @@ cluster <- function(dsc, dsd, n=1, ...) {
     invisible(dsc)
 }
 
-
-#TODO: tnn has error when reclustering
-
 cluster_animation <- function(dsc,dsd,n=1,interval=.1, horizon=500, pointInterval=100, weights=FALSE, scale=c(1,10), outdir=NULL,...) {
 	if(is.null(outdir)) {
 		cluster.ani(dsc, dsd, n, pointInterval, horizon, weights, scale,save=FALSE,interval=interval,...)
@@ -117,5 +114,9 @@ recluster.DSC_Macro <- function(macro, dsc, ...) {
     x <- as.data.frame(get_centers(dsc))
     weight <- get_weights(dsc,scale=NULL)
     macro$RObj$cluster(x, weight=weight, ...)
+}
+
+recluster.tNN <- function(macro, dsc, ...) {
+	stop(gettextf("recluster not implemented for class '%s'.", class(x)))
 }
 

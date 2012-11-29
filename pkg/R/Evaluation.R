@@ -28,8 +28,6 @@ evaluate <- function(method, predict, actual, points, centers) {
 	#make a vector of all of the methods and then do a lot of if statements
 	methods <- c("f1","recall","precision","numCluster","numClasses","fpr","ssq","rand","jaccard","rand_HA","rand_MA","rand_FM")
 
-	### FIXME: add regular RAND
-
 	
 	m <- pmatch(tolower(method),tolower(methods)) #finds index of partial match in array of methods
 	

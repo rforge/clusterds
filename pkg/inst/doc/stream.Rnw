@@ -540,7 +540,7 @@ For DSC class the following function can be used:
 \item A creator function which creates an empty clustering.
 
 \item
-\code{cluster(dsc, dsd, n=1000)} which accepts a DSC object,
+\code{cluster(dsc, dsd, n=1)} which accepts a DSC object,
 a DSD object, and the number of points
 from the DSD object to cluster into the DSC object.
 
@@ -566,7 +566,8 @@ a \code{DSC_Macro}.
 clusters in the DSC object.
 
 \item
-\code{cluster_animation(dsc, dsd, n = 1, interval = .1, horizon = 500, pointInterval = 100, weights = FALSE, scale = c(1,10), outdir = NULL, ...)} which animates the clustering process. The parameters alter the presentation of the animation. If the \code{outdir} is set
+\code{cluster_animation(dsc, dsd, n=1, interval=.1, horizon=500,} ^^J
+\code{pointInterval=100, weights=FALSE, scale=c(1,10), outdir=NULL, ...)} which animates the clustering process. The parameters alter the presentation of the animation. If the \code{outdir} is set
 then an animated gif will be produced.
 
 \item
@@ -579,18 +580,21 @@ DSC object. Currently it prints a small description of the underlying algorithm
 and the number of clusters that have been calculated.
 
 \item
-\code{plot(x, dsd = NULL, col_points = "gray", col_macro = "red", col_micro = "black", weights = FALSE, scale = c(1,10), ..., method="pairs", microclusters = FALSE)} which plots the centers
-of the centers. There are 3 available plot methods: \code{pairs},
-\code{plot}, \code{pc}. If a DSD is given then the centers will be overlayed on top, and if
-a \code{DSC_Macro()} is being plotted the micro-clusters can also be plotted by setting the
-microcluster flag to true. Lastly, the size of the centers can mirror the weights of each
-cluster by using the weights flag and the scale parameter. 
+\code{plot(x, dsd=NULL, col_points="gray", col_macro="red", col_micro="black",} ^^J
+\code{weights=FALSE, scale=c(1,10), ..., method="pairs", microclusters=FALSE)} which plots the centers
+of the clusters. There are 3 available plot methods: \code{pairs},
+\code{plot}, \code{pc}. 
 \code{plot}, or \code{pc}. \code{pairs} is the default method that produces a
 matrix of scatter plots that plots the attributes against one another (this
 method is only available when \code{d > 2}). \code{plot} simply takes the first
 two attributes of the matrix and plots it as \code{x} and \code{y} on a scatter
 plot. Lastly, \code{pc} performs Principle Component Analysis (PCA) on the data
 and projects the data to a 2 dimensional plane and then plots the results.
+If a DSD is given then the centers will be overlayed on top, and if
+a \code{DSC_Macro()} is being plotted the micro-clusters can also be plotted by setting the
+microcluster flag to true. Lastly, the size of the centers can mirror the weights of each
+cluster by using the weights flag and the scale parameter. 
+
 \end{itemize}
 
 Figure \ref{figure:interaction} shows the typical usage of \code{cluster()}
@@ -634,7 +638,7 @@ their online counterparts.
 \item
 \code{DSC_Kmeans}
 \item
-\code{DSC_KmeansW} weighted $k$-means
+\code{DSC_KmeansW} (weighted $k$-means)
 \item
 \code{DSC_DBSCAN}
 \item
@@ -804,7 +808,7 @@ Next, we plot 500 points from the data stream to get an idea about its
 structure.
 
 <<static, fig=TRUE, include=FALSE>>= 
-plot(data)
+plot(dsd,n=500)
 @
 
 \begin{figure} 

@@ -224,7 +224,7 @@ get_weights.DSC_tNN <- function(x, scale=NULL) {
 }
 
 get_matrix <- function(dsc) {
-	#FIXME: make edgelist max length to avoid copying
+	#TODO: make edgelist max length to avoid copying
 	r <- dsc$RObj$relations
 	mc <- get_microclusters(dsc)
 	matrix <- Matrix(0,nrow(mc),nrow(mc),sparse=TRUE)
@@ -262,7 +262,7 @@ get_all_weights <- function(x, scale=NULL) {
 }
 
 get_edgelist <- function(dsc) {
-	#FIXME: make edgelist max length to avoid copying
+	#TODO: make edgelist max length to avoid copying
 	edgelist <- numeric()
 	r <- dsc$RObj$relations
 	mc <- get_microclusters(dsc)

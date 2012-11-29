@@ -1,5 +1,3 @@
-#TODO: DBSCAN is all caps
-
 DBSCAN <- setRefClass("DBSCAN", 
 	fields = list(
 		data     = "data.frame",
