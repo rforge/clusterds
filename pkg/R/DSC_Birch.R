@@ -1,8 +1,8 @@
-birch <- setRefClass("Birch", 
+BIRCH <- setRefClass("BIRCH", 
 	fields = list(
 		data 		= "data.frame",
 		weights 	= "numeric",
-		birch	    = "ANY",
+		BIRCH	    = "ANY",
 		radius	    = "numeric",
 		compact	    = "numeric",
 		keeptree    = "logical",
@@ -19,7 +19,7 @@ birch <- setRefClass("Birch",
 		    data <<- data.frame()
 		    assignment <<- numeric()
 		    weights <<- numeric()
-		    birch <<- NULL
+		    BIRCH <<- NULL
 		    keeptree <<- keeptree 
 		    columns <<- columns
 		    radius <<- numeric()
@@ -30,51 +30,51 @@ birch <- setRefClass("Birch",
 		
 		cluster = function(points,  weight = rep(1,nrow(points)), ...) {
 			if(any(is.na(points))) {
-				warning("Birch: Throwing out point with NA.")
+				warning("BIRCH: Throwing out point with NA.")
 			} else {
 			data <<- rbind(data,points)
 			weights <<- c(weights,weight)
-		    if(is.null(birch)) {
-				birch <<- birch(data.matrix(points), 
+		    if(is.null(BIRCH)) {
+				BIRCH <<- birch(data.matrix(points), 
 			    	radius, compact=compact, keeptree=keeptree, 
 			    	columns=columns)
-			  	birch <<- birch.getTree(birch)
+			  	BIRCH <<- birch.getTree(BIRCH)
 			} else {
-		    	birch.addToTree(data.matrix(points), birch)
-		    	birch <<- birch.getTree(birch)
+		    	birch.addToTree(data.matrix(points), BIRCH)
+		    	BIRCH <<- birch.getTree(BIRCH)
 		    }
 		    
 		    i<-1
-		    lapply(birch$members,function(x){assignment[x]<<-i;i<<-i+1})
+		    lapply(BIRCH$members,function(x){assignment[x]<<-i;i<<-i+1})
 		    }
 		    }
 	)
 )
 
 ### creator    
-DSC_Birch <- function(radius, compact=radius, keeptree = TRUE, columns = NULL) {
+DSC_BIRCH <- function(radius, compact=radius, keeptree = TRUE, columns = NULL) {
 
-    l <- list(description = "Birch",
-	    RObj = birch$new(keeptree = keeptree, columns = columns)
+    l <- list(description = "BIRCH",
+	    RObj = BIRCH$new(keeptree = keeptree, columns = columns)
 	    )
 	    
 	    l$RObj$radius <- radius
 	    l$RObj$compact <- compact
 
-    class(l) <- c("DSC_Birch","DSC_R","DSC_Micro","DSC")
+    class(l) <- c("DSC_BIRCH","DSC_Micro","DSC_R","DSC")
     l
 }
 
 ### get centers, etc.
-get_microclusters.DSC_Birch <- function(x, ...) {
-	 centers <- x$RObj$birch$sumXi/x$RObj$birch$N
+get_microclusters.DSC_BIRCH <- function(x, ...) {
+	 centers <- x$RObj$BIRCH$sumXi/x$RObj$BIRCH$N
 	 if(length(centers)==0) warning(paste(class(x)[1],": There are no clusters",sep=""))
 	 
 	 as.data.frame(centers)
 }
 
-get_weights.DSC_Birch <- function(x, scale=NULL) {
-    weight <- x$RObj$birch$N
+get_weights.DSC_BIRCH <- function(x, scale=NULL) {
+    weight <- x$RObj$BIRCH$N
     
 	 if(length(weight)==0) warning(paste(class(x)[1],": There are no clusters",sep=""))
 

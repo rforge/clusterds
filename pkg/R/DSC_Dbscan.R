@@ -1,4 +1,6 @@
-dbscan <- setRefClass("dbscan", 
+#TODO: DBSCAN is all caps
+
+DBSCAN <- setRefClass("DBSCAN", 
 	fields = list(
 		data     = "data.frame",
 		eps   = "numeric",
@@ -38,34 +40,34 @@ dbscan <- setRefClass("dbscan",
 	),
 )
 
-dbscan$methods(cluster = function(x, weight = rep(1,nrow(x)), ...) {
+DBSCAN$methods(cluster = function(x, weight = rep(1,nrow(x)), ...) {
 		if(length(data)>0) {warning("DBSCAN: Previous data is being overridden")}
 		weights <<- weight
 	    data <<- x
-		dbscan <- dbscan(data, eps, MinPts = 5, scale = FALSE, method = c("hybrid", "raw",
+		DBSCAN <- dbscan(data, eps, MinPts = 5, scale = FALSE, method = c("hybrid", "raw",
     "dist"), seeds = TRUE, showplot = FALSE, countmode = NULL)
 
-		assignment <<- dbscan$cluster
+		assignment <<- DBSCAN$cluster
 		row_sub = unlist(lapply(assignment, function(x) all(x !=0 )))
 		data <<- data[row_sub,]
 		assignment <<- assignment[row_sub]
-		details <<- dbscan
+		details <<- DBSCAN
 	}
 )
 
 ### creator    
-DSC_Dbscan <- function(eps, MinPts = 5, scale = FALSE, method = c("hybrid", "raw",
+DSC_DBSCAN <- function(eps, MinPts = 5, scale = FALSE, method = c("hybrid", "raw",
     "dist"), seeds = TRUE, showplot = FALSE, countmode = NULL) {
 
-    dbscan <- dbscan$new(
+    DBSCAN <- DBSCAN$new(
 	    MinPts = MinPts, scale = scale,
 	    method = method,seeds=seeds,showplot=showplot,countmode=countmode)
 
-	dbscan$eps <- eps
+	DBSCAN$eps <- eps
 
     l <- list(description = "DBSCAN",
-	    RObj = dbscan)
+	    RObj = DBSCAN)
 
-    class(l) <- c("DSC_Dbscan","DSC_R","DSC_Macro","DSC")
+    class(l) <- c("DSC_DBSCAN","DSC_Macro","DSC_R","DSC")
     l
 }

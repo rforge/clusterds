@@ -49,7 +49,7 @@ DSC_Sample <- function(size = 100) {
     l <- list(description = "Sample",
 	    RObj = sample)
 
-    class(l) <- c("DSC_Sample","DSC_R","DSC_Micro","DSC")
+    class(l) <- c("DSC_Sample","DSC_Micro","DSC_R","DSC")
     l
 }
 

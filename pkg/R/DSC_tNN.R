@@ -1,18 +1,4 @@
-#release?
-
-#documentation
-#R CMD CHECK
-#look at vignette
-
-#noise is NA and 0?! Choose NA
-#class(NA) is logical, may make whole vector a number
-#NA_real_ <- use this or as.numeric(NA)
-
-#We don't have anything with datastream moves.
-
-#higher dimensional stuff
-
-#real dataset that shows classification
+#complain 
 
 
 tNN <- setRefClass("tNN",
@@ -77,11 +63,12 @@ DSC_tNN <- function(r = 0.2, k=NULL, lambda = 0.01, minweight = .1, noise = 0, a
     l <- list(description = "tNN",
 	    RObj = tNN)
 
-	class <- c("DSC_tNN","DSC_R")
+	class <- c("DSC_tNN")
 	
 	if(macro) class <- c(class,"DSC_Macro")
-
-    class(l) <- c(class,"DSC_Micro","DSC")
+	else class <- c(class,"DSC_Micro")
+	
+	class(l) <- c(class,"DSC_R","DSC")
     
     l
 }

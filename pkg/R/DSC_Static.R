@@ -30,7 +30,7 @@ static$methods(cluster = function(newdata, verbose = FALSE) {
 )
 
 DSC_Static <- function(macroclusters=NULL,microclusters=NULL,weights=NULL) {
-	class <- c("DSC_Static","DSC_R")
+	class <- c("DSC_Static")
 	
 	if(is.null(macroclusters)) {
 		class <- c(class,"DSC_Micro")
@@ -38,6 +38,8 @@ DSC_Static <- function(macroclusters=NULL,microclusters=NULL,weights=NULL) {
 	} else {
 		class <- c(class,"DSC_Macro")
 	}
+	
+	
 	if(is.null(microclusters)) {
 		microclusters <- data.frame()
 	}
@@ -47,7 +49,7 @@ DSC_Static <- function(macroclusters=NULL,microclusters=NULL,weights=NULL) {
     l <- list(description = "Static",
 	    RObj = static)
 
-    class(l) <- c(class,"DSC")
+    class(l) <- c(class,"DSC_R","DSC")
     l
     l
 }

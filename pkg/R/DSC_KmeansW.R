@@ -56,7 +56,7 @@ DSC_KmeansW <- function(k, iter.max = 10, nstart = 1) {
     l <- list(description = "Weighted k-Means",
 	    RObj = kmeansW)
 
-    class(l) <- c("DSC_KmeansW","DSC_Kmeans","DSC_R","DSC_Macro","DSC")
+    class(l) <- c("DSC_KmeansW","DSC_Kmeans","DSC_Macro","DSC_R","DSC")
     l
 }
 

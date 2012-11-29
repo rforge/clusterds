@@ -1,10 +1,10 @@
-\name{DSC_Birch}
-\alias{DSC_Birch}
-\title{DataStreamClusterer: Birch}
-\description{Creates a new DataStreamClusterer with the Birch algorithm}
+\name{DSC_BIRCH}
+\alias{DSC_BIRCH}
+\title{DataStreamClusterer: BIRCH}
+\description{Creates a new DataStreamClusterer with the BIRCH algorithm}
 
 \usage{
-	DSC_Birch(radius, compact = radius, keeptree = TRUE, columns = NULL)
+	DSC_BIRCH(radius, compact = radius, keeptree = TRUE, columns = NULL)
 }
 
 \arguments{
@@ -16,12 +16,12 @@ variables)}
 }
 
 \details{
-Please refer to package \code{birch} for more details. It is treated as a micro clusterer within
+Please refer to package \code{BIRCH} for more details. It is treated as a micro clusterer within
 the \code{stream} package.
 }
 
 \value{
-A list of class \code{DSC}, \code{DSC_R}, \code{DSC_Micro}, and \code{DSC_Birch}. The list
+A list of class \code{DSC}, \code{DSC_R}, \code{DSC_Micro}, and \code{DSC_BIRCH}. The list
 contains the following items:
 
 	\item{description}{The name of the algorithm in the DSC object.}
@@ -36,7 +36,7 @@ contains the following items:
 # 3 clusters with 5% noise
 dsd <- DSD_Gaussian_Static(k=3, noise=0.05)
 
-dsc <- DSC_Birch(radius = .05)
+dsc <- DSC_BIRCH(radius = .05)
 cluster(dsc, dsd, 1000)
 dsc
 

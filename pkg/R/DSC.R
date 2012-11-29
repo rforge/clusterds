@@ -31,6 +31,11 @@ get_macroclusters.DSC <- function(x) {
 	stop(gettextf("get_macroclusters not implemented for class '%s'.", class(x)))
 }
 
+recluster <- function(macro, dsc, ...) UseMethod("recluster")
+recluster.DSC <- function(macro, dsc, ...) {
+	stop(gettextf("recluster not implemented for class '%s'.", class(x)))
+}
+
 ### End of interface
 #####################################################################3
 ### derived functions, plot and print
@@ -65,6 +70,8 @@ print.DSC <- function(x, ...) {
     cat(paste('Number of clusters:', nclusters(x), '\n'))
 }
 
+
+#plot.DSC will call super question.
 plot.DSC <- function(x, dsd = NULL, n = 1000, 
 	col_points="gray",  
 	col_macro="red", 

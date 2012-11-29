@@ -1,10 +1,10 @@
-\name{DSC_Dbscan}
-\alias{DSC_Dbscan}
+\name{DSC_DBSCAN}
+\alias{DSC_DBSCAN}
 \title{DataStreamClusterer: DBSCAN}
 \description{Creates a new DataStreamClusterer with the DBSCAN algorithm}
 
 \usage{
-	DSC_Dbscan(eps, MinPts = 5, scale = FALSE, method = c("hybrid", "raw", "dist"), seeds = TRUE, showplot = FALSE, countmode = NULL)
+	DSC_DBSCAN(eps, MinPts = 5, scale = FALSE, method = c("hybrid", "raw", "dist"), seeds = TRUE, showplot = FALSE, countmode = NULL)
 }
 
 \arguments{
@@ -16,17 +16,17 @@
 	calculating a distance matrix (saves memory but may be slow), "hybrid"
 	expects also raw data, but calculates partial distance matrices (very
 	fast with moderate memory requirements ).}
-	\item{seeds}{FALSE to not include the isseed-vector in the dbscan-object.}
+	\item{seeds}{FALSE to not include the isseed-vector in the DBSCAN-object.}
 	\item{showplot}{0 = no plot, 1 = plot per iteration, 2 = plot per subiteration.}
 	\item{countmode}{NULL or vector of point numbers at which to report progress.}
 }
 
 \details{
-Please refer to package \code{dbscan} for more details on the behavior of \code{dbscan}.
+Please refer to package \code{DBSCAN} for more details on the behavior of \code{DBSCAN}.
 }
 
 \value{
-A list of class \code{DSC}, \code{DSC_R}, \code{DSC_Macro}, and \code{DSC_Dbscan}. The list
+A list of class \code{DSC}, \code{DSC_R}, \code{DSC_Macro}, and \code{DSC_DBSCAN}. The list
 contains the following items:
 
 	\item{description}{The name of the algorithm in the DSC object.}
@@ -41,15 +41,15 @@ contains the following items:
 # 3 clusters with 5% noise
 dsd <- DSD_Gaussian_Static(k=3, noise=0.05)
 
-dbscan <- DSC_Dbscan(eps = .05)
-cluster(dbscan, dsd, 1000)
-plot(dbscan,dsd)
+DBSCAN <- DSC_DBSCAN(eps = .05)
+cluster(DBSCAN, dsd, 1000)
+plot(DBSCAN,dsd)
 
 # DBSCAN can also recluster microclusters
 dsc <- DSC_ClusTree()
 cluster(dsc, dsd, 1000)
 
-recluster(dbscan,dsc)
-plot(dbscan,dsd,microclusters=TRUE)
+recluster(DBSCAN,dsc)
+plot(DBSCAN,dsd,microclusters=TRUE)
 
 }

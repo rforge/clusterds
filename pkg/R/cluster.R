@@ -12,13 +12,8 @@ cluster <- function(dsc, dsd, n=1, ...) {
     invisible(dsc)
 }
 
-recluster <- function(macro, dsc, ...) {
-    if(!is(macro, "DSC_Macro")) stop("macro is not of class DSC_marco")
-    
-    x <- as.data.frame(get_centers(dsc))
-    weight <- get_weights(dsc,scale=NULL)
-    macro$RObj$cluster(x, weight=weight, ...)
-}
+
+#TODO: tnn has error when reclustering
 
 cluster_animation <- function(dsc,dsd,n=1,interval=.1, horizon=500, pointInterval=100, weights=FALSE, scale=c(1,10), outdir=NULL,...) {
 	if(is.null(outdir)) {
@@ -101,7 +96,7 @@ cluster.ani <- function(dsc=NULL, dsd, n, pointInterval=100, horizon=5*pointInte
     }	
 }
 
-.cluster.DSC <- function(dsc, dsd, n, ...) {
+.cluster.DSC_R <- function(dsc, dsd, n, ...) {
     ### dsc contains an RObj which is  a reference object with a cluster method
     for (i in 1:n) {
 
@@ -111,11 +106,16 @@ cluster.ani <- function(dsc=NULL, dsd, n, pointInterval=100, horizon=5*pointInte
     }
 }
 
-### FIXME: macro clusterers get all the data and can only be used once!!!
-### FIXME: we should warn that the old clustering is completely lost!
 .cluster.DSC_Macro <- function(dsc, dsd, n, ...) {
     d <- get_points(dsd,n=n)
     dsc$RObj$cluster(d, ...)
 }
 
+
+recluster.DSC_Macro <- function(macro, dsc, ...) {
+    
+    x <- as.data.frame(get_centers(dsc))
+    weight <- get_weights(dsc,scale=NULL)
+    macro$RObj$cluster(x, weight=weight, ...)
+}
 
