@@ -35,9 +35,9 @@
 %\VignetteIndexEntry{Introduction to stream}
 
 
-\author{John Forrest\\Southern Methodist University 
-\And Michael Hahsler\\Southern Methodist University
-\AND Matthew Bolanos\\Southern Methodist University} 
+\author{John Forrest\\Microsoft
+\And Matthew Bolanos\\Southern Methodist University
+\AND Michael Hahsler\\Southern Methodist University}
 
 \title{Introduction to \pkg{stream}: A Framework for Data Stream Modeling in R}
 
@@ -396,9 +396,15 @@ R to create artificial data and to analyze and visualize the results
 is currently only partially possible or very difficult.
 
 The \pkg{stream} framework provides a R-based alternative to the MOA 
-framework which directly (via \pkg{rJava} \citep{stream:Urbanek:2011}) 
-interfaces the algorithms already available in MOA while it also
-allows to write algorithms in R or any language interfaceable by R.
+framework. It is based on several packages 
+including the \pkg{proxy} package, written by
+\cite{stream:Meyer+Buchta:2010}, the \pkg{MASS} package by
+\cite{stream:Venables+Ripley:2002}, and \pkg{clusterGeneration} by
+\cite{stream:Qiu+Joe:2009}. \pkg{stream} also interfaces
+the algorithms already available in MOA using the \pkg{rJava} package by
+\cite{stream:Urbanek:2010}. Furthermore, \pkg{stream}
+can incorporate any algorithm which is written in a
+language interfaceable by R.
 
 The \pkg{stream} framework consists of two main components:
 \begin{enumerate}
@@ -580,8 +586,8 @@ DSC object. Currently it prints a small description of the underlying algorithm
 and the number of clusters that have been calculated.
 
 \item
-\code{plot(x, dsd=NULL, col_points="gray", col_macro="red", col_micro="black",} ^^J
-\code{weights=FALSE, scale=c(1,10), ..., method="pairs", microclusters=FALSE)} which plots the centers
+\code{plot(x, dsd=NULL, ..., method="pairs"} 
+(see manual page for more available parameters) which plots the centers
 of the clusters. There are 3 available plot methods: \code{pairs},
 \code{plot}, \code{pc}. 
 \code{plot}, or \code{pc}. \code{pairs} is the default method that produces a
@@ -787,16 +793,12 @@ The result is a data.frame containing the data points as rows. For evaluation
 it is often important to know the ground truth, in this case from which
 cluster each point was created. The generator also returns the ground 
 truth if it is called with \code{assignment=TRUE}.
-
-<<>>= 
-data <- get_points(dsd, n=5, assignment=TRUE) 
-data 
-@
-
 The ground truth is returned as an attribute with the name 
 \code{"assignment"} and can easily be accessed in the following way:
 
+
 <<>>= 
+data <- get_points(dsd, n=100, assignment=TRUE) 
 attr(data, "assignment") 
 @
 
@@ -896,7 +898,7 @@ how a new algorithm handles this specific case.
 reading and writing parts of data streams 
 through an R connection which provide a set of 
 functions to interface file-like objects like files, compressed files,
-pipes, URLs or sockets \citep{stream:RIO:1111}.
+pipes, URLs or sockets \citep{stream:RIO:2011}.
 
 We start by creating a DSD object. 
 
@@ -1051,15 +1053,14 @@ get_centers(dsc)
 
 
 <<cluster, fig=TRUE, include=FALSE>>= 
-plot(dsc,dsd)
+plot(dsc, dsd, weights=TRUE)
 @
 
 \begin{figure} \centering \includegraphics[width=.5\linewidth]{stream-cluster}
 \caption{Plotting the micro-clusters on top of data points}
 \label{figure:cluster} \end{figure}
 
-Figure \ref{figure:cluster} is the result of the calls to \code{plot()} and
-\code{points()}. It shows the micro-clusters as red crosses on top of grey data
+The resulting plot is schown in Figure \ref{figure:cluster}. The micro-clusters are plotted in red on top of grey data
 points. It is often helpful to visualize the results of the clustering
 operation during the comparison of algorithms.
 
@@ -1146,37 +1147,39 @@ set.seed(1000)
 
 <<>>= 
 library("stream") 
-d <- get_points(DSD_Gaussian_Static(k=3, d=2, noise=0.01), 10000,assignment=TRUE) 
+d <- get_points(DSD_Gaussian_Static(k=3, d=2, noise=0.01), 1000,
+assignment=TRUE) 
 head(d)
 
 dsd <- DSD_Wrapper(d, k=3) 
 dsd
 
-dsc1 <- DSC_DenStream() 
-dsc2 <- DSC_CluStream() 
+dsc_denstream <- DSC_DenStream() 
+dsc_clustream <- DSC_CluStream() 
 @
 
 Clustering the data:
 
 <<>>= 
-cluster(dsc1, dsd, 10000) 
+cluster(dsc_denstream, dsd, 1000) 
 reset_stream(dsd) 
-cluster(dsc2, dsd, 10000)
-dsc1 
-dsc2 
+cluster(dsc_clustream, dsd, 1000)
+dsc_denstream
+dsc_clustream
 @
 
 Now we plot the data and the 2 sets of micro-clusters generated.
 
-<<clustream, fig=TRUE, include=FALSE>>= 
-reset_stream(dsd) 
-plot(dsc1,dsd, xlab='x', ylab='y') 
-@
-
 <<denstream, fig=TRUE, include=FALSE>>= 
 reset_stream(dsd) 
-plot(dsc2,dsd, xlab='x', ylab='y') 
+plot(dsc_denstream,dsd, weights=TRUE) 
 @
+
+<<clustream, fig=TRUE, include=FALSE>>= 
+reset_stream(dsd) 
+plot(dsc_clustream,dsd, weights=TRUE, scale=c(1,3)) 
+@
+
 
 \begin{figure} 
 \begin{minipage}[b]{.48\linewidth} \centering
@@ -1231,20 +1234,20 @@ representations for the \textit{k-means} clusters to better show the area they
 cover.
 
 <<>>= 
-macro1 <- DSC_KmeansW(3)
-macro2 <- DSC_KmeansW(3)
-recluster(macro1,dsc1)
-recluster(macro2,dsc2)
+macro_denstream <- DSC_KmeansW(3)
+recluster(macro_denstream,dsc_denstream)
+macro_clustream <- DSC_KmeansW(3)
+recluster(macro_clustream,dsc_clustream)
 @
 
 <<denstreamkmeans, fig=TRUE, include=FALSE>>= 
 reset_stream(dsd) 
-plot(macro1,dsd, xlab='x', ylab='y',weights=TRUE) 
+plot(macro_denstream,dsd, weights=TRUE) 
 @
 
 <<clustreamkmeans, fig=TRUE, include=FALSE>>= 
 reset_stream(dsd) 
-plot(macro2,dsd, xlab='x', ylab='y',weights=TRUE) 
+plot(macro_clustream,dsd, weights=TRUE) 
 @
 
 This last operation is an example of how we use the same offline component for
@@ -1262,19 +1265,10 @@ performed better.
 
 <<>>= 
 reset_stream(dsd)
-get_evaluation(macro1,dsd,c("f1","precision","recall","rand"),1000)
+get_evaluation(macro_denstream,dsd,c("f1","precision","recall","rand"),1000)
 reset_stream(dsd)
-get_evaluation(macro2,dsd,c("f1","precision","recall","rand"),1000)
+get_evaluation(macro_clustream,dsd,c("f1","precision","recall","rand"),1000)
 @
-
-There are several external packages that are required to use the \pkg{stream}
-package. These include the \pkg{proxy} package, written by
-\cite{stream:Meyer+Buchta:2010}, the \pkg{MASS} package by
-\cite{stream:Venables+Ripley:2002}, and \pkg{clusterGeneration} by
-\cite{stream:Qiu+Joe:2009}. To facilitate the communication between
-\proglang{R} and \proglang{Java}, we used the \pkg{rJava} package by
-\cite{stream:Urbanek:2010}. This allows us to make method calls directly to the
-JRI from within the \proglang{R} environment.
 
 \begin{figure} \begin{minipage}[b]{.48\linewidth} \centering
 \includegraphics{stream-denstreamkmeans} \\(a) DenStream with Weighted $k$-means 
@@ -1303,9 +1297,7 @@ set of functions that are defined in each base class. Writing the framework in
 \proglang{R} means that developers have the ability to design components either
 directly in \proglang{R}, or design components in \proglang{Java} or
 \proglang{C}/\proglang{C++}, and then write an \proglang{R} wrapper to use the
-high level code. Upon completion, stream will be available from The
-Comprehensive R Archive Network (CRAN) website for download
-\citep{stream:cran:2010}.
+high level code. 
 
 
 In the future, we plan on adding additional functionality to \pkg{stream}.

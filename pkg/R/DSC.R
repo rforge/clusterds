@@ -66,7 +66,7 @@ get_assignment.DSC <- function(dsc,points) {
 }
 
 print.DSC <- function(x, ...) {
-    cat(paste('DSC - Data Stream Clusterer:', x$description, '\n'))
+    cat(paste(class(x)[1], "-", x$description, '\n'))
     cat(paste('Number of clusters:', nclusters(x), '\n'))
 }
 
@@ -80,28 +80,41 @@ plot.DSC <- function(x, dsd = NULL, n = 1000,
 	scale=c(1,10),
 	..., 
 	method="pairs", microclusters=FALSE) {
+    
     ## method can be pairs, plot or pc (projection with PCA)
     centers <- get_centers(x)
+    
     if(!is.null(dsd)) {
 	d <- get_points(dsd, n, assignment = TRUE)
 	names(d) <- names(centers)
 
 	if(ncol(centers)>2 && method=="pairs") {
 	    pairs(rbind(d,centers),
-		    col=c(rep(col_points,n),rep(col_macro,nrow(centers))), ...)
+		    col=c(rep(col_points,n),rep(col_macro,nrow(centers))), 
+		    ...)
 	}
 	else if(ncol(centers)>2 && method=="pc") {
 	    ## we assume Euclidean here
 	    p <- prcomp(rbind(d,centers))
 	    if(weights)
-	    	plot(p$x,col=c(rep(col_points,n),rep(col_macro,nrow(centers))),cex=c(rep(1,n),get_weights(x,scale)),...)
+	    	plot(p$x,
+		    col=c(rep(col_points,n),rep(col_macro,nrow(centers))),
+		    cex=c(rep(1,n),get_weights(x,scale)),
+		    ...)
 	    else
-	    	plot(p$x,col=c(rep(col_points,n),rep(col_macro,nrow(centers))),...)
+		plot(p$x,
+		    col=c(rep(col_points,n),rep(col_macro,nrow(centers))),
+		    ...)
 	} else {
 	    if(weights)
-	 		plot(rbind(d,centers),col=c(rep(col_points,n),rep(col_macro,nrow(centers))),cex=c(rep(1,n),get_weights(x,scale)),...)
-	 	else
-	 		plot(rbind(d,centers),col=c(rep(col_points,n),rep(col_macro,nrow(centers))),...)
+		plot(rbind(d,centers),
+		    col=c(rep(col_points,n),rep(col_macro,nrow(centers))),
+		    cex=c(rep(1,n),get_weights(x,scale)),
+		    ...)
+	    else
+		plot(rbind(d,centers),
+		    col=c(rep(col_points,n),rep(col_macro,nrow(centers))),
+		    ...)
 	}
     } else {
 	if(ncol(centers)>2 && method=="pairs") {

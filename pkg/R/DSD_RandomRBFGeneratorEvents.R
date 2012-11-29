@@ -63,7 +63,7 @@ DSD_RandomRBFGeneratorEvents <- function(k=3, d=2,
     .jcall(options, "V", "setViaCLIString", cliParams)
 	.jcall(strm, "V", "prepareForUse")
 
-    l <- list(description = "RandomRBFGeneratorEvents",
+    l <- list(description = "Random RBF Generator Events (MOA)",
 		k = k,
 		d = d,
 	    cliParams = cliParams,

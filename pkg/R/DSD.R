@@ -25,7 +25,7 @@ reset_stream.DSD <- function(dsd) {
 #############################################################
 ### helper
 print.DSD <- function(x, ...) {
-    cat(paste('DSD - Data Stream Datasource:', x$description, '\n'))
+    cat(paste(class(x)[1], "-", x$description, '\n'))
 	cat(paste('With', x$k, 'clusters', 'in', x$d, 'dimensions', '\n'))
 }
 
