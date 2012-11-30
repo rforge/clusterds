@@ -1,4 +1,4 @@
-## wrapper for cluster and recluster functions
+## wrapper for cluster functions
 
 cluster <- function(dsc, dsd, n=1, ...) { 
     if (n < 1)
@@ -108,15 +108,4 @@ cluster.ani <- function(dsc=NULL, dsd, n, pointInterval=100, horizon=5*pointInte
     dsc$RObj$cluster(d, ...)
 }
 
-
-recluster.DSC_Macro <- function(macro, dsc, ...) {
-    
-    x <- as.data.frame(get_centers(dsc))
-    weight <- get_weights(dsc,scale=NULL)
-    macro$RObj$cluster(x, weight=weight, ...)
-}
-
-recluster.tNN <- function(macro, dsc, ...) {
-	stop(gettextf("recluster not implemented for class '%s'.", class(x)))
-}
 

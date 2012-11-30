@@ -27,6 +27,7 @@ export(
 	DSD_Target,
 	DSD_Gaussian_Moving,
 	DSD_mlbench,
+	DSD_Data,
 	DSD_Test,
 	
 	# DSD

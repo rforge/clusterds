@@ -31,10 +31,6 @@ get_macroclusters.DSC <- function(x) {
 	stop(gettextf("get_macroclusters not implemented for class '%s'.", class(x)))
 }
 
-recluster <- function(macro, dsc, ...) UseMethod("recluster")
-recluster.DSC <- function(macro, dsc, ...) {
-	stop(gettextf("recluster not implemented for class '%s'.", class(x)))
-}
 
 ### End of interface
 #####################################################################3

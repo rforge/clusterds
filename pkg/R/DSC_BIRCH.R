@@ -43,7 +43,8 @@ BIRCH <- setRefClass("BIRCH",
 			    BIRCH <<- birch.getTree(BIRCH)
 			}
 
-			for(i in 1:length(BIRCH$members)) assignment[x] <<- i
+			for(i in 1:length(BIRCH$members)) 
+			    assignment[BIRCH$members[[i]]] <<- i
 
 		    }
 		}
