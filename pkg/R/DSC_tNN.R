@@ -79,7 +79,7 @@ tNN$methods(cluster = function(newdata, verbose = FALSE) {
 	    if(!is(newdata, "data.frame")) newdata <- as.data.frame(newdata)
 	    
 	    for(i in 1:nrow(newdata)) {
-	    	killweight <- killweight*wmean(weights)
+	    	kw <- killweight*wmean(weights)
 	    	point <- newdata[i,]
 	    	
 	    	
@@ -89,7 +89,7 @@ tNN$methods(cluster = function(newdata, verbose = FALSE) {
 	    		keys <- keys(relations)
 	    		
 	    		#find dead microclusters
-	    		remove <- which(weights < killweight)
+	    		remove <- which(weights < kw)
 	    		
 	    		if(length(remove)>0) {
 	    			#remove microclusters
@@ -106,10 +106,10 @@ tNN$methods(cluster = function(newdata, verbose = FALSE) {
 	    			relationWeights <- values(relations,keys)
 	    			if(length(relationWeights) > 0) {
 	    				relationWeights <- relationWeights * lambda
-	    				if(length(which(relationWeights < killweight*alpha)))
-	    					relations[keys[which(relationWeights < killweight*alpha)]] <- NULL
-	    				if(length(which(relationWeights >= killweight*alpha)))
-	    					relations[keys[which(relationWeights >= killweight*alpha)]] <- relationWeights[which(relationWeights >= killweight*alpha)]
+	    				if(length(which(relationWeights < kw*alpha)))
+	    					relations[keys[which(relationWeights < kw*alpha)]] <- NULL
+	    				if(length(which(relationWeights >= kw*alpha)))
+	    					relations[keys[which(relationWeights >= kw*alpha)]] <- relationWeights[which(relationWeights >= kw*alpha)]
 	    			}
 	    		}
 	    	}

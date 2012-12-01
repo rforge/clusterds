@@ -72,7 +72,7 @@ plot.DSC <- function(x, dsd = NULL, n = 1000,
 	col_points="gray",  
 	col_macro="red", 
 	col_micro="black",
-	weights=FALSE,
+	weights=TRUE,
 	scale=c(1,10),
 	..., 
 	method="pairs", microclusters=FALSE) {

@@ -12,7 +12,7 @@ cluster <- function(dsc, dsd, n=1, ...) {
     invisible(dsc)
 }
 
-cluster_animation <- function(dsc,dsd,n=1,interval=.1, horizon=500, pointInterval=100, weights=FALSE, scale=c(1,10), outdir=NULL,...) {
+cluster_animation <- function(dsc,dsd,n=1,interval=.1, horizon=500, pointInterval=100, weights=TRUE, scale=c(1,10), outdir=NULL,...) {
 	if(is.null(outdir)) {
 		cluster.ani(dsc, dsd, n, pointInterval, horizon, weights, scale,save=FALSE,interval=interval,...)
 	} else {
@@ -28,7 +28,7 @@ plot_animation <- function(dsd,n=1,interval=.1, horizon=500, pointInterval=100, 
 	}
 }
 
-cluster.ani <- function(dsc=NULL, dsd, n, pointInterval=100, horizon=5*pointInterval, weights=FALSE, scale=c(1,10),save=TRUE,interval=.1, microclusters=FALSE, ...) {
+cluster.ani <- function(dsc=NULL, dsd, n, pointInterval=100, horizon=5*pointInterval, weights=TRUE, scale=c(1,10),save=TRUE,interval=.1, microclusters=FALSE, ...) {
 	points <- data.frame()
 	col <- gray.colors(horizon, start = 1, end = .7, gamma = 2.2)
 	i <- 1

@@ -1,5 +1,5 @@
-\name{DSD_Data}
-\alias{DSD_Data}
+\name{DSD_mlbench_Data}
+\alias{DSD_mlbench_Data}
 \title{DataStreamData: Data (a wrapper for data sets within the mlbench library)}
 \description{
 A DataStreamData class that wraps data from the mlbench library and
@@ -8,7 +8,7 @@ The data can either be looped or replayed manually to give
 the exact same data to 2 different DataStreamTask objects.
 }
 
-\usage{DSD_Data(data, loop = FALSE, random = FALSE, scale = FALSE)}
+\usage{DSD_mlbench_Data(data, loop = FALSE, random = FALSE, scale = FALSE)}
 
 \arguments{
 	\item{data}{The name of the dataset from mlbench}
@@ -19,7 +19,7 @@ the exact same data to 2 different DataStreamTask objects.
 }
 
 \details{
-The \code{DSD_Data} class is designed to be a wrapper class for data that is
+The \code{DSD_mlbench_Data} class is designed to be a wrapper class for data that is
 held in memory in either a data frame or matrix form. It functions nearly identical
 to \code{DSD_Wrapper}.
 
@@ -30,7 +30,7 @@ to be able to replay stream data for multiple clusters as shown in the example
 below.
 
 The value returned is a \code{list} of class \code{DSD}, and
-\code{DSD_Data}. The important items with the list are \code{strm}, the data
+\code{DSD_mlbench_Data}. The important items with the list are \code{strm}, the data
 being wrapped, \code{state} the environment which contains the counter, and
 \code{d}, the number of dimensions in the stream.
 
@@ -38,7 +38,7 @@ The supported data sets are the following: \code{BostonHousing}, \code{BostonHou
 }
 
 \value{
-Returns a \code{DSD_Data} object which is a list of the defined parameters. The parameters are either passed in from the function or created internally. They include: 
+Returns a \code{DSD_mlbench_Data} object which is a list of the defined parameters. The parameters are either passed in from the function or created internally. They include: 
 
 	\item{description}{The name of the class of the DSD object.}
 	\item{strm}{The data frame or matrix that the stream is wrapping.}
@@ -54,8 +54,8 @@ Returns a \code{DSD_Data} object which is a list of the defined parameters. The 
 }
 
 \examples{
-# creating the DSD_Data
-dsd <- DSD_Data("Shuttle")
+# creating the DSD_mlbench_Data
+dsd <- DSD_mlbench_Data("Shuttle")
 dsd
 
 plot(get_points(dsd,n=1000))
