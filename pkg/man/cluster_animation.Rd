@@ -8,7 +8,7 @@ produces an animation as an animated gif.
 }
 
 \usage{
-cluster_animation(dsc,dsd,n=1,interval=.1, horizon=500, pointInterval=100, weights=FALSE, scale=c(1,10), outdir=NULL,...)
+cluster_animation(dsc,dsd,n=1,interval=.1, horizon=500, pointInterval=100, weights=TRUE, scale=c(1,10), outdir=NULL,...)
 }
 
 \arguments{

@@ -261,7 +261,6 @@ get_all_weights <- function(x, scale=NULL) {
 	m
 }
 
-###get_edgelist <- function(dsc) UseMethod("get_edgelist")
 get_edgelist <- function(dsc) {
 	#TODO: make edgelist max length to avoid copying
 	edgelist <- numeric()
