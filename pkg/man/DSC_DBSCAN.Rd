@@ -39,7 +39,7 @@ contains the following items:
 
 \examples{
 # 3 clusters with 5% noise
-dsd <- DSD_Gaussian_Static(k=3, noise=0.05)
+dsd <- DSD_GaussianStatic(k=3, noise=0.05)
 
 DBSCAN <- DSC_DBSCAN(eps = .05)
 cluster(DBSCAN, dsd, 1000)

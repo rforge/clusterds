@@ -28,7 +28,7 @@
 
 \examples{
 	#Create stream
-	dsd <- DSD_Gaussian_Static(k=3, d=2)
+	dsd <- DSD_GaussianStatic(k=3, d=2)
 	
 	#Create cluster
 	x <-DSC_Kmeans(2)

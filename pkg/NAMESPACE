@@ -21,19 +21,20 @@ export(
 	
 	# DSD
 	DSD_RandomRBFGeneratorEvents,
-	DSD_Gaussian_Static,
+	DSD_GaussianStatic,
+	DSD_GaussianMoving,
+	DSD_UniformNoise,
 	DSD_ReadStream,
 	DSD_Wrapper,
 	DSD_Target,
-	DSD_Gaussian_Moving,
 	DSD_mlbench,
-	DSD_mlbench_Data,
+	DSD_Data,
 	DSD_Test,
 	
 	# DSD
+	get_points,
 	write_stream,
 	reset_stream,
-	get_points,
 	
 	# DSC
 	cluster,
@@ -51,7 +52,7 @@ export(
 	
 	get_evaluation,
 	cluster_animation,
-	plot_animation
+	data_animation
       )
 
 S3method(print, DSC)
@@ -64,7 +65,8 @@ S3method(plot, DSD)
 
 S3method(write_stream, DSD)
 
-S3method(get_points, DSD_Gaussian_Static)
+S3method(get_points, DSD_GaussianStatic)
+##S3method(get_points, DSD_GaussianMoving)
 S3method(get_points, DSD_mlbench)
 S3method(get_points, DSD_Test)
 S3method(get_points, DSD_MOA)

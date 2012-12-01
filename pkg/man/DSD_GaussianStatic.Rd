@@ -1,5 +1,5 @@
-\name{DSD_Gaussian_Static}
-\alias{DSD_Gaussian_Static}
+\name{DSD_GaussianStatic}
+\alias{DSD_GaussianStatic}
 \title{DataStreamData: Static data stream}
 \description{
 A DataStreamData that generates random data based upon either a 
@@ -8,7 +8,7 @@ matrices.
 }
 
 \usage{
-DSD_Gaussian_Static(k=2, d=2, mu, sigma, p, noise=0, noise_range)
+DSD_GaussianStatic(k=2, d=2, mu, sigma, p, noise=0, noise_range)
 }
 
 \arguments{
@@ -27,7 +27,7 @@ DSD_Gaussian_Static(k=2, d=2, mu, sigma, p, noise=0, noise_range)
 }
 
 \details{
-\code{DSD_Gaussian_Static} creates a mixture of \code{k} \code{d}-dimensional
+\code{DSD_GaussianStatic} creates a mixture of \code{k} \code{d}-dimensional
 static Gaussians in approximately unit space.
 The centers \code{mu} and the covariance matrices \code{sigma}
 can be supplied or will be randomly generates. The probability vector \code{p}
@@ -36,7 +36,7 @@ be chosen from it (defaults to equal probability).
 }
 
 \value{
-Returns a \code{DSD_Gaussian_Static} object which is a list of the defined
+Returns a \code{DSD_GaussianStatic} object which is a list of the defined
 params. The params are either passed in from the function or
 created internally. They include: 
 
@@ -55,13 +55,13 @@ created internally. They include:
 
 \examples{
 # create data stream with three clusters in 2D
-dsd1 <- DSD_Gaussian_Static(k=3, d=2)
+dsd1 <- DSD_GaussianStatic(k=3, d=2)
 
 # plotting the data
 plot(dsd1)
 
 # create data stream with specified clusters and 20% noise
-dsd2 <- DSD_Gaussian_Static(k=2, d=2, mu=rbind(c(-.5,-.5), c(.5,.5)), 
+dsd2 <- DSD_GaussianStatic(k=2, d=2, mu=rbind(c(-.5,-.5), c(.5,.5)), 
     noise=0.2, noise_range=rbind(c(-1,1),c(-1,1)))
 plot(dsd2)
 

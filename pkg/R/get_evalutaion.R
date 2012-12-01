@@ -3,7 +3,15 @@
 get_evaluation <- function (dsc,dsd,
 	method,
 	n = 1000) {
-	
+
+    if(missing(method)) {
+    method <- 
+	methods <- c("numCluster","numClasses", "f1","recall",
+		"precision","fpr","ssq","jaccard",
+		"rand","rand_HA","rand_MA","rand_FM")
+
+    }
+
     d <- get_points(dsd, n, assignment = TRUE)
     c <- get_centers(dsc) ### these are macro centers (for macro clusterers)
     

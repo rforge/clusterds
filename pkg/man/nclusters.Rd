@@ -31,7 +31,7 @@ An integer; the number of micro-clusters in the clustering.
 
 \examples{
 # setting up the objects
-dsd <- DSD_Gaussian_Static()
+dsd <- DSD_GaussianStatic()
 dsc <- DSC_DenStream(initPoints=100)
 cluster(dsc, dsd, 500)
 

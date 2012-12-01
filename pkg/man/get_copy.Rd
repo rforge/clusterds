@@ -38,7 +38,7 @@ A copy of the original DSC.
 
 \examples{
 # setting up the objects
-dsd <- DSD_Gaussian_Static()
+dsd <- DSD_GaussianStatic()
 dsc <- DSC_Kmeans(k = 3)
 cluster(dsc, dsd, 500)
 

@@ -29,7 +29,7 @@ The object macro is altered and contains the clustering.
 
 \examples{
 ### create a data stream and a micro-clustering
-dsd <- DSD_Gaussian_Static(k=3)
+dsd <- DSD_GaussianStatic(k=3)
 
 micro <- DSC_DenStream(initPoints=100)
 cluster(micro, dsd, 1000)

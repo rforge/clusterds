@@ -16,7 +16,7 @@ contain various DSD classes that have been implemented.
 
 \seealso{
 	\code{\link{DSClusterer}},
-	\code{\link{DSD_Gaussian_Static}},
+	\code{\link{DSD_GaussianStatic}},
 %%	\code{\link{DSD_Gaussian_Dynamic}},
 	\code{\link{DSD_ReadStream}},
 	\code{\link{DSD_Wrapper}},

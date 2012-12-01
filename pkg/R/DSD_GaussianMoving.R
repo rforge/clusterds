@@ -1,4 +1,4 @@
-DSD_Gaussian_Moving <- function(t = 10,n = 20) {
+DSD_GaussianMoving <- function(t = 10,n = 20) {
 
     state <- new.env()
     assign("counter", 1L, envir = state)
@@ -60,6 +60,6 @@ for (jj in 1:t){
 	    k = k,
 	    loop = FALSE,
 	    assignment = sequ)
-    class(l) <- c("DSD_Gaussian_Moving","DSD_Wrapper","DSD_R","DSD")
+    class(l) <- c("DSD_GaussianMoving","DSD_Wrapper","DSD_R","DSD")
     l
 }

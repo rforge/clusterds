@@ -49,13 +49,13 @@ Returns a \code{DSD_Wrapper} object which is a list of the defined parameters. T
 %%	\code{\link{DSD_MOA}},
 %%	\code{\link{DSD_ReadStream}},
 %%	\code{\link{DSD_Gaussian_Dynamic}},
-%%	\code{\link{DSD_Gaussian_Static}},
+%%	\code{\link{DSD_GaussianStatic}},
 %%	\code{\link{write_stream}},
 	\code{\link{reset_stream}}
 }
 
 \examples{
-dsd <- DSD_Gaussian_Static(k=3, d=2)
+dsd <- DSD_GaussianStatic(k=3, d=2)
 d <- get_points(dsd, 500)
 head(d)
 

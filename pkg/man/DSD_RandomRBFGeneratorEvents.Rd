@@ -67,5 +67,5 @@ on Applications of Pattern Analysis (2010).
 \examples{
 dsd <- DSD_RandomRBFGeneratorEvents()
 
-plot_animation(dsd,1000)
+data_animation(dsd,1000)
 }

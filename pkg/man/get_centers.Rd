@@ -50,7 +50,7 @@ The number of columns in the matrix is dependent on the data stream that was use
 
 \examples{
 # setting up the objects
-dsd <- DSD_Gaussian_Static(k=3)
+dsd <- DSD_GaussianStatic(k=3)
 dsc <- DSC_Kmeans(k=3)
 cluster(dsc, dsd, 500)
 

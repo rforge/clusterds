@@ -1,5 +1,5 @@
-\name{plot_animation}
-\alias{plot_animation}
+\name{data_animation}
+\alias{data_animation}
 \title{Animates the plotting of a DSD}
 
 \description{
@@ -8,7 +8,7 @@ an animation of the data points.
 }
 
 \usage{
-plot_animation(dsd,n=1,interval=.1, horizon=500, pointInterval=100, outdir=NULL,...)
+data_animation(dsd,n=1,interval=.1, horizon=500, pointInterval=100, outdir=NULL,...)
 }
 
 \arguments{
@@ -33,6 +33,6 @@ the function will animate the progress while clustering.
 }
 
 \examples{
-dsd <- DSD_Gaussian_Moving()
-plot_animation(dsd, 500)
+dsd <- DSD_GaussianMoving()
+data_animation(dsd, 500)
 }

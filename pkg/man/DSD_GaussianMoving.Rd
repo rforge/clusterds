@@ -1,5 +1,5 @@
-\name{DSD_Gaussian_Moving}
-\alias{DSD_Gaussian_Moving}
+\name{DSD_GaussianMoving}
+\alias{DSD_GaussianMoving}
 \title{DataStreamData: Moving data stream}
 \description{
 A DataStreamData that generates a moving data stream. It has two clusters and a third that moves
@@ -7,7 +7,7 @@ between them.
 }
 
 \usage{
-DSD_Gaussian_Moving(t=10, n=20)
+DSD_GaussianMoving(t=10, n=20)
 }
 
 \arguments{
@@ -17,16 +17,16 @@ DSD_Gaussian_Moving(t=10, n=20)
 }
 
 \details{
-\code{DSD_Gaussian_Moving} is a DSD generator for stream data. 
+\code{DSD_GaussianMoving} is a DSD generator for stream data. 
 It has been implemented entirely in R, so there is no computational 
 overhead with communicating to the Java Runtime Interface (JRI) or 
-native C code. An important characteristic of \code{DSD_Gaussian_Moving} 
+native C code. An important characteristic of \code{DSD_GaussianMoving} 
 is that the data stream models data that changes. This makes it
  an ideal DSD for examining 
 the temporal structure of data streams for drastic changes such as 
 the splitting or merging of clusters. 
 
-\code{DSD_Gaussian_Moving} generates 2 dimensionality data in 3
+\code{DSD_GaussianMoving} generates 2 dimensionality data in 3
 different clusters. Two of the clusters are static and are located at opposite
 corners. The third cluster traverses the two. The number of steps it takes for
 the third cluster to complete its journey is determined by \code{t}.
@@ -37,7 +37,7 @@ function.
 }
 
 \value{
-Returns a \code{DSD_Gaussian_Moving} object which is a list of the defined
+Returns a \code{DSD_GaussianMoving} object which is a list of the defined
 params. The params are either passed in from the function or
 created internally. They include: 
 
@@ -52,10 +52,10 @@ created internally. They include:
 
 \examples{
 # create data stream with three clusters in 2D
-dsd <- DSD_Gaussian_Moving()
+dsd <- DSD_GaussianMoving()
 
 # plotting the data
-plot_animation(dsd,600)
+data_animation(dsd,600)
 
 
 }

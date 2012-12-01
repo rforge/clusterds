@@ -42,7 +42,7 @@ an empty string for performance reasons.
 
 \examples{
 # creating data and writing it to disk
-dsd <- DSD_Gaussian_Static(k=3, d=5)
+dsd <- DSD_GaussianStatic(k=3, d=5)
 write_stream(dsd, "dsd_data.txt", n=100, sep=",")
 
 # reading the same data back in

@@ -31,7 +31,7 @@ contains the following items:
 
 \examples{
 # 3 clusters with 5% noise
-dsd <- DSD_Gaussian_Static(k=3, noise=0.05)
+dsd <- DSD_GaussianStatic(k=3, noise=0.05)
 
 dsc <- DSC_Sample(100)
 cluster(dsc, dsd, 1000)

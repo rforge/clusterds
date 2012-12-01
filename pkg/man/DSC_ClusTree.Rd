@@ -44,7 +44,7 @@ Society, Washington, DC, USA, 249-258. DOI=10.1109/ICDM.2009.47
 }
 \examples{
 # 3 clusters with 5% noise
-dsd <- DSD_Gaussian_Static(k=3, noise=0.05)
+dsd <- DSD_GaussianStatic(k=3, noise=0.05)
 
 dsc <- DSC_ClusTree()
 cluster(dsc, dsd, 1000)
