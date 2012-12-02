@@ -46,7 +46,7 @@
 \Shorttitle{Introduction to stream}
 
 %% an abstract and keywords
-\Abstract{ In recent years, data streams have become an increasingly important
+\Abstract{In recent years, data streams have become an increasingly important
 area of research for the computer science, database and data mining
 communities. Data streams are ordered and potentially unbounded sequences of
 data points created by a typically non-stationary generation process.  Common

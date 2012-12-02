@@ -29,7 +29,7 @@ print.DSD <- function(x, ...) {
 	cat(paste('With', x$k, 'clusters', 'in', x$d, 'dimensions', '\n'))
 }
 
-plot.DSD <- function(x = NULL, n = 1000, col= NULL, pch= NULL, 
+plot.DSD <- function(x, n = 1000, col= NULL, pch= NULL, 
 	..., method="pairs") {
     ## method can be pairs, plot or pc (projection with PCA)
     d <- get_points(x, n, assignment = TRUE)

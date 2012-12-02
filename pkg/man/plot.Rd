@@ -1,0 +1,66 @@
+\name{plot}
+\alias{plot.DSD}
+\alias{plot.DSC}
+\title{Plotting Data Stream Data and Clusterings}
+\description{Methods to plot data stream data and clusterings.}
+
+\usage{
+    \method{print}{DSD}(x, n = 1000, col= NULL, 
+	    pch= NULL, ..., method="pairs")
+    \method{print}{DSC}(x, dsd = NULL, n = 1000,
+	    col_points="gray", col_macro="red", col_micro="black",
+	    weights=TRUE, scale=c(1,10), ..., method="pairs", 
+	    microclusters=FALSE)
+}
+
+\arguments{
+	\item{x}{the DSD or DSC object to be plotted.}
+	\item{dsd}{a DSD object to plot the data in the 
+	    background.}
+	\item{n}{number of plots taken from the dsd to plot.}
+	\item{col, col_points, col_macro, col_micro}{colors
+	    used for plotting.}
+	\item{pch}{symbols used for plotting.}
+	\item{weights}{the size of the symbols for 
+	    micro- and macro-clusters represents its weight.}
+	\item{scale}{range for the symbol sizes used.}
+	\item{method}{method used for plotting: 
+	    "pairs" (pairs plot), 
+	    "plot" (plot first two dimensions) or 
+	    "pc" (plot first 2 principal components).}
+	\item{microclusters}{plot also micro-clusters
+	    for a macro-clusterer.} 
+	\item{\dots}{further arguments are passed on to
+	plot or pairs in \pkg{graphics}.}
+}
+
+%\details{
+%}
+
+%\value{
+%}
+
+\seealso{
+	\code{\link{DSC}},
+	\code{\link{DSD}}
+}
+
+\examples{
+dsd <- DSD_GaussianStatic(k=3)
+
+## plot data
+plot(dsd, n=500)
+
+## create and plot miocro-clusters
+micro <- DSC_DenStream(initPoints=100)
+cluster(micro, dsd, 500)
+plot(micro)
+
+## plot on data
+plot(micro, dsd)
+
+## create and plot macro-clusters
+macro <- DSC_KmeansW(k=3)
+recluster(macro, micro)
+plot(macro, dsd)
+}

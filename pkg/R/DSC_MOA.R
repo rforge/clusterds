@@ -20,14 +20,6 @@ convert_params <- function(paramList=list()) {
     cliParams <- substr(cliParams, 1, nchar(cliParams)-1)
 }
 
-nclusters.DSC_MOA <- function(x) {
-	options(warn=-1)
-	nclusters <- nrow(get_microclusters(x))
-	options(warn=1)
-	
-	nclusters
-}
-
 get_microclusters.DSC_MOA <- function(x, ...) {
 
     error <- tryCatch( {
@@ -82,7 +74,7 @@ get_microclusters.DSC_MOA <- function(x, ...) {
     m
 }
 
-get_weights.DSC_MOA <- function(x, scale=NULL) {
+get_microweights.DSC_MOA <- function(x) {
 
     if (.jcall(x$javaObj, "Z", "implementsMicroClusterer")) {
 	mClustering <- .jcall(x$javaObj, 
@@ -125,15 +117,7 @@ get_weights.DSC_MOA <- function(x, scale=NULL) {
 
     colnames(m) <- paste("X", 1:ncol(m), sep="")
     
-    #m$weight <- weight
-    
-    # returning the matrix 
-    m <- unlist(m)
-
-    if(!is.null(scale)) m <- map(m, scale)
-
-    
-    m
+    unlist(m)
 }
 
 get_copy.DSC_MOA <- function(x) {

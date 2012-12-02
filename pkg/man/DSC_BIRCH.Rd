@@ -1,7 +1,10 @@
 \name{DSC_BIRCH}
 \alias{DSC_BIRCH}
-\title{DataStreamClusterer: BIRCH}
-\description{Creates a new DataStreamClusterer with the BIRCH algorithm}
+\alias{BIRCH}
+\alias{birch}
+\title{BIRCH Data Stream Clusterer}
+\description{Class implements the BIRCH cluster algorithm 
+for data streams.}
 
 \usage{
 	DSC_BIRCH(radius, compact = radius, keeptree = TRUE, columns = NULL)
@@ -28,8 +31,12 @@ contains the following items:
 	\item{RObj}{The underlying R object.}
 }
 
+\references{
+Tian Zhang, Raghu Ramakrishnan, Miron Livny, An Efficient Data Clustering Method for Very Large Databases, In SIGMOD '96: Proceedings of the 1996 ACM SIGMOD international conference on Management of data (1996), pp. 103-114
+}
+
 \seealso{
-	\code{\link{DSClusterer}}
+	\code{\link{DSC}}
 }
 
 \examples{

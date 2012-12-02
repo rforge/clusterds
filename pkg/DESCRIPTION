@@ -1,13 +1,10 @@
 Package: stream
 Version: 0.0-2
 Date: 2012-xx-xx
-Title: Infrastructure for Data Streams
+Title: Infrastructure for Data Stream Mining
 Author: Matthew Bolanos, John Forrest, Michael Hahsler
 Maintainer: Michael Hahsler <mhahsler@lyle.smu.edu>
-Description: A framework for data stream modeling and
-    associated data mining tasks such as 
-    clustering and classification. Development of this
-    package was supported in part by NSF IIS-0948893.
-Depends: R (>= 2.13.0), clusterGeneration, proxy (>= 0.4-7), fpc, methods, Matrix, birch, MASS, clues, animation, mlbench, rJava (>= 0.6-3), igraph, sfsmisc, hash
+Description: A framework for data stream modeling and associated data mining tasks such as clustering and classification. The development of this package was supported in part by NSF IIS-0948893 and NIH R21HG005912.
+Depends: R (>= 2.13.0), proxy (>= 0.4-7), rJava (>= 0.6-3), methods, hash, clusterGeneration, fpc, birch, MASS, clues, animation, mlbench, igraph, sfsmisc
 SystemRequirements: Java (>= 5.0)
 License: GPL-2

@@ -4,61 +4,69 @@
 
 get_centers <- function(x, ...) UseMethod("get_centers")
 get_centers.default <- function(x, ...) {
-   stop(gettextf("get_centers not implemented for class '%s'.", class(x)))
+    stop(gettextf("get_centers not implemented for class '%s'.", class(x)))
 }
 
-### get MC weights. In case it is not implemented it returns 1 for each MC
-get_weights <- function(x, scale = NULL) UseMethod("get_weights")
-get_weights.DSC <- function(x, scale=NULL) {
-	m <- rep(1,nclusters(x))
-	if(!is.null(scale)) m <- map(m, scale)
-	m
+### get MC weights. In case it is not implemented it returns 1s
+get_weights <- function(x, ...) UseMethod("get_weights")
+get_weights.default <- function(x, type=c("auto", "micro", "macro"), 
+	scale=NULL, ...) {
+    m <- rep(1,nclusters(x, type=type))
+    if(!is.null(scale)) m <- map(m, range=scale)
+    m
 }
+
+### End of interface
+#####################################################################3
 
 ### make a deep copy of the 
 get_copy <- function(x) UseMethod("get_copy")
 get_copy.default <- function(x, ...) {
-   stop(gettextf("get_copy not implemented for class '%s'.", class(x)))
+    stop(gettextf("get_copy not implemented for class '%s'.", class(x)))
 }
 
 get_microclusters <- function(x) UseMethod("get_microclusters")
 get_microclusters.DSC <- function(x) {
-	stop(gettextf("get_microclusters not implemented for class '%s'.", class(x)))
+    stop(gettextf("No micro-clusters available for class '%s'.", class(x)))
 }
 
 get_macroclusters <- function(x) UseMethod("get_macroclusters")
 get_macroclusters.DSC <- function(x) {
-	stop(gettextf("get_macroclusters not implemented for class '%s'.", class(x)))
+    stop(gettextf("No macro-clusters available for class '%s'.", class(x)))
+}
+
+get_microweights <- function(x) UseMethod("get_microweights")
+get_microweights.DSC <- function(x) {
+    stop(gettextf("No weights for micro-clusters available for class '%s'.", class(x)))
+}
+
+get_macroweights <- function(x) UseMethod("get_macroweights")
+get_macroweights.DSC <- function(x) {
+    stop(gettextf("No weights for macro-clusters available for class '%s'.", class(x)))
 }
 
 
-### End of interface
-#####################################################################3
 ### derived functions, plot and print
-nclusters <- function(x) UseMethod("nclusters")
-nclusters.DSC <- function(x) {
-	options(warn=-1)
-	nclusters <- nrow(get_centers(x))
-	options(warn=1)
-	
-	nclusters
+nclusters <- function(x, ...) UseMethod("nclusters")
+nclusters.DSC <- function(x, type=c("auto", "micro", "macro"), ...) {
+    nrow(get_centers(x, type=type))
 }
 
 get_assignment <- function(dsc,points) UseMethod("get_assignment")
-get_assignment.DSC <- function(dsc,points) {
-	d <- points
-	c <- get_centers(dsc)
-	if(length(c)>0) {
-		dist <- dist(d,c)
-		#Find the minimum distance and save the class
-		predict <- apply(dist, 1, which.min)+1
-		predict[is.null(predict)] <- 1
-		predict[is.na(predict)] <- 1
-	} else {
-		warning(paste(class(dsc)[1],": There are no clusters",sep=""))
-		predict <- rep(1,nrow(d))
-	}
-	predict	
+get_assignment.DSC <- function(dsc, points, type=c("auto", "micro", "macro")) {
+    d <- points
+    c <- get_centers(dsc, type=type)
+    if(length(c)>0) {
+	dist <- dist(d,c)
+	#Find the minimum distance and save the class
+	predict <- apply(dist, 1, which.min)+1
+	predict[is.null(predict)] <- 1
+	predict[is.na(predict)] <- 1
+    } else {
+	warning(paste(class(dsc)[1],": There are no clusters",sep=""))
+	predict <- rep(1,nrow(d))
+    }
+    predict	
 }
 
 print.DSC <- function(x, ...) {
@@ -70,89 +78,65 @@ print.DSC <- function(x, ...) {
 #plot.DSC will call super question.
 plot.DSC <- function(x, dsd = NULL, n = 1000, 
 	col_points="gray",  
-	col_macro="red", 
-	col_micro="black",
+	col_clusters="red", 
 	weights=TRUE,
-	scale=c(1,10),
+	scale=c(1,5),
+	cex =1,
 	..., 
-	method="pairs", microclusters=FALSE) {
-    
+	method="pairs", 
+	type=c("auto", "micro", "macro")) {
+
     ## method can be pairs, plot or pc (projection with PCA)
-    centers <- get_centers(x)
-    
+    k <- nclusters(x, type=type)
+    centers <- get_centers(x, type=type)
+    if(weights) cex_clusters <- get_weights(x, type=type, scale=scale)
+    else cex_clusters <- rep(cex, k)
+    col <- rep(col_clusters, k)
+
+    ### prepend data if given
     if(!is.null(dsd)) {
 	d <- get_points(dsd, n, assignment = TRUE)
 	names(d) <- names(centers)
 
-	if(ncol(centers)>2 && method=="pairs") {
-	    pairs(rbind(d,centers),
-		    col=c(rep(col_points,n),rep(col_macro,nrow(centers))), 
-		    ...)
-	}
-	else if(ncol(centers)>2 && method=="pc") {
-	    ## we assume Euclidean here
-	    p <- prcomp(rbind(d,centers))
-	    if(weights)
-	    	plot(p$x,
-		    col=c(rep(col_points,n),rep(col_macro,nrow(centers))),
-		    cex=c(rep(1,n),get_weights(x,scale)),
-		    ...)
-	    else
-		plot(p$x,
-		    col=c(rep(col_points,n),rep(col_macro,nrow(centers))),
-		    ...)
-	} else {
-	    if(weights)
-		plot(rbind(d,centers),
-		    col=c(rep(col_points,n),rep(col_macro,nrow(centers))),
-		    cex=c(rep(1,n),get_weights(x,scale)),
-		    ...)
-	    else
-		plot(rbind(d,centers),
-		    col=c(rep(col_points,n),rep(col_macro,nrow(centers))),
-		    ...)
-	}
-    } else {
-	if(ncol(centers)>2 && method=="pairs") {
-	    if(weights)
-	   		pairs(centers,col=col_macro,cex=get_weights(x,scale), ...)
-	   	else
-	   		pairs(centers,col=col_macro, ...)
-	}
-	else if(ncol(centers)>2 && method=="pc") {
-	    ## we assume Euclidean here
-	    p <- prcomp(centers)
-	    if(weights)
-	    	plot(p$x,col=col_macro,cex=get_weights(x,scale),...)
-	    else
-	    	plot(p$x,col=col_macro,...)
-	} else {
-	    if(weights)
-	    	plot(centers,col=col_macro,cex=get_weights(x,scale),...)
-	    else
-	    	plot(centers,col=col_macro,...)
-	}
+	centers <- rbind(d, centers)
+	col <- c(rep(col_points,n), col)
+	cex_clusters <- c(rep(cex, n), cex_clusters)
     }
 
-    if(!is.null(x) && microclusters && length(get_microclusters(x))>0) {
-	if(class(x)[1] == "DSC_tNN") {
+    ### plot
+    if(ncol(centers)>2 && method=="pairs") {
+	    pairs(centers, col=col, cex=cex_clusters, ...)
+    }
+    else if(ncol(centers)>2 && method=="pc") {
+	## we assume Euclidean here
+	p <- prcomp(centers)
+	    plot(p$x, col=col, cex=cex_clusters, ...)
+    } else { ## plot first 2 dimensions
+	    plot(centers, col=col, cex=cex_clusters, ...)
+    }
+
+
+### add lines for tNN this only works for plot!!!
+    if(class(x)[1] == "DSC_tNN" && (ncol(centers)<=2 || method=="plot")) {
+	p <- get_microclusters(x)
+	if(length(p)>0) {
+	    
 	    library(sfsmisc)
-	    p <- get_microclusters(x)
+	    
 	    for(i in 1:nrow(p)){
 		lines(ellipsePoints(x$RObj$r, x$RObj$r, 
 				loc=as.numeric(p[i,]), n=90),
-			col = col_micro, lty=3)
+			col = col_clusters, lty=3)
 	    }
-	    
+
 	    edgelist <- get_edgelist(x)
 	    for(i in (1:(length(edgelist)/2))*2-1){
 		lines(rbind(p[edgelist[i],],p[edgelist[i+1],]),
-			col=col_micro)}
+			col=col_clusters)}
+	    }
+
+	    points(p, col=col_clusters)
+	    points(centers,col=col_clusters)
 	}
-	
-	points(get_microclusters(x), col=col_micro)
-	
-	points(centers,col=col_macro)
     }
-}
 

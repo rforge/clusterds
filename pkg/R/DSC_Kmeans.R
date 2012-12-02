@@ -8,7 +8,8 @@ kmeans <- setRefClass("kmeans",
 		assignment = "numeric",
 		details = "ANY",
 		clusterCenters = "data.frame",
-		weights = "numeric"
+		weights = "numeric",
+		clusterWeights = "numeric"
 	), 
 
 	methods = list(
@@ -22,6 +23,7 @@ kmeans <- setRefClass("kmeans",
 		    centers	<<- numeric() 
 		    assignment	<<- numeric() 
 		    weights	<<- numeric() 
+		    clusterWeights <<- numeric() 
 		    clusterCenters <<- data.frame()
 		    nstart	<<- nstart
 		    algorithm   <<- algorithm
@@ -47,7 +49,10 @@ kmeans$methods(cluster = function(x, weight = rep(1,nrow(x)), ...) {
 			details <<- kmeans
 		} else
 			assignment <<- 1:nrow(data)
-	}
+	
+		    clusterWeights <- sapply(1:centers, FUN =function(i) sum(assignment==i))
+
+		    }
 )
 
 ### creator    
@@ -68,8 +73,6 @@ DSC_Kmeans <- function(k, iter.max = 10, nstart = 1,
     l
 }
 
-### get centers
-get_macroclusters.DSC_Kmeans <- function(x, ...) {
-	if(length(x$RObj$clusterCenters) == 0) warning(paste(class(x)[1],": There are no clusters",sep=""))
-	x$RObj$clusterCenters
-} 
+get_macroclusters.DSC_Kmeans <- function(x) x$RObj$clusterCenters
+get_macroweights.DSC_Kmeans <- function(x) x$RObj$weights
+
