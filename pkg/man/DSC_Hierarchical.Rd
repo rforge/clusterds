@@ -1,7 +1,9 @@
 \name{DSC_Hierarchical}
 \alias{DSC_Hierarchical}
-\title{DataStreamClusterer: Hierarchical}
-\description{Creates a new DataStreamClusterer with the Hierarchical algorithm}
+\title{Hierarchical Micro-Cluster Reclusterer}
+\description{
+    Implementation of hierarchical clustering to recluster a set of micro-clusters.
+    }
 
 \usage{
 	DSC_Hierarchical(k, method = "complete", members = NULL)
@@ -35,13 +37,13 @@ dsd <- DSD_mlbench("cassini")
 
 hierarchical <- DSC_Hierarchical(3,"single")
 cluster(hierarchical, dsd, 1000)
-plot(hierarchical,dsd)
+plot(hierarchical, dsd)
 
-# Hierarchical can also recluster microclusters
+# Hierarchical can also recluster micro-clusters
 dsc <- DSC_ClusTree()
 cluster(dsc, dsd, 1000)
 
 recluster(hierarchical,dsc)
-plot(hierarchical,dsd,microclusters=TRUE)
+plot(hierarchical, dsd)
 
 }

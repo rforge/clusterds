@@ -19,7 +19,7 @@ DSD_RandomRBFGeneratorEvents(k = 3, d = 2, numClusterRange = 3L,
 \arguments{
 	\item{k}{The number of clusters.}
 	\item{d}{The dimensionality of the data.}
-	\item{numClusterRange}{Numbner of clusters.}
+	\item{numClusterRange}{Number of clusters.}
 	\item{kernelRadius}{The average radius of the micro-clusters.}
 	\item{kernelRadiusRange}{Radius range of the micro-clusters.}
 	\item{densityRange}{Density range.}

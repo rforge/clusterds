@@ -19,10 +19,10 @@
 	calculating a distance matrix (saves memory but may be slow), "hybrid"
 	expects also raw data, but calculates partial distance matrices (very
 	fast with moderate memory requirements ).}
-	\item{seeds}{FALSE to not include the isseed-vector in the
+	\item{seeds}{FALSE to not include the seed-vector in the
 	DBSCAN-object.}
 	\item{showplot}{0 = no plot, 1 = plot per iteration, 2 = plot per
-	subiteration.}
+	sub-iteration.}
 	\item{countmode}{NULL or vector of point numbers at which to report
 	progress.}
 }

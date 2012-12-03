@@ -21,7 +21,7 @@ DSC_DenStream(horizon = 1000, epsilon = 0.1, minPoints = 10, beta = 0.001, mu = 
 }
 
 \details{
-Interface to the DenStream inplementation in MOA.
+Interface to the DenStream implementation in MOA.
 }
 \value{
 An object of class \code{DSC_DenStream} (subclass of

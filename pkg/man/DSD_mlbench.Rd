@@ -14,7 +14,7 @@ A data stream generator class that wraps data generators found in mlbench.
 
 \details{
 The \code{DSD_mlbench} class is designed to be a wrapper class for data created
-by datagens in the mlbench library.
+by data generators in the mlbench library.
 
 Call \code{DSD_mlbench} with missing method to get a list of available 
 methods.

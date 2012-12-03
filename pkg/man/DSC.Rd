@@ -16,7 +16,7 @@ get the current number of clusters,
 \code{get_centers()} to get the cluster centers,
 and \code{get_weights()} to get the cluster weights 
 (if implemented). \code{get_centers()} and \code{get_weights()}
-are typically overwritten by subclassed of \code{DSC}.
+are typically overwritten by subclasses of \code{DSC}.
 }
 
 \seealso{

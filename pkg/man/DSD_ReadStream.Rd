@@ -26,7 +26,7 @@ connection. The connection is responsible for maintaining where the stream
 is currently being read from. In general, the connections will consist of files
 stored on disk but have many other possibilities (see \code{\link{connection}}).
 
-The \code{get_points()} method can pass additional params to \code{read.table()}
+The \code{get_points()} method can pass additional parameters to \code{read.table()}
 to alter how the reading is done. By default, the \code{comment.char} is set to
 an empty string for performance reasons.
 }
@@ -43,9 +43,12 @@ an empty string for performance reasons.
 \examples{
 # creating data and writing it to disk
 dsd <- DSD_GaussianStatic(k=3, d=5)
-write_stream(dsd, "dsd_data.txt", n=100, sep=",")
+write_stream(dsd, "data.txt", n=100, sep=",")
 
 # reading the same data back (as a loop)
-dsd2 <- DSD_ReadStream("dsd_data.txt", sep=",", loop=TRUE)
+dsd2 <- DSD_ReadStream("data.txt", sep=",", loop=TRUE)
 dsd2
+
+# clean up
+file.remove("data.txt")
 }

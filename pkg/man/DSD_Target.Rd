@@ -2,8 +2,9 @@
 \alias{DSD_Target}
 \title{Target Data Stream Generator}
 \description{
-A DataStreamData that generates a data stream in the shape of a target. It has
-a single gaussian cluster in the center and a ring that surrounds it.}
+A data stream generator that generates a data stream in the shape of a target.
+It has a single Gaussian cluster in the center and a ring that surrounds it.
+}
 
 \usage{
 DSD_Target()
@@ -13,7 +14,7 @@ DSD_Target()
 \code{DSD_Target} is a DSD generator for stream data. 
 It has been implemented entirely in R, so there is no computational 
 overhead with communicating to the Java Runtime Interface (JRI) or 
-native C code. This DSD will produce a singular guassian cluster in the
+native C code. This DSD will produce a singular Gaussian cluster in the
 center with a ring around it.
 }
 

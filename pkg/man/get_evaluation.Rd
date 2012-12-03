@@ -54,6 +54,6 @@ cluster(x, dsd, 1000)
 # Evaluates for the f1 and rand score
 get_evaluation(x, dsd, c("f1","rand"))
 
-# Get all avaialable measures 
+# Get all available measures 
 get_evaluation(x, dsd)
 }

@@ -10,7 +10,7 @@ and provides the common functions needed to interface MOA clusterers.
 \details{
 \code{DSC_MOA} classes operate in a different way in that the centers of the
 micro-clusters have to be extracted from the underlying Java object. This is
-done by using rJava to perform method calls directly in the JRI and unpackaging the 
+done by using rJava to perform method calls directly in the JRI and converting the 
 multi-dimensional Java array into a local R data type.
 }
 

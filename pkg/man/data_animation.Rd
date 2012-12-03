@@ -23,7 +23,7 @@ data_animation(dsd,n=1,interval=.1, horizon=500, pointInterval=100, outdir=NULL,
 
 \details{
 It generates several plots and strings them together to form an animation. This is particularly
-useful to see the behaviour of moving data sets. If no \code{outdir} is specified
+useful to see the behavior of moving data sets. If no \code{outdir} is specified
 the function will animate the progress while clustering.
 }
 

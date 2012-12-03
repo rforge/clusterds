@@ -9,8 +9,8 @@
 }
 
 \arguments{
-	\item{dsc}{The DSC object with the clusters for assignemnt.}
-	\item{points}{The points to ne assigned as a data.frame.}
+	\item{dsc}{The DSC object with the clusters for assignment.}
+	\item{points}{The points to be assigned as a data.frame.}
 	\item{type}{Use micro- or macro-clusters in DSC for assignment. Auto
 	used the class of dsc to decide.}
 	\item{...}{Additional arguments are passed on.}

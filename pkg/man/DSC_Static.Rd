@@ -1,7 +1,11 @@
 \name{DSC_Static}
 \alias{DSC_Static}
-\title{DataStreamClusterer: Static}
-\description{Creates a new DataStreamClusterer with fixed attributes}
+\title{Represent the Results of a Clustering in a Static Form}
+\description{
+    This representation cannot perform clustering anymore, but it
+    also does not need the supporting data structures. It only stores
+    the cluster centers and weights.
+    }
 
 \usage{
 	DSC_Static(macroclusters = NULL, microclusters = NULL, weights = NULL)
@@ -47,4 +51,4 @@ dsc_static
 
 #plot the results
 plot(dsc_static,dsd)
-}
+I}

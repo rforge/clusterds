@@ -10,7 +10,7 @@
 }
 
 \arguments{
-	\item{k}{either the number of clusters, say k, or a set of initial (distinct) cluster centres. If a number, a random set of (distinct) rows in x is chosen as the initial centres.}
+	\item{k}{either the number of clusters, say k, or a set of initial (distinct) cluster centers. If a number, a random set of (distinct) rows in x is chosen as the initial centers.}
 	\item{iter.max}{the maximum number of iterations allowed.}
 	\item{nstart}{if centers is a number, how many random sets should be chosen?}
 }
@@ -32,7 +32,7 @@ An object of class  \code{DSC_Kmeans} (subclass of \code{DSC},
 # 3 clusters with 5% noise
 dsd <- DSD_GaussianStatic(k=3, noise=0.05)
 
-# recluster a micro clusters
+# recluster a micro-clusters
 dsc <- DSC_ClusTree()
 cluster(dsc, dsd, 500)
 

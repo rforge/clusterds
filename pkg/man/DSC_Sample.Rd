@@ -1,7 +1,12 @@
 \name{DSC_Sample}
 \alias{DSC_Sample}
-\title{DataStreamClusterer: Sample}
-\description{Creates a set of micro clusters by taking a random sampling from a DSD.}
+\title{Extract a Fixed-size Sample from a Data Stream}
+\description{
+    Extracts a sample form a data stream using Reservoir Sampling. 
+    The sample is stored
+    as a set of micro-clusters to be compatible with other
+    data DSC stream clustering algorithms.
+}
 
 \usage{
 	DSC_Sample(size = 100)
@@ -11,22 +16,21 @@
 	\item{size}{the number of points to be sampled from the stream.}
 }
 
-\details{
-This object performs a simple sampling procedure to generate a fixed number of micro-clusters. This
-is by far the simplest method to generate microcluster, but it is prone to lose some of the details
-of the original data set.
-}
+%\details{
+%}
 
 \value{
-A list of class \code{DSC}, \code{DSC_R}, \code{DSC_Micro}, and \code{DSC_Sample}. The list
-contains the following items:
-
-	\item{description}{The name of the algorithm in the DSC object.}
-	\item{RObj}{The underlying R object.}
+An object of class \code{DSC_Sample} (subclass of
+\code{DSC}, \code{DSC_R}, \code{DSC_Micro}).
 }
 
 \seealso{
 	\code{\link{DSC}}
+}
+
+\references{
+Vitter, J. S. (1985): Random sampling with a reservoir. ACM Transactions
+on Mathematical Software, 11(1), 37-57.
 }
 
 \examples{

@@ -52,7 +52,7 @@ dsd <- DSD_GaussianStatic(k=3)
 ## plot data
 plot(dsd, n=500)
 
-## create and plot miocro-clusters
+## create and plot micro-clusters
 micro <- DSC_DenStream(initPoints=100)
 cluster(micro, dsd, 500)
 plot(micro)

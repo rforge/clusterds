@@ -13,7 +13,7 @@ connection.}
 	\item{dsd}{The DSD object that will generate the data points for output.}
 	\item{con}{The R connection to be written to.}
 	\item{n}{The number of data points to be written to the connection.}
-	\item{sep}{The character that will seperate attributes in a data point.}
+	\item{sep}{The character that will separate attributes in a data point.}
 	\item{col.names}{A flag that determines if column names will be output.}
 	\item{row.names}{A flag that determines if row names will be output.}
 	\item{...}{Additional parameters that are passed to \code{write.table()}.}
@@ -34,5 +34,8 @@ There is no value returned from this operation.
 \examples{
 # creating data and writing it to disk
 dsd <- DSD_GaussianStatic(k=3, d=5)
-write_stream(dsd, "dsd_data.txt", n=100, sep=",")
+write_stream(dsd, "data.txt", n=100, sep=",")
+
+# clean up
+file.remove("data.txt")
 }
