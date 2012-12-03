@@ -52,7 +52,7 @@ Stream Clustering in R, Journal of Statistical Software, 35(5), 1-31, URL \url{h
 
 \examples{
 # Cassini
-dsd <- DSD_mlbench("cassini")
+dsd <- DSD_mlbenchGenerator("cassini")
 
 # tNN has a built in micro and micro-clusterer
 tnn <- DSC_tNN(k=3, alpha=.08)

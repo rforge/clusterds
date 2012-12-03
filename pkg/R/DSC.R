@@ -5,7 +5,8 @@
 get_centers <- function(x, type = c("auto", "micro", "macro"), ...) 
     UseMethod("get_centers")
 get_centers.default <- function(x, type = c("auto", "micro", "macro"), ...) {
-    stop(gettextf("get_centers not implemented for class '%s'.", class(x)))
+    stop(gettextf("get_centers not implemented for class '%s'.",
+		                        paste(class(x), collapse=", ")))
 }
 
 ### get MC weights. In case it is not implemented it returns 1s
@@ -24,27 +25,32 @@ get_weights.default <- function(x, type=c("auto", "micro", "macro"),
 ### make a deep copy of the 
 get_copy <- function(x) UseMethod("get_copy")
 get_copy.default <- function(x, ...) {
-    stop(gettextf("get_copy not implemented for class '%s'.", class(x)))
+    stop(gettextf("get_copy not implemented for class '%s'.",
+		    paste(class(x), collapse=", ")))
 }
 
 get_microclusters <- function(x) UseMethod("get_microclusters")
 get_microclusters.DSC <- function(x) {
-    stop(gettextf("No micro-clusters available for class '%s'.", class(x)))
+    stop(gettextf("No micro-clusters available for class '%s'.",
+		    paste(class(x), collapse=", ")))
 }
 
 get_macroclusters <- function(x) UseMethod("get_macroclusters")
 get_macroclusters.DSC <- function(x) {
-    stop(gettextf("No macro-clusters available for class '%s'.", class(x)))
+    stop(gettextf("No macro-clusters available for class '%s'.",
+		    paste(class(x), collapse=", ")))
 }
 
 get_microweights <- function(x) UseMethod("get_microweights")
 get_microweights.DSC <- function(x) {
-    stop(gettextf("No weights for micro-clusters available for class '%s'.", class(x)))
+    stop(gettextf("No weights for micro-clusters available for class '%s'.",
+		    paste(class(x), collapse=", ")))
 }
 
 get_macroweights <- function(x) UseMethod("get_macroweights")
 get_macroweights.DSC <- function(x) {
-    stop(gettextf("No weights for macro-clusters available for class '%s'.", class(x)))
+    stop(gettextf("No weights for macro-clusters available for class '%s'.",
+		    paste(class(x), collapse=", ")))
 }
 
 
@@ -63,15 +69,16 @@ get_assignment.DSC <- function(dsc, points, type=c("auto", "micro", "macro"),
     
     c <- get_centers(dsc, type=type)
     
-    if(length(c)>0) {
+    if(nrow(c)>0) {
 	dist <- dist(d,c)
 	#Find the minimum distance and save the class
-	predict <- apply(dist, 1, which.min)+1
-	predict[is.null(predict)] <- 1
-	predict[is.na(predict)] <- 1
+	#predict <- apply(dist, 1, which.min)+1
+	predict <- apply(dist, 1, which.min)
+	predict[is.null(predict)] <- 1L
+	predict[is.na(predict)] <- 1L
     } else {
-	warning(paste(class(dsc)[1],": There are no clusters",sep=""))
-	predict <- rep(1,nrow(d))
+	warning("There are no clusters!")
+	predict <- rep(1L, nrow(d))
     }
     predict	
 }

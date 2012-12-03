@@ -33,7 +33,7 @@ contains the following items:
 
 \examples{
 # Cassini dataset
-dsd <- DSD_mlbench("cassini")
+dsd <- DSD_mlbenchData("cassini")
 
 hierarchical <- DSC_Hierarchical(3,"single")
 cluster(hierarchical, dsd, 1000)

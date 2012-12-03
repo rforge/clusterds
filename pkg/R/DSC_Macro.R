@@ -19,3 +19,4 @@ get_weights.DSC_Macro <- function(x, type=c("auto", "micro", "macro"),
     w
 }
 
+

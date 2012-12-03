@@ -31,7 +31,7 @@ hierarchical <- setRefClass("hierarchical",
 	),
 )
 
-hierarchical $methods(cluster = function(x,  weight = rep(1,nrow(x)), ...) {
+hierarchical$methods(cluster = function(x,  weight = rep(1,nrow(x)), ...) {
 	    if(length(data)>0) {
 		warning("Hierarchical: Previous data is being overridden")
 	    }
@@ -75,6 +75,10 @@ DSC_Hierarchical <- function(k, method = "complete", members = NULL) {
     l
 }
 
+get_microclusters.DSC_Hierarchical <- function(x) x$RObj$data
+get_microweights.DSC_Hierarchical <- function(x) x$RObj$dataWeights
+
 get_macroclusters.DSC_Hierarchical <- function(x) x$RObj$centers
 get_macroweights.DSC_Hierarchical <- function(x) x$RObj$weights
 
+microToMacro.DSC_Hierarchical <- function(x, micro) x$RObj$assignment[micro]

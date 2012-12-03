@@ -229,7 +229,13 @@ get_macroweights.DSC_tNN <- function(x) {
     }
 }
 
+microToMacro.DSC_tNN <- function(x, micro) {
+    assignment <- get_membership(x)
+    assignment[micro]
+}
 
+##################################################################3
+### helpers
 ### this needs package Matrix
 #get_matrix <- function(dsc) {
 #    #TODO: make edgelist max length to avoid copying
@@ -253,6 +259,7 @@ get_macroweights.DSC_tNN <- function(x) {
 #    matrix
 #}
 #
+
 get_all_weights <- function(x) {
     assignment <- get_membership(x)
     weights <- x$RObj$weights
@@ -303,4 +310,6 @@ get_membership <- function(dsc) {
 
     1:length(dsc$RObj$relations)
 }
+
+
 

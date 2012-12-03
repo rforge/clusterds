@@ -1,4 +1,4 @@
-DSD_Data <- function(data, loop=FALSE, random=FALSE, scale = FALSE) {
+DSD_mlbenchData <- function(data, loop=FALSE, random=FALSE, scale = FALSE) {
 
     datas <- c("BostonHousing", "BostonHousing2", "BreastCancer", 
 	    "DNA", "Glass", "Ionosphere", "LetterRecognition", 
@@ -130,6 +130,6 @@ DSD_Data <- function(data, loop=FALSE, random=FALSE, scale = FALSE) {
 	    k = length(unique(a)),
 	    loop = loop,
 	    assignment = a)
-    class(l) <- c("DSD_Data","DSD_Wrapper","DSD_R","DSD")
+    class(l) <- c("DSD_mlbenchData","DSD_Wrapper","DSD_R","DSD")
     l
 }

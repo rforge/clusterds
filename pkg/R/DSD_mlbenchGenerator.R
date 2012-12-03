@@ -1,4 +1,4 @@
-DSD_mlbench <- function(method, ...) {
+DSD_mlbenchGenerator <- function(method, ...) {
 
     methods <- c("2dnormals","cassini","circle","cuboids","friedman1",
 	    "friedman2","friedman3","hypercube", "peak","ringnorm",
@@ -14,18 +14,18 @@ DSD_mlbench <- function(method, ...) {
 
     #finds index of partial match in array of methods
     m <- pmatch(tolower(method),tolower(methods)) 
-    if(is.na(m)) stop("DSD_mlbench: Invalid datagen")
+    if(is.na(m)) stop("DSD_mlbenchGenerator: Invalid data generator")
 
     # creating the DSD object
     l <- list(description = paste("mlbench",method),
 	    method = method,
 	    variables = list(...)
 	    )
-    class(l) <- c("DSD_mlbench","DSD_R","DSD")
+    class(l) <- c("DSD_mlbenchGenerator","DSD_R","DSD")
     l
 }
 
-get_points.DSD_mlbench <- function(x, n=1, assignment = FALSE,...) {
+get_points.DSD_mlbenchGenerator <- function(x, n=1, assignment = FALSE,...) {
 
     if(is.null(unlist(x$variables)))
 	d <- do.call(paste("mlbench.",x$method,sep=""),list(n*20))
@@ -41,7 +41,7 @@ get_points.DSD_mlbench <- function(x, n=1, assignment = FALSE,...) {
     df <- rbind(df,dat)
 
     if(assignment) {
-	attr(df,"assignment")<-as.numeric(d$classes[rand])
+	attr(df,"assignment")<-as.integer(d$classes[rand])
     }
 
     names(df) <- 1:ncol(df)

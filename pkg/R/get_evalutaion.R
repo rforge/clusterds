@@ -1,38 +1,48 @@
 #get dsd, dsc and n
 
-get_evaluation <- function (dsc,dsd,
-	method,
-	n = 1000, type=c("auto", "micro", "macro")) {
+get_evaluation <- function (dsc, dsd,
+	method, n = 1000, 
+	type=c("auto", "micro", "macro"), assign="micro") {
 
-    if(missing(method)) {
-    method <- 
-	methods <- c("numCluster","numClasses", "f1","recall",
-		"precision","fpr","ssq","jaccard",
-		"rand","rand_HA","rand_MA","rand_FM")
+    if(missing(method)) method <- c("numCluster","numClasses", "f1","recall",
+	    "precision","fpr","ssq","jaccard",
+	    "rand","rand_HA","rand_MA","rand_FM")
 
+    ### figure out type
+    type <- match.arg(type)
+    if(type=="auto") {
+	if("DSC_Macro" %in% class(dsc)) type <- "macro"
+	else type <- "micro"
     }
 
-    d <- get_points(dsd, n, assignment = TRUE)
     c <- get_centers(dsc, type=type) 
     
-    if(nrow(c)==0)
-    	return(0)
+    if(nrow(c)<1) {
+	warning("No centers available!")
+	return(0)
+    }
    
-    ### FIXME: we want to do the assignments to macro-clusters
-    ### using micro-clusters!!!
-    predict <- get_assignment(dsc,d, type=type)
+    d <- get_points(dsd, n, assignment = TRUE)
     actual <- attr(d, "assignment")
-    
-    noise <- which(is.na(actual))
-    
+
+    predict <- get_assignment(dsc,d, type=assign)
+
+    ### translate micro to macro cluster ids if necessary
+    if(type=="macro" && assign=="micro") predict <- microToMacro(dsc, predict)
+    else if (type!=assign) stop("type and assign are not compatible!")
+
     ### remove noise
+    noise <- which(is.na(actual))
     if(length(noise)>0) {
 	predict <- predict[-noise]
 	actual <- actual[-noise]
 	d <- d[-noise,]
     }
 	
-    sapply(method, function(x) evaluate(x, predict, actual, d, c))
+    e <- sapply(method, function(x) evaluate(x, predict, actual, d, c))
+    attr(e, "type") <- type
+    attr(e, "assign") <- assign
+    e
 }
 
 evaluate <- function(method, predict, actual, points, centers) {

@@ -74,3 +74,5 @@ get_macroweights.DSC_KmeansW <- function(x) x$RObj$weights
 get_microclusters.DSC_KmeansW <- function(x) x$RObj$data
 get_microweights.DSC_KmeansW <- function(x) x$RObj$dataWeights
 
+microToMacro.DSC_KmeansW <- function(x, micro) x$RObj$assignment[micro]
+

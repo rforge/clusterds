@@ -11,13 +11,15 @@
 
 get_points <- function(x, n=1, ...) UseMethod("get_points")
 get_points.default <- function(x, n=1, ...) {
-   stop(gettextf("get_points not implemented for class '%s'.", class(x)))
+    stop(gettextf("get_points not implemented for class '%s'.",
+		    paste(class(x), collapse=", ")))
 }
 
 ### in case the stream can be reset (e.g., a stream from a file)
 reset_stream <- function(dsd) UseMethod("reset_stream")
 reset_stream.DSD <- function(dsd) {
-    stop(gettextf("reset_stream not implemented for class '%s'.", class(dsd)))
+    stop(gettextf("reset_stream not implemented for class '%s'.",
+		    paste(class(x), collapse=", ")))
 }
 
 

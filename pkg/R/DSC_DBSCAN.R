@@ -97,3 +97,5 @@ get_macroweights.DSC_DBSCAN <- function(x) x$RObj$clusterWeights
 get_microclusters.DSC_DBSCAN <- function(x) x$RObj$data
 get_microweights.DSC_DBSCAN <- function(x) x$RObj$weights
 
+microToMacro.DSC_DBSCAN <- function(x, micro) x$RObj$assignment[micro]
+

@@ -47,13 +47,12 @@
 # Create stream
 dsd <- DSD_GaussianStatic(k=3, d=2)
 
-# Create cluster
-x <-DSC_Kmeans(2)
-cluster(x, dsd, 1000)
+micro <- DSC_DenStream()
+cluster(micro, dsd, 1000)
+get_evaluation(micro, dsd, c("f1","rand"))
 
-# Evaluates for the f1 and rand score
-get_evaluation(x, dsd, c("f1","rand"))
-
-# Get all available measures 
-get_evaluation(x, dsd)
+macro <- DSC_KmeansW(2)
+recluster(macro, micro)
+get_evaluation(macro, dsd, c("f1","rand"))
+get_evaluation(macro, dsd, c("f1","rand"), assign="macro")
 }
