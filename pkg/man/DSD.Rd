@@ -15,5 +15,5 @@ for a new \code{DSD} subclass:
 
 \seealso{
 	\code{\link{get_points}},
-	\code{\link{plot}}
+	\code{\link[stream]{plot}}
 }

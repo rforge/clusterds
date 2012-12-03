@@ -38,7 +38,6 @@ plot.DSD <- function(x, n = 1000, col= NULL, pch= NULL,
     assignment <- attr(d,"assignment")
     
     if(is.null(col)) {
-	col <- attr(d,"assignment")
 	col[assignment==0 | is.na(assignment)] <- "gray"
     }
     

@@ -20,8 +20,10 @@ are typically overwritten by subclassed of \code{DSC}.
 }
 
 \seealso{
-	\code{\link{plot}},
+	\code{\link[stream]{plot}},
 	\code{\link{nclusters}},
 	\code{\link{get_centers}},
-	\code{\link{get_weights}}
+	\code{\link{get_weights}},
+	\code{\link{get_assignment}},
+	\code{\link{get_copy}}
 }

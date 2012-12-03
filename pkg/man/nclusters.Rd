@@ -4,29 +4,25 @@
 \description{Returns the number of micro-clusters from the DSC object.}
 
 \usage{
-	nclusters(x)
+	nclusters(x, type=c("auto", "micro", "macro"), ...)
 }
 
 \arguments{
-	\item{x}{A DSC object.}
+    \item{x}{A DSC object.}
+    \item{type}{Return the number of  micro- or macro-clusters in DSC.
+    Auto used the class of dsc to decide.}
+    \item{...}{Additional arguments are passed on.}
 }
 
-\details{
-This function will return the number of micro-clusters from the DSC object if there are any, or if they are supported. This is done by calling \code{get_centers()} and retrieving the number of rows in the return matrix.
-}
+%\details{
+%}
 
 \value{
-An integer; the number of micro-clusters in the clustering.
+An integer; the number of micro- or macro-clusters in the clustering.
 }
 
 \seealso{
-	\code{\link{DSClusterer}}%,
-	%\code{\link{DSC_CobWeb}},
-	%\code{\link{DSC_ClusTree}},
-	%\code{\link{DSC_StreamKM}},
-	%\code{\link{DSC_DenStream}},
-	%\code{\link{DSC_CluStream}},
-	\code{\link{get_centers}}
+	\code{\link{DSC}}
 }
 
 \examples{

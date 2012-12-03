@@ -1,51 +1,31 @@
 \name{get_centers}
 \alias{get_centers}
-\title{get_centers}
+\title{Get Cluster Centers from a DSC}
 
 \description{
-Gets the centers of micro-clusters (if available) from a DSC object
+Gets the cluster centers (micro- or macro-clusters) from a DSC object.
 }
 
 \usage{
-	get_centers(x, ...)
+	get_centers(x, type=c("auto", "micro", "macro"), ...)
 }
 
 \arguments{
 	\item{x}{The DSC object the centers are being requested from.}
-	\item{...}{Additional parameters to pass to \code{get_centers()}.}
+	\item{type}{get centers for micro- or macro-clusters. Auto
+	        used the class of dsc to decide.}
+	\item{...}{Additional parameters.}
 }
 
-\details{
-Each DSC object has a unique way for returning data points, but they all are
-called through the generic function, \code{get_centers()}. This is done by
-using the S3 class system. 
-
-Macro clusterers will return the macro clusters while micro clusterers will
-return the micro clusters of the \code{DSC}.
-
-All of the \code{DSC_MOA} classes use the same
-function that first checks for the existence of micro-clusters (as deemed in
-the MOA framework), extracts those micro-clusters, then manually extracts the
-center from each of those micro-clusters and packages them into a matrix.
-}
+%\details{
+%}
 
 \value{
-A matrix of data that contains the centers of the micro-clusters (these can be
-either the centroids or medoids depending on the algorithm). There are some
-DSC classes that do not generate micro-clusters--an error will be given in these
-cases.
-
-The number of columns in the matrix is dependent on the data stream that was used as input data to the DSC object, and the number of rows will differ upon the algorithm being used.
+A data.frame with the micro- or macro-cluster centers as rows.
 }
 
 \seealso{
-	\code{\link{DSClusterer}},
-	%\code{\link{DSC_CobWeb}},
-	%\code{\link{DSC_ClusTree}},
-	%\code{\link{DSC_StreamKM}},
-	%\code{\link{DSC_DenStream}},
-	%\code{\link{DSC_CluStream}},
-	\code{\link{DSData}}
+	\code{\link{DSC}}
 }
 
 \examples{
@@ -54,6 +34,7 @@ dsd <- DSD_GaussianStatic(k=3)
 dsc <- DSC_Kmeans(k=3)
 cluster(dsc, dsd, 500)
 
-# getting the centers
-d <- get_centers(dsc)
+# getting the centers (these are macro-clusters since 
+# Kmeans is a macro-cluster)
+get_centers(dsc)
 }

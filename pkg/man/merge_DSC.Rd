@@ -1,6 +1,6 @@
 \name{merge_DSC}
 \alias{merge_DSC}
-\title{merge_DSC}
+\title{Merge DSDs}
 
 \description{
 Merges multiple \code{DSC}s into a single \code{DSC_Static}.

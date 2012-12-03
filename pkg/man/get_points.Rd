@@ -1,6 +1,6 @@
 \name{get_points}
 \alias{get_points}
-\title{get_points}
+\title{Get Points from a Data Stream Generator}
 
 \description{
 Gets points from a DSD object.
@@ -13,7 +13,8 @@ Gets points from a DSD object.
 \arguments{
 	\item{x}{The DSD object.}
 	\item{n}{The number of data points being requested.}
-	\item{...}{Additional parameters to pass to \code{get_points()}}
+	\item{...}{Additional parameters to pass to \code{get_points()}
+	implementations.}
 }
 
 \details{
@@ -28,10 +29,10 @@ Returns a matrix of \code{x$d} columns and \code{n} rows.
 }
 
 \seealso{
-	\code{\link{DSData}}
+	\code{\link{DSD}}
 }
 
 \examples{
 dsd <- DSD_GaussianStatic()
-d <- get_points(dsd, 100)
+get_points(dsd, 100)
 }

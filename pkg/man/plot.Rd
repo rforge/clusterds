@@ -5,12 +5,12 @@
 \description{Methods to plot data stream data and clusterings.}
 
 \usage{
-    \method{print}{DSD}(x, n = 1000, col= NULL, 
+    \method{plot}{DSD}(x, n = 1000, col= NULL, 
 	    pch= NULL, ..., method="pairs")
-    \method{print}{DSC}(x, dsd = NULL, n = 1000,
-	    col_points="gray", col_macro="red", col_micro="black",
-	    weights=TRUE, scale=c(1,10), ..., method="pairs", 
-	    microclusters=FALSE)
+    \method{plot}{DSC}(x, dsd = NULL, n = 1000,
+	    col_points="gray", col_clusters="red",
+	    weights=TRUE, scale=c(1,5), cex=1, ..., method="pairs", 
+	    type = c("auto", "micro", "macro"))
 }
 
 \arguments{
@@ -18,18 +18,19 @@
 	\item{dsd}{a DSD object to plot the data in the 
 	    background.}
 	\item{n}{number of plots taken from the dsd to plot.}
-	\item{col, col_points, col_macro, col_micro}{colors
+	\item{col_points, col_clusters}{colors
 	    used for plotting.}
 	\item{pch}{symbols used for plotting.}
 	\item{weights}{the size of the symbols for 
 	    micro- and macro-clusters represents its weight.}
 	\item{scale}{range for the symbol sizes used.}
+	\item{cex}{size factor for symbols.}
 	\item{method}{method used for plotting: 
 	    "pairs" (pairs plot), 
 	    "plot" (plot first two dimensions) or 
 	    "pc" (plot first 2 principal components).}
-	\item{microclusters}{plot also micro-clusters
-	    for a macro-clusterer.} 
+	\item{type}{Plot micro- or macro-clusters. Auto
+	        used the class of dsc to decide.}
 	\item{\dots}{further arguments are passed on to
 	plot or pairs in \pkg{graphics}.}
 }

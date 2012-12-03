@@ -2,13 +2,15 @@
 
 ### all DSC classes have these interface methods
 
-get_centers <- function(x, ...) UseMethod("get_centers")
-get_centers.default <- function(x, ...) {
+get_centers <- function(x, type = c("auto", "micro", "macro"), ...) 
+    UseMethod("get_centers")
+get_centers.default <- function(x, type = c("auto", "micro", "macro"), ...) {
     stop(gettextf("get_centers not implemented for class '%s'.", class(x)))
 }
 
 ### get MC weights. In case it is not implemented it returns 1s
-get_weights <- function(x, ...) UseMethod("get_weights")
+get_weights <- function(x, type=c("auto", "micro", "macro"), scale=NULL, ...) 
+    UseMethod("get_weights")
 get_weights.default <- function(x, type=c("auto", "micro", "macro"), 
 	scale=NULL, ...) {
     m <- rep(1,nclusters(x, type=type))
@@ -47,15 +49,20 @@ get_macroweights.DSC <- function(x) {
 
 
 ### derived functions, plot and print
-nclusters <- function(x, ...) UseMethod("nclusters")
+nclusters <- function(x, type=c("auto", "micro", "macro"), ...) 
+    UseMethod("nclusters")
 nclusters.DSC <- function(x, type=c("auto", "micro", "macro"), ...) {
     nrow(get_centers(x, type=type))
 }
 
-get_assignment <- function(dsc,points) UseMethod("get_assignment")
-get_assignment.DSC <- function(dsc, points, type=c("auto", "micro", "macro")) {
+get_assignment <- function(dsc, points, type=c("auto", "micro", "macro"), ...) 
+    UseMethod("get_assignment")
+get_assignment.DSC <- function(dsc, points, type=c("auto", "micro", "macro"), 
+	...) {
     d <- points
+    
     c <- get_centers(dsc, type=type)
+    
     if(length(c)>0) {
 	dist <- dist(d,c)
 	#Find the minimum distance and save the class
@@ -117,7 +124,9 @@ plot.DSC <- function(x, dsd = NULL, n = 1000,
 
 
 ### add lines for tNN this only works for plot!!!
-    if(class(x)[1] == "DSC_tNN" && (ncol(centers)<=2 || method=="plot")) {
+    if(all(c("DSC_tNN", "DSC_Macro") %in% class(x))
+		&& type %in% c("macro", "auto" )
+		&& (ncol(centers)<=2 || method=="plot")) {
 	p <- get_microclusters(x)
 	if(length(p)>0) {
 	    
@@ -126,17 +135,17 @@ plot.DSC <- function(x, dsd = NULL, n = 1000,
 	    for(i in 1:nrow(p)){
 		lines(ellipsePoints(x$RObj$r, x$RObj$r, 
 				loc=as.numeric(p[i,]), n=90),
-			col = col_clusters, lty=3)
+			col = "black", lty=3)
 	    }
 
 	    edgelist <- get_edgelist(x)
 	    for(i in (1:(length(edgelist)/2))*2-1){
 		lines(rbind(p[edgelist[i],],p[edgelist[i+1],]),
-			col=col_clusters)}
+			col="black")}
 	    }
 
-	    points(p, col=col_clusters)
-	    points(centers,col=col_clusters)
+	    #points(p, col=col_clusters)
+	    #points(centers,col=col_clusters)
 	}
     }
 

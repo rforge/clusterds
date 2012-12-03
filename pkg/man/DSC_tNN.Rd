@@ -50,26 +50,29 @@ Stream Clustering in R, Journal of Statistical Software, 35(5), 1-31, URL \url{h
 }
 
 \seealso{
-	\code{\link{DSClusterer}}
-	\code{\link{DSC_tNN}}
+	\code{\link{DSC}}
 }
 
 \examples{
 # Cassini
 dsd <- DSD_mlbench("cassini")
 
-tnn_macro <- DSC_tNN(k=3,alpha=.08)
-cluster(tnn_macro, dsd, 1000)
-plot(tnn_macro,dsd)
+# tNN has a built in micro and micro-clusterer
+tnn <- DSC_tNN(k=3, alpha=.08)
+cluster(tnn, dsd, 1000)
 
-get_evaluation(tnn_macro,dsd,"rand")
+# see macro-clusters
+get_centers(tnn)
 
+# see micro-clusters
+head(get_centers(tnn, type="micro"))
 
-# tNN can also be used as just a microclusterer
-hierarchical <- DSC_Hierarchical(3,"single")
-dsc <- DSC_tNN(r=.1,macro=FALSE)
-cluster(dsc, dsd, 1000)
+# plot macro-clusters
+plot(tnn, dsd)
+# plot micro-clusters
+plot(tnn, dsd, type="micro")
 
-recluster(hierarchical,dsc)
-plot(hierarchical,dsd,microclusters=TRUE)
+# evaluate first using macro and then using micro-clusters
+get_evaluation(tnn, dsd, "rand")
+get_evaluation(tnn, dsd, "rand", type ="micro")
 }

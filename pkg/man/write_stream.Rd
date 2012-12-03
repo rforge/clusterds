@@ -1,7 +1,8 @@
 \name{write_stream}
 \alias{write_stream}
-\title{write_stream}
-\description{Writes points to a connection from a DSD object.}
+\title{Write a Data Stream to a File}
+\description{Writes points from a data stream DSD object to a file or a 
+connection.}
 
 \usage{
 	write_stream(dsd, con, n=100, sep=",", col.names=FALSE,
@@ -18,16 +19,8 @@
 	\item{...}{Additional parameters that are passed to \code{write.table()}.}
 }
 
-\details{
-\code{write_stream()} accepts either a \code{connection} directly, or the file
-name to be written to. The \code{sep} parameter defines how the dimensions in
-each data point are separated. Behind the scenes we are using the
-\code{write.table()} function to write the data to disk. We are able to pass
-additional parameters to this function to alter how the data is written. By
-default, the column names and row names are hidden.
-
-Additionally, the parameter \code{comment.char} in \code{write.table} is hidden due to performance reasons. 
-}
+%\details{
+%}
 
 \value{
 There is no value returned from this operation.
@@ -35,7 +28,7 @@ There is no value returned from this operation.
 
 \seealso{
 	\code{\link{write.table}},
-	\code{\link{DSData}}
+	\code{\link{DSD}}
 }
 
 \examples{

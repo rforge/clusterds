@@ -8,7 +8,7 @@ get_centers.DSC_Macro <- function(x, type=c("auto", "micro", "macro"), ...) {
     }
 
 get_weights.DSC_Macro <- function(x, type=c("auto", "micro", "macro"), 
-	scale=NULL) {
+	scale=NULL, ...) {
     type <- match.arg(type)
     if(type=="auto") type <- "macro"
 
@@ -17,14 +17,5 @@ get_weights.DSC_Macro <- function(x, type=c("auto", "micro", "macro"),
 
     if(!is.null(scale)) w <- map(w, scale)
     w
-}
-
-get_assignment.DSC_Macro <- function(dsc, points, 
-	type=c("auto", "micro", "macro")) {
-
-    type <- match.arg(type)
-    if(type=="auto") type <- "macro"
-
-    .get_assignment(get_centers(dsc, type=type), points)
 }
 

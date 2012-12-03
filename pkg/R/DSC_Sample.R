@@ -59,4 +59,8 @@ DSC_Sample <- function(size = 100) {
 get_microclusters.DSC_Sample <- function(x, ...) {
     if(length(x$RObj$centers) == 0) warning(paste(class(x)[1],": There are no clusters",sep=""))
     x$RObj$centers
-} 
+}
+
+get_microweights.DSC_Sample <- function(x, ...) {
+    rep(1, nclusters(x))
+}

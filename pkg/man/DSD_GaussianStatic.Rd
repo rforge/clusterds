@@ -1,10 +1,8 @@
 \name{DSD_GaussianStatic}
 \alias{DSD_GaussianStatic}
-\title{DataStreamData: Static data stream}
+\title{Static Gaussians Data Stream Generator}
 \description{
-A DataStreamData that generates random data based upon either a 
-defined list covariance matrices or randomly generated covariance
-matrices.
+A data stream generator that produces a data stream with static Gaussians.
 }
 
 \usage{
@@ -36,7 +34,9 @@ be chosen from it (defaults to equal probability).
 }
 
 \value{
-Returns a \code{DSD_GaussianStatic} object which is a list of the defined
+Returns a \code{DSD_GaussianStatic} 
+object (subclass of 
+\code{DSD_R}, \code{DSD}) which is a list of the defined
 params. The params are either passed in from the function or
 created internally. They include: 
 
@@ -50,7 +50,7 @@ created internally. They include:
 }
 	   
 \seealso{
-	\code{\link{DSData}}
+	\code{\link{DSD}}
 }
 
 \examples{
@@ -61,10 +61,8 @@ dsd1 <- DSD_GaussianStatic(k=3, d=2)
 plot(dsd1)
 
 # create data stream with specified clusters and 20% noise
-dsd2 <- DSD_GaussianStatic(k=2, d=2, mu=rbind(c(-.5,-.5), c(.5,.5)), 
+dsd2 <- DSD_GaussianStatic(k=2, d=2, 
+    mu=rbind(c(-.5,-.5), c(.5,.5)), 
     noise=0.2, noise_range=rbind(c(-1,1),c(-1,1)))
 plot(dsd2)
-
-
-
 }

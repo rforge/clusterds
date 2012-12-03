@@ -2,7 +2,7 @@
 
 get_evaluation <- function (dsc,dsd,
 	method,
-	n = 1000) {
+	n = 1000, type=c("auto", "micro", "macro")) {
 
     if(missing(method)) {
     method <- 
@@ -13,21 +13,24 @@ get_evaluation <- function (dsc,dsd,
     }
 
     d <- get_points(dsd, n, assignment = TRUE)
-    c <- get_centers(dsc) ### these are macro centers (for macro clusterers)
+    c <- get_centers(dsc, type=type) 
     
     if(nrow(c)==0)
     	return(0)
-    
-    predict <- get_assignment(dsc,d) ### uses micro cluster centers
+   
+    ### FIXME: we want to do the assignments to macro-clusters
+    ### using micro-clusters!!!
+    predict <- get_assignment(dsc,d, type=type)
     actual <- attr(d, "assignment")
     
     noise <- which(is.na(actual))
     
+    ### remove noise
     if(length(noise)>0) {
-    	predict <- predict[-noise]
-    	actual <- actual[-noise]
-    	d <- d[-noise,]
-	}
+	predict <- predict[-noise]
+	actual <- actual[-noise]
+	d <- d[-noise,]
+    }
 	
     sapply(method, function(x) evaluate(x, predict, actual, d, c))
 }

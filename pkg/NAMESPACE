@@ -57,7 +57,6 @@ export(
 
 S3method(print, DSC)
 S3method(print, DSD)
-S3method(print, DSD_mlbench)
 S3method(print, DSD_Wrapper)
 
 S3method(plot, DSC)
@@ -96,7 +95,6 @@ S3method(recluster, DSC_Macro)
 #S3method(get_microclusters, DSC_Sample)
 
 S3method(get_assignment, DSC)
-S3method(get_assignment, DSC_Macro)
 
 S3method(get_copy, DSC_R)
 S3method(get_copy, DSC_MOA)

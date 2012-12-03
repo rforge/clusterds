@@ -71,3 +71,6 @@ DSC_KmeansW <- function(k, iter.max = 10, nstart = 1) {
 get_macroclusters.DSC_KmeansW <- function(x) x$RObj$centers
 get_macroweights.DSC_KmeansW <- function(x) x$RObj$weights
 
+get_microclusters.DSC_KmeansW <- function(x) x$RObj$data
+get_microweights.DSC_KmeansW <- function(x) x$RObj$dataWeights
+

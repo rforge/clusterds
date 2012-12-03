@@ -26,23 +26,22 @@ contains the following items:
 }
 
 \seealso{
-	\code{\link{DSClusterer}}
+	\code{\link{DSC}}
 }
 
 \examples{
 # 3 clusters with 5% noise
 dsd <- DSD_GaussianStatic(k=3, noise=0.05)
 
-dsc <- DSC_Sample(100)
-cluster(dsc, dsd, 1000)
+dsc <- DSC_Sample(20)
+cluster(dsc, dsd, 500)
 dsc
 
 # plot micro-clusters
-plot(dsc,dsd)
+plot(dsc, dsd)
 
 # reclustering (Kmeans is sufficient because DSC_Sample does not return weights)
 kmeans <- DSC_Kmeans(3)
 recluster(kmeans,dsc)
-plot(kmeans,dsd,microclusters=TRUE)
-
+plot(kmeans,dsd)
 }

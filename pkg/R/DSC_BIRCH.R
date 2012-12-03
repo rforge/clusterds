@@ -66,18 +66,17 @@ DSC_BIRCH <- function(radius, compact=radius, keeptree = TRUE, columns = NULL) {
 }
 
 ### get centers, etc.
-get_microclusters.DSC_BIRCH <- function(x, ...) {
+get_microclusters.DSC_BIRCH <- function(x) {
     centers <- x$RObj$BIRCH$sumXi/x$RObj$BIRCH$N
     if(length(centers)==0) warning(paste(class(x)[1],": There are no clusters",sep=""))
 
     as.data.frame(centers)
 }
 
-get_weights.DSC_BIRCH <- function(x, scale=NULL) {
+get_microweights.DSC_BIRCH <- function(x) {
     weight <- x$RObj$BIRCH$N
 
     if(length(weight)==0) warning(paste(class(x)[1],": There are no clusters",sep=""))
 
-    if(!is.null(scale)) weight <- map(weight, scale)
     weight
 }

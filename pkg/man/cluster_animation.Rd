@@ -1,14 +1,15 @@
 \name{cluster_animation}
 \alias{cluster_animation}
-\title{Clustering data based with input algorithm and data stream and then animates it}
+\title{Animation of the Clustering Process}
 
 \description{
-Clusters a number of input points from a data stream into a clustering object and then
-produces an animation as an animated gif.
+Clusters a number of input points from a data stream into a clustering object
+and then produces an animation as an animated gif.
 }
 
 \usage{
-cluster_animation(dsc,dsd,n=1,interval=.1, horizon=500, pointInterval=100, weights=FALSE, scale=c(1,10), outdir=NULL,...)
+    cluster_animation(dsc,dsd,n=1,interval=.1, horizon=500, 
+	    pointInterval=100, weights=FALSE, scale=c(1,10), outdir=NULL,...)
 }
 
 \arguments{
@@ -46,7 +47,7 @@ clustering result, call \code{get_centers()} upon the DSC object.
 
 
 \seealso{
-	\code{\link{DSClusterer}}
+	\code{\link{DSC}}
 	\code{\link{cluster}}
 }
 
@@ -54,7 +55,7 @@ clustering result, call \code{get_centers()} upon the DSC object.
 dsc <- DSC_tNN(.1,alpha=.3,lambda=.01)
 dsd <- DSD_GaussianMoving(t=20,n=20)
 
-cluster_animation(dsc, dsd, 1100,interval=.01,
-	pointInterval=10,microclusters=TRUE,outdir=getwd(),
-	xlim=c(-.5,1.5),ylim=c(-.5,1.5))
+#cluster_animation(dsc, dsd, 1100,interval=.01,
+#	pointInterval=10,microclusters=TRUE,
+#	xlim=c(-.5,1.5),ylim=c(-.5,1.5))
 }

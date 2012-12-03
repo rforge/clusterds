@@ -1,6 +1,6 @@
 \name{DSD_Target}
 \alias{DSD_Target}
-\title{DataStreamData: Target data stream}
+\title{Target Data Stream Generator}
 \description{
 A DataStreamData that generates a data stream in the shape of a target. It has
 a single gaussian cluster in the center and a ring that surrounds it.}
@@ -28,7 +28,7 @@ created internally. They include:
 }
 	   
 \seealso{
-	\code{\link{DSData}}
+	\code{\link{DSD}}
 }
 
 \examples{

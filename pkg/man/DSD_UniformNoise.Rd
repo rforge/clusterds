@@ -1,6 +1,6 @@
 \name{DSD_UniformNoise}
 \alias{DSD_UniformNoise}
-\title{DataStreamData: Uniform Noise Generator}
+\title{Uniform Noise Data Stream Generator}
 \description{
 This generator produces uniform noise in a d-dimensional unit (hyper) cube.
 }
@@ -17,11 +17,12 @@ DSD_UniformNoise(d=2)
 %}
 
 \value{
-Returns a \code{DSD_UniformNoise} object.
+Returns a \code{DSD_UniformNoise} object.(subclass of \code{DSD_R}, 
+\code{DSD}).
 }
 	   
 \seealso{
-	\code{\link{DSData}}
+	\code{\link{DSD}}
 }
 
 \examples{

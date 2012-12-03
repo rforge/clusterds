@@ -65,7 +65,7 @@ get_microclusters.DSC_Static <- function(x, ...) {
     x$RObj$microclusters
 }
 
-get_weights.DSC_Static <- function(x, scale = NULL)  {
+get_weights.DSC_Static <- function(x, scale = NULL, ...)  {
     weight <- x$RObj$weights
 
     if(length(weight) == 0) warning(paste(class(x)[1],": There are no clusters",sep=""))

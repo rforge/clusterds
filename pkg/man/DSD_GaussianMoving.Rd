@@ -1,9 +1,9 @@
 \name{DSD_GaussianMoving}
 \alias{DSD_GaussianMoving}
-\title{DataStreamData: Moving data stream}
+\title{Moving Gaussians Data Stream Generator}
 \description{
-A DataStreamData that generates a moving data stream. It has two clusters and a third that moves
-between them.
+A data stream generator that produces a data stream with moving Gaussians . It
+has two clusters and a third that moves between them.
 }
 
 \usage{
@@ -17,45 +17,26 @@ DSD_GaussianMoving(t=10, n=20)
 }
 
 \details{
-\code{DSD_GaussianMoving} is a DSD generator for stream data. 
-It has been implemented entirely in R, so there is no computational 
-overhead with communicating to the Java Runtime Interface (JRI) or 
-native C code. An important characteristic of \code{DSD_GaussianMoving} 
-is that the data stream models data that changes. This makes it
- an ideal DSD for examining 
-the temporal structure of data streams for drastic changes such as 
-the splitting or merging of clusters. 
-
-\code{DSD_GaussianMoving} generates 2 dimensionality data in 3
-different clusters. Two of the clusters are static and are located at opposite
+\code{DSD_GaussianMoving} is a DSD generator
+with 3 clusters in 2 dimensional space. 
+Two of the clusters are static and are located at opposite
 corners. The third cluster traverses the two. The number of steps it takes for
 the third cluster to complete its journey is determined by \code{t}.
-
-This DSD does not loop. To reuse the DSD the user must call the \code{reset_stream}
-function.
-
 }
 
 \value{
-Returns a \code{DSD_GaussianMoving} object which is a list of the defined
-params. The params are either passed in from the function or
-created internally. They include: 
-
-	\item{description}{A brief description of the DSD object.}
-	\item{k}{The number of clusters.}
-	\item{d}{The number of dimensions.}
+An object of class \code{DSD_GaussianMoving} (subclass of
+\code{DSD_Wrapper}, \code{DSD_R}, \code{DSD}).
 }
 	   
 \seealso{
-	\code{\link{DSData}}
+	\code{\link{DSD}}
 }
 
 \examples{
 # create data stream with three clusters in 2D
 dsd <- DSD_GaussianMoving()
 
-# plotting the data
-data_animation(dsd,600)
-
-
+# show an animation of the data
+data_animation(dsd, n=600, horizon=100)
 }

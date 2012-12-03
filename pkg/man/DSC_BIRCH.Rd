@@ -19,16 +19,12 @@ variables)}
 }
 
 \details{
-Please refer to package \code{BIRCH} for more details. It is treated as a micro clusterer within
-the \code{stream} package.
+Please refer to package \code{BIRCH} for more details. It is treated as a micro
+clusterer within the \code{stream} package.
 }
 
 \value{
-A list of class \code{DSC}, \code{DSC_R}, \code{DSC_Micro}, and \code{DSC_BIRCH}. The list
-contains the following items:
-
-	\item{description}{The name of the algorithm in the DSC object.}
-	\item{RObj}{The underlying R object.}
+An object of class  \code{DSC_BIRCH} (subclass of \code{DSC}, \code{DSC_R}, \code{DSC_Micro})
 }
 
 \references{
@@ -48,11 +44,10 @@ cluster(dsc, dsd, 1000)
 dsc
 
 # plot micro-clusters
-plot(dsc,dsd)
+plot(dsc, dsd)
 
 # reclustering
 kmeans <- DSC_KmeansW(3)
 recluster(kmeans,dsc)
-plot(kmeans,dsd,microclusters=TRUE)
-
+plot(kmeans,dsd)
 }

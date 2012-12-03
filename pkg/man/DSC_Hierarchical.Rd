@@ -26,7 +26,7 @@ contains the following items:
 }
 
 \seealso{
-	\code{\link{DSClusterer}}
+	\code{\link{DSC}}
 }
 
 \examples{

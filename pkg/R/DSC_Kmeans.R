@@ -50,7 +50,8 @@ kmeans$methods(cluster = function(x, weight = rep(1,nrow(x)), ...) {
 		} else
 			assignment <<- 1:nrow(data)
 	
-		    clusterWeights <- sapply(1:centers, FUN =function(i) sum(assignment==i))
+		    clusterWeights <<- sapply(1:centers, FUN =
+			    function(i) sum(assignment==i))
 
 		    }
 )
@@ -74,5 +75,7 @@ DSC_Kmeans <- function(k, iter.max = 10, nstart = 1,
 }
 
 get_macroclusters.DSC_Kmeans <- function(x) x$RObj$clusterCenters
-get_macroweights.DSC_Kmeans <- function(x) x$RObj$weights
+get_macroweights.DSC_Kmeans <- function(x) x$RObj$clusterWeights
 
+get_microclusters.DSC_Kmeans <- function(x) x$RObj$data
+get_microweights.DSC_Kmeans <- function(x) x$RObj$weights

@@ -1,8 +1,8 @@
 \name{DSD_Test}
 \alias{DSD_Test}
-\title{DataStreamData: Test data stream}
+\title{Data Stream Generator for Blocks and Gaussians}
 \description{
-A DataStreamData that generates a data stream in the shape of two bars and two gaussians clusters.}
+A DataStreamData that generates a data stream in the shape of two bars and two Gaussians clusters.}
 
 \usage{
 DSD_Test(noise = 0)
@@ -31,7 +31,7 @@ created internally. They include:
 }
 	   
 \seealso{
-	\code{\link{DSData}}
+	\code{\link{DSD}}
 }
 
 \examples{

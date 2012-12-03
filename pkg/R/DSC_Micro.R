@@ -8,7 +8,7 @@ get_centers.DSC_Micro <- function(x, type=c("auto", "micro", "macro"), ...) {
 }
 
 get_weights.DSC_Micro <- function(x, type=c("auto", "micro", "macro"),
-	scale=NULL) {
+	scale=NULL, ...) {
     type <- match.arg(type)
     if(type=="auto") type <- "micro"
 
