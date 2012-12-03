@@ -18,7 +18,7 @@
 	\item{dsd}{a DSD object to plot the data in the 
 	    background.}
 	\item{n}{number of plots taken from the dsd to plot.}
-	\item{col_points, col_clusters}{colors
+	\item{col, col_points, col_clusters}{colors
 	    used for plotting.}
 	\item{pch}{symbols used for plotting.}
 	\item{weights}{the size of the symbols for 

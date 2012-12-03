@@ -65,12 +65,9 @@ get_microclusters.DSC_Static <- function(x, ...) {
     x$RObj$microclusters
 }
 
-get_weights.DSC_Static <- function(x, scale = NULL, ...)  {
-    weight <- x$RObj$weights
+### FIXME: We need two types of weights!
+#get_macroweights.DSC_Static <- function(x) x$RObj$weights
+#get_microweights.DSC_Static <- function(x) x$RObj$weights
+get_macroweights.DSC_Static <- function(x) rep(1, nclusters(x, type="macro"))
+get_microweights.DSC_Static <- function(x) rep(1, nclusters(x, type="micro"))
 
-    if(length(weight) == 0) warning(paste(class(x)[1],": There are no clusters",sep=""))
-
-    if(!is.null(scale)) weight <- map(weight, scale)
-
-    weight
-}

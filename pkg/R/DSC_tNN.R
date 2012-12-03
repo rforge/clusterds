@@ -229,28 +229,30 @@ get_macroweights.DSC_tNN <- function(x) {
     }
 }
 
-get_matrix <- function(dsc) {
-    #TODO: make edgelist max length to avoid copying
-    r <- dsc$RObj$relations
-    mc <- get_microclusters(dsc)
-    matrix <- Matrix(0,nrow(mc),nrow(mc),sparse=TRUE)
 
-    i <- 0
-
-    lookup <- sapply(rownames(mc),function(name) {
-		i <<- i + 1
-	    })
-
-    sapply(keys(dsc$RObj$relations),function(x){
-		microclusters <- unlist(strsplit(x,'-'))
-		if(all(!is.na(lookup[microclusters]))) {
-		    matrix[lookup[microclusters[1]],lookup[microclusters[2]]] <<- dsc$RObj$relations[[x]]
-		}
-	    })
-
-    matrix
-}
-
+### this needs package Matrix
+#get_matrix <- function(dsc) {
+#    #TODO: make edgelist max length to avoid copying
+#    r <- dsc$RObj$relations
+#    mc <- get_microclusters(dsc)
+#    matrix <- Matrix(0,nrow(mc),nrow(mc),sparse=TRUE)
+#
+#    i <- 0
+#
+#    lookup <- sapply(rownames(mc),function(name) {
+#		i <<- i + 1
+#	    })
+#
+#    sapply(keys(dsc$RObj$relations),function(x){
+#		microclusters <- unlist(strsplit(x,'-'))
+#		if(all(!is.na(lookup[microclusters]))) {
+#		    matrix[lookup[microclusters[1]],lookup[microclusters[2]]] <<- dsc$RObj$relations[[x]]
+#		}
+#	    })
+#
+#    matrix
+#}
+#
 get_all_weights <- function(x) {
     assignment <- get_membership(x)
     weights <- x$RObj$weights

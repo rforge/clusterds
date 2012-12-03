@@ -143,17 +143,18 @@ jaccard <- function(predict,actual) {
 
 ### silhouette <- function(d,c,assignment = NULL) {}
 
-get_confusionMatrix <- function(d,c,predict) {
-	#Get the actual class
-	actual <- attr(d, "assignment")
-	
-	actual[is.na(actual)]<- 0
-	
-	if(0 %in% actual)
-		actual <- actual + 1
-	
-	result <- cbind(actual,predict)
-	#Compute the sparse matrix
-	confusion <- sparseMatrix(i = result[,1],j = result[,2], x = 1)
-	confusion
-}
+### this would need package Matrix
+#get_confusionMatrix <- function(d,c,predict) {
+#	#Get the actual class
+#	actual <- attr(d, "assignment")
+#	
+#	actual[is.na(actual)]<- 0
+#	
+#	if(0 %in% actual)
+#		actual <- actual + 1
+#	
+#	result <- cbind(actual,predict)
+#	#Compute the sparse matrix
+#	confusion <- sparseMatrix(i = result[,1],j = result[,2], x = 1)
+#	confusion
+#}

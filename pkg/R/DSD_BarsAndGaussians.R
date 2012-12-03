@@ -1,17 +1,17 @@
-DSD_Test <- function(noise = 0) {
+DSD_BarsAndGaussians <- function(noise = 0) {
 
 
 
     # creating the DSD object
-    l <- list(description = "Test Shapes",
+    l <- list(description = "Bars and Gaussians",
 	    d = 2,
 	    k = 4,
 	    noise = noise)
-    class(l) <- c("DSD_Test","DSD_R","DSD")
+    class(l) <- c("DSD_BarsAndGaussians","DSD_R","DSD")
     l
 }
 
-get_points.DSD_Test <- function(x, n=1, assignment = FALSE,...) {
+get_points.DSD_BarsAndGaussians <- function(x, n=1, assignment = FALSE,...) {
     ### gaussians at (3,2.5) and (3,-2.5)
 ### bars at (-3,2.8) and (-3,-2.8)
 
@@ -58,7 +58,7 @@ get_points.DSD_Test <- function(x, n=1, assignment = FALSE,...) {
 	}
 	
 	if(assignment) {
-		if(type==0) a <- c(a,as.numeric(NA))
+		if(type==0) a <- c(a,as.integer(NA))
 		else a <- c(a,type)
 	}
 	
@@ -71,7 +71,7 @@ get_points.DSD_Test <- function(x, n=1, assignment = FALSE,...) {
 		attr(df,"assignment")<-a
 	}
 	
-	names(df) <- 1:ncol(df)
+	names(df) <- c("x","y")
 	
 	df
 }
