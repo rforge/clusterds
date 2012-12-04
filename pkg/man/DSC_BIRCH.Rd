@@ -32,7 +32,8 @@ Tian Zhang, Raghu Ramakrishnan, Miron Livny, An Efficient Data Clustering Method
 }
 
 \seealso{
-	\code{\link{DSC}}
+	\code{\link{DSC}},
+	\code{\link{DSC_Micro}}
 }
 
 \examples{

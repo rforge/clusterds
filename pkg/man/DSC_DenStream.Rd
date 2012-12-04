@@ -40,6 +40,7 @@ Classification and Clustering. In Journal of Machine Learning Research
 }
 \seealso{
 	\code{\link{DSC}},
+	\code{\link{DSC_Micro}},
 	\code{\link{DSC_MOA}}
 }
 \examples{

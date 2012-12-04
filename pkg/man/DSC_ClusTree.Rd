@@ -40,6 +40,7 @@ Stream Classification and Clustering. In Journal of Machine
 }
 \seealso{
 	\code{\link{DSC}},
+	\code{\link{DSC_Micro}},
 	\code{\link{DSC_MOA}}
 }
 \examples{

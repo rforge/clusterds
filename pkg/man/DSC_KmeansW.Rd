@@ -25,6 +25,7 @@ An object of class  \code{DSC_Kmeans} (subclass of \code{DSC},
 
 \seealso{
 	\code{\link{DSC}},
+	\code{\link{DSC_Macro}},
 	\code{\link{DSC_Kmeans}}
 }
 

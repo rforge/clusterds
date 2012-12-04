@@ -31,7 +31,8 @@ on the algorithm.
 }
 
 \seealso{
-	\code{\link{DSC}}
+	\code{\link{DSC}},
+	\code{\link{DSC_Macro}},
 	\code{\link{DSC_KmeansW}} for a weighted version of k-means.
 }
 

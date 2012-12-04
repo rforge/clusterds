@@ -38,6 +38,7 @@ Clustering. In Journal of Machine Learning Research (JMLR).
 
 \seealso{
 	\code{\link{DSC}},
+	\code{\link{DSC_Micro}},
 	\code{\link{DSC_MOA}}
 }
 

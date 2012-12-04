@@ -19,7 +19,7 @@ get_points.default <- function(x, n=1, ...) {
 reset_stream <- function(dsd) UseMethod("reset_stream")
 reset_stream.DSD <- function(dsd) {
     stop(gettextf("reset_stream not implemented for class '%s'.",
-		    paste(class(x), collapse=", ")))
+		    paste(class(dsd), collapse=", ")))
 }
 
 
@@ -27,8 +27,8 @@ reset_stream.DSD <- function(dsd) {
 #############################################################
 ### helper
 print.DSD <- function(x, ...) {
-    cat(paste(class(x)[1], "-", x$description, '\n'))
-	cat(paste('With', x$k, 'clusters', 'in', x$d, 'dimensions', '\n'))
+    cat(paste(paste(class(x), collapse=", "), "-", x$description, '\n'))
+    cat(paste('With', x$k, 'clusters', 'in', x$d, 'dimensions', '\n'))
 }
 
 plot.DSD <- function(x, n = 1000, col= NULL, pch= NULL, 

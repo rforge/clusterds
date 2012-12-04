@@ -28,12 +28,13 @@ contains the following items:
 }
 
 \seealso{
-	\code{\link{DSC}}
+	\code{\link{DSC}},
+	\code{\link{DSC_Macro}}
 }
 
 \examples{
 # Cassini dataset
-dsd <- DSD_mlbenchData("cassini")
+dsd <- DSD_mlbenchGenerator("cassini")
 
 hierarchical <- DSC_Hierarchical(3,"single")
 cluster(hierarchical, dsd, 1000)

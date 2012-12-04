@@ -16,7 +16,6 @@ microToMacro(x, micro)
   micro-clusters.}
   \item{micro}{A vector with micro-cluster ids.}
 }
-}
 %\details{
 %}
 \value{

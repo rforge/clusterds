@@ -47,7 +47,9 @@ Stream Clustering in R, Journal of Statistical Software, 35(5), 1-31, URL \url{h
 }
 
 \seealso{
-	\code{\link{DSC}}
+	\code{\link{DSC}},
+	\code{\link{DSC_Micro}},
+	\code{\link{DSC_Macro}}
 }
 
 \examples{
@@ -56,7 +58,7 @@ dsd <- DSD_mlbenchGenerator("cassini")
 
 # tNN has a built in micro and micro-clusterer
 tnn <- DSC_tNN(k=3, alpha=.08)
-cluster(tnn, dsd, 1000)
+cluster(tnn, dsd, 500)
 
 # see macro-clusters
 get_centers(tnn)

@@ -25,7 +25,8 @@ An object of class \code{DSC_Sample} (subclass of
 }
 
 \seealso{
-	\code{\link{DSC}}
+	\code{\link{DSC}},
+	\code{\link{DSC_Micro}}
 }
 
 \references{

@@ -33,7 +33,10 @@ contains the following items:
 }
 
 \seealso{
-	\code{\link{merge_DSC}}
+	\code{\link{DSC}},
+	\code{\link{DSC_Micro}},
+	\code{\link{DSC_Macro}},
+	\code{\link{merge_DSC}},
 	\code{\link{prune_clusters}}
 }
 

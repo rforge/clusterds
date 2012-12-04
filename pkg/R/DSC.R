@@ -84,7 +84,7 @@ get_assignment.DSC <- function(dsc, points, type=c("auto", "micro", "macro"),
 }
 
 print.DSC <- function(x, ...) {
-    cat(paste(class(x)[1], "-", x$description, '\n'))
+    cat(paste(paste(class(x), collapse=", "), "-", x$description, '\n'))
     cat(paste('Number of clusters:', nclusters(x), '\n'))
 }
 
@@ -96,6 +96,7 @@ plot.DSC <- function(x, dsd = NULL, n = 1000,
 	weights=TRUE,
 	scale=c(1,5),
 	cex =1,
+	pch=NULL,
 	..., 
 	method="pairs", 
 	type=c("auto", "micro", "macro")) {
@@ -106,6 +107,7 @@ plot.DSC <- function(x, dsd = NULL, n = 1000,
     if(weights) cex_clusters <- get_weights(x, type=type, scale=scale)
     else cex_clusters <- rep(cex, k)
 	col <- rep(col_clusters, k)
+    mpch <- rep(1, k)
 
     ### prepend data if given
     if(!is.null(dsd)) {
@@ -115,18 +117,21 @@ plot.DSC <- function(x, dsd = NULL, n = 1000,
 	centers <- rbind(d, centers)
 	col <- c(rep(col_points,n), col)
 	cex_clusters <- c(rep(cex, n), cex_clusters)
+	mpch <- c(attr(d, "assignment"), mpch)
     }
+
+    if(!is.null(pch)) mpch <- pch
 
     ### plot
     if(ncol(centers)>2 && method=="pairs") {
-	    pairs(centers, col=col, cex=cex_clusters, ...)
+	    pairs(centers, col=col, cex=cex_clusters, pch=mpch, ...)
     }
     else if(ncol(centers)>2 && method=="pc") {
 	## we assume Euclidean here
 	p <- prcomp(centers)
-	    plot(p$x, col=col, cex=cex_clusters, ...)
+	    plot(p$x, col=col, cex=cex_clusters, pch=mpch, ...)
     } else { ## plot first 2 dimensions
-	    plot(centers, col=col, cex=cex_clusters, ...)
+	    plot(centers, col=col, cex=cex_clusters, pch=mpch, ...)
     }
 
 

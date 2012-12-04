@@ -38,7 +38,8 @@ An object of class \code{DSC_DBSCAN} (a subclass of \code{DSC},
 }
 
 \seealso{
-	\code{\link{DSC}}
+	\code{\link{DSC}},
+	\code{\link{DSC_Macro}}
 }
 
 \examples{
