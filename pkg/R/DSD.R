@@ -39,11 +39,13 @@ plot.DSD <- function(x, n = 1000, col= NULL, pch= NULL,
     ### make sure to plot noise
     assignment <- attr(d,"assignment")
    
-    col <- assignment
     if(is.null(col)) {
-	col[assignment==0 | is.na(assignment)] <- "gray"
-    }
-    
+	col <- assignment
+	if(is.null(col)) {
+	    col[assignment==0 | is.na(assignment)] <- "gray"
+	}
+    } 
+ 
     if(is.null(pch)) {
 	pch <- rep(1, n)
 	pch[assignment==0 | is.na(assignment)] <- 3

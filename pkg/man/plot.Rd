@@ -1,4 +1,5 @@
 \name{plot}
+\alias{plot}
 \alias{plot.DSD}
 \alias{plot.DSC}
 \title{Plotting Data Stream Data and Clusterings}

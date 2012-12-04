@@ -105,7 +105,7 @@ plot.DSC <- function(x, dsd = NULL, n = 1000,
     centers <- get_centers(x, type=type)
     if(weights) cex_clusters <- get_weights(x, type=type, scale=scale)
     else cex_clusters <- rep(cex, k)
-    col <- rep(col_clusters, k)
+	col <- rep(col_clusters, k)
 
     ### prepend data if given
     if(!is.null(dsd)) {
