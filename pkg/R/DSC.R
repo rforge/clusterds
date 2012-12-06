@@ -15,7 +15,8 @@ get_weights <- function(x, type=c("auto", "micro", "macro"), scale=NULL, ...)
 get_weights.default <- function(x, type=c("auto", "micro", "macro"), 
 	scale=NULL, ...) {
     m <- rep(1,nclusters(x, type=type))
-    if(!is.null(scale)) m <- map(m, range=scale)
+    if(!is.null(scale)) m <- map(m, range=scale, from.range=c(0, 
+		    max(m, na.rm=TRUE)))
     m
 }
 
@@ -84,8 +85,12 @@ get_assignment.DSC <- function(dsc, points, type=c("auto", "micro", "macro"),
 }
 
 print.DSC <- function(x, ...) {
-    cat(paste(paste(class(x), collapse=", "), "-", x$description, '\n'))
-    cat(paste('Number of clusters:', nclusters(x), '\n'))
+    cat(paste(x$description, " (", paste(class(x), collapse=", "), ")", 
+		    '\n', sep=""))
+    if(!is(nc <- try(nclusters(x, type="macro"), silent=TRUE), "try-error")) 
+	cat(paste('Number of macro-clusters:', nc, '\n'))
+    if(!is(nc <- try(nclusters(x, type="micro"), silent=TRUE), "try-error")) 
+	cat(paste('Number of micro-clusters:', nc, '\n'))
 }
 
 
@@ -134,30 +139,5 @@ plot.DSC <- function(x, dsd = NULL, n = 1000,
 	    plot(centers, col=col, cex=cex_clusters, pch=mpch, ...)
     }
 
-
-### add lines for tNN this only works for plot!!!
-    if(all(c("DSC_tNN", "DSC_Macro") %in% class(x))
-		&& type %in% c("macro", "auto" )
-		&& (ncol(centers)<=2 || method=="plot")) {
-	p <- get_microclusters(x)
-	if(length(p)>0) {
-	    
-	    library(sfsmisc)
-	    
-	    for(i in 1:nrow(p)){
-		lines(ellipsePoints(x$RObj$r, x$RObj$r, 
-				loc=as.numeric(p[i,]), n=90),
-			col = "black", lty=3)
-	    }
-
-	    edgelist <- get_edgelist(x)
-	    for(i in (1:(length(edgelist)/2))*2-1){
-		lines(rbind(p[edgelist[i],],p[edgelist[i+1],]),
-			col="black")}
-	    }
-
-	    #points(p, col=col_clusters)
-	    #points(centers,col=col_clusters)
-	}
-    }
+}
 

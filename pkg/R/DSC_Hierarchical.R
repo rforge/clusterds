@@ -81,4 +81,7 @@ get_microweights.DSC_Hierarchical <- function(x) x$RObj$dataWeights
 get_macroclusters.DSC_Hierarchical <- function(x) x$RObj$centers
 get_macroweights.DSC_Hierarchical <- function(x) x$RObj$weights
 
-microToMacro.DSC_Hierarchical <- function(x, micro) x$RObj$assignment[micro]
+microToMacro.DSC_Hierarchical <- function(x, micro=NULL){ 
+    if(is.null(micro)) micro <- 1:nclusters(x, type="micro")
+    structure(x$RObj$assignment[micro], names=micro)
+}  

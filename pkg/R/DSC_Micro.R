@@ -1,3 +1,4 @@
+
 get_centers.DSC_Micro <- function(x, type=c("auto", "micro", "macro"), ...) {
     type <- match.arg(type)
     if(type=="auto") type <- "micro"
@@ -7,6 +8,7 @@ get_centers.DSC_Micro <- function(x, type=c("auto", "micro", "macro"), ...) {
     get_microclusters(x)
 }
 
+
 get_weights.DSC_Micro <- function(x, type=c("auto", "micro", "macro"),
 	scale=NULL, ...) {
     type <- match.arg(type)
@@ -15,7 +17,10 @@ get_weights.DSC_Micro <- function(x, type=c("auto", "micro", "macro"),
     if(type=="macro") stop("No macro-weights available for a DSC_Micro subclass!")
     w <- get_microweights(x)
 
-    if(!is.null(scale)) w <- map(w, scale)
+
+    if(!is.null(scale)) w <- map(w, range=scale, 
+	    from.range=c(0, max(w, na.rm=TRUE)))
+    
     w
 }
 

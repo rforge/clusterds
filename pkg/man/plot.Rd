@@ -10,7 +10,7 @@
 	    pch= NULL, ..., method="pairs")
     \method{plot}{DSC}(x, dsd = NULL, n = 1000,
 	    col_points="gray", col_clusters="red",
-	    weights=TRUE, scale=c(1,5), cex=1, ..., method="pairs", 
+	    weights=TRUE, scale=c(1,5), cex=1, pch=NULL, ..., method="pairs", 
 	    type = c("auto", "micro", "macro"))
 }
 
@@ -26,6 +26,7 @@
 	    micro- and macro-clusters represents its weight.}
 	\item{scale}{range for the symbol sizes used.}
 	\item{cex}{size factor for symbols.}
+	\item{pch}{symbol type.}
 	\item{method}{method used for plotting: 
 	    "pairs" (pairs plot), 
 	    "plot" (plot first two dimensions) or 

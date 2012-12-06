@@ -57,14 +57,21 @@ Stream Clustering in R, Journal of Statistical Software, 35(5), 1-31, URL \url{h
 dsd <- DSD_mlbenchGenerator("cassini")
 
 # tNN has a built in micro and micro-clusterer
-tnn <- DSC_tNN(k=3, alpha=.08)
-cluster(tnn, dsd, 500)
+tnn <- DSC_tNN(k=3, alpha=.08, lambda=0)
+cluster(tnn, dsd, 1000)
 
 # see macro-clusters
 get_centers(tnn)
 
 # see micro-clusters
 head(get_centers(tnn, type="micro"))
+nclusters(tnn, type="micro")
+
+# see how micro and macro-clusters relate
+# each microcluster has an entry with the macro-cluster id
+# Note: unassigned micro-clusters (noise) have an NA
+microToMacro(tnn)
+
 
 # plot macro-clusters
 plot(tnn, dsd)
@@ -73,5 +80,6 @@ plot(tnn, dsd, type="micro")
 
 # evaluate first using macro and then using micro-clusters
 get_evaluation(tnn, dsd, "rand")
+get_evaluation(tnn, dsd, "rand", assign="macro")
 get_evaluation(tnn, dsd, "rand", type ="micro")
 }

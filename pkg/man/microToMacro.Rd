@@ -8,13 +8,14 @@ Translates micro-cluster ids into macro-cluster ids for
 a \code{DSC_Macro} object.
 }
 \usage{
-microToMacro(x, micro)
+microToMacro(x, micro=NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{x}{ a \code{DSC_Macro} object that also contains information about 
   micro-clusters.}
-  \item{micro}{A vector with micro-cluster ids.}
+  \item{micro}{A vector with micro-cluster ids. If \code{NULL} then
+  the assignment for all micro-clusters in x are returned. }
 }
 %\details{
 %}

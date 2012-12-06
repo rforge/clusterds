@@ -1,20 +1,22 @@
 ## wrapper for recluster functions
 
-recluster <- function(macro, dsc, ...) UseMethod("recluster")
+recluster <- function(macro, dsc, type="auto", ...) UseMethod("recluster")
 
-recluster.DSC <- function(macro, dsc, ...) {
-    stop(gettextf("recluster not implemented for class '%s'.", class(macro)))
+recluster.DSC <- function(macro, dsc, type="auto", ...) {
+    stop(gettextf("recluster not implemented for class '%s'.", 
+		    paste(class(macro), collapse=", ")))
 }
 
-recluster.DSC_Macro <- function(macro, dsc, ...) {
+recluster.DSC_Macro <- function(macro, dsc, type="auto", ...) {
     
-    x <- as.data.frame(get_centers(dsc))
-    weight <- get_weights(dsc,scale=NULL)
+    x <- get_centers(dsc, type=type)
+    weight <- get_weights(dsc, scale=NULL, type=type)
     macro$RObj$cluster(x, weight=weight, ...)
 }
 
 ### tNN uses an internal reclustering!
-recluster.tNN <- function(macro, dsc, ...) {
-	stop(gettextf("recluster not implemented for class '%s'.", class(macro)))
+recluster.tNN <- function(macro, dsc, type="auto", ...) {
+	stop(gettextf("recluster not implemented for class '%s'.", 
+		    paste(class(macro), collapse=", ")))
 }
 
