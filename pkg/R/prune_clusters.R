@@ -7,7 +7,7 @@ prune_clusters <- function(dsc, threshold=.05, weight=TRUE) {
     
     w <- get_weights(dsc)
 
-    if(prob) {
+    if(weight) {
 	o <- order(w)
 	o <- o[cumsum(w[o])>sum(w)*threshold]
 	#o <- o[w[o] > quantile(w,prob=threshold)]
