@@ -42,9 +42,7 @@ plot.DSD <- function(x, n = 500, col= NULL, pch= NULL,
    
     if(is.null(col)) {
 	col <- assignment
-	if(is.null(col)) {
-	    col[assignment==0 | is.na(assignment)] <- "gray"
-	}
+	col[assignment==0 | is.na(assignment)] <- "gray"
     } 
  
     if(is.null(pch)) {

@@ -697,6 +697,7 @@ a micro-cluster representing more data points has more weight.
 
 \section{Evaluating Data Stream Mining}
 \marginpar{missing}
+\marginpar{add pruning somewhere}
 
 
 \section{Extending the stream Framework} \label{sec:design:extension}

@@ -1,22 +1,22 @@
 
 
-static <- setRefClass("static", 
+Static <- setRefClass("Static", 
 	fields = list(
-		macroclusters = "data.frame",
-		microclusters = "data.frame",
-		weights		= "numeric"
+		centers		    = "data.frame",
+		weights		    = "numeric",
+		macro		    = "logical"
 		), 
 
 	methods = list(
 		initialize = function(
-			macroclusters	    = data.frame(),
-			microclusters	    = data.frame(),
-			weights		    = numeric()
+			centers	    = data.frame(),
+			weights	    = numeric(),
+			macro	    = FALSE
 			) {
 
-		    macroclusters	<<- macroclusters 
-		    microclusters	<<- microclusters
-		    weights		<<- weights
+		    centers	    <<- centers 
+		    weights	    <<- weights
+		    macro	    <<- macro
 
 		    .self
 		}
@@ -24,50 +24,45 @@ static <- setRefClass("static",
 		),
 	)
 
-static$methods(cluster = function(newdata, verbose = FALSE) {
-	    stop("DSC_Static: cluster not implemented")
+Static$methods(cluster = function(newdata, ...) {
+	    stop("DSC_Static: cluster not implemented!")
 	}
 	)
 
-DSC_Static <- function(macroclusters=NULL,microclusters=NULL,weights=NULL) {
-    class <- c("DSC_Static")
+DSC_Static <- function(x, type=c("auto", "micro", "macro")) {
+    
+    ### figure out type
+    type <- get_type(x, type)
+    if(type=="macro") macro <- TRUE
+    else macro <- FALSE
 
-    if(is.null(macroclusters)) {
-	class <- c(class,"DSC_Micro")
-	macroclusters <- data.frame()
-    } else {
-	class <- c(class,"DSC_Macro")
-    }
+    static <- Static$new(get_centers(x, type), get_weights(x, type), 
+	macro=macro)
 
+    l <- list(description = "Static", RObj = static)
+    
+    if(macro) micromacro <- "DSC_Macro"
+    else micromacro <- "DSC_Micro"
 
-    if(is.null(microclusters)) {
-	microclusters <- data.frame()
-    }
+    class(l) <- c("DSC_Static", micromacro, "DSC_R","DSC")
 
-    static <- static$new(macroclusters=macroclusters,microclusters=microclusters,weights=weights)
-
-    l <- list(description = "Static",
-	    RObj = static)
-
-    class(l) <- c(class,"DSC_R","DSC")
-    l
     l
 }
 
-### get macroclusters
-get_macroclusters.DSC_Static <- function(x, ...) {
-    if(length(x$RObj$macroclusters) == 0) warning(paste(class(x)[1],": There are no clusters",sep=""))
-    x$RObj$macroclusters
+
+get_macroweights.DSC_Static <- function(x) {
+    if(!x$RObj$macro) stop("This is a micro-clustering!")
+    x$RObj$weights
 }
-
-get_microclusters.DSC_Static <- function(x, ...) {
-    if(length(x$RObj$microclusters) == 0) warning(paste(class(x)[1],": There are no microclusters",sep=""))
-    x$RObj$microclusters
+get_macroclusters.DSC_Static <- function(x) {
+    if(!x$RObj$macro) stop("This is a micro-clustering!")
+    x$RObj$centers
 }
-
-### FIXME: We need two types of weights!
-#get_macroweights.DSC_Static <- function(x) x$RObj$weights
-#get_microweights.DSC_Static <- function(x) x$RObj$weights
-get_macroweights.DSC_Static <- function(x) rep(1, nclusters(x, type="macro"))
-get_microweights.DSC_Static <- function(x) rep(1, nclusters(x, type="micro"))
-
+get_microweights.DSC_Static <- function(x) {
+    if(x$RObj$macro) stop("This is a macro-clustering!")
+    x$RObj$weights
+}
+get_microclusters.DSC_Static <- function(x) {
+    if(x$RObj$macro) stop("This is a macro-clustering!")
+    x$RObj$centers
+}

@@ -9,11 +9,7 @@ get_evaluation <- function (dsc, dsd,
 	    "rand","rand_HA","rand_MA","rand_FM")
 
     ### figure out type
-    type <- match.arg(type)
-    if(type=="auto") {
-	if("DSC_Macro" %in% class(dsc)) type <- "macro"
-	else type <- "micro"
-    }
+    type <- get_type(dsc, type)
 
     c <- get_centers(dsc, type=type) 
     

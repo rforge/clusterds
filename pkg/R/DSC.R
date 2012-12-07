@@ -120,6 +120,12 @@ plot.DSC <- function(x, dsd = NULL, n = 500,
 	col <- c(rep(col_points,n), col)
 	cex_clusters <- c(rep(cex, n), cex_clusters)
 	mpch <- c(attr(d, "assignment"), mpch)
+	
+	### handle noise
+	noise <- is.na(mpch)
+	mpch[noise] <- 20
+	cex_clusters[noise] <- cex_clusters[noise]*.3
+
     }
 
     if(!is.null(pch)) mpch <- pch
@@ -137,4 +143,5 @@ plot.DSC <- function(x, dsd = NULL, n = 500,
     }
 
 }
+
 
