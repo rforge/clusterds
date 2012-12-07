@@ -24,7 +24,8 @@ cluster.ani <- function(dsc=NULL, dsd, n,interval=.1, pointInterval=100, horizon
 	points <- data.frame()
 	assignment <- numeric()
 	col <- gray.colors(horizon, start = 1, end = .7, gamma = 2.2)
-	evaluation <- rep(NA,horizon/pointInterval*2)
+	evaluation <- numeric()
+	#evaluation <- rep(NA,horizon/pointInterval*2)
 	
 	for (i in 1:n) {
 		d <- get_points(dsd,assignment=TRUE)
@@ -48,7 +49,7 @@ cluster.ani <- function(dsc=NULL, dsd, n,interval=.1, pointInterval=100, horizon
 			
 			if(!is.null(evaluationMethod)) {
 				par(mar=c(2.1,4.1,1.1,2.1))
-				evaluation <- c(evaluation,get_evaluation(dsc,DSD_Wrapper(points,0,assignment=assignment),evaluationMethod,n=nrow(points)))[1:length(evaluation)+1]
+				evaluation <- c(evaluation,get_evaluation(dsc,DSD_Wrapper(points,0,assignment=assignment),evaluationMethod,n=nrow(points)))#[1:length(evaluation)+1]
 				plot(evaluation, type="o", col="blue",ylim=c(0,1), ann=FALSE,xaxt='n')
 				title(ylab=evaluationMethod)
 

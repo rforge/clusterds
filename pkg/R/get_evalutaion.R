@@ -1,48 +1,62 @@
 #get dsd, dsc and n
 
+
+
 get_evaluation <- function (dsc, dsd,
 	method, n = 1000, 
-	type=c("auto", "micro", "macro"), assign="micro") {
+	type=c("auto", "micro", "macro"), assign="micro", pointInterval=NULL) {
+		
+	if(!is.null(pointInterval)) {
+		evaluations <- data.frame()
+		for(i in 1:(n/pointInterval)) {
+			points <- get_points(dsd,pointInterval,assignment=TRUE)
+			wrapper <- DSD_Wrapper(points,0,loop=TRUE,assignment=attr(points,"assignment"))
+			cluster(dsc,wrapper,pointInterval)
+			evaluations <- rbind(evaluations,get_evaluation(dsc,dsd,method,pointInterval,type,assign))
+		}
+		row.names(evaluations)<-seq(pointInterval,n,pointInterval)
+		names(evaluations)<-method
+		return(evaluations)
+	} else {
 
-    if(missing(method)) method <- c("numCluster","numClasses", "f1","recall",
-	    "precision", "purity" ,"fpr","ssq","jaccard",
-	    "rand","rand_HA","rand_MA","rand_FM")
+	    if(missing(method)) method <- c("numCluster","numClasses", "f1","recall",
+		    "precision", "purity" ,"fpr","ssq","jaccard",
+		    "rand","rand_HA","rand_MA","rand_FM")
+	
+	    ### figure out type
+	    type <- get_type(dsc, type)
+	
+    	c <- get_centers(dsc, type=type) 
+    	
+    	if(nrow(c)<1) {
+		warning("No centers available!")
+		return(0)
+    	}
+   	
+    	d <- get_points(dsd, n, assignment = TRUE)
+    	actual <- attr(d, "assignment")
+	
+    	predict <- get_assignment(dsc,d, type=assign)
 
-    ### figure out type
-    type <- get_type(dsc, type)
+    	### translate micro to macro cluster ids if necessary
+    	if(type=="macro" && assign=="micro") predict <- microToMacro(dsc, predict)
+    	else if (type!=assign) stop("type and assign are not compatible!")
 
-    c <- get_centers(dsc, type=type) 
+    	### make points assigned to unassigned micro-clusters noise (0)
+    	predict[is.na(predict)] <- 0L
+
+
+    	### remove noise
+    	noise <- which(is.na(actual))
+    	if(length(noise)>0) {
+		predict <- predict[-noise]
+		actual <- actual[-noise]
+		d <- d[-noise,]
+    	}
     
-    if(nrow(c)<1) {
-	warning("No centers available!")
-	return(0)
+    	e <- sapply(method, function(x) evaluate(x, predict, actual, d, c))
+    	structure(e, type=type, assign=assign, class="stream_eval")
     }
-   
-    d <- get_points(dsd, n, assignment = TRUE)
-    actual <- attr(d, "assignment")
-
-    predict <- get_assignment(dsc,d, type=assign)
-
-    ### translate micro to macro cluster ids if necessary
-    if(type=="macro" && assign=="micro") predict <- microToMacro(dsc, predict)
-    else if (type!=assign) stop("type and assign are not compatible!")
-
-    ### make points assigned to unassigned micro-clusters noise (0)
-    predict[is.na(predict)] <- 0L
-
-
-    ### remove noise
-    noise <- which(is.na(actual))
-    if(length(noise)>0) {
-	predict <- predict[-noise]
-	actual <- actual[-noise]
-	d <- d[-noise,]
-    }
-
-
-
-    e <- sapply(method, function(x) evaluate(x, predict, actual, d, c))
-    structure(e, type=type, assign=assign, class="stream_eval")
 }
 
 print.stream_eval <-  function(x, ...) {
