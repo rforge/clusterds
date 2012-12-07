@@ -117,7 +117,7 @@ plot.DSC <- function(x, dsd = NULL, n = 500,
 	names(d) <- names(centers)
 
 	centers <- rbind(d, centers)
-	col <- c(rep(col_points,n), col)
+	col <- c(rep(col_points,n)[1:n], col)
 	cex_clusters <- c(rep(cex, n), cex_clusters)
 	mpch <- c(attr(d, "assignment"), mpch)
 	

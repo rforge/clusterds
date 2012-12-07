@@ -392,9 +392,11 @@ plot.DSC_tNN <- function(x, dsd = NULL, n = 1000,
 
 	    ### add edges connecting macro-clusters
 	    edges <- get_edges(x)
-	    for(i in 1:nrow(edges)){
-		lines(rbind(p[edges[i,1],],p[edges[i,2],]),
-			col="black")
+	    if(nrow(edges)>0) {
+	    	for(i in 1:nrow(edges)){
+			lines(rbind(p[edges[i,1],],p[edges[i,2],]),
+				col="black")
+	    	}
 	    }
 	    
 	    points(get_centers(x, type="micro"), col="black")

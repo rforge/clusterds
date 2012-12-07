@@ -8,8 +8,7 @@ and then produces an animation as an animated gif.
 }
 
 \usage{
-    cluster_animation(dsc,dsd,n=1,interval=.1, horizon=500, 
-	    pointInterval=100, weights=FALSE, scale=c(1,10), outdir=NULL,...)
+    cluster_animation(dsc,dsd,n=1,interval=.1, pointInterval=100, horizon=5*pointInterval, evaluationMethod=NULL, outdir=NULL,...)
 }
 
 \arguments{
@@ -17,11 +16,9 @@ and then produces an animation as an animated gif.
   \item{dsd}{a DSD object}
   \item{n}{the number of points to cluster}
   \item{interval}{the time interval between each frame}
-  \item{horizon}{the max number of data points to be shown at a time}
   \item{pointInterval}{the number of new points needed before a new frame is created}
-  \item{weights}{whether or not the macro-clusters should be different sizes depending on 
-  	weight}
-  \item{scale}{the scaling used for the weights}
+  \item{horizon}{the max number of data points to be shown at a time}
+  \item{evaluationMethod}{the evaluation method that should be graphed below the animation}
   \item{outdir}{the location of where the gif should be saved}
   \item{...}{extra arguments for plot.}
 }
