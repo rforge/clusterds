@@ -1,5 +1,6 @@
 \name{get_evaluation}
 \alias{get_evaluation}
+\alias{print.stream_eval}
 \title{Evaluate Clusterings}
 
 \description{
@@ -66,9 +67,10 @@ points and ad what level (micro or macro) to evaluate.
 }
 
 \value{
-    \code{get_evaluation} returns the values of the requested measure
-    as a vector. The vector has two attribures \code{"type"} and
-    \code{"assign"} to see at what level the evaluation was done.
+    \code{get_evaluation} returns an object of class \code{stream_eval}
+    which is a numeric vector of the values of the requested measures
+    and two attribures, \code{"type"} and
+    \code{"assign"}, to see at what level the evaluation was done.
     
 }
 

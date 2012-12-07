@@ -851,8 +851,8 @@ the cluster.
 The following instruction requests $n=5$ new data points.
 
 <<>>= 
-data <- get_points(dsd, n=5) 
-data 
+p <- get_points(dsd, n=5) 
+p 
 @
 
 The result is a data.frame containing the data points as rows. For evaluation
@@ -864,8 +864,8 @@ The ground truth is returned as an attribute with the name
 
 
 <<>>= 
-data <- get_points(dsd, n=100, assignment=TRUE) 
-attr(data, "assignment") 
+p <- get_points(dsd, n=100, assignment=TRUE) 
+attr(p, "assignment") 
 @
 
 Note that we created a generator with 5\% noise. Noise points
@@ -876,7 +876,7 @@ Next, we plot 500 points from the data stream to get an idea about its
 structure.
 
 <<static, fig=TRUE, include=FALSE>>= 
-plot(dsd,n=500)
+plot(dsd, n=500)
 @
 
 \begin{figure} 
@@ -977,7 +977,7 @@ dsd
 Next, we write 100 data points to disk using \code{write_stream()}.
 
 <<>>= 
-write_stream(dsd, "dsd_data.csv", n=100, sep=",") 
+write_stream(dsd, "data.csv", n=100, sep=",") 
 @
 
 \code{write_stream()} accepts 
@@ -1002,7 +1002,7 @@ algorithm, it it removed from memory,
 we can efficiently process files larger than the available main memory.
 
 <<>>= 
-dsd_file <- DSD_ReadStream("dsd_data.csv", sep=",") 
+dsd_file <- DSD_ReadStream("data.csv", sep=",") 
 dsd_file
 @
 
@@ -1042,15 +1042,15 @@ points as a data.frame in \code{points}.
 library("stream") 
 set.seed(1000) 
 dsd <- DSD_GaussianStatic(k=3, d=2) 
-points <- get_points(dsd, 100)
-head(points)
+p <- get_points(dsd, 100)
+head(p)
 @
 
 Next, we create a \code{DSD_Wrapper} object which provides a 
 data stream wrapper for points.
 
 <<>>= 
-replayer <- DSD_Wrapper(points) 
+replayer <- DSD_Wrapper(p) 
 replayer 
 @
 
@@ -1097,11 +1097,11 @@ dsd
 
 Next, we prepare the clustering algorithm. We use here \code{DSC_BIRCH}
 and set the 
-radius (BIRCH's closeness criterion) to 0.1.
+radius (BIRCH's closeness criterion) to 0.01.
 
 <<>>=
-dsc <- DSC_BIRCH(radius=0.1) 
-dsc
+birch <- DSC_BIRCH(radius=0.01) 
+birch
 @
 
 Now we are ready to cluster data from the stream using
@@ -1110,22 +1110,22 @@ will implicitly alter \code{dsc} so no
 reassignment is necessary.
 
 <<>>= 
-cluster(dsc, dsd, 500) 
-dsc
+cluster(birch, dsd, 500) 
+birch
 @
 
 After clustering 500 data points data the clustering contains
-\Sexpr{nclusters(dsc)} micro clusters. The micro cluster centers
+\Sexpr{nclusters(birch)} micro clusters. The micro cluster centers
 are:
 <<>>=
-get_centers(dsc)
+head(get_centers(birch))
 @
 
 It is often helpful to visualize the results of the clustering
 operation during the comparison of algorithms.
 
 <<cluster, fig=TRUE, include=FALSE>>= 
-plot(dsc, dsd)
+plot(birch, dsd)
 @
 
 \begin{figure} \centering \includegraphics[width=.5\linewidth]{stream-cluster}
@@ -1162,15 +1162,15 @@ from DSD are used to compute the measures).
 library("stream")
 dsd <- DSD_GaussianStatic(k=3, d=2, mu=rbind(c(1.5,1.3),c(1,1),c(1.2,1)))
 
-dsc <- DSC_tNN(, r=.1)
-cluster(dsc,dsd,500)
+tnn <- DSC_tNN(, r=.1)
+cluster(tnn, dsd, 500)
 
-get_evaluation(dsc,dsd, n = 500)
+get_evaluation(tnn, dsd, n = 500)
 @
 
 Individual measures can be calculated using the method argument.
 <<>>=
-get_evaluation(dsc,dsd, method = c("f1", "rand"), n = 500)
+get_evaluation(tnn, dsd, method = c("f1", "rand"), n = 500)
 @
 
 \marginpar{evaluate measures over time}
@@ -1185,9 +1185,9 @@ library("stream")
 
 dsd <- DSD_GaussianStatic(k=3, d=2, mu=rbind(c(1.5,1.3),c(1,1),c(1.2,1)))
 
-micro <- DSC_tNN(r=.04, macro=FALSE)
-cluster(micro, dsd, 1000)
-micro
+tnn <- DSC_tNN(r=.04, macro=FALSE)
+cluster(tnn, dsd, 1000)
+tnn
 @
 
 This will produce micro-clusters which can then be reclustered. To achieve this,
@@ -1197,19 +1197,19 @@ weighted $k$-means, hierarchical clustering, and DBSCAN. Here we use
 weighted $k$-means.
 
 <<>>= 
-macro <- DSC_KmeansW(3)
-recluster(macro, micro)
-macro
+km <- DSC_KmeansW(3)
+recluster(km, tnn)
+km
 @
 
 Now the macro clusters can be used for example for evaluation or plotted.
 
 <<>>= 
-get_evaluation(macro, dsd,"f1")
+get_evaluation(km, dsd,"f1")
 @
 
 <<recluster, fig=TRUE, include=FALSE>>= 
-plot(macro, dsd) 
+plot(km, dsd) 
 @
 
 
@@ -1258,19 +1258,19 @@ before we cluster the data points for the second clustering
 algorithm.
 
 <<>>= 
-dsc_denstream <- DSC_DenStream() 
-dsc_clustream <- DSC_CluStream() 
+denstream <- DSC_DenStream() 
+clustream <- DSC_CluStream() 
 @
 
 <<>>=
-cluster(dsc_denstream, dsd, 1000) 
+cluster(denstream, dsd, 1000) 
 reset_stream(dsd) 
-cluster(dsc_clustream, dsd, 1000)
+cluster(clustream, dsd, 1000)
 @
 
 <<>>=
-dsc_denstream
-dsc_clustream
+denstream
+clustream
 @
 
 After the clustering operations, we plot the calculated micro-clusters and the
@@ -1278,12 +1278,12 @@ original data.
 
 <<denstream, fig=TRUE, include=FALSE>>= 
 reset_stream(dsd) 
-plot(dsc_denstream,dsd) 
+plot(denstream,dsd) 
 @
 
 <<clustream, fig=TRUE, include=FALSE>>= 
 reset_stream(dsd) 
-plot(dsc_clustream,dsd) 
+plot(clustream,dsd) 
 @
 
 
@@ -1306,20 +1306,20 @@ We use weighted $k$-means for reclustering
 where we use $k=3$, the true number of clusters.
 
 <<>>= 
-macro_denstream <- DSC_KmeansW(3)
-recluster(macro_denstream, dsc_denstream)
-macro_clustream <- DSC_KmeansW(3)
-recluster(macro_clustream, dsc_clustream)
+km_denstream <- DSC_KmeansW(3)
+recluster(km_denstream, denstream)
+km_clustream <- DSC_KmeansW(3)
+recluster(km_clustream, clustream)
 @
 
 <<denstreamkmeans, fig=TRUE, include=FALSE>>= 
 reset_stream(dsd) 
-plot(macro_denstream,dsd) 
+plot(km_denstream,dsd) 
 @
 
 <<clustreamkmeans, fig=TRUE, include=FALSE>>= 
 reset_stream(dsd) 
-plot(macro_clustream, dsd) 
+plot(km_clustream, dsd) 
 @
 
 \begin{figure} \begin{minipage}[b]{.48\linewidth} \centering
@@ -1343,10 +1343,10 @@ Given more data, DenStream will eventually also find the correct clustering.
 Finally, we can compare the clusterings using \code{get_evaluation}.
 
 <<>>= 
-sapply(list(DenStream=macro_denstream, CluStream=macro_clustream), 
+sapply(list(DenStream=km_denstream, CluStream=km_clustream), 
 FUN=function(x){
     reset_stream(dsd)
-    get_evaluation(x,dsd,c("f1","precision","recall","rand"))
+    get_evaluation(x, dsd, c("f1","precision","recall","rand"))
 })
 @
 

@@ -6,9 +6,9 @@
 \description{Methods to plot data stream data and clusterings.}
 
 \usage{
-    \method{plot}{DSD}(x, n = 1000, col= NULL, 
+    \method{plot}{DSD}(x, n = 500, col= NULL, 
 	    pch= NULL, ..., method="pairs")
-    \method{plot}{DSC}(x, dsd = NULL, n = 1000,
+    \method{plot}{DSC}(x, dsd = NULL, n = 500,
 	    col_points="gray", col_clusters="red",
 	    weights=TRUE, scale=c(1,5), cex=1, pch=NULL, ..., method="pairs", 
 	    type = c("auto", "micro", "macro"))
@@ -21,7 +21,6 @@
 	\item{n}{number of plots taken from the dsd to plot.}
 	\item{col, col_points, col_clusters}{colors
 	    used for plotting.}
-	\item{pch}{symbols used for plotting.}
 	\item{weights}{the size of the symbols for 
 	    micro- and macro-clusters represents its weight.}
 	\item{scale}{range for the symbol sizes used.}

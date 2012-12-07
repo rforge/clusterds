@@ -23,12 +23,12 @@ tNN <- setRefClass("tNN",
 
 	methods = list(
 		initialize = function(
-			r		= 0.05,
+			r		= 0.1,
 			k		= 0,
 			lambda		= 0.01,
 			minweight	= 0.1,
 			noise		= 0,
-			alpha 		= 0.1,
+			alpha 		= 0.25,
 			measure		= "Euclidean",
 			macro		= TRUE
 			) {
@@ -61,9 +61,9 @@ tNN <- setRefClass("tNN",
 	)
 
 
-DSC_tNN <- function(r = 0.2, k=NULL, lambda = 0.01, minweight = .1, 
-	noise = 0, alpha = .4, measure = "Euclidean", 
-	    macro = TRUE, debug=FALSE) {
+DSC_tNN <- function(r = 0.1, k=NULL, lambda = 0.01, minweight = 0.1, 
+	noise = 0, alpha = .25, measure = "Euclidean", 
+	    macro = TRUE) {
 
     tNN <- tNN$new(r, k, lambda, minweight, noise, alpha, measure, macro)
 

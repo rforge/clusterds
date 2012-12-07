@@ -33,7 +33,6 @@ cluster.ani <- function(dsc=NULL, dsd, n, pointInterval=100, horizon=5*pointInte
 			plot(points,col=col[horizon-nrow(points)+1: horizon],...)
 			if(!is.null(dsc) && microclusters && length(get_microclusters(dsc))>0) {
 				if(class(dsc)[1] == "DSC_tNN") {
-					library(sfsmisc)
 					p <- get_microclusters(dsc)
 						for(i in 1:nrow(points)){
 							lines(ellipsePoints(dsc$RObj$r, dsc$RObj$r, loc=as.numeric(p[i,])),col = "grey", lty=2)

@@ -97,3 +97,6 @@ S3method(microToMacro, DSC_tNN)
 
 S3method(get_copy, DSC_R)
 S3method(get_copy, DSC_MOA)
+
+### other
+S3method(print, stream_eval)

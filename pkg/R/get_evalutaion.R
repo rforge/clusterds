@@ -31,6 +31,10 @@ get_evaluation <- function (dsc, dsd,
     if(type=="macro" && assign=="micro") predict <- microToMacro(dsc, predict)
     else if (type!=assign) stop("type and assign are not compatible!")
 
+    ### make points assigned to unassigned micro-clusters noise (0)
+    predict[is.na(predict)] <- 0L
+
+
     ### remove noise
     noise <- which(is.na(actual))
     if(length(noise)>0) {
@@ -38,11 +42,20 @@ get_evaluation <- function (dsc, dsd,
 	actual <- actual[-noise]
 	d <- d[-noise,]
     }
-	
+
+
+
     e <- sapply(method, function(x) evaluate(x, predict, actual, d, c))
-    attr(e, "type") <- type
-    attr(e, "assign") <- assign
-    e
+    structure(e, type=type, assign=assign, class="stream_eval")
+}
+
+print.stream_eval <-  function(x, ...) {
+    cat("Evaluation results for ", attr(x, "type"),"-clusters.\n", sep="")
+    cat("Points were assigned to ", attr(x, "assign"),"-clusters.\n\n", sep="")
+    names <- names(x)
+    x <- as.numeric(x)
+    names(x) <- names 
+    print(x)
 }
 
 evaluate <- function(method, predict, actual, points, centers) {

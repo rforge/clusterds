@@ -73,10 +73,7 @@ get_assignment.DSC <- function(dsc, points, type=c("auto", "micro", "macro"),
     if(nrow(c)>0) {
 	dist <- dist(d,c)
 	#Find the minimum distance and save the class
-	#predict <- apply(dist, 1, which.min)+1
 	predict <- apply(dist, 1, which.min)
-	predict[is.null(predict)] <- 1L
-	predict[is.na(predict)] <- 1L
     } else {
 	warning("There are no clusters!")
 	predict <- rep(1L, nrow(d))
@@ -95,7 +92,7 @@ print.DSC <- function(x, ...) {
 
 
 #plot.DSC will call super question.
-plot.DSC <- function(x, dsd = NULL, n = 1000, 
+plot.DSC <- function(x, dsd = NULL, n = 500, 
 	col_points="gray",  
 	col_clusters="red", 
 	weights=TRUE,

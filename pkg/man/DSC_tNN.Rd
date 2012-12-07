@@ -5,9 +5,9 @@
     Implements the tNN (threshold Nearest Neighbor) data stream algorithm.}
 
 \usage{
-	DSC_tNN(r = 0.2, k = NULL, lambda = 0.01, minweight = 0.1,
-                 noise = 0, alpha = 0.4, measure = "Euclidean", macro =
-                 TRUE)
+	DSC_tNN(r = 0.1, k = NULL, lambda = 0.01, minweight = 0.1,
+                 noise = 0, alpha = 0.25, measure = "Euclidean", 
+		 macro = TRUE)
 }
 
 \arguments{
