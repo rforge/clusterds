@@ -89,7 +89,7 @@ get_points.DSD_ReadStream <- function(x, n=1, assignment=FALSE, ...) {
 }
 
 reset_stream.DSD_ReadStream <- function(dsd) {
-    seek(dsd$con, where=0)
+    invisible(seek(dsd$con, where=0))
 }
 
 close_stream <- function(dsd) {

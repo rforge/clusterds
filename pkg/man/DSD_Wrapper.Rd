@@ -8,7 +8,7 @@ The data can either be looped or replayed manually to give
 the exact same data several times.
 }
 
-\usage{DSD_Wrapper(x, k, loop=FALSE, assignment = NULL)}
+\usage{DSD_Wrapper(x, k=NA, loop=FALSE, assignment = NULL)}
 
 \arguments{
 	\item{x}{A data frame or matrix with the data to be used in the stream.}

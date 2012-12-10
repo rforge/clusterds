@@ -35,8 +35,8 @@ DSC_CluStream <- function(
   if (maxNumKernels < 0)
     stop("invalid maxNumKernels, must be > 0")
 
-  paramList <- list(h = horizon,
-                    k = maxNumKernels,
+  paramList <- list(h = as.integer(horizon),
+                    k = as.integer(maxNumKernels),
 		    t = kernelRadiFactor)
 
   # converting the param list to a cli string to use in java

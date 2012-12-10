@@ -19,7 +19,8 @@ cluster <- function(dsc, dsd, n=1, verbose=FALSE, ...) {
     ## data has to be all doubles for MOA clusterers!
     for (i in 1:n) {
 
-	if(verbose && !i%%100) cat("Processed", i, "points\n")
+	if(verbose && !i%%100) cat("Processed", i, "points -",
+		nclusters(dsc), "clusters\n")
 
 	d <- get_points(dsd, 1)
     	x <- .jcast(
@@ -35,7 +36,8 @@ cluster <- function(dsc, dsd, n=1, verbose=FALSE, ...) {
     ### dsc contains an RObj which is  a reference object with a cluster method
     for (i in 1:n) {
 
-	if(verbose && !i%%100) cat("Processed", i, "points\n")
+	if(verbose && !i%%100) cat("Processed", i, "points -",
+		nclusters(dsc), "clusters\n")
     	
 	d <- get_points(dsd,1)
     	

@@ -1,6 +1,5 @@
 Sample <- setRefClass("Sample", 
 	fields = list(
-		data	    = "data.frame",
 		size	    = "numeric",
 		stream_size = "numeric",
 
@@ -12,7 +11,6 @@ Sample <- setRefClass("Sample",
 			size	    = 100
 			) {
 		    
-		    data <<- data.frame()
 		    size	<<- size 
 		    stream_size	<<- 0 
 		    
@@ -25,8 +23,7 @@ Sample <- setRefClass("Sample",
 ### Reservoir sampling: all values in the stream have the same prob. to
 ### be sampled
 Sample $methods(cluster = function(x, ...) {
-	    data <<- rbind(data,x)
-
+	    
 	    ### fill with first values
 	    if(nrow(centers) < size) {
 		centers <<- rbind(centers,x)

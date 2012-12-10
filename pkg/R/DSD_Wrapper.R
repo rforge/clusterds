@@ -1,4 +1,4 @@
-DSD_Wrapper <- function(x, k, loop=FALSE, assignment = NULL) {
+DSD_Wrapper <- function(x, k=NA, loop=FALSE, assignment = NULL) {
 
     x <- as.data.frame(x)
     
