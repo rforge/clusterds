@@ -41,13 +41,13 @@ plot.DSD <- function(x, n = 500, col= NULL, pch= NULL,
     assignment <- attr(d,"assignment")
    
     if(is.null(col)) {
-	col <- assignment
-	col[assignment==0 | is.na(assignment)] <- "gray"
+	col <- as.integer(assignment)
+	col[assignment==0 | is.na(assignment)] <-  which(palette()=="gray")
     } 
  
     if(is.null(pch)) {
 	pch <- rep(1, n)
-	pch[assignment==0 | is.na(assignment)] <- 3
+	pch[assignment==0 | is.na(assignment)] <- 3L
     }
     
     if(ncol(d)>2 && method=="pairs") {

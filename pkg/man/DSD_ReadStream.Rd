@@ -10,6 +10,7 @@ A DSD class that reads a data stream from a file or any R connection.
 \usage{
 DSD_ReadStream(x, sep=",", take=NULL, class=NULL, 
     center=FALSE, scale=FALSE, loop=FALSE)
+scale_stream(dsd, n=1000, reset_stream=FALSE)
 close_stream{dsd}
 }
 
@@ -28,6 +29,8 @@ close_stream{dsd}
 	the end has been reached. If disabled, the object will warn the user
 	upon reaching the end.}
 	\item{dsd}{A object of class \code{DSD_ReadStream}.}
+	\item{n}{number of points used to estimate values for centering and scaing (see \code{scale} in \pkg{base}).}
+	\item{reset_stream}{Reset the stream position after taking the points for scale estimation.}
 }
 
 \details{
@@ -36,8 +39,12 @@ connection. The connection is responsible for maintaining where the stream
 is currently being read from. In general, the connections will consist of files
 stored on disk but have many other possibilities (see \code{\link{connection}}).
 
-The position in the file can be reset to the begining using \code{reset_stream()}.
-The connection can be closed using \code{close_stream()}.
+\code{scale_stream()} estimates the values for centering and scaling 
+(see \code{scale} in \pkg{base}) using \code{n} points from the 
+stream.
+
+The position in the file can be reset to the begining using 
+\code{reset_stream()}. The connection can be closed using \code{close_stream()}.
 }
 
 \value{
@@ -47,7 +54,9 @@ The connection can be closed using \code{close_stream()}.
 
 \seealso{
 	\code{\link{DSD}},
-	\code{\link{reset_stream}}
+	\code{\link{reset_stream}},
+	\code{\link{scale}} in \pkg{base}
+
 
 }
 
@@ -61,5 +70,23 @@ dsd2 <- DSD_ReadStream("data.txt", sep=",", loop=TRUE)
 dsd2
 
 # clean up
+close_Stream(dsd2)
 file.remove("data.txt")
+
+# example with a part of the kddcup1999 data (take only cont. variables)
+file <- system.file("examples", "kddcup10000.data.gz", package="stream")
+dsd <- DSD_ReadStream(gzfile(file),
+        take=c(1, 5, 6, 8:11, 13:20, 23:41), class=42, k=7)
+dsd
+
+get_points(dsd)
+
+# scale the stream
+dsd <- scale_stream(dsd, reset_stream=TRUE)
+get_points(dsd)
+
+# plot 100 points (projected on the first two principal components)
+plot(dsd, n=100, method="pc")
+
+close_stream(dsd)
 }

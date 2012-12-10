@@ -1,5 +1,5 @@
 # accepts an open connection
-DSD_ReadStream <- function(x, sep=",", 
+DSD_ReadStream <- function(x, sep=",", k=NA, d=NA,
 	take=NULL, class=NULL, 
 	center=FALSE, scale=FALSE,
 	loop=FALSE) {
@@ -8,22 +8,25 @@ DSD_ReadStream <- function(x, sep=",",
     if (is(x,"character")) {
 	x <- file(x)
 	open(x)
-	}
-	
-	# error out if no string or connection is passed
+    }
+
+    # error out if no string or connection is passed
     else if (!is(x,"connection")) {
 	stop("please pass a valid connection")
-	}
-	
-	# open the connection if its closed
+    }
+
+    # open the connection if its closed
     else if (!isOpen(x)) {
 	open(x)
     }
 
+    # figure out d
+    if(is.na(d) && !is.null(take)) d <- length(take)
+
     # creating the DSD object
     l <- list(description = "File Data Stream",
-	    d = NA,
-	    k = NA,
+	    d = d,
+	    k = k,
 	    con = x,
 	    sep = sep,
 	    take = take,
@@ -37,55 +40,57 @@ DSD_ReadStream <- function(x, sep=",",
 
 ## it is important that the connection is OPEN
 get_points.DSD_ReadStream <- function(x, n=1, assignment=FALSE, ...) {
-	
-	togo <- n
 
-	# comment.char="" is for performance reasons
-	tryCatch({
+    togo <- n
+
+    # comment.char="" is for performance reasons
+    tryCatch({
 		d <- suppressWarnings(read.table(file=x$con, 
 				sep=x$sep, nrows=n, comment.char="", ...))
 		togo <- n - nrow(d)
-	}, error = function(ex) {
-	})
-	
-	# this means no lines were read, we need to do a prep-read before looping
-	if (x$loop && togo == n) {
-		seek(x$con, where=0) # resetting the connection
-		d <- suppressWarnings(read.table(file=x$con, sep=x$sep, nrows=n, comment.char="", ...))
-		togo <- n - nrow(d)
-	}
-	
-	# we need to loop
-	while (x$loop && togo > 0) {
-		seek(x$con, where=0) # resetting the connection
-		
-		prev <- nrow(d)	
-		d <- suppressWarnings(rbind(d, read.table(file=x$con, sep=x$sep, nrows=togo, comment.char="", ...)))
-		togo <- togo - (nrow(d)-prev)
-	}
-	
-	# looping disabled, warn the user
-	if (!x$loop && togo == n) {
+	    }, error = function(ex) {
+	    })
+
+    # this means no lines were read, we need to do a prep-read before looping
+    if (x$loop && togo == n) {
+	seek(x$con, where=0) # resetting the connection
+	d <- suppressWarnings(read.table(file=x$con, 
+			sep=x$sep, nrows=n, comment.char="", ...))
+	togo <- n - nrow(d)
+    }
+
+    # we need to loop
+    while (x$loop && togo > 0) {
+	seek(x$con, where=0) # resetting the connection
+
+	prev <- nrow(d)	
+	d <- suppressWarnings(rbind(d, read.table(file=x$con, 
+				sep=x$sep, nrows=togo, comment.char="", ...)))
+	togo <- togo - (nrow(d)-prev)
+    }
+
+    # looping disabled, warn the user
+    if (!x$loop && togo == n) {
 	stop("looping disabled and the stream is empty")
-	}
-	
-	else if (!x$loop && togo > 0) {
+    }
+
+    else if (!x$loop && togo > 0) {
 	warning("reached the end of the stream, returned as much as possible")
-	}
-	
-
-	if(!is.null(x$class)) cl <- d[,x$class[1]]
-	if(!is.null(x$take)) d <- d[,x$take, drop=FALSE]
+    }
 
 
-	# scale
-	d <- scale(d, center= x$center, scale=x$scale)
-	
-	# if enough data was read, return like normal
-	d <- data.frame(d)
-	attr(d, "assignment") <- cl
+    if(!is.null(x$class)) cl <- d[,x$class[1]]
+    if(!is.null(x$take)) d <- d[,x$take, drop=FALSE]
 
-	d
+
+    # scale
+    d <- scale(d, center= x$center, scale=x$scale)
+
+    # if enough data was read, return like normal
+    d <- data.frame(d)
+    attr(d, "assignment") <- cl
+
+    d
 }
 
 reset_stream.DSD_ReadStream <- function(dsd) {
@@ -98,4 +103,19 @@ close_stream <- function(dsd) {
     close(dsd$con)
 }
 
+scale_stream <- function(dsd, n=1000, reset_stream=FALSE) {
+    if(!is(dsd, "DSD_ReadStream")) 
+	stop("'dsd' is not of class 'DSD_ReadStream'")
+
+    sc <- scale(get_points(dsd, n=n))
+    dsd$center <- attr(sc, "scaled:center")
+    dsd$scale <- attr(sc, "scaled:scale")
+
+    # fix division by 0 if all values were the same
+    dsd$scale[dsd$scale==0] <- 1
+
+    if(reset_stream) reset_stream(dsd)
+
+    dsd
+}
 

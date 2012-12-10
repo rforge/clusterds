@@ -36,6 +36,7 @@ export(
 	write_stream,
 	reset_stream,
 	close_stream,
+	scale_stream,
 	
 	# DSC
 	cluster,
