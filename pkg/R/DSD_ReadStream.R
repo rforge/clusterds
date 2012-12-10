@@ -1,5 +1,8 @@
 # accepts an open connection
-DSD_ReadStream <- function(x, sep=",", loop=FALSE) {
+DSD_ReadStream <- function(x, sep=",", 
+	take=NULL, class=NULL, 
+	center=FALSE, scale=FALSE,
+	loop=FALSE) {
 
     # if the user passes a string, create a new connection and open it
     if (is(x,"character")) {
@@ -23,19 +26,24 @@ DSD_ReadStream <- function(x, sep=",", loop=FALSE) {
 	    k = NA,
 	    con = x,
 	    sep = sep,
+	    take = take,
+	    class = class,
+	    center = center,
+	    scale = scale,
 	    loop = loop)
     class(l) <- c("DSD_ReadStream","DSD_R","DSD")
     l
 }
 
 ## it is important that the connection is OPEN
-get_points.DSD_ReadStream <- function(x, n=1, ...) {
+get_points.DSD_ReadStream <- function(x, n=1, assignment=FALSE, ...) {
 	
 	togo <- n
-	
+
 	# comment.char="" is for performance reasons
 	tryCatch({
-		d <- suppressWarnings(read.table(file=x$con, sep=x$sep, nrows=n, comment.char="", ...))
+		d <- suppressWarnings(read.table(file=x$con, 
+				sep=x$sep, nrows=n, comment.char="", ...))
 		togo <- n - nrow(d)
 	}, error = function(ex) {
 	})
@@ -65,10 +73,29 @@ get_points.DSD_ReadStream <- function(x, n=1, ...) {
 	warning("reached the end of the stream, returned as much as possible")
 	}
 	
+
+	if(!is.null(x$class)) cl <- d[,x$class[1]]
+	if(!is.null(x$take)) d <- d[,x$take, drop=FALSE]
+
+
+	# scale
+	d <- scale(d, center= x$center, scale=x$scale)
+	
 	# if enough data was read, return like normal
-	return(data.frame(d))
+	d <- data.frame(d)
+	attr(d, "assignment") <- cl
+
+	d
 }
 
 reset_stream.DSD_ReadStream <- function(dsd) {
-	seek(dsd$con, where=0)
+    seek(dsd$con, where=0)
 }
+
+close_stream <- function(dsd) {
+    if(!is(dsd, "DSD_ReadStream")) 
+	stop("'dsd' is not of class 'DSD_ReadStream'")
+    close(dsd$con)
+}
+
+

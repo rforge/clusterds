@@ -7,13 +7,14 @@ Clusters a number of input points from a data stream into a clustering object.
 }
 
 \usage{
-cluster(dsc, dsd, n = 1, ...)
+cluster(dsc, dsd, n = 1, verbose=FALSE, ...)
 }
 
 \arguments{
   \item{dsc}{a DSC object (clusterer).}
   \item{dsd}{a DSD object (data stream).}
   \item{n}{number of points to cluster.}
+  \item{verbose}{report progress.}
   \item{...}{extra arguments for clusterer.}
 }
 

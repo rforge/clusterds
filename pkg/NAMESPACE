@@ -35,6 +35,7 @@ export(
 	get_points,
 	write_stream,
 	reset_stream,
+	close_stream,
 	
 	# DSC
 	cluster,
