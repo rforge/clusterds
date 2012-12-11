@@ -4,7 +4,7 @@
 
 #Reclustering: suggests EM or k-means
 
-DSC_ClusTree <- function(horizon=1000, maxHeight=8, negLambda=NULL) {
+DSC_ClusTree <- function(horizon=1000, maxHeight=8, lambda=NULL) {
 
   # error checking
   if (maxHeight < 0) {
@@ -27,8 +27,8 @@ DSC_ClusTree <- function(horizon=1000, maxHeight=8, negLambda=NULL) {
   .jcall(options, "V", "setViaCLIString", cliParams)
   .jcall(clusterer, "V", "prepareForUse")
 
-  if(!is.null(negLambda))
-  	.jfield(clusterer,"negLambda")<-negLambda
+  if(!is.null(lambda))
+  	.jfield(clusterer,"negLambda") <- -1*lambda
 
   # initializing the R object
   l <- list(description = "ClusTree",

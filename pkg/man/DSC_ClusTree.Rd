@@ -9,13 +9,13 @@ Class implements the ClusTree cluster algorithm for data streams.
 }
 
 \usage{
-	DSC_ClusTree(horizon = 1000, maxHeight = 8, negLambda = NULL)
+	DSC_ClusTree(horizon = 1000, maxHeight = 8, lambda = NULL)
 }
 
 \arguments{
 	\item{horizon}{Range of the (time) window.}
 	\item{maxHeight}{The maximum height of the tree.}
- 	\item{negLambda}{number used to override computed lambda}
+ 	\item{negLambda}{number used to override computed lambda (decay).}
 }
 
 \details{

@@ -15,9 +15,9 @@ DSC_DenStream(horizon = 1000, epsilon = 0.1, minPoints = 10, beta = 0.001, mu = 
   \item{minPoints}{minimum number of points a micro-cluster must have.}
   \item{beta}{the outlier threshold, used in conjunction with \code{mu}
   (range: 0 to 1)} \item{mu}{the minimum weight a micro-cluster must have
-  within the \code{epsilon} neighborhood (range: 0 to max(double))}
-  \item{initPoints}{number of points to use for initialization}
-  \item{lambda}{number used to override computed lambda}
+  within the \code{epsilon} neighborhood (range: 0 to max(double)).}
+  \item{initPoints}{number of points to use for initialization.}
+  \item{lambda}{number used to override computed lambda (decay).}
 }
 
 \details{

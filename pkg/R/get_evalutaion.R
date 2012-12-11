@@ -89,8 +89,8 @@ evaluate <- function(method, predict, actual, points, centers) {
 		x <- numCluster(actual, predict)
 	else if(m == 5)
 		x <- numClasses(actual, predict)
-	else if(m == 6)
-		x <- fpr(actual, predict)
+	else if(m == 6) ### fpr = recall
+		x <- recall(actual, predict) 
 	else if(m == 7)
 		x <- ssq(points,centers)
 	else if(m == 8)
@@ -110,44 +110,41 @@ evaluate <- function(method, predict, actual, points, centers) {
 	x
 }
 
+### helper
+colMax <- function(x, which=FALSE) {
+    if(!which) apply(x, 2, FUN=function(y) max(y))
+    else {
+	apply(x, 2, FUN=function(y) which.max(y))
+    }
+}
+
 f1 <- function(actual, predict) {
 	precision <- precision(actual, predict)
 	recall <- recall(actual, predict)
 	f1 <- (2*precision*recall)/(precision+recall)
-	mean(f1)
+	f1
 }
 
 recall <- function(actual, predict) {
     confusion <- table(actual, predict)
-    confusion <- cbind(confusion,0)
-	relativeDocs <- apply(confusion[,],1, FUN = sum)
-	recall <- apply(confusion[,],2,function(x) if(relativeDocs[which.max(x)]) max(x)/relativeDocs[which.max(x)] else 0)
-	mean(recall[1:length(recall)-1])
+    relevant <- rowSums(confusion)
+
+    mean(colMax(confusion)/relevant[colMax(confusion, which=TRUE)])
 }
 
 precision <- function(actual, predict) {
     confusion <- table(actual, predict)
-    confusion <- cbind(confusion,0)
-	precision <- apply(confusion[,],2,function(x) if(sum(x)>0)max(x)/sum(x) else 0)
-	mean(precision[1:length(precision)-1])
-}
+    
+    mean(colMax(confusion)/colSums(confusion))
 
-fpr <- function(actual, predict) {
-    confusion <- table(actual, predict)
-    confusion <- cbind(confusion,0)
-	relativeDocs <- apply(confusion[,],1, FUN = sum)
-	recall <- apply(confusion[,],2,function(x) if(sum(relativeDocs[which(x != max(x))])) (sum(x)-max(x))/sum(relativeDocs[which(x != max(x))]) else 0)
-	mean(recall[1:length(recall)-1])
 }
 
 numCluster <- function(actual, predict) {
-    confusion <- table(actual, predict)
-	ncol(confusion)
+    length(unique(predict))
 }
 
 numClasses <- function(actual, predict) {
-    confusion <- table(actual, predict)
-	nrow(confusion)
+    length(unique(actual))
 }
 
 ssq <- function(points,centers) {
