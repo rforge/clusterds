@@ -3,21 +3,23 @@ get_centers.DSC_Macro <- function(x, type=c("auto", "micro", "macro"), ...) {
     type <- match.arg(type)
     if(type=="auto") type <- "macro"
 
-    if(type=="micro") get_microclusters(x)
-    else get_macroclusters(x)
-    }
+    if(type=="macro") return(get_macroclusters(x))
+    else return(get_microclusters(x))
+}
 
-get_weights.DSC_Macro <- function(x, type=c("auto", "micro", "macro"), 
+
+get_weights.DSC_Macro <- function(x, type=c("auto", "micro", "macro"),
 	scale=NULL, ...) {
     type <- match.arg(type)
     if(type=="auto") type <- "macro"
 
-    if(type=="micro") w <- get_microweights(x)
-    else w <- get_macroweights(x)
+    if(type=="macro") w <- get_macroweights(x)
+    else w <- get_microweights(x)
+
 
     if(!is.null(scale)) w <- map(w, range=scale, 
 	    from.range=c(0, max(w, na.rm=TRUE)))
+    
     w
 }
-
 

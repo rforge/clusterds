@@ -23,12 +23,12 @@ cluster <- function(dsc, dsd, n=1, verbose=FALSE, ...) {
 		nclusters(dsc), "clusters\n")
 
 	d <- get_points(dsd, 1)
-    	x <- .jcast(
-		    .jnew("weka/core/DenseInstance", 1.0, .jarray(as.double(d))),
-		    "weka/core/Instance"
-		    )
-    
-    	.jcall(dsc$javaObj, "V", "trainOnInstanceImpl", x)
+	x <- .jcast(
+		.jnew("weka/core/DenseInstance", 1.0, .jarray(as.double(d))),
+		"weka/core/Instance"
+		)
+
+	.jcall(dsc$javaObj, "V", "trainOnInstanceImpl", x)
     }	
 }
 
@@ -39,15 +39,13 @@ cluster <- function(dsc, dsd, n=1, verbose=FALSE, ...) {
 	if(verbose && !i%%100) cat("Processed", i, "points -",
 		nclusters(dsc), "clusters\n")
     	
-	d <- get_points(dsd,1)
-    	
-    	dsc$RObj$cluster(d, ...)
+    	dsc$RObj$cluster(get_points(dsd,1), ...)
     }
 }
 
 .cluster.DSC_Macro <- function(dsc, dsd, n, ...) {
-    d <- get_points(dsd,n=n)
-    dsc$RObj$cluster(d, ...)
+    d <- get_points(dsd, n=n)
+    dsc$RObj$cluster(d, weight=rep(1, nrow(d)), ...)
 }
 
 

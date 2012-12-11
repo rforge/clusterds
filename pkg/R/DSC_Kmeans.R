@@ -36,7 +36,7 @@ kmeans <- setRefClass("kmeans",
 )
 
 kmeans$methods(cluster = function(x, weight = rep(1,nrow(x)), ...) {
-		if(length(data)>0) {warning("Kmeans: Previous data is being overridden")}
+		if(length(data)>0) {warning("Kmeans: Previous data is being overwritten")}
 		weights <<- weight
 	    data <<- x
 	    if(nrow(data)>centers) {

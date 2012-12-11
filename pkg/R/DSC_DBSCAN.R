@@ -44,7 +44,7 @@ DBSCAN <- setRefClass("DBSCAN",
 
 DBSCAN$methods(cluster = function(x, weight = rep(1,nrow(x)), ...) {
 	    if(length(data)>0) {
-		warning("DBSCAN: Previous data is being overridden")
+		warning("DBSCAN: Previous data is being overwritten")
 	    }
 
 	    weights <<- weight

@@ -49,7 +49,6 @@ get_microclusters.DSC_MOA <- function(x, ...) {
 
     # empty clustering?
     if(length<1) {
-	warning(paste(class(x)[1],": There are no clusters",sep=""))
 	return(data.frame())
     }
 
@@ -98,7 +97,6 @@ get_microweights.DSC_MOA <- function(x) {
 
     # empty clustering?
     if(length<1) {
-	warning(paste(class(x)[1],": There are no clusters",sep=""))
 	return(numeric())
     }
 
@@ -123,4 +121,4 @@ get_microweights.DSC_MOA <- function(x) {
 get_copy.DSC_MOA <- function(x) {
 	#TODO
 	stop("Copy not yet implemented for MOA")
-}
+    }

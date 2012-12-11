@@ -69,11 +69,7 @@ DSC_tNN <- function(r = 0.1, k=NULL, lambda = 0.01, minweight = 0.1,
 
     l <- list(description = "tNN", RObj = tNN)
 
-    class <- c("DSC_tNN")
-    if(macro) class <- c(class,"DSC_Macro")
-    else class <- c(class,"DSC_Micro")
-
-    class(l) <- c(class,"DSC_R","DSC")
+    class(l) <- c("DSC_tNN", "DSC_Micro", "DSC_R", "DSC")
 
     l
 }
@@ -208,28 +204,33 @@ tNN$methods(cluster = function(newdata, debug = FALSE) {
 	    }
 	}
 	)
+    
+#helper
+strong_mcs <- function(x) {
+    which(x$RObj$weights>quantile(x$RObj$weights,
+		    probs=x$RObj$noise))
+}
 
 get_microclusters.DSC_tNN <- function(x) {
     ### we have to rename the micro-clusters
     mc <- x$RObj$centers
     if(nrow(mc)<1) return(data.frame())
     
-    mc <- mc[which(x$RObj$weights>quantile(x$RObj$weights,
-		    probs=x$RObj$noise)),]
+    mc <- mc[strong_mcs(x),]
 
     rownames(mc) <- 1:nrow(mc)
     mc
 }
 
 get_microweights.DSC_tNN <- function(x) {
-    x$RObj$weights[
-    which(x$RObj$weights>quantile(x$RObj$weights,
-		    probs=x$RObj$noise))]
+    x$RObj$weights[strong_mcs(x)]
 }
 
 
 
 get_macroclusters.DSC_tNN <- function(x) {
+    if(!x$RObj$macro) stop("No macro-clusters available!")
+    
     mw <-  get_membership_weights(x)
     assignment <- mw$assignment
     weights <- mw$weight
@@ -253,14 +254,17 @@ get_macroclusters.DSC_tNN <- function(x) {
     data
 }
 
-get_macroweights.DSC_tNN <- function(x) get_membership_weights(x)$weight
-
+get_macroweights.DSC_tNN <- function(x) {
+    if(!x$RObj$macro) stop("No macro-clusters available!")
+    get_membership_weights(x)$weight
+}
 
 
 microToMacro.DSC_tNN <- function(x, micro=NULL) {
     if(is.null(micro)) micro <- 1:nclusters(x, type="micro")
     mw <- get_membership_weights(x)
-    assignment <- mw$assignment
+   
+    assignment <- mw$assignment[strong_mcs(x)]
     structure(assignment[micro], names=micro)
 }
 
@@ -377,9 +381,8 @@ plot.DSC_tNN <- function(x, dsd = NULL, n = 1000,
     #p <- get_microclusters(x)
     p <- x$RObj$centers
 
-    if(all(c("DSC_tNN", "DSC_Macro") %in% class(x))
-		&& type %in% c("macro", "auto")
-	    && (ncol(p)<=2 || method=="plot")) {
+    if(x$RObj$macro && type %in% c("macro")
+		&& (ncol(p)<=2 || method=="plot")) {
 	
 	if(nrow(p)>0) {
 

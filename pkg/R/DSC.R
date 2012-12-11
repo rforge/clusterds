@@ -84,10 +84,10 @@ get_assignment.DSC <- function(dsc, points, type=c("auto", "micro", "macro"),
 print.DSC <- function(x, ...) {
     cat(paste(x$description, " (", paste(class(x), collapse=", "), ")", 
 		    '\n', sep=""))
-    if(!is(nc <- try(nclusters(x, type="macro"), silent=TRUE), "try-error")) 
-	cat(paste('Number of macro-clusters:', nc, '\n'))
     if(!is(nc <- try(nclusters(x, type="micro"), silent=TRUE), "try-error")) 
 	cat(paste('Number of micro-clusters:', nc, '\n'))
+    if(!is(nc <- try(nclusters(x, type="macro"), silent=TRUE), "try-error")) 
+	cat(paste('Number of macro-clusters:', nc, '\n'))
 }
 
 

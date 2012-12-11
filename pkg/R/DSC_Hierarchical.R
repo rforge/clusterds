@@ -33,7 +33,7 @@ hierarchical <- setRefClass("hierarchical",
 
 hierarchical$methods(cluster = function(x,  weight = rep(1,nrow(x)), ...) {
 	    if(length(data)>0) {
-		warning("Hierarchical: Previous data is being overridden")
+		warning("Hierarchical: Previous data is being overwritten")
 	    }
 	    
 	    dataWeights <<- weight

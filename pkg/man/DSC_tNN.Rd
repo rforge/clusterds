@@ -30,12 +30,14 @@ incoming stream, if it is below the threshold value of dissimilarity value of
 any existing micro-clusters, and if so, merges the point with the 
 micro-cluster. Otherwise, a new micro-cluster is created to accommodate 
 the new data point.
+
+Note: Although DSC_tNN is a micro clustering algoritm, macro clusters
+and weights are available.
+
 }
 
 \value{
-An object of class \code{DSC_tNN} (subclass of  \code{DSC}, \code{DSC_R}). 
-Depending on whether or not the \code{macro} flag
-is set, the class list also includes  \code{DSC_Micro} or  \code{DSC_Macro}.
+An object of class \code{DSC_tNN} (subclass of  \code{DSC}, \code{DSC_R}, \code{DSC_Micro}). 
 }
 
 \references{ 
@@ -48,8 +50,7 @@ Stream Clustering in R, Journal of Statistical Software, 35(5), 1-31, URL \url{h
 
 \seealso{
 	\code{\link{DSC}},
-	\code{\link{DSC_Micro}},
-	\code{\link{DSC_Macro}}
+	\code{\link{DSC_Micro}}
 }
 
 \examples{
@@ -57,15 +58,17 @@ Stream Clustering in R, Journal of Statistical Software, 35(5), 1-31, URL \url{h
 dsd <- DSD_mlbenchGenerator("cassini")
 
 # tNN has a built in micro and micro-clusterer
-tnn <- DSC_tNN(k=3, alpha=.08, lambda=0)
+tnn <- DSC_tNN(r=.2, k=3, alpha=.08, lambda=0)
 cluster(tnn, dsd, 1000)
 
-# see macro-clusters
-get_centers(tnn)
-
 # see micro-clusters
-head(get_centers(tnn, type="micro"))
-nclusters(tnn, type="micro")
+nclusters(tnn)
+head(get_centers(tnn))
+
+# see macro-clusters
+nclusters(tnn, type="macro")
+get_centers(tnn, type="macro")
+
 
 # see how micro and macro-clusters relate
 # each microcluster has an entry with the macro-cluster id
@@ -73,13 +76,13 @@ nclusters(tnn, type="micro")
 microToMacro(tnn)
 
 
-# plot macro-clusters
-plot(tnn, dsd)
 # plot micro-clusters
-plot(tnn, dsd, type="micro")
+plot(tnn, dsd)
+# plot macro-clusters
+plot(tnn, dsd, type="macro")
 
 # evaluate first using macro and then using micro-clusters
-get_evaluation(tnn, dsd, "rand")
-get_evaluation(tnn, dsd, "rand", assign="macro")
-get_evaluation(tnn, dsd, "rand", type ="micro")
+get_evaluation(tnn, dsd, "rand_ha")
+get_evaluation(tnn, dsd, "rand_ha", type="macro")
+get_evaluation(tnn, dsd, "rand_ha", type="macro", assign="macro")
 }

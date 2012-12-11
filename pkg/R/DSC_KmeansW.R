@@ -33,7 +33,7 @@ kmeansW <- setRefClass("kmeansW",
 
 kmeansW$methods(cluster = function(x, weight = rep(1,nrow(x)), ...) {
 	    if(length(data)>0) {
-		warning("KmeansW: Previous data is being overridden")
+		warning("KmeansW: Previous data is being overwritten")
 	    }
 	    
 	    data <<- x
