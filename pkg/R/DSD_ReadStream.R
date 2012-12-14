@@ -23,6 +23,7 @@ DSD_ReadStream <- function(x, sep=",", k=NA, d=NA,
     # figure out d
     if(is.na(d) && !is.null(take)) d <- length(take)
 
+
     # creating the DSD object
     l <- list(description = "File Data Stream",
 	    d = d,
@@ -31,10 +32,14 @@ DSD_ReadStream <- function(x, sep=",", k=NA, d=NA,
 	    sep = sep,
 	    take = take,
 	    class = class,
-	    center = center,
-	    scale = scale,
+	    center = FALSE,
+	    scale = FALSE,
 	    loop = loop)
     class(l) <- c("DSD_ReadStream","DSD_R","DSD")
+    
+    l <- scale_stream(l, n=1000, center=center, scale=scale,
+	    reset_stream=TRUE)
+
     l
 }
 
@@ -78,8 +83,6 @@ get_points.DSD_ReadStream <- function(x, n=1, assignment=FALSE, ...) {
 	warning("reached the end of the stream, returned as much as possible")
     }
 
-
-    if(!is.null(x$class)) cl <- d[,x$class[1]]
     if(!is.null(x$take)) d <- d[,x$take, drop=FALSE]
 
 
@@ -88,8 +91,12 @@ get_points.DSD_ReadStream <- function(x, n=1, assignment=FALSE, ...) {
 
     # if enough data was read, return like normal
     d <- data.frame(d)
-    attr(d, "assignment") <- cl
-
+    
+    if(assignment) {
+	 if(!is.null(x$class)) attr(d, "assignment") <- d[,x$class[1]]
+	 else warning("No assignment avaialble!")
+    }
+    
     d
 }
 
@@ -103,16 +110,18 @@ close_stream <- function(dsd) {
     close(dsd$con)
 }
 
-scale_stream <- function(dsd, n=1000, reset_stream=FALSE) {
+scale_stream <- function(dsd, n=1000, center=TRUE, scale=TRUE, 
+	reset_stream=FALSE) {
     if(!is(dsd, "DSD_ReadStream")) 
 	stop("'dsd' is not of class 'DSD_ReadStream'")
 
-    sc <- scale(get_points(dsd, n=n))
+    sc <- scale(get_points(dsd, n=n), center=center, scale=scale)
     dsd$center <- attr(sc, "scaled:center")
+    if(is.null(dsd$center)) dsd$center <- center
     dsd$scale <- attr(sc, "scaled:scale")
-
-    # fix division by 0 if all values were the same
-    dsd$scale[dsd$scale==0] <- 1
+    
+    if(is.null(dsd$scale)) dsd$scale <- scale
+    else dsd$scale[dsd$scale==0] <- 1 # fix division by 0 if all values were the same
 
     if(reset_stream) reset_stream(dsd)
 
