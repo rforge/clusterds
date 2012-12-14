@@ -15,7 +15,7 @@ Class implements the ClusTree cluster algorithm for data streams.
 \arguments{
 	\item{horizon}{Range of the (time) window.}
 	\item{maxHeight}{The maximum height of the tree.}
- 	\item{negLambda}{number used to override computed lambda (decay).}
+ 	\item{lambda}{number used to override computed lambda (decay).}
 }
 
 \details{

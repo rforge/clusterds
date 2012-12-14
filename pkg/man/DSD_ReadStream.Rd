@@ -8,7 +8,7 @@ A DSD class that reads a data stream from a file or any R connection.
 }
 
 \usage{
-DSD_ReadStream(x, sep=",", take=NULL, class=NULL, 
+DSD_ReadStream(x, sep=",", k=NA, d=NA, take=NULL, class=NULL, 
     center=FALSE, scale=FALSE, loop=FALSE)
 scale_stream(dsd, n=1000, reset_stream=FALSE)
 close_stream{dsd}
@@ -19,6 +19,8 @@ close_stream{dsd}
 	connection.}
 	\item{sep}{The character string that separates dimensions in data
 	points in the stream.}
+	\item{k}{The number of clusters within the stream.}
+	\item{d}{The number of dimensions within the stream.}
 	\item{take}{indices of columns to extract from the file.}
 	\item{class}{column index for the class attribute.}
 	\item{center}{FALSE or a numeric vector of length equal to
@@ -70,7 +72,7 @@ dsd2 <- DSD_ReadStream("data.txt", sep=",", loop=TRUE)
 dsd2
 
 # clean up
-close_Stream(dsd2)
+close_stream(dsd2)
 file.remove("data.txt")
 
 # example with a part of the kddcup1999 data (take only cont. variables)

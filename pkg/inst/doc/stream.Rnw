@@ -1003,7 +1003,8 @@ algorithm, it it removed from memory,
 we can efficiently process files larger than the available main memory.
 
 <<>>= 
-dsd_file <- DSD_ReadStream("data.csv", sep=",") 
+file <- system.file("examples", "kddcup10000.data.gz", package="stream")
+dsd_file <- DSD_ReadStream(gzfile(file),take=c(1, 5, 6, 8:11, 13:20, 23:41), class=42, k=7)
 dsd_file
 @
 

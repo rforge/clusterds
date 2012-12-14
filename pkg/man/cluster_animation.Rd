@@ -8,12 +8,13 @@ and then produces an animation as an animated gif.
 }
 
 \usage{
-    cluster_animation(dsc,dsd,n=1,interval=.1, pointInterval=100, horizon=5*pointInterval, evaluationMethod=NULL, outdir=NULL,...)
+    cluster_animation(dsc,dsd,macro=NULL,n=1,interval=.1, pointInterval=100, horizon=5*pointInterval, evaluationMethod=NULL, outdir=NULL,...)
 }
 
 \arguments{
   \item{dsc}{a DSC object}
   \item{dsd}{a DSD object}
+  \item{macro}{a DSC object used for reclustering when performing evaluations.}
   \item{n}{the number of points to cluster}
   \item{interval}{the time interval between each frame}
   \item{pointInterval}{the number of new points needed before a new frame is created}

@@ -52,7 +52,9 @@ export(
 	microToMacro,	
 	get_evaluation,
 	cluster_animation,
-	data_animation
+	data_animation,
+	cluster_evaluation
+	
       )
 
 ### DSD Methods

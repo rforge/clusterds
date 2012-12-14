@@ -10,7 +10,7 @@
 
 \usage{
 	get_evaluation(dsc, dsd, method, n = 1000, 
-	    type=c("auto", "micro", "macro"), assign="micro", pointInterval=NULL)
+	    type=c("auto", "micro", "macro"), assign="micro")
 }
 
 \arguments{
@@ -24,8 +24,6 @@
 	assignment is done to micro-clusters while type is macro, micro-cluster
 	assignments are translated to macro-cluster assignments using 
 	information on what micro-clusters constitute each macro-cluster.}
-	\item{pointInterval}{If set, it will cluster the DSC on the given interval and then perform
-		the evaluation method(s) each time until n is depleted}
 }
 
 \details{
