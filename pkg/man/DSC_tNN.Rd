@@ -82,7 +82,7 @@ plot(tnn, dsd)
 plot(tnn, dsd, type="macro")
 
 # evaluate first using macro and then using micro-clusters
-get_evaluation(tnn, dsd, "rand_ha")
-get_evaluation(tnn, dsd, "rand_ha", type="macro")
-get_evaluation(tnn, dsd, "rand_ha", type="macro", assign="macro")
+get_evaluation(tnn, dsd, "cRand")
+get_evaluation(tnn, dsd, "cRand", type="macro")
+get_evaluation(tnn, dsd, "cRand", type="macro", assign="macro")
 }

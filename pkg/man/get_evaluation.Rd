@@ -34,19 +34,30 @@
 	the majority class and the class of all assigned points several 
 	evaluation measures are available:
 	\itemize{
-		\item	\code{"numCluster"} (number of clusters), 
-		\item	\code{"numClasses"} (number of classes),
-		\item	\code{"f1"} (F1 measure), 
-		\item	\code{"recall"},
+		\item	\code{"numClusters"} number of clusters, 
+		\item	\code{"numClasses"} number of classes,
 		\item	\code{"precision"}, 
+		\item	\code{"recall"},
+		\item	\code{"F1"} F1 measure, 
 		\item	\code{"purity"}, 
-		\item	\code{"fpr"} (false positive rate),
-		\item	\code{"ssq"} (sum of squares), 
-		\item	\code{"jaccard"} (Jaccard index), 
-		\item	\code{"rand"} (Rand index),
-		\item	\code{"rand_HA"} (Hubert and Arabie's adjusted Rand index),
-		\item	\code{"rand_MA"} (Morey and Agresti's adjusted Rand index),
-		\item	\code{"rand_FM"} (Fowlkes and Mallows's index).
+		\item	\code{"fpr"} false positive rate,
+		\item	\code{"SSQ"} sum of squares, 
+		\item	\code{"Euclidean"} Euclidean dissimilarity of
+		          the memberships (See Dimitriadou, Weingessel and Hornik
+			            (2002)), 
+		\item	\code{"Manhattan"} Manhattan dissimilarity of
+		          the memberships, 
+		\item	\code{"Rand"} Rand index (see Rand (1971)),
+		\item	\code{"cRand"} Adjusted Rand index (see Hubert and Arabie (1985)),
+		\item	\code{"NMI"} Normalized Mutual Information (see Strehl and Ghosh
+		          (2002)),
+		\item	\code{"KP"} Katz-Powell index (see Katz and
+		          Powell (1953)),
+		\item	\code{"angle"} maximal cosine of the angle between the agreements,
+		\item	\code{"diag"} maximal co-classification rate,
+		\item	\code{"FM"} Fowlkes and Mallows's index (see Fowlkes and Mallows (1983)),
+		\item	\code{"Jaccard"} Jaccard index, 
+		\item	\code{"PS"} Prediction Strength (see Tibshirani and Walter (2005)).
 	}
 
 Many measures are the average over all clusters. For example, purity is
@@ -64,6 +75,9 @@ does not make sense.
 
 Using \code{type} and \code{assign}, the user can select how to assign data
 points and ad what level (micro or macro) to evaluate.
+
+Many of the above measures are implemented package \pkg{clue} in function
+\code{cl_agreement().}
 }
 
 \value{
@@ -73,6 +87,40 @@ points and ad what level (micro or macro) to evaluate.
     \code{"assign"}, to see at what level the evaluation was done.
     
 }
+
+\references{
+E. Dimitriadou, A. Weingessel and K. Hornik (2002).  A combination
+scheme for fuzzy clustering.  International Journal of Pattern
+Recognition and Artificial Intelligence, 16, 901-912.
+
+E. B. Fowlkes and C. L. Mallows (1983).  A method for comparing
+two hierarchical clusterings.  Journal of the American
+Statistical Association, 78, 553-569.
+
+L. Hubert and P. Arabie (1985).  Comparing partitions.  Journal
+of Classification, 2, 193-218.
+
+W. M. Rand (1971).  Objective criteria for the evaluation of
+clustering methods.  Journal of the American Statistical
+Association, 66, 846-850.
+
+L. Katz and J. H. Powell (1953).  A proposed index of the
+conformity of one sociometric measurement to another.
+Psychometrika, 18, 249-256.
+
+A. Strehl and J. Ghosh (2002).  Cluster ensembles - A knowledge
+reuse framework for combining multiple partitions.  Journal of
+Machine Learning Research, 3, 583-617.
+
+R. Tibshirani and G. Walter (2005).  Cluster validation by
+Prediction Strength.  Journal of Computational and Graphical
+Statistics, 14/3, 511-528.
+}
+
+\seealso{
+            \code{\link[clue]{cl_agreement}} in \pkg{clue}.
+}
+
 
 \examples{
 # Create stream

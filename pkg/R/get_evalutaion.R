@@ -1,6 +1,7 @@
 #get dsd, dsc and n
 
-cluster_evaluation <- function(dsc,dsd,macro=NULL,method, n=1000,type=c("auto", "micro", "macro"), assign="micro", pointInterval=100) {
+cluster_evaluation <- function(dsc, dsd, macro=NULL, method, 
+	n=1000, type=c("auto", "micro", "macro"), assign="micro", pointInterval=100) {
 	
 	evaluations <- data.frame()
 	for(i in 1:(n/pointInterval)) {
@@ -19,20 +20,25 @@ cluster_evaluation <- function(dsc,dsd,macro=NULL,method, n=1000,type=c("auto", 
 	
 }
 
-get_evaluation <- function (dsc, dsd,
-	method, n = 1000, 
+get_evaluation <- function (dsc, dsd, method, n = 1000, 
 	type=c("auto", "micro", "macro"), assign="micro") {
-		
-	
-	if(missing(method)) method <- c("numCluster","numClasses", "f1","recall",
-		    "precision", "purity" ,"fpr","ssq","jaccard",
-		    "rand","rand_HA","rand_MA","rand_FM")
-	
-	### figure out type
-	type <- get_type(dsc, type)
-	
+
+    methods <- c(
+	    "numClusters","numClasses",
+	    "precision", "recall", "F1",
+	    "purity", "fpr",
+	    "SSQ",
+	    "Euclidean", "Manhattan", "Rand", "cRand",
+	    "NMI", "KP", "angle", "diag", "FM", "Jaccard", "PS")
+
+    if(missing(method)) method <- methods
+    else method <- methods[pmatch(tolower(method),tolower(methods))] 
+
+    ### figure out type
+    type <- get_type(dsc, type)
+
     c <- get_centers(dsc, type=type) 
-    	
+
     if(nrow(c)<1) {
 	warning("No centers available!")
 	return(0)
@@ -49,7 +55,6 @@ get_evaluation <- function (dsc, dsd,
 
     ### make points assigned to unassigned micro-clusters noise (0)
     predict[is.na(predict)] <- 0L
-
 
     ### remove noise
     noise <- which(is.na(actual))
@@ -75,44 +80,48 @@ print.stream_eval <-  function(x, ...) {
 
 evaluate <- function(method, predict, actual, points, centers) {
 	#make a vector of all of the methods and then do a lot of if statements
-	methods <- c("f1","recall","precision","numCluster","numClasses","fpr","ssq","rand","jaccard","rand_HA","rand_MA","rand_FM", "purity")
+	methods <- c(
+		"numClusters","numClasses",
+		"precision", "recall", "F1",
+		"purity", "fpr",
+		"SSQ",
+		"Euclidean", "Manhattan", "Rand", "cRand",
+		"NMI", "KP", "angle", "diag", "FM", "Jaccard", "PS")
 
 	
-	m <- pmatch(tolower(method),tolower(methods)) #finds index of partial match in array of methods
+	#finds index of partial match in array of methods
+	method <- methods[pmatch(tolower(method),tolower(methods))] 
 	
-	if(is.na(m)){
+	if(is.na(method)){
 		stop("Invalid measure.")
 	}
 	
-	if(m == 1)
-		x <- f1(actual, predict)
-	else if(m == 2)
-		x <- recall(actual, predict)
-	else if(m == 3)
-		x <- precision(actual, predict)
-	else if(m == 4)
-		x <- numCluster(actual, predict)
-	else if(m == 5)
-		x <- numClasses(actual, predict)
-	else if(m == 6) ### fpr = recall
-		x <- recall(actual, predict) 
-	else if(m == 7)
-		x <- ssq(points,centers)
-	else if(m == 8)
-		x <- rand(predict,actual)
-	else if(m == 9)
-		x <- jaccard(predict,actual)
-	else if(m == 10)
-		x <- HA(predict,actual)
-	else if(m == 11)
-		x <- MA(predict,actual)
-	else if(m == 12)
-		x <- FM(predict,actual)
-	else if(m == 13) ### purity is precision
-		x <- precision(actual, predict)
-	else
-		stop(paste(method,"is not a valid evaluation method."))
-	x
+	switch(method,
+		numClusters  = numClusters(actual, predict),
+		numClasses  = numClasses(actual, predict),
+		
+		precision   = precision(actual, predict),
+		recall	    = recall(actual, predict),
+		F1	    = f1(actual, predict),
+		
+		purity	    = precision(actual, predict),
+		fpr	    = recall(actual, predict),
+	
+		SSQ	    = ssq(points,centers),
+		
+		Euclidean   = clue_agreement(predict, actual, "euclidean"),
+		Manhattan   = clue_agreement(predict, actual, "manhattan"),
+		Rand	    = clue_agreement(predict, actual, "rand"),
+		cRand	    = clue_agreement(predict, actual, "crand"),
+		NMI	    = clue_agreement(predict, actual, "NMI"),
+		KP	    = clue_agreement(predict, actual, "KP"),
+		angle	    = clue_agreement(predict, actual, "angle"),
+		diag	    = clue_agreement(predict, actual, "diag"),
+		FM	    = clue_agreement(predict, actual, "FM"),
+		Jaccard	    = clue_agreement(predict, actual, "jaccard"),
+	#	purity	    = clue_agreement(predict, actual, "purity"),
+		PS	    = clue_agreement(predict, actual, "PS")
+	)
 }
 
 ### helper
@@ -126,8 +135,7 @@ colMax <- function(x, which=FALSE) {
 f1 <- function(actual, predict) {
 	precision <- precision(actual, predict)
 	recall <- recall(actual, predict)
-	f1 <- (2*precision*recall)/(precision+recall)
-	f1
+	(2*precision*recall)/(precision+recall)
 }
 
 recall <- function(actual, predict) {
@@ -144,7 +152,7 @@ precision <- function(actual, predict) {
 
 }
 
-numCluster <- function(actual, predict) {
+numClusters <- function(actual, predict) {
     length(unique(predict))
 }
 
@@ -152,30 +160,16 @@ numClasses <- function(actual, predict) {
     length(unique(actual))
 }
 
-ssq <- function(points,centers) {
+ssq <- function(points, centers) {
 	dist <- dist(points,centers)
 	mindistance <- apply(dist, 1, min)
 	sum(mindistance)
 }
 
-rand <- function(predict,actual) {
-	as.numeric(adjustedRand(predict,actual,"Rand"))
-}
-
-HA <- function(predict,actual) {
-	as.numeric(adjustedRand(predict,actual,"HA"))
-}
-
-MA <- function(predict,actual) {
-	as.numeric(adjustedRand(predict,actual,"MA"))
-}
-
-FM <- function(predict,actual) {
-	as.numeric(adjustedRand(predict,actual,"FM"))
-}
-
-jaccard <- function(predict,actual) {
-	as.numeric(adjustedRand(predict,actual,"Jaccard"))
+clue_agreement <- function(predict, actual, method) {
+    predict <- as.cl_hard_partition(predict)
+    actual <- as.cl_hard_partition(actual)
+    as.numeric(cl_agreement(cl_ensemble(predict, actual), method=method))
 }
 
 ### silhouette <- function(d,c,assignment = NULL) {}

@@ -17,8 +17,11 @@ get_weights.DSC_Micro <- function(x, type=c("auto", "micro", "macro"),
     else w <- get_microweights(x)
 
 
-    if(!is.null(scale)) w <- map(w, range=scale, 
-	    from.range=c(0, max(w, na.rm=TRUE)))
+    if(!is.null(scale)) { 
+	if(length(unique(w) ==1))  w <- rep(mean(scale), length(w))
+	else w <- map(w, range=scale, from.range=c(0,  
+			    max(w, na.rm=TRUE))) 
+    }
     
     w
 }

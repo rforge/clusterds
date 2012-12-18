@@ -58,6 +58,6 @@ plot.DSD <- function(x, n = 500, col= NULL, pch= NULL,
 		p <- prcomp(d)
 		plot(p$x, col=col, pch=pch, ...)
     } else {
-		plot(d,col=col, pch=pch, ...)
+		plot(d[,1:2],col=col, pch=pch, ...)
     }
 }

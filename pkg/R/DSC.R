@@ -15,8 +15,11 @@ get_weights <- function(x, type=c("auto", "micro", "macro"), scale=NULL, ...)
 get_weights.default <- function(x, type=c("auto", "micro", "macro"), 
 	scale=NULL, ...) {
     m <- rep(1,nclusters(x, type=type))
-    if(!is.null(scale)) m <- map(m, range=scale, from.range=c(0, 
-		    max(m, na.rm=TRUE)))
+    if(!is.null(scale)) {
+	if(length(unique(m) ==1))  w <- rep(mean(scale), length(w))
+	else m <- map(m, range=scale, from.range=c(0, 
+			max(m, na.rm=TRUE)))
+    }
     m
 }
 
@@ -139,7 +142,7 @@ plot.DSC <- function(x, dsd = NULL, n = 500,
 	p <- prcomp(centers)
 	    plot(p$x, col=col, cex=cex_clusters, pch=mpch, ...)
     } else { ## plot first 2 dimensions
-	    plot(centers, col=col, cex=cex_clusters, pch=mpch, ...)
+	    plot(centers[,1:2], col=col, cex=cex_clusters, pch=mpch, ...)
     }
 
 }

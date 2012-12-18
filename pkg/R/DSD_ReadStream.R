@@ -83,19 +83,20 @@ get_points.DSD_ReadStream <- function(x, n=1, assignment=FALSE, ...) {
 	warning("reached the end of the stream, returned as much as possible")
     }
 
+    if(assignment) {
+	if(is.null(x$class)) {
+	    warning("No assignment avaialble!")
+	    cl<-NULL
+	}else cl <- d[,x$class[1]]
+    }
+
     if(!is.null(x$take)) d <- d[,x$take, drop=FALSE]
 
 
     # scale
-    d <- scale(d, center= x$center, scale=x$scale)
-
-    # if enough data was read, return like normal
-    d <- data.frame(d)
+    d <- as.data.frame(scale(d, center= x$center, scale=x$scale))
     
-    if(assignment) {
-	 if(!is.null(x$class)) attr(d, "assignment") <- d[,x$class[1]]
-	 else warning("No assignment avaialble!")
-    }
+    if(assignment) attr(d, "assignment") <-cl
     
     d
 }

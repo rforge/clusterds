@@ -1,14 +1,14 @@
 ### write data from a stream to a file
 
-write_stream <- function(dsd, con, n=100, sep=",",
+write_stream <- function(dsd, con, n=100, assignment=FALSE, sep=",",
 	col.names=FALSE, row.names=FALSE, ...) UseMethod("write_stream")
 
-write_stream.default <- function(dsd, con, n=100, sep=",", 
+write_stream.default <- function(dsd, con, n=100, assignment=FALSE, sep=",", 
 	col.names=FALSE, row.names=FALSE, ...) {
     stop(gettextf("write_stream not implemented for class '%s'.", class(dsd)))
 }
 
-write_stream.DSD <- function(dsd, con, n=100, sep=",",
+write_stream.DSD <- function(dsd, con, n=100, assignment=FALSE, sep=",",
 	col.names=FALSE, row.names=FALSE, ...) {	
 
     # string w/ file name (clears the file)
@@ -21,10 +21,13 @@ write_stream.DSD <- function(dsd, con, n=100, sep=",",
     else if (!isOpen(con)) open(con)
 
     # all following calls have to have col.names=FALSE regardless
-    for (i in 1:n) write.table(get_points(dsd, 1), 
-	    con, sep=sep, append=TRUE, col.names=FALSE,
+    for (i in 1:n) {
+	p <- get_points(dsd, 1, assignment=assignment)
+	if(assignment) p <- cbind(p, attr(p, "assignment"))
+	write.table(p, 
+		con, sep=sep, append=TRUE, col.names=FALSE,
 		row.names=row.names, ...)
-
+    }
     close(con)
 }
 
