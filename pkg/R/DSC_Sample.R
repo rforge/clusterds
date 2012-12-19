@@ -1,18 +1,18 @@
 Sample <- setRefClass("Sample", 
 	fields = list(
-		size	    = "numeric",
-		stream_size = "numeric",
+		k		= "integer",
+		stream_size	= "integer",
 
-		centers	    = "data.frame"
+		centers		= "data.frame"
 	), 
 
 	methods = list(
 		initialize = function(
-			size	    = 100
+			k	= 100L
 			) {
 		    
-		    size	<<- size 
-		    stream_size	<<- 0 
+		    k		<<- k
+		    stream_size	<<- 0L 
 		    
 		    .self
 		}
@@ -25,22 +25,22 @@ Sample <- setRefClass("Sample",
 Sample $methods(cluster = function(x, ...) {
 	    
 	    ### fill with first values
-	    if(nrow(centers) < size) {
+	    if(nrow(centers) < k) {
 		centers <<- rbind(centers,x)
 
 	    }else{ ### replace values with decreasing probabilities
 		r <- as.integer(runif(1, min=1, max=stream_size+1))
-		if(r < size) centers[r, ] <<- x
+		if(r < k) centers[r, ] <<- x
 	    }	 
 
-	    stream_size <<- stream_size+1
+	    stream_size <<- stream_size + 1L
 	}
 	)
 
    
-DSC_Sample <- function(size = 100) {
+DSC_Sample <- function(k = 100) {
 
-    sample <- Sample$new( size = size)
+    sample <- Sample$new(k = as.integer(k))
 
 
     l <- list(description = "Sample",

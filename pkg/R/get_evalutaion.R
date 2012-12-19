@@ -97,8 +97,8 @@ evaluate <- function(method, predict, actual, points, centers) {
 	}
 	
 	switch(method,
-		numClusters  = numClusters(actual, predict),
-		numClasses  = numClasses(actual, predict),
+		numClusters  = numClusters(centers),
+		numClasses  = numClasses(actual),
 		
 		precision   = precision(actual, predict),
 		recall	    = recall(actual, predict),
@@ -152,11 +152,11 @@ precision <- function(actual, predict) {
 
 }
 
-numClusters <- function(actual, predict) {
-    length(unique(predict))
+numClusters <- function(centers) {
+    nrow(centers)
 }
 
-numClasses <- function(actual, predict) {
+numClasses <- function(actual) {
     length(unique(actual))
 }
 

@@ -25,19 +25,19 @@
 
 DSC_CluStream <- function(
 	horizon=1000, 
-	maxNumKernels=100,
-	kernelRadiFactor=2
+	k=100,
+	t=2
 	) {
   
   if (horizon < 0)
     stop("invalid horizon, must be > 0")
 
-  if (maxNumKernels < 0)
-    stop("invalid maxNumKernels, must be > 0")
+  if (k < 0)
+    stop("invalid k, must be > 0")
 
   paramList <- list(h = as.integer(horizon),
-                    k = as.integer(maxNumKernels),
-		    t = kernelRadiFactor)
+                    k = as.integer(k),
+		    t = t)
 
   # converting the param list to a cli string to use in java
   cliParams <- convert_params(paramList)

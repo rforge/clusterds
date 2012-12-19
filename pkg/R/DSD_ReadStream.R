@@ -28,7 +28,7 @@ DSD_ReadStream <- function(x, sep=",", k=NA, d=NA,
     l <- list(description = "File Data Stream",
 	    d = d,
 	    k = k,
-	    con = x,
+	    file = x,
 	    sep = sep,
 	    take = take,
 	    class = class,
@@ -50,7 +50,7 @@ get_points.DSD_ReadStream <- function(x, n=1, assignment=FALSE, ...) {
 
     # comment.char="" is for performance reasons
     tryCatch({
-		d <- suppressWarnings(read.table(file=x$con, 
+		d <- suppressWarnings(read.table(file=x$file, 
 				sep=x$sep, nrows=n, comment.char="", ...))
 		togo <- n - nrow(d)
 	    }, error = function(ex) {
@@ -58,18 +58,18 @@ get_points.DSD_ReadStream <- function(x, n=1, assignment=FALSE, ...) {
 
     # this means no lines were read, we need to do a prep-read before looping
     if (x$loop && togo == n) {
-	seek(x$con, where=0) # resetting the connection
-	d <- suppressWarnings(read.table(file=x$con, 
+	seek(x$file, where=0) # resetting the connection
+	d <- suppressWarnings(read.table(file=x$file, 
 			sep=x$sep, nrows=n, comment.char="", ...))
 	togo <- n - nrow(d)
     }
 
     # we need to loop
     while (x$loop && togo > 0) {
-	seek(x$con, where=0) # resetting the connection
+	seek(x$file, where=0) # resetting the connection
 
 	prev <- nrow(d)	
-	d <- suppressWarnings(rbind(d, read.table(file=x$con, 
+	d <- suppressWarnings(rbind(d, read.table(file=x$file, 
 				sep=x$sep, nrows=togo, comment.char="", ...)))
 	togo <- togo - (nrow(d)-prev)
     }
@@ -102,13 +102,13 @@ get_points.DSD_ReadStream <- function(x, n=1, assignment=FALSE, ...) {
 }
 
 reset_stream.DSD_ReadStream <- function(dsd) {
-    invisible(seek(dsd$con, where=0))
+    invisible(seek(dsd$file, where=0))
 }
 
 close_stream <- function(dsd) {
     if(!is(dsd, "DSD_ReadStream")) 
 	stop("'dsd' is not of class 'DSD_ReadStream'")
-    close(dsd$con)
+    close(dsd$file)
 }
 
 scale_stream <- function(dsd, n=1000, center=TRUE, scale=TRUE, 

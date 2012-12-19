@@ -46,6 +46,13 @@ cluster <- function(dsc, dsd, n=1, verbose=FALSE, ...) {
     }
 }
 
+### make BIRCH faster by passing all the data at once
+.cluster.DSC_BIRCH <-  function(dsc, dsd, n, verbose=FALSE, ...) {
+    ### dsc contains an RObj which is  a reference object with a cluster method
+	dsc$RObj$cluster(get_points(dsd,n), ...)
+}
+
+
 .cluster.DSC_Macro <- function(dsc, dsd, n, ...) {
     d <- get_points(dsd, n=n)
     dsc$RObj$cluster(d, weight=rep(1, nrow(d)), ...)

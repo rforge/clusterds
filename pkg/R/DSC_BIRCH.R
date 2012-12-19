@@ -6,7 +6,6 @@ BIRCH <- setRefClass("BIRCH",
 		radius	    = "numeric",
 		compact	    = "numeric",
 		keeptree    = "logical",
-		columns	    = "ANY",
 		assignment	= "numeric"
 		), 
 
@@ -21,7 +20,6 @@ BIRCH <- setRefClass("BIRCH",
 		    weights <<- numeric()
 		    BIRCH <<- NULL
 		    keeptree <<- keeptree 
-		    columns <<- columns
 		    radius <<- numeric()
 		    compact <<- numeric()
 
@@ -52,10 +50,10 @@ BIRCH <- setRefClass("BIRCH",
 	)
 
 ### creator    
-DSC_BIRCH <- function(radius, compact=radius, keeptree = TRUE, columns = NULL) {
+DSC_BIRCH <- function(radius, compact=radius, keeptree = TRUE) {
 
     l <- list(description = "BIRCH",
-	    RObj = BIRCH$new(keeptree = keeptree, columns = columns)
+	    RObj = BIRCH$new(keeptree = keeptree, columns = NULL)
 	    )
 
     l$RObj$radius <- radius

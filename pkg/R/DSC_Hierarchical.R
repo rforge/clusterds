@@ -5,7 +5,7 @@ hierarchical <- setRefClass("hierarchical",
 		d	= "matrix",
 		method  = "character",
 		members	= "ANY",
-		k	= "numeric",
+		k	= "integer",
 		assignment = "numeric",
 		details = "ANY",
 		centers	= "data.frame",
@@ -14,6 +14,7 @@ hierarchical <- setRefClass("hierarchical",
 
 	methods = list(
 		initialize = function(
+			k,
 			method	= "complete",
 			members = NULL
 			) {
@@ -24,7 +25,8 @@ hierarchical <- setRefClass("hierarchical",
 		    centers	<<- data.frame()
 		    method	<<- method 
 		    members	<<- members
-		    
+		    k		<<- k
+
 		    .self
 		}
 
@@ -64,9 +66,7 @@ hierarchical$methods(cluster = function(x,  weight = rep(1,nrow(x)), ...) {
 DSC_Hierarchical <- function(k, method = "complete", members = NULL) {
 
     hierarchical <- hierarchical $new( 
-	    method = method, members = members)
-
-    hierarchical$k <- k
+	    k=as.integer(k), method = method, members = members)
 
     l <- list(description = paste("Hierarchical -", method),
 	    RObj = hierarchical)

@@ -16,7 +16,7 @@ get_weights.default <- function(x, type=c("auto", "micro", "macro"),
 	scale=NULL, ...) {
     m <- rep(1,nclusters(x, type=type))
     if(!is.null(scale)) {
-	if(length(unique(m) ==1))  w <- rep(mean(scale), length(w))
+	if(length(unique(m)) ==1)  w <- rep(mean(scale), length(w))
 	else m <- map(m, range=scale, from.range=c(0, 
 			max(m, na.rm=TRUE)))
     }

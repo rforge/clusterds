@@ -18,7 +18,7 @@ get_weights.DSC_Micro <- function(x, type=c("auto", "micro", "macro"),
 
 
     if(!is.null(scale)) { 
-	if(length(unique(w) ==1))  w <- rep(mean(scale), length(w))
+	if(length(unique(w)) ==1)  w <- rep(mean(scale), length(w))
 	else w <- map(w, range=scale, from.range=c(0,  
 			    max(w, na.rm=TRUE))) 
     }
