@@ -39,7 +39,7 @@ tNN <- setRefClass("tNN",
 		    decay_factor	<<- 2^-lambda
 		    minweight		<<- minweight
 		    noise		<<- noise
-		    killweight 		<<- noise*2*decay_factor^(10)
+		    killweight 		<<- noise*.01
 		    alpha		<<- alpha
 		    measure		<<- measure
 		    macro		<<- macro
@@ -76,6 +76,9 @@ DSC_tNN <- function(r = 0.1, k=NULL, lambda = 0.01, minweight = 0.1,
 
 tNN$methods(cluster = function(newdata, debug = FALSE) {
 	    'Cluster new data.' ### online help
+      
+      #TODO use strong_mcs with .self
+      #strong_mcs(.self)
 
 	    newdata <- as.data.frame(newdata)
 
@@ -88,14 +91,16 @@ tNN$methods(cluster = function(newdata, debug = FALSE) {
 		if(debug && !i%%100) cat("Processed",i,"points\n")
 
 		### decay and remove clusters
-		current_killweight <- killweight*wmean(weights)
+        
 		if(decay_factor<1) {
 		    #decrease weight for microclusters
 		    weights <<- weights * decay_factor
 
 
 		    #find dead microclusters
-		    remove <- which(weights < current_killweight)
+        wremove <- quantile(weights,probs= noise)*decay_factor^(10)
+        
+		    remove <- which(weights < wremove)
 
 
 		    if(length(remove)>0) {
@@ -122,7 +127,12 @@ tNN$methods(cluster = function(newdata, debug = FALSE) {
 			    if(debug) cat("  - Removing relation",
 				    rkey, "(state)\n")
 
-			    relations[[rkey]] <<- NULL
+			   tryCatch({
+			    	relations[[rkey]] <<- NULL
+			   }, warning = function(w) {
+ 				 if(debug) cat("  * Relation not found",
+				    rkey, "(state)\n")
+			   })
 			}
 		    }
 
@@ -131,7 +141,11 @@ tNN$methods(cluster = function(newdata, debug = FALSE) {
 
 			if(length(relations) > 0) {
 			    values(relations) <<- values(relations) * decay_factor
-			    removekeys <- keys(relations)[values(relations) < current_killweight*alpha]
+
+
+    
+
+			    removekeys <- keys(relations)[which(values(relations) < wremove*alpha]
 
 			    for(rkey in removekeys) {
 				if(debug) cat("  - Removing relation",
@@ -207,7 +221,7 @@ tNN$methods(cluster = function(newdata, debug = FALSE) {
     
 #helper
 strong_mcs <- function(x) {
-    which(x$RObj$weights>quantile(x$RObj$weights,
+    which(x$RObj$weights>=quantile(x$RObj$weights,
 		    probs=x$RObj$noise))
 }
 
@@ -336,7 +350,7 @@ get_membership_weights <- function(dsc) {
     ### gets weights of all connected components
     ### remove noise components
     weight <- dsc$RObj$weights
-    weight[weight<dsc$RObj$noise] <- 0
+    weight[strong_mcs(dsc)] <- 0
 
     clusters <- unique(assignment)
 

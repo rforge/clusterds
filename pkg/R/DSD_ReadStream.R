@@ -2,7 +2,7 @@
 DSD_ReadStream <- function(x, sep=",", k=NA, d=NA,
 	take=NULL, class=NULL, 
 	center=FALSE, scale=FALSE,
-	loop=FALSE) {
+	loop=FALSE, n=1000) {
 
     # if the user passes a string, create a new connection and open it
     if (is(x,"character")) {
@@ -37,7 +37,7 @@ DSD_ReadStream <- function(x, sep=",", k=NA, d=NA,
 	    loop = loop)
     class(l) <- c("DSD_ReadStream","DSD_R","DSD")
     
-    l <- scale_stream(l, n=1000, center=center, scale=scale,
+    l <- scale_stream(l, n=n, center=center, scale=scale,
 	    reset_stream=TRUE)
 
     l
