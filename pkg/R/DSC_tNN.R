@@ -77,8 +77,6 @@ DSC_tNN <- function(r = 0.1, k=NULL, lambda = 0.01, minweight = 0.1,
 tNN$methods(cluster = function(newdata, debug = FALSE) {
 	    'Cluster new data.' ### online help
       
-      #TODO use strong_mcs with .self
-      #strong_mcs(.self)
 
 	    newdata <- as.data.frame(newdata)
 
@@ -145,7 +143,7 @@ tNN$methods(cluster = function(newdata, debug = FALSE) {
 
     
 
-			    removekeys <- keys(relations)[which(values(relations) < wremove*alpha]
+			    removekeys <- keys(relations)[which(values(relations) < wremove*alpha)]
 
 			    for(rkey in removekeys) {
 				if(debug) cat("  - Removing relation",
