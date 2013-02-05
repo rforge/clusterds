@@ -10,7 +10,9 @@
 
 
 
-DSC_DenStream <- function(horizon=1000, epsilon=0.1, minPoints=10, beta=0.001, mu=1, initPoints=100, lambda=NULL) {
+DSC_DenStream <- function(epsilon=0.1, beta=0.001, mu=1, 
+	initPoints=100, minPoints=10, 
+	horizon=1000, lambda=NULL) {
   
   if (horizon < 1)
     stop("invalid horizon, range: >= 1")

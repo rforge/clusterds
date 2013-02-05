@@ -28,7 +28,7 @@ cluster <- function(dsc, dsd, n=1, verbose=FALSE, ...) {
 
 	.jcall(dsc$javaObj, "V", "trainOnInstanceImpl", x)
     
-	if(verbose && !i%%100) cat("Processed", i, "points -",
+	if(verbose && !i%%1000) cat("Processed", i, "points -",
 		nclusters(dsc), "clusters\n")
     
     }	
@@ -40,17 +40,24 @@ cluster <- function(dsc, dsd, n=1, verbose=FALSE, ...) {
 
     	dsc$RObj$cluster(get_points(dsd,1), ...)
     
-	if(verbose && !i%%100) cat("Processed", i, "points -",
+	if(verbose && !i%%1000) cat("Processed", i, "points -",
 		nclusters(dsc), "clusters\n")
     	
     }
 }
 
-### make BIRCH faster by passing all the data at once
-.cluster.DSC_BIRCH <-  function(dsc, dsd, n, verbose=FALSE, ...) {
+### make BIRCH faster by passing block data points at once
+.cluster.DSC_BIRCH <-  function(dsc, dsd, n, verbose=FALSE, 
+	block=100000L, ...) {
     ### dsc contains an RObj which is  a reference object with a cluster method
-	dsc$RObj$cluster(get_points(dsd,n), ...)
+    
+    for(bl in .make_block(n, block)) {
+	dsc$RObj$cluster(get_points(dsd, bl), ...)
+	if(verbose) cat("Processed", bl, "points -",
+		nclusters(dsc), "clusters\n")
+    }
 }
+
 
 
 .cluster.DSC_Macro <- function(dsc, dsd, n, ...) {

@@ -5,25 +5,26 @@ BIRCH <- setRefClass("BIRCH",
 		BIRCH	    = "ANY",
 		radius	    = "numeric",
 		compact	    = "numeric",
-		keeptree    = "logical",
-		assignment	= "numeric"
+		keeptree    = "logical"
+#		assignment	= "numeric"
 		), 
 
 	methods = list(
-		initialize = function(
-			keeptree = FALSE,
-			columns = NULL
-			) {
+		initialize = function(keeptree = FALSE, radius, compact) {
 
 		    data <<- data.frame()
-		    assignment <<- numeric()
+#		    assignment <<- numeric()
 		    weights <<- numeric()
 		    BIRCH <<- NULL
 		    keeptree <<- keeptree 
-		    radius <<- numeric()
-		    compact <<- numeric()
+		    radius <<- radius
+		    compact <<- compact
 
 		    .self
+		},
+		finalize = function() {
+		    ### Seems to be not necessary!
+		    #    if(!is.null(BIRCH)) birch.killTree(BIRCH)
 		},
 
 		cluster = function(points,  weight = rep(1,nrow(points)), ...) {
@@ -41,8 +42,8 @@ BIRCH <- setRefClass("BIRCH",
 			    BIRCH <<- birch.getTree(BIRCH)
 			}
 
-			for(i in 1:length(BIRCH$members)) 
-			    assignment[BIRCH$members[[i]]] <<- i
+#			for(i in 1:length(BIRCH$members)) 
+#			    assignment[BIRCH$members[[i]]] <<- i
 
 		    }
 		}
@@ -53,11 +54,9 @@ BIRCH <- setRefClass("BIRCH",
 DSC_BIRCH <- function(radius, compact=radius, keeptree = TRUE) {
 
     l <- list(description = "BIRCH",
-	    RObj = BIRCH$new(keeptree = keeptree, columns = NULL)
+	    RObj = BIRCH$new(keeptree = keeptree, 
+		    radius=radius, compact=compact)
 	    )
-
-    l$RObj$radius <- radius
-    l$RObj$compact <- compact
 
     class(l) <- c("DSC_BIRCH","DSC_Micro","DSC_R","DSC")
     l

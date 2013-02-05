@@ -1,19 +1,16 @@
-DSD_Wrapper <- function(x, k=NA, loop=FALSE, assignment = NULL, n = NULL) {
+DSD_Wrapper <- function(x, n, k=NA, loop=FALSE, assignment = NULL) {
 
     if(is(x, "DSD")) {
+	if(is.na(k)) k <- x$k
 	p <- get_points(x, n, assignment = TRUE)
 	assignment <- attr(p, "assignment")
 	x <- p
-	if(is.na(k)) k <- data$k
     }else{
 	x <- as.data.frame(x)
     }
 
     state <- new.env()
     assign("counter", 1L, envir = state)
-
-    if (missing(k))
-	k <- NA
 
     if(is.null(assignment)) assignment <-attr(x, "assignment")
 

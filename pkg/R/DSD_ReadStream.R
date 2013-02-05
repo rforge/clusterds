@@ -1,23 +1,23 @@
 # accepts an open connection
-DSD_ReadStream <- function(x, sep=",", k=NA, d=NA,
-	take=NULL, class=NULL, 
+DSD_ReadStream <- function(file, sep=",", k=NA, d=NA,
+	take=NULL, assignment=NULL, 
 	center=FALSE, scale=FALSE,
 	loop=FALSE, n=1000) {
 
     # if the user passes a string, create a new connection and open it
-    if (is(x,"character")) {
-	x <- file(x)
-	open(x)
+    if (is(file,"character")) {
+	file <- file(file)
+	open(file)
     }
 
     # error out if no string or connection is passed
-    else if (!is(x,"connection")) {
+    else if (!is(file,"connection")) {
 	stop("please pass a valid connection")
     }
 
     # open the connection if its closed
-    else if (!isOpen(x)) {
-	open(x)
+    else if (!isOpen(file)) {
+	open(file)
     }
 
     # figure out d
@@ -28,10 +28,10 @@ DSD_ReadStream <- function(x, sep=",", k=NA, d=NA,
     l <- list(description = "File Data Stream",
 	    d = d,
 	    k = k,
-	    file = x,
+	    file = file,
 	    sep = sep,
 	    take = take,
-	    class = class,
+	    assignment = assignment,
 	    center = FALSE,
 	    scale = FALSE,
 	    loop = loop)
@@ -84,10 +84,10 @@ get_points.DSD_ReadStream <- function(x, n=1, assignment=FALSE, ...) {
     }
 
     if(assignment) {
-	if(is.null(x$class)) {
+	if(is.null(x$assignment)) {
 	    warning("No assignment avaialble!")
 	    cl<-NULL
-	}else cl <- d[,x$class[1]]
+	}else cl <- d[,x$assignment[1]]
     }
 
     if(!is.null(x$take)) d <- d[,x$take, drop=FALSE]
