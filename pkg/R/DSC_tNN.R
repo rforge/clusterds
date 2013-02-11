@@ -386,7 +386,7 @@ get_membership_weights <- function(dsc) {
     ### gets weights of all connected components
     ### remove noise components (only keep strong MC weights)
     weight <- dsc$RObj$weights
-    weight[strong_mcs(dsc, weak=TRUE)] <- 0
+    weight[strong_mcs(dsc, weak=TRUE)] <- NA
 
     clusters <- unique(assignment)
 
