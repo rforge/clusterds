@@ -1,10 +1,15 @@
 
-get_centers.DSC_Micro <- function(x, type=c("auto", "micro", "macro"), ...) {
+get_centers.DSC_Micro <- function(x, type=c("auto", "micro", "macro"), assigned = FALSE, ...) {
     type <- match.arg(type)
     if(type=="auto") type <- "micro"
 
     if(type=="macro") return(get_macroclusters(x))
-    else return(get_microclusters(x))
+    else if(!assigned) return(get_microclusters(x))
+    else { 
+	### only return micro-clusters assigned to macro-clusters
+	### used in get_assignment 
+	return(get_microclusters(x)[!is.na(microToMacro(x)),])
+    }
 }
 
 

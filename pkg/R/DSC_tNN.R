@@ -3,21 +3,34 @@
 
 tNN <- setRefClass("tNN",
 	fields = list(
-		relations 		= "hash",
-		lambda			= "numeric",
-		decay_factor		= "numeric",
+		### parameters (micro-clustering)
 		r			= "numeric",
-		weights			= "numeric",
-		alpha			= "numeric",
-		centers			= "data.frame",
-		minweight		= "numeric", ### min weight for macro
-		noise			= "numeric", ### min weights from micro
-		killweight		= "numeric", ### for micro clusters
-		k			= "numeric",
 		measure			= "character",
+		lambda			= "numeric",
+		### noise: min. weight for micro-clusters given as a 
+		### percentile of the total weight of the clustering (i.e.,
+		### noise% of the data points is considered noise)
+		noise			= "numeric", 
+		
+		### used internally
 		distFun			= "ANY",
-		macro			= "logical",
-		debug			= "logical"
+		decay_factor		= "numeric",
+		debug			= "logical",
+		
+		### data
+		weights			= "numeric",
+		total_weight		= "numeric",
+		centers			= "data.frame",
+		relations 		= "hash",
+		
+		### Macro-clustering
+		macro			= "logical",	# do macro?
+		### alpha: intersection factor (area of the intersection)
+		alpha			= "numeric",
+		### minweights: min. weight for macro-clusters 	
+		minweight		= "numeric",
+		### k: number of macro-clusters (alternative to )
+		k			= "numeric"
 		),
 
 
@@ -27,7 +40,7 @@ tNN <- setRefClass("tNN",
 			k		= 0,
 			lambda		= 0.01,
 			minweight	= 0.1,
-			noise		= 0,
+			noise		= 0.01,
 			alpha 		= 0.25,
 			measure		= "Euclidean",
 			macro		= TRUE
@@ -39,7 +52,6 @@ tNN <- setRefClass("tNN",
 		    decay_factor	<<- 2^-lambda
 		    minweight		<<- minweight
 		    noise		<<- noise
-		    killweight 		<<- noise*.01
 		    alpha		<<- alpha
 		    measure		<<- measure
 		    macro		<<- macro
@@ -50,6 +62,7 @@ tNN <- setRefClass("tNN",
 			k		<<- k
 
 		    weights		<<- numeric()
+		    total_weight	<<- 0
 		    centers		<<- data.frame()
 
 		    distFun		<<- pr_DB[[measure]]
@@ -62,7 +75,7 @@ tNN <- setRefClass("tNN",
 
 
 DSC_tNN <- function(r = 0.1, k=NULL, lambda = 0.01, minweight = 0.1, 
-	noise = 0, alpha = .25, measure = "Euclidean", 
+	noise = 0.01, alpha = .25, measure = "Euclidean", 
 	    macro = TRUE) {
 
     tNN <- tNN$new(r, k, lambda, minweight, noise, alpha, measure, macro)
@@ -77,29 +90,32 @@ DSC_tNN <- function(r = 0.1, k=NULL, lambda = 0.01, minweight = 0.1,
 tNN$methods(cluster = function(newdata, debug = FALSE) {
 	    'Cluster new data.' ### online help
       
-
 	    newdata <- as.data.frame(newdata)
-
-	    wmean <- function(w) if(length(w)==0) 0 else mean(w)
 
 	    if(debug) cat("Debug cluster for tNN!\n")
 
 	    for(i in 1:nrow(newdata)) {
-
+		
 		if(debug && !i%%100) cat("Processed",i,"points\n")
 
 		### decay and remove clusters
-        
 		if(decay_factor<1) {
 		    #decrease weight for microclusters
 		    weights <<- weights * decay_factor
-
+		
+		    total_weight <<- total_weight * decay_factor
 
 		    #find dead microclusters
-        wremove <- quantile(weights,probs= noise)*decay_factor^(10)
-        
-		    remove <- which(weights < wremove)
-
+		    #weight_remove <- quantile(weights,
+		#	    probs= noise)*decay_factor^(10)
+	
+		    o <- order(weights, decreasing=TRUE)		    
+		    o <- o[cumsum(weights[o]) < total_weight*(1-noise)]
+		    weight_remove <- weights[o[length(o)]] ### this is the larges weight to remove!
+		    
+		    #weight_remove <- weight_remove*decay_factor^10
+		    weight_remove <- .5
+		    remove <- which(weights < weight_remove)
 
 		    if(length(remove)>0) {
 			### get mc names
@@ -116,34 +132,34 @@ tNN$methods(cluster = function(newdata, debug = FALSE) {
 			#remove microclusters in relations
 			keys <- keys(relations)
 			removekeys <- c(
-				grep(paste("^",mcs[remove],"-",sep="",collapse="|"), keys, value = TRUE), 
-				grep(paste("-",mcs[remove],"$",sep="",collapse="|"), keys, value = TRUE)
+				grep(paste("^",mcs[remove],"-",
+						sep="",collapse="|"), 
+					keys, value = TRUE), 
+				grep(paste("-",mcs[remove],"$"
+						,sep="",collapse="|"), 
+					keys, value = TRUE)
 				)
 
 			for(rkey in removekeys) {
-
 			    if(debug) cat("  - Removing relation",
 				    rkey, "(state)\n")
 
-			   tryCatch({
-			    	relations[[rkey]] <<- NULL
-			   }, warning = function(w) {
- 				 if(debug) cat("  * Relation not found",
-				    rkey, "(state)\n")
-			   })
+			    tryCatch({
+					relations[[rkey]] <<- NULL
+				    }, warning = function(w) {
+					if(debug) cat("  * Relation not found",
+						rkey, "(state)\n")
+				    })
 			}
 		    }
 
-		    if(macro) {
-			### decay and remove weak relations
-
+		    ### decay and remove weak relations
+		    if(macro) {  
 			if(length(relations) > 0) {
 			    values(relations) <<- values(relations) * decay_factor
 
-
-    
-
-			    removekeys <- keys(relations)[which(values(relations) < wremove*alpha)]
+			    removekeys <- keys(relations)[which(
+				    values(relations) < weight_remove*alpha)]
 
 			    for(rkey in removekeys) {
 				if(debug) cat("  - Removing relation",
@@ -158,6 +174,8 @@ tNN$methods(cluster = function(newdata, debug = FALSE) {
 		### process new point
 		point <- newdata[i,]
 		mcs <- rownames(centers) ### names
+		
+		total_weight <<- total_weight +1
 
 
 		if(nrow(centers)==0) {
@@ -188,7 +206,7 @@ tNN$methods(cluster = function(newdata, debug = FALSE) {
 					ncol=ncol(point)),
 				row.names=rownames(centers[inside,]))
 
-			distance <- dist(newCenters,newCenters,method=distFun)
+			distance <- dist(newCenters,method=distFun)
 
 			test <- apply(distance,1,function(x){all(x>r|x==0)})
 			if(length(which(test)) > 0) {
@@ -218,9 +236,24 @@ tNN$methods(cluster = function(newdata, debug = FALSE) {
 	)
     
 #helper
-strong_mcs <- function(x) {
-    which(x$RObj$weights>=quantile(x$RObj$weights,
-		    probs=x$RObj$noise))
+strong_mcs <- function(x, weak=FALSE) {
+    o <- order(x$RObj$weights, decreasing=TRUE)
+    cs <- cumsum(x$RObj$weights[o])+x$RObj$total_weight-sum(x$RObj$weights)
+
+    if(weak)
+	o[cs > x$RObj$total_weight*(1-x$RObj$noise)]
+	#o[cumsum(x$RObj$weights[o]) >= x$RObj$total_weight*(1-x$RObj$noise)]
+    else	
+	o[cs <= x$RObj$total_weight*(1-x$RObj$noise)]
+	#o[cumsum(x$RObj$weights[o]) <  x$RObj$total_weight*(1-x$RObj$noise)]
+
+#    if(weak) which(x$RObj$weights<x$RObj$total_weight*x$RObj$noise)
+	
+	#which(x$RObj$weights<quantile(x$RObj$weights,
+	#	    probs=x$RObj$noise))
+ #   else  which(x$RObj$weights>=x$RObj$total_weight*x$RObj$noise)
+	#which(x$RObj$weights>=quantile(x$RObj$weights,
+	#	    probs=x$RObj$noise))
 }
 
 get_microclusters.DSC_tNN <- function(x) {
@@ -319,8 +352,13 @@ get_edges <- function(dsc) {
     val <- values(dsc$RObj$relations)
    
     avg_weight <- apply(rel, MARGIN=1, FUN= function(x) mean(mc_weights[x]))
-   
-    rel[val >= avg_weight*dsc$RObj$alpha,, drop=FALSE]
+    
+    rel <- rel[val >= avg_weight*dsc$RObj$alpha,, drop=FALSE]
+
+    # remove weak clusters
+    strong <- strong_mcs(dsc)
+
+    rel[rel[,1] %in% strong & rel[,2] %in% strong,]
 }
 
 ### return (at most) the k largest components (k=0 -> return all)
@@ -346,9 +384,9 @@ get_membership_weights <- function(dsc) {
     }
 
     ### gets weights of all connected components
-    ### remove noise components
+    ### remove noise components (only keep strong MC weights)
     weight <- dsc$RObj$weights
-    weight[strong_mcs(dsc)] <- 0
+    weight[strong_mcs(dsc, weak=TRUE)] <- 0
 
     clusters <- unique(assignment)
 
@@ -356,18 +394,16 @@ get_membership_weights <- function(dsc) {
 			sum(weight[which(assignment==cl)])
 		    }))
 
-    ### do filtring
-    take <- order(weight,decreasing=TRUE)
-
     ### check for k
+    take <- order(weight,decreasing=TRUE)
     if(k>0 && length(clusters)>k) {
 	take[(k+1):length(take)] <- NA
+    }else{
+
+	### check for minweight * total weight
+	take <- which(weight>=(minweight*sum(weight)))
     }
 
-    ### check for minweight * total weight
-    take[weight<(minweight*sum(weight))] <- NA
-
-    take <- na.omit(take)
     weight <- weight[take]
     assignment <- match(assignment, take)
 
@@ -386,37 +422,40 @@ plot.DSC_tNN <- function(x, dsd = NULL, n = 1000,
 	...,
 	method="pairs",
 	type=c("auto", "micro", "macro")) {
-    
+	
     NextMethod()
 
 
-    #p <- get_microclusters(x)
-    p <- x$RObj$centers
-
     if(x$RObj$macro && type %in% c("macro")
-		&& (ncol(p)<=2 || method=="plot")) {
-	
-	if(nrow(p)>0) {
+		&& (ncol(x$RObj$centers)<=2 || method=="plot")) {
 
-	    ### add threshold circles
-	    for(i in 1:nrow(p)){
-		lines(ellipsePoints(x$RObj$r, x$RObj$r, 
-				loc=as.numeric(p[i,]), n=60),
-			col = "black", lty=3)
-	    }
+	    #p <- get_microclusters(x)
+	    p <- x$RObj$centers
+	    ### remove weak mcs
+	    weak <- strong_mcs(x, weak=TRUE)
+	    if(length(weak)>0) p[weak,] <- NA
 
-	    ### add edges connecting macro-clusters
-	    edges <- get_edges(x)
-	    if(nrow(edges)>0) {
-	    	for(i in 1:nrow(edges)){
+	    points(get_centers(x, type="micro"), col="black")
+
+	    if(nrow(p)>0) {
+
+		### add threshold circles
+		for(i in 1:nrow(p)){
+		    lines(ellipsePoints(x$RObj$r, x$RObj$r, 
+				    loc=as.numeric(p[i,]), n=60),
+			    col = "black", lty=3)
+		}
+
+		### add edges connecting macro-clusters
+		edges <- get_edges(x)
+		if(nrow(edges)>0) {
+		    for(i in 1:nrow(edges)){
 			lines(rbind(p[edges[i,1],],p[edges[i,2],]),
 				col="black")
-	    	}
+		    }
+		}
+
 	    }
-	    
-	    points(get_centers(x, type="micro"), col="black")
-	    #points(p, col=col_clusters)
-	    #points(centers,col=col_clusters)
 	}
+
     }
-}

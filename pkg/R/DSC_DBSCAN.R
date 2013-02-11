@@ -63,12 +63,17 @@ DBSCAN$methods(cluster = function(x, weight = rep(1,nrow(x)), ...) {
 	    details <<- DBSCAN
 
 
-	    k <- max(assignment)
-	    clusterCenters <<- as.data.frame(t(sapply(1:k, FUN=
-				    function(i) colMeans(data[assignment==i,]))))
-	    clusterWeights <<- sapply(1:k, FUN =
-		    function(i) sum(weights[assignment==i], na.rm=TRUE))
-
+	    if(length(assignment>0)) {
+		k <- max(assignment)
+		clusterCenters <<- as.data.frame(t(sapply(1:k, FUN=
+					function(i) colMeans(data[assignment==i,]))))
+		clusterWeights <<- sapply(1:k, FUN =
+			function(i) sum(weights[assignment==i], na.rm=TRUE))
+	    }else{ ### no clusters found
+		k <- 0
+		clusterCenters <<- data.frame()
+		clusterWeights <<- numeric(0)
+	    }
 
 
 	}

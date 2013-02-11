@@ -71,7 +71,8 @@ get_assignment.DSC <- function(dsc, points, type=c("auto", "micro", "macro"),
 	...) {
     d <- points
     
-    c <- get_centers(dsc, type=type)
+    # assigned=TRUE: only gets micros assigned to macros (where implemented)!
+    c <- get_centers(dsc, type=type, assigned=TRUE)
     
     if(nrow(c)>0) {
 	dist <- dist(d,c)

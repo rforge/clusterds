@@ -5,19 +5,22 @@
 Class implements the DenStream cluster algorithm for data streams.
 }
 \usage{
-DSC_DenStream(horizon = 1000, epsilon = 0.1, minPoints = 10, beta = 0.001, mu = 1, initPoints = 100, lambda = NULL)
+DSC_DenStream(epsilon = 0.1, beta = 0.001, mu = 1, 
+    initPoints = 100, minPoints = 10, 
+    horizon = 1000, lambda = NULL)
 }
 
 \arguments{
-  \item{horizon}{Range of the (time) window.}
-  \item{epsilon}{defines the epsilon neighborhood in which the density of each micro-cluster is calculated (i.e.,
+  \item{epsilon}{defines the epsilon-neighborhood in which the 
+  density of each micro-cluster is calculated (i.e.,
   the radius).}
-  \item{minPoints}{minimum number of points a micro-cluster must have.}
   \item{beta}{the outlier threshold, used in conjunction with \code{mu}
-  (range: 0 to 1)} \item{mu}{the minimum weight a micro-cluster must have
-  within the \code{epsilon} neighborhood (range: 0 to max(double)).}
-  \item{initPoints}{number of points to use for initialization.}
-  \item{lambda}{number used to override computed lambda (decay).}
+  (range: 0 to 1)} 
+  \item{mu}{the weight a micro-cluster must exceed mu times beta (range: 0 to max(double)).}
+  \item{initPoints}{number of points to use for initialization via DBSCAN.}
+  \item{minPoints}{minimum number of points to form initial micro-clusters using DBSCAN.}
+  \item{horizon}{used to compute lambda.}
+  \item{lambda}{override computed lambda (decay).}
 }
 
 \details{

@@ -34,15 +34,16 @@ cluster <- function(dsc, dsd, n=1, verbose=FALSE, ...) {
     }	
 }
 
-.cluster.DSC_R <- function(dsc, dsd, n, verbose=FALSE, ...) {
+.cluster.DSC_R <- function(dsc, dsd, n, verbose=FALSE, 
+	block=100000L, ...) {
     ### dsc contains an RObj which is  a reference object with a cluster method
-    for (i in 1:n) {
 
-    	dsc$RObj$cluster(get_points(dsd,1), ...)
-    
-	if(verbose && !i%%1000) cat("Processed", i, "points -",
+
+    for(bl in .make_block(n, block)) {
+	dsc$RObj$cluster(get_points(dsd, bl), ...)
+	if(verbose) cat("Processed", bl, "points -",
 		nclusters(dsc), "clusters\n")
-    	
+
     }
 }
 

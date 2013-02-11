@@ -9,11 +9,11 @@
 }
 
 \usage{
-	DSC_Sample(size = 100)
+	DSC_Sample(k = 100)
 }
 
 \arguments{
-	\item{size}{the number of points to be sampled from the stream.}
+	\item{k}{the number of points to be sampled from the stream.}
 }
 
 %\details{

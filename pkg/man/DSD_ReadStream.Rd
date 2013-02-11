@@ -9,21 +9,20 @@ A DSD class that reads a data stream from a file or any R connection.
 }
 
 \usage{
-DSD_ReadStream(x, sep=",", k=NA, d=NA, take=NULL, class=NULL, 
+DSD_ReadStream(file, sep=",", k=NA, d=NA, take=NULL, assignment=NULL, 
     center=FALSE, scale=FALSE, loop=FALSE)
 scale_stream(dsd, n=1000, center=TRUE, scale=TRUE, reset_stream=FALSE)
 close_stream(dsd)
 }
 
 \arguments{
-	\item{x}{An open connection, or a file path/URL to be opened as a
-	connection.}
+	\item{file}{A file/URL or an open connection.}
 	\item{sep}{The character string that separates dimensions in data
 	points in the stream.}
 	\item{k}{Number of true clusters, if known.}
 	\item{d}{Number of dimensions (only used for print).}
 	\item{take}{indices of columns to extract from the file.}
-	\item{class}{column index for the class attribute.}
+	\item{assignment}{column index for the cluster assignment (class attribute).}
 	\item{center, scale}{logical or a numeric vector of length equal to
 	          the number of columns used for centering/scaling. }
 	\item{loop}{If enabled, the object will loop through the stream when
@@ -77,7 +76,7 @@ file.remove("data.txt")
 # example with a part of the kddcup1999 data (take only cont. variables)
 file <- system.file("examples", "kddcup10000.data.gz", package="stream")
 dsd <- DSD_ReadStream(gzfile(file),
-        take=c(1, 5, 6, 8:11, 13:20, 23:41), class=42, k=7)
+        take=c(1, 5, 6, 8:11, 13:20, 23:41), assignment=42, k=7)
 dsd
 
 get_points(dsd,5)
@@ -93,7 +92,7 @@ close_stream(dsd)
 
 # open the stream already scaled (this calles scale_stream internally)
 dsd <- DSD_ReadStream(gzfile(file),
-        take=c(1, 5, 6, 8:11, 13:20, 23:41), class=42, k=7, 
+        take=c(1, 5, 6, 8:11, 13:20, 23:41), assignment=42, k=7, 
 	scale=TRUE, center=TRUE)
 
 get_points(dsd, 5)

@@ -341,11 +341,12 @@ void kmnsw ( double *a, int *m_p, int *n_p, double *c, double *wh, int *k_p,
       wss[ii-1] = wss[ii-1] + da * da * wh[i-1]; //MODIF
     }
   }
-  delete [] ic2;
-  delete [] ncp;
+  
   delete [] d;
+  delete [] ic2;
   delete [] itran;
   delete [] live;
+  delete [] ncp;
   delete [] whc; //NEW
 
   return;

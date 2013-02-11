@@ -8,17 +8,18 @@ The data can either be looped or replayed manually to give
 the exact same data several times.
 }
 
-\usage{DSD_Wrapper(x, k=NA, loop=FALSE, assignment = NULL, n = NULL)}
+\usage{DSD_Wrapper(x, n, k=NA, loop=FALSE, assignment = NULL)}
 
 \arguments{
 	\item{x}{A data frame or matrix with the data to be used in the stream.
 	If \code{x} is a DSD object then a wrapper for \code{n} data points
 	from this DSD is created. }
+	\item{n}{Number of points used if \code{x} is a DSD object. If
+	\code{x} is a data frame or matrix then \code{n} is ignored.}
 	\item{k}{Optional: The number of clusters}
 	\item{loop}{A flag that tells the stream to loop or 
 				not to loop over the data frame.}
 	\item{assignment}{A flag that tells the stream to return assignment information.}
-	\item{n}{Number of points used if \code{x} is a DSD object.}
 }
 
 %\details{

@@ -7,15 +7,13 @@
 for data streams.}
 
 \usage{
-	DSC_BIRCH(radius, compact = radius, keeptree = TRUE, columns = NULL)
+	DSC_BIRCH(radius, compact = radius, keeptree = TRUE)
 }
 
 \arguments{
 	\item{radius}{The closeness criterion.}
 	\item{compact}{The The compactness criterion.}
 	\item{keeptree}{A Boolean, whether to keep the CF tree in memory.}
-	\item{columns}{The choice of variables to use if x is a file name or a connection (default is all
-variables)}
 }
 
 \details{

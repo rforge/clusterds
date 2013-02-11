@@ -8,13 +8,17 @@
     }
 
 \usage{
-DSC_CluStream(horizon = 1000, maxNumKernels = 100, kernelRadiFactor = 2)
+DSC_CluStream(horizon = 1000, k = 100, t = 2)
 }
 
 \arguments{
   \item{horizon}{Defines the time window to be used in CluStream}
-  \item{maxNumKernels}{Defines the maximum number of kernels used in CluStream}
-  \item{kernelRadiFactor}{Kernel radius factor.}
+  \item{k}{Defines the maximum number of micro-clusters used in CluStream}
+  \item{t}{Maximal boundary factor (=Kernel radius factor). 
+  When deciding to add a new data point to a
+  micro-cluster, the maximum boundary is defined as a factor of \code{t} of the
+  RMS deviation of the data points in the micro-cluster from the centroid. 
+  }
 }
 
 \details{
