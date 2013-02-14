@@ -1,6 +1,3 @@
-#complain 
-
-
 tNN <- setRefClass("tNN",
 	fields = list(
 		### parameters (micro-clustering)
@@ -16,12 +13,14 @@ tNN <- setRefClass("tNN",
 		distFun			= "ANY",
 		decay_factor		= "numeric",
 		debug			= "logical",
+    count     = "numeric",
 		
 		### data
 		weights			= "numeric",
 		total_weight		= "numeric",
 		centers			= "data.frame",
 		relations 		= "hash",
+    
 		
 		### Macro-clustering
 		macro			= "logical",	# do macro?
@@ -49,7 +48,7 @@ tNN <- setRefClass("tNN",
 		    relations 		<<- hash()
 		    r			<<- r
 		    lambda		<<- lambda
-		    decay_factor	<<- 2^-lambda
+		    decay_factor	<<- .5 #2^-lambda
 		    minweight		<<- minweight
 		    noise		<<- noise
 		    alpha		<<- alpha
@@ -64,6 +63,7 @@ tNN <- setRefClass("tNN",
 		    weights		<<- numeric()
 		    total_weight	<<- 0
 		    centers		<<- data.frame()
+        count <<- 0
 
 		    distFun		<<- pr_DB[[measure]]
 
@@ -97,9 +97,11 @@ tNN$methods(cluster = function(newdata, debug = FALSE) {
 	    for(i in 1:nrow(newdata)) {
 		
 		if(debug && !i%%100) cat("Processed",i,"points\n")
-
+  
+    count <- count + 1
+    
 		### decay and remove clusters
-		if(decay_factor<1) {
+		if(lambda>0 && !count%%(lambda^-1)) {
 		    #decrease weight for microclusters
 		    weights <<- weights * decay_factor
 		
@@ -262,7 +264,7 @@ get_microclusters.DSC_tNN <- function(x) {
     if(nrow(mc)<1) return(data.frame())
     
     mc <- mc[strong_mcs(x),]
-
+    if(nrow(mc)<1) return(data.frame())
     rownames(mc) <- 1:nrow(mc)
     mc
 }
@@ -306,7 +308,12 @@ get_macroweights.DSC_tNN <- function(x) {
 
 
 microToMacro.DSC_tNN <- function(x, micro=NULL) {
-    if(is.null(micro)) micro <- 1:nclusters(x, type="micro")
+    if(is.null(micro)) {
+      micro <- 1:nclusters(x, type="micro")
+      if(nclusters(x, type="micro") == 0) {
+        micro <- numeric()
+      }
+    } 
     mw <- get_membership_weights(x)
    
     assignment <- mw$assignment[strong_mcs(x)]
@@ -369,7 +376,7 @@ get_membership_weights <- function(dsc) {
 
     ### finds connected components
     edgelist <- get_edges(dsc)
-    if(nrow(edgelist)>1) {
+    if(!is.null(nrow(edgelist)) && nrow(edgelist)>1) {
 	edgelist <- as.integer(t(edgelist))
 	assignment <- as.integer(clusters(
 			graph(edgelist,directed=FALSE))$membership)
@@ -391,7 +398,7 @@ get_membership_weights <- function(dsc) {
     clusters <- unique(assignment)
 
     weight <- unlist(lapply(clusters, function(cl){
-			sum(weight[which(assignment==cl)])
+			sum(weight[which(assignment==cl)],na.rm = TRUE)
 		    }))
 
     ### check for k
