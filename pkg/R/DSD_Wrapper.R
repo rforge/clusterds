@@ -1,7 +1,7 @@
 DSD_Wrapper <- function(x, n, k=NA, loop=FALSE, assignment = NULL) {
 
     if(is(x, "DSD")) {
-	if(is.na(k)) k <- x$k
+	if(is.na(k) && !is.null(x$k)) k <- x$k
 	p <- get_points(x, n, assignment = TRUE)
 	assignment <- attr(p, "assignment")
 	x <- p

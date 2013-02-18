@@ -39,7 +39,8 @@
 		\item	\code{"precision"}, 
 		\item	\code{"recall"},
 		\item	\code{"F1"} F1 measure, 
-		\item	\code{"purity"}, 
+		\item	\code{"purity"} (of found clusters), 
+		\item	\code{"classPurity"} (of real clusters), 
 		\item	\code{"fpr"} false positive rate,
 		\item	\code{"SSQ"} sum of squares, 
 		\item	\code{"Euclidean"} Euclidean dissimilarity of

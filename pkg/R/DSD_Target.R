@@ -1,47 +1,47 @@
-DSD_Target <- function() {
-
-
+DSD_Target <- function(center_sd =.05, center_weight=.5, 
+	ring_r=.2, ring_sd=0.02, noise=0) {
 
     # creating the DSD object
     l <- list(description = "Target Shape",
 	    d = 2,
-	    k = 2)
+	    k = 2,
+	    center_sd = center_sd,
+	    center_weight = center_weight,
+	    ring_r = ring_r,
+	    ring_sd = ring_sd,
+	    noise = noise
+	    )
     class(l) <- c("DSD_Target","DSD_R","DSD")
     l
 }
 
 get_points.DSD_Target <- function(x, n=1, assignment = FALSE,...) {
-    ## ball
-	sd <- .05
-	nc <- n*20/2 + 1
-	datb <- cbind(x=rnorm(nc, sd=sd),y=rnorm(nc, sd=sd))
+    ### choose point type
+    type <- sample(c(NA, 1:2), n, replace=TRUE, 
+	    prob=c(x$noise, (1-x$noise)*x$center_weight,
+		    (1-x$noise)*(1-x$center_weight)))
+    
+    p <- sapply(type, FUN=function(tp) {
 
-	## ring
-	nr <- n*20/2 + 1
-	sdr <- .01
-	avgr <- .3
-	r <- avgr+rnorm(nr, sd=sdr)
-	angle <- runif(nr, 0,2*pi)
+		if(is.na(tp)) { ### noise
+		    p <- runif(2, -x$ring_r-5*x$ring_sd, x$ring_r+5*x$ring_sd)
+		}else if(tp==1) {			    ### ball
+		    p <- rnorm(2, sd=x$center_sd)
+		}else if(tp==2) {		    ### circle
+		    r <- x$ring_r+rnorm(1, sd=x$ring_sd)
+		    angle <- runif(1, 0, 2*pi)
+		    p <- c(cos(angle)*r, sin(angle)*r)
+		}
+		p
+	    })
 
-	datr <- cbind(x=cos(angle)*r, y=sin(angle)*r)
 
-	dat <- rbind(datb, datr)
-	
-	rand <- sample(1:n*20,n,replace=F)
-	
-	dat <- dat[rand,]
-	
-	df <- data.frame()
-	
-	df <- rbind(df,dat)
+	p<- as.data.frame(t(p))
+	colnames(p) <- c("x", "y")
 	
 	if(assignment) {
-		ab <- rep(1,nc)
-		ar <- rep(2,nr)
-		attr(df,"assignment")<-as.numeric(c(ab,ar)[rand])
+		attr(p,"assignment") <- type
 	}
 	
-	names(df) <- 1:ncol(df)
-	
-	df
-}
+	p
+    }

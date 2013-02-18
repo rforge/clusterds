@@ -29,7 +29,8 @@ get_evaluation <- function (dsc, dsd, method, n = 1000,
 	    "purity", "fpr",
 	    "SSQ",
 	    "Euclidean", "Manhattan", "Rand", "cRand",
-	    "NMI", "KP", "angle", "diag", "FM", "Jaccard", "PS")
+	    "NMI", "KP", "angle", "diag", "FM", "Jaccard", "PS", 
+	    "classPurity")
 
     if(missing(method)) method <- methods
     else method <- methods[pmatch(tolower(method),tolower(methods))] 
@@ -86,7 +87,8 @@ evaluate <- function(method, predict, actual, points, centers) {
 		"purity", "fpr",
 		"SSQ",
 		"Euclidean", "Manhattan", "Rand", "cRand",
-		"NMI", "KP", "angle", "diag", "FM", "Jaccard", "PS")
+		"NMI", "KP", "angle", "diag", "FM", "Jaccard", "PS",
+		"classPurity")
 
 	
 	#finds index of partial match in array of methods
@@ -120,7 +122,9 @@ evaluate <- function(method, predict, actual, points, centers) {
 		FM	    = clue_agreement(predict, actual, "FM"),
 		Jaccard	    = clue_agreement(predict, actual, "jaccard"),
 	#	purity	    = clue_agreement(predict, actual, "purity"),
-		PS	    = clue_agreement(predict, actual, "PS")
+		PS	    = clue_agreement(predict, actual, "PS"),
+
+		classPurity = recall(actual, predict)
 	)
 }
 
@@ -149,7 +153,12 @@ precision <- function(actual, predict) {
     confusion <- table(actual, predict)
     
     mean(colMax(confusion)/colSums(confusion))
+}
 
+classPurity <- function(actual, predict) {
+    confusion <- table(actual, predict)
+    
+    mean(rowMax(confusion)/rowSums(confusion))
 }
 
 numClusters <- function(centers) {
