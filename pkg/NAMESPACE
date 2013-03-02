@@ -18,7 +18,7 @@ export(
 	
 	# DSC_R
 	DSC_tNN,
-	DSC_tNN_fast,
+#	DSC_tNN_fast,
 	
 	# DSD
 	DSD_RandomRBFGeneratorEvents,
@@ -52,8 +52,8 @@ export(
 	prune_clusters,
 	microToMacro,	
 	get_evaluation,
-	cluster_animation,
-	data_animation,
+	animate_cluster,
+	animate_data,
 	cluster_evaluation
 	
       )
@@ -80,7 +80,7 @@ S3method(reset_stream, DSD_ReadStream)
 ### DSC Methods
 S3method(plot, DSC)
 S3method(plot, DSC_tNN)
-S3method(plot, DSC_tNN_fast)
+#S3method(plot, DSC_tNN_fast)
 S3method(print, DSC)
 S3method(get_assignment, DSC)
 S3method(nclusters, DSC)
@@ -98,7 +98,7 @@ S3method(microToMacro, DSC_Kmeans)
 S3method(microToMacro, DSC_KmeansW)
 S3method(microToMacro, DSC_DBSCAN)
 S3method(microToMacro, DSC_tNN)
-S3method(microToMacro, DSC_tNN_fast)
+#S3method(microToMacro, DSC_tNN_fast)
 
 S3method(get_copy, DSC_R)
 S3method(get_copy, DSC_MOA)

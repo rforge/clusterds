@@ -10,7 +10,7 @@
 
 \usage{
 	get_evaluation(dsc, dsd, method, n = 1000, 
-	    type=c("auto", "micro", "macro"), assign="micro")
+	    type=c("auto", "micro", "macro"), assign="micro", ...)
 }
 
 \arguments{
@@ -24,6 +24,7 @@
 	assignment is done to micro-clusters while type is macro, micro-cluster
 	assignments are translated to macro-cluster assignments using 
 	information on what micro-clusters constitute each macro-cluster.}
+	\item{...}{Unused arguments are ignored.}
 }
 
 \details{

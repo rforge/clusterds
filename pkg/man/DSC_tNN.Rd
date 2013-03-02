@@ -5,20 +5,22 @@
     Implements the tNN (threshold Nearest Neighbor) data stream algorithm.}
 
 \usage{
-	DSC_tNN(r = 0.1, k = NULL, lambda = 0.01, minweight = 0.1,
-                 noise = 0, alpha = 0.25, measure = "Euclidean", 
-		 macro = TRUE)
+    DSC_tNN(r = 0.1, k = 0, alpha = 0, minweight = 0, 
+	lambda = 0.001, decay_interval = 1000L, noise = 0.01, 
+	measure = "Euclidean", macro = TRUE)
 }
 
 \arguments{
 	\item{r}{The threshold in the nearest neighborhood algorithm.}
 	\item{k}{The number of macro clusters to be returned if macro is true.}
-	\item{lambda}{The lambda used in the fading function.}
+	\item{alpha}{The minimum proportion of shared points between to 
+	    clusters to warrant combining them.}
 	\item{minweight}{The minimum number of weight a micro-cluster
 	    needs to have.}
+	\item{lambda}{The lambda used in the fading function.}
+	\item{decay_interval}{Fading is only called every 
+	    \code{decay_interval} points.}
 	\item{noise}{The amount of noise that should be removed while clustering.}
-	\item{alpha}{The minimum proportion of shared points between to clusters to warrant 
-		combining them.}
 	\item{measure}{The measure used to calculate cluster proximity 
 	(see package \pkg{proxy}).}
 	\item{macro}{A flag that indicates if the macro clusters should be computed.}

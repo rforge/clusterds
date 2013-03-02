@@ -31,6 +31,9 @@ The centers \code{mu} and the covariance matrices \code{sigma}
 can be supplied or will be randomly generates. The probability vector \code{p}
 defines for each cluster the probability that the next data point will
 be chosen from it (defaults to equal probability).
+
+The generation method is similar to the one suggested by Jain 
+and Dubes (1988).
 }
 
 \value{
@@ -53,6 +56,10 @@ created internally. They include:
 	\code{\link{DSD}}
 }
 
+\references{
+Jain and Dubes(1988) Algorithms for clustering data, 
+Prentice-Hall, Inc., Upper Saddle River, NJ, USA.
+}
 \examples{
 # create data stream with three clusters in 2D
 dsd1 <- DSD_GaussianStatic(k=3, d=2)

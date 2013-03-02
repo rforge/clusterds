@@ -120,7 +120,7 @@ This type of data is called a data stream and dealing with data streams
 has become 
 an increasingly important area of
 research~\citep{stream:Babcock:2002,stream:Gaber:2005,stream:Aggarwal:2007}.  
-Early on the statistical community also started to see the emerging field
+Early on, the statistical community also started to see the emerging field
 of statistical analysis of massive data streams~(see~\cite{stream:NRC:2004}).
 
 A data stream can be formalized as an ordered sequence of data points 
@@ -185,7 +185,7 @@ no longer viewed as a static collection, but rather as a dynamic set, or
 stream, of incoming data points. 
 The most common data
 stream mining tasks are clustering, classification and frequent pattern
-mining \citep{stream:Aggarwal:2007}. 
+mining \citep{stream:Aggarwal:2007,stream:Gama:2010}. 
 The rest of this section will give a brief introduce these data stream mining tasks.
 We will focus on clustering, since this is also the current focus of \pkg{stream}.
 
@@ -495,29 +495,44 @@ base class~\code{DSD}.
 There are currently two types of \code{DSD} implementations,
 classes which implement R-based data streams~(\code{DSD_R})
 and MOA-based stream generators~(\code{DSD_MOA}).
-\pkg{stream} currently provides: 
+\pkg{stream} currently provides the following generators: 
 \begin{itemize}
 \item \code{DSD_GaussianStatic}, a DSD that generates static cluster data with a
 random Gaussian distribution. 
 \item \code{DSD_GaussianMoving}, a DSD that generates moving cluster data with a
 Gaussian distribution.
-\item\code{DSD_RandomRBFGeneratorEvents} (from MOA),
- a data generator for moving Gaussian clusters which noise which can
- merge and split.
 \item\code{DSD_UniformNoise}, generates uniform noise in a $d$-dimensional
 (hyper) cube.
 \item\code{DSD_mlbenchGenerator}, a class uses the generators for artificial datasets defined in 
 the \code{mlbench} package.
 \item\code{DSD_mlbenchData}, a DSD that wraps datasets found within the \code{mlbench} package.
 \item\code{DSD_Target}, a DSD that generates a ball in circle data set.
-\item \code{DSD_Wrapper}, a
-DSD class that wraps local static data (e.g., a data.frame or a matrix) 
-as a data stream.
-\item\code{DSD_ReadStream}, a class designed
-to read data from files or open connections.
+\item\code{DSD_BarsAndGaussians}, a DSD that generates 
+two bars and two Gaussians clusters with different density.
+\item\code{DSD_RandomRBFGeneratorEvents} (from MOA),
+ a data generator for moving Gaussian clusters which noise which can
+ merge and split.
 \end{itemize}
 
-\marginpar{add bars and Gaussians data}
+For reading a saved data stream from a file (in csv format) 
+or to connection to a real stream using a R connection \pkg{stream}
+provides:
+\begin{itemize}
+\item\code{DSD_ReadStream}, a class designed
+to read data from files or open connections. This object also provides 
+support to scale the data points using \code{scale()}.
+\end{itemize}
+
+A non-streaming data set (in a \code{data.frame}) 
+can also be wrapped in stream class and to be replayed as a stream over and
+over again using:
+\begin{itemize}
+\item \code{DSD_Wrapper}, a
+DSD class that wraps static data (e.g., a data.frame, a matrix
+or a fixed portion of another data stream) 
+as a data stream.
+\end{itemize}
+
 As depicted in the class diagram, 
 other data steam implementations can be easily added in the future.
 
@@ -542,7 +557,8 @@ parameters can be obtained
 from the help page of each class. The result of this creator function
 is not a data set but
 an object representing the streams properties and its current state.
-\item The data generation function \code{get_points(x, n=1, ...)}. This function is used
+\item The data generation function \code{get_points(x, n=1, ...)}. 
+This function is used
 to obtain the next data point (or next \code{n} data points) from the 
 stream represented by object~\code{x}. The data point(s) are returned
 as a data.frame with each row representing a single data point.
@@ -579,12 +595,11 @@ since  \pkg{stream} currently focus on this task.
 \subsection{Data Stream Clustering (DSC)} \label{sec:design:dsc}
 Data stream clustering algorithms are implemented 
 as subclasses of the DSC class (see Figure~\ref{figure:dst}).
-DSCs implement the online process (called \code{DSC_Micro} since it produces micro-clusters)
-and the offline process (called \code{DSC_Macro}).
+DSCs implement the online process as subclasses of \code{DSC_Micro} 
+(since it produces micro-clusters)
+and the offline process as subclasses of \code{DSC_Macro}.
 
-\marginpar{macro\_clusters should have their own list}
-
-For DSC class the following function can be used:
+The following function can be used for objects of subclasses of DSC: 
 \begin{itemize}
 \item A creator function which creates an empty clustering.
 
@@ -597,64 +612,68 @@ data points out of the DSD and adds them to the clustering in the DSC object.
 clusters currently in the DSC object.
 
 \item
-\code{get_centers(x, ...)} which returns the centers, 
+\code{get_centers(x, type=c("auto", "micro", "macro"), ...)} returns the centers, 
 either the centroids or the medoids, of the
-clusters of the DSC object. For a \code{DSC_Micro}
-micro-clusters will be returned while final clusters will
-be returned for a \code{DSC_Macro}.
-
+clusters of the DSC object. 
+The default value for \code{type} is \code{"auto"} and results in
+\code{DSC_Micro} objects to return
+micro-cluster centers 
+and \code{DSC_Macro} objects to return macro-cluster centers.
+Most \code{DSC_Macro} objects also store the micro-cluster centers and 
+using \code{type} these centers can also be retrieved. Trying to access centers that are not
+available in the clustering results in an error.
 \item
-\code{get_weights(x)} which returns the weights of the
-clusters (e.g., number of points assigned to the cluster) in the DSC object.
-
-
+\code{get_weights(x, type=c("auto", "micro", "macro"), ...)} returns the weights of the
+clusters (typically the number of points assigned to the cluster after fading) 
+in the DSC object.
 \item
-\code{get_microclusters(x, ...)} which returns the micro-clusters of
-a \code{DSC_Micro}. When using a \code{DSC_Macro} the points or micro-clusters
-used to generate the macro-clusters are returned. A notable exception is
-\code{DSC_tNN} which will return the micro-clusters it generated while clustering.
-
+\code{get_assignment(dsc, points, type=c("auto", "micro", "macro"), ...)} 
+assigns each data point in \code{points} to its nearest cluster center 
+using Euclidean distance and returns a cluster assignment vector.
+\item 
+\code{get_copy(x)} creates a deep copy of a DSC object. This is necessary since
+most clusterings are represented by data structures in Java (for MOA-based algorithms) 
+or by R-based reference classes. This function is currently not available for
+all DSC implementations.
 \item
-\code{get_macroclusters(x, ...)} which returns the macro-clusters of
-a \code{DSC_Macro}.
-
-
-\item
-\code{plot(x, dsd=NULL, ..., method="pairs"} 
-(see manual page for more available parameters) which plots the centers
-of the clusters. There are 3 available plot methods: \code{pairs},
-\code{plot}, \code{pc}. 
-\code{plot}, or \code{pc}. \code{pairs} is the default method that produces a
+\code{plot(x, dsd=NULL, ..., method="pairs", type = c("auto", "micro", "macro")} 
+(see manual page for more available parameters) plots the centers
+of the clusters. There are 3 available plot methods: \code{"pairs"},
+\code{"plot"}, \code{"pc"}. Method \code{"pairs"} is the default method that produces a
 matrix of scatter plots that plots the attributes against one another (this
-method is only available when \code{d > 2}). \code{plot} simply takes the first
+method is only available when \code{d > 2}). Method \code{"plot"} simply takes the first
 two attributes of the matrix and plots it as \code{x} and \code{y} on a scatter
-plot. Lastly, \code{pc} performs Principle Component Analysis (PCA) on the data
+plot. Lastly, method \code{"pc"} performs Principle Component Analysis (PCA) on the data
 and projects the data to a 2 dimensional plane and then plots the results.
-If a DSD is given then the centers will be overlayed on top, and if
-a \code{DSC_Macro()} is being plotted the micro-clusters can also be plotted by setting the
-micro-cluster flag to true. Lastly, the size of the centers can mirror the weights of each
-cluster by using the weights flag and the scale parameter. 
-
-In addition,
-\code{cluster_animation(dsc, dsd, n=1, ..., outdir=NULL)} can be used to produce an animation of the clustering process. If the \code{outdir} is set then an animated gif will be produced.
-
+Parameter \code{type} controls if micro- or macro-clusters are plotted.
 \item
-\code{print(x, ...)} which prints common attributes of the
-DSC object. Currently it prints a small description of the underlying algorithm
-and the number of clusters that have been calculated.
+\code{print(x, ...)} prints common attributes of the
+DSC object (a small description of the underlying algorithm
+and the number of clusters that have been calculated).
 \end{itemize}
 
-Figure \ref{figure:interaction} shows the typical usage of \code{cluster()}
-to cluster
-data from a DSD object into a DSC object and then obtaining the clustering
-results via \code{get_centers()}.
+Figure \ref{figure:interaction} shows the typical use of \code{cluster()}
+and other functions.
+Clustering on a data stream (DSD) is performed with \code{cluster()}
+on a DSC object.
+This is typically done with a \code{DSC_micro} object which will perform its
+online clustering process and the resulting micro-clusters will be available 
+(via \code{get_centers()}, etc.)
+from the object after clustering. Note that DSC classes are implemented as reference classes
+and thus the result of cluster does not need to be reassigned to the object.
+New data points can be assigned to the clusters in the clustering using
+\code{get_assignment} resulting in the cluster assignments.
 
-\marginpar{add recluster}
-
+Reclustering (the offline component of data stream clustering)
+is done with \code{recluster(macro, dsc, type="auto", ...)}. Here the centers
+in \code{dsc} are used as pseudo-points by the \code{DSC_macro} object \code{macro}.
+After reclustering the macro-clusters can be inspected (using \code{get_centers()}, etc.) and
+the assignment of micro-clusters to macro-clusters is available via 
+\code{microToMacro()}.
 
 \begin{figure} 
 \centering 
-\includegraphics[width=10cm]{interaction} 
+\includegraphics[width=15cm]{interaction} 
 \caption{Interaction between the DSD and DSC classes} 
 \label{figure:interaction} 
 \end{figure}
@@ -676,7 +695,9 @@ leave notes are used as micro-clusters.
 \item\code{DSC_ClusTree}, the ClusTree algorithm from MOA \citep{stream:Kranen+Assent+Baldauf+Seidl:2009}.
 %\item
 %CobWeb \citep{stream:Fisher:1987}
-\item\code{DSC_tNN}, a simple data stream clustering algorithm called threshold nearest-neighbors \citep{stream:Hahsler+Dunham:2010,stream:Hahsler+Dunham:2010b}.
+\item\code{DSC_tNN}, a simple data stream clustering algorithm called threshold nearest-neighbors \citep{stream:Hahsler+Dunham:2010,stream:Hahsler+Dunham:2010b}
+extended by a new shared-density graph reclustering method which makes \code{DSC_tNN} 
+a combined micro- and macro-clustering algorithm.
 \end{itemize}
 
 
@@ -695,9 +716,85 @@ a micro-cluster representing more data points has more weight.
 \code{DSC_Hierarchical}, interface to R's \code{hclust} function.
 \end{itemize}
 
+Finally, clustering sometimes creates small clusters for noise or outliers in the data.
+\pkg{stream} provides \code{prune_clusters(dsc, threshold=.05, weight=TRUE)} to remove
+a given percentage (given by \code{threshold}) of the clusters with the least weight.
+The percentage is either computed with the 
+number of clusters or with the sum of the weight of all clusters (\code{weight}).
+The resulting clustering is a static copy (\code{DSC_Static}) and further clustering
+cannot be performed with it. Reclustering, however,  can be performed on it.
+
 \section{Evaluating Data Stream Mining}
-\marginpar{missing}
-\marginpar{add pruning somewhere}
+Evaluation of data stream mining is an important issue. We will only discuss 
+the evaluation of data stream clustering here and refer the interested 
+reader to the books by \cite{stream:Aggarwal:2007} and \cite{stream:Gama:2010}.
+
+
+
+\section{Evaluating Data Stream Clustering}
+Evaluation of clustering and in particular data stream clustering
+is discussed in the literature extensively and there are many evaluation criteria
+available. 
+For the evaluation of conventional clustering we refer the reader to the popular books by
+\cite{clust:Jain:1988} and \cite{Kaufman:1990}. 
+Evaluation of data stream clustering is treated in the book by \cite{stream:Gama:2010}.
+
+
+Evaluation in \pkg{stream} is performed via 
+\centerline{\code{get\_evaluation(dsc, dsd, method, n = 1000, type=c("auto", "micro", "macro"), assign="micro"}.}
+\code{n} data points are taken from \code{dsd} and assigned to their closest cluster in the 
+clustering 
+in \code{dsc} using Euclidean distance. 
+By default the points are assigned to micro-clusters (\code{assign}).
+Then the assignments are aggregated to the level specified in \code{type}.
+So for a macro-clustering, the assignments will be translated into 
+macro-cluster assignments using the micro- to macro-cluster relationships stored
+in the clustering. Then the evaluation measure specified in \code{method} is calculated.
+A simple measure is to evaluate the compactness of the data points assigned to each 
+cluster using the sum of squared distances between each data point and 
+the center of its cluster (method \code{"SSQ"}). 
+
+Most evaluation measures require the ground truth (class label) for the data (\code{dsd}).
+If this is available then for each cluster the majority class in the assigned data points
+is found and is used as the class label for the cluster.
+Based on 
+the majority class and the class of all assigned points several 
+evaluation measures are available. 
+We will not describe each measure, since most of them are standard measures 
+which can be found in many text books \citep[e.g.,][]{clust:Jain:1988,Kaufman:1990}.
+The following evaluation measures are currently implemented (method name used in 
+\code{get_evaluation} are typed as code):
+\begin{itemize}
+	    \item   \code{"precision"} 
+	    \item   \code{"recall"}
+	    \item   F1 measure (\code{"F1"}), 
+	    \item   \code{"purity"}
+	    \item   false positive rate (\code{"fpr"})
+	    \item   Rand index (\code{"Rand"})
+	    \item   Adjusted Rand index (\code{"cRand"}),
+	    \item   Jaccard index (\code{"Jaccard"}), 
+	    \item   Euclidean dissimilarity of the memberships (\code{"Euclidean"})
+%		(See Dimitriadou, Weingessel and Hornik
+%			(2002)), 
+	    \item   Manhattan dissimilarity of the memberships (\code{"Manhattan"}), 
+	    \item   Normalized Mutual Information (\code{"NMI"}) 
+%	    
+%%	    (see Strehl and Ghosh
+%		    (2002)),
+	    \item   Katz-Powell index (\code{"KP"}) 
+%	    (see Katz and
+%		    Powell (1953)),
+	    \item   Fowlkes and Mallows's index (\code{"FM"}) 
+%	    (see Fowlkes and Mallows (1983)),
+	    \item   Maximal cosine of the angle between the agreements (\code{"angle"}),
+	    \item   Maximal co-classification rate (\code{"diag"}),
+	    \item   Prediction Strength (\code{"PS"}).
+%	    (see Tibshirani and Walter (2005)).
+\end{itemize}
+
+Many measures are the average over all clusters. For example, purity is
+the average purity over all clusters.
+
 
 
 \section{Extending the stream Framework} \label{sec:design:extension}
@@ -1142,19 +1239,6 @@ points.
 
 In this example we will show how to display evaluation measures after clustering
 data using a DSC object with the \code{get_evaluation()} function.
-
-There are various scores that can be measured using the \code{get_evaluation()} function.
-Available measures includes: 
-F1 measure (f1), 
-recall, 
-precision, 
-false positive rate (fpr),
-Jaccard index (jaccard),
-Rand index (rand, rand\_HA, rand\_MA, rand\_FM),
-within cluster sum of squares (ssq), and the informational items
-number of clusters (numCluster) and
-number of classes (numClasses).
-
 To use the function simply pass in the \code{DSC} object 
 used for clustering
 as well as the \code{DSD}
@@ -1349,7 +1433,7 @@ Finally, we can compare the clusterings using \code{get_evaluation}.
 sapply(list(DenStream=km_denstream, CluStream=km_clustream), 
 FUN=function(x){
     reset_stream(dsd)
-    get_evaluation(x, dsd, c("f1","precision","recall","rand"))
+    get_evaluation(x, dsd, c("purity","rand", "crand"))
 })
 @
 

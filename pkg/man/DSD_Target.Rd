@@ -7,7 +7,15 @@ It has a single Gaussian cluster in the center and a ring that surrounds it.
 }
 
 \usage{
-DSD_Target()
+DSD_Target(center_sd = 0.05, center_weight = 0.5, ring_r = 0.2,
+                 ring_sd = 0.02, noise = 0)
+}
+\arguments{
+    \item{center_sd}{standard deviation of center}
+    \item{center_weight}{proportion of points in center}
+    \item{ring_r}{average ring radius}
+    \item{ring_sd}{standard deviation of ring radius}
+    \item{noise}{proportion of noise}
 }
 
 \details{
@@ -35,7 +43,6 @@ created internally. They include:
 \examples{
 # create data stream with three clusters in 2D
 dsd <- DSD_Target()
-
 # plotting the data
 plot(dsd)
 

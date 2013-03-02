@@ -8,8 +8,9 @@
 }
 
 \usage{
-	cluster_evaluation(dsc, dsd, macro=NULL, method, n = 1000, 
-	    type=c("auto", "micro", "macro"), assign="micro", pointInterval=100)
+    cluster_evaluation(dsc, dsd, macro=NULL, method, n = 1000, 
+	    type=c("auto", "micro", "macro"), assign="micro", 
+	    pointInterval=100)
 }
 
 \arguments{
@@ -48,11 +49,14 @@
 }
 
 \examples{
-# Create stream
+### evaluate a micro clusterer
 dsd <- DSD_GaussianStatic(k=3, d=2)
+micro <- DSC_DenStream()
+cluster_evaluation(micro, dsd, method=c("f1","rand"), assign="micro")
 
+### evaluate a macro clusterer
+dsd <- DSD_GaussianStatic(k=3, d=2)
 micro <- DSC_DenStream()
 macro <- DSC_KmeansW(2)
-
-cluster_evaluation(micro, dsd, macro, c("f1","rand"), assign="macro")
+cluster_evaluation(micro, dsd, macro, method=c("f1","rand"), assign="micro")
 }

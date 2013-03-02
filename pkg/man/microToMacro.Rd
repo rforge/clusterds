@@ -1,7 +1,7 @@
 \name{microToMacro}
 \alias{microToMacro}
 \title{
-Translate Micro-cluster Ids into Macro-cluster Ids
+Translate Micro-cluster IDs to Macro-cluster IDs
 }
 \description{
 Translates micro-cluster ids into macro-cluster ids for 
@@ -15,7 +15,7 @@ microToMacro(x, micro=NULL)
   \item{x}{ a \code{DSC_Macro} object that also contains information about 
   micro-clusters.}
   \item{micro}{A vector with micro-cluster ids. If \code{NULL} then
-  the assignment for all micro-clusters in x are returned. }
+  the assignments for all micro-clusters in x are returned. }
 }
 %\details{
 %}

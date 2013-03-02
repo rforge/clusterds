@@ -1,27 +1,33 @@
-#get dsd, dsc and n
 
 cluster_evaluation <- function(dsc, dsd, macro=NULL, method, 
-	n=1000, type=c("auto", "micro", "macro"), assign="micro", pointInterval=100) {
-	
-	evaluations <- data.frame()
-	for(i in 1:(n/pointInterval)) {
-		points <- get_points(dsd,pointInterval,assignment=TRUE)
-		wrapper <- DSD_Wrapper(points,0,loop=TRUE,assignment=attr(points,"assignment"))
-		cluster(dsc,wrapper,pointInterval)
-		if(is.null(macro)) {
-			evaluations <- rbind(evaluations,get_evaluation(dsc,dsd,method,pointInterval,type,assign))
-		} else {
-			recluster(macro,dsc)
-			evaluations <- rbind(evaluations,get_evaluation(macro,dsd,method,pointInterval,type,assign))
-		}
+	n=1000, type=c("auto", "micro", "macro"), assign="micro", 
+	pointInterval=100) {
+
+    evaluations <- data.frame()
+    for(i in 1:(n/pointInterval)) {
+	wrapper <- DSD_Wrapper(dsd, n=pointInterval, loop=FALSE)
+	cluster(dsc, wrapper, pointInterval)
+
+	reset_stream(wrapper)
+	if(is.null(macro)) {
+	    e <- get_evaluation(dsc, wrapper, method, 
+		    pointInterval, type, assign)
+	} else {
+	    suppressWarnings(recluster(macro, dsc)) ### we get reclustering warnings
+	    e <- get_evaluation(macro, wrapper, method,
+		    pointInterval, type, assign)
 	}
 	
-	evaluations
-	
+	if(i==1) evaluations <- e
+	else evaluations <- rbind(evaluations,e)
+	}
+
+    rownames(evaluations) <- 1:(n/pointInterval)*pointInterval
+    evaluations
 }
 
 get_evaluation <- function (dsc, dsd, method, n = 1000, 
-	type=c("auto", "micro", "macro"), assign="micro") {
+	type=c("auto", "micro", "macro"), assign="micro", ...) {
 
     methods <- c(
 	    "numClusters","numClasses",
@@ -38,7 +44,9 @@ get_evaluation <- function (dsc, dsd, method, n = 1000,
     ### figure out type
     type <- get_type(dsc, type)
 
+    ### FIXME: we might want to use only assigned micro-clusters here!
     c <- get_centers(dsc, type=type) 
+
 
     if(nrow(c)<1) {
 	warning("No centers available!")
@@ -136,6 +144,13 @@ colMax <- function(x, which=FALSE) {
     }
 }
 
+rowMax <- function(x, which=FALSE) {
+    if(!which) apply(x, 1, FUN=function(y) max(y))
+    else {
+	apply(x, 1, FUN=function(y) which.max(y))
+    }
+}
+
 f1 <- function(actual, predict) {
 	precision <- precision(actual, predict)
 	recall <- recall(actual, predict)
@@ -157,7 +172,7 @@ precision <- function(actual, predict) {
 
 classPurity <- function(actual, predict) {
     confusion <- table(actual, predict)
-    
+
     mean(rowMax(confusion)/rowSums(confusion))
 }
 

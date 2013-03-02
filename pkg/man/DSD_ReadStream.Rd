@@ -10,7 +10,7 @@ A DSD class that reads a data stream from a file or any R connection.
 
 \usage{
 DSD_ReadStream(file, sep=",", k=NA, d=NA, take=NULL, assignment=NULL, 
-    center=FALSE, scale=FALSE, loop=FALSE)
+    center=FALSE, scale=FALSE, loop=FALSE, n=1000)
 scale_stream(dsd, n=1000, center=TRUE, scale=TRUE, reset_stream=FALSE)
 close_stream(dsd)
 }
