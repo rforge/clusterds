@@ -42,7 +42,6 @@ export(
 	# DSC
 	cluster,
 	recluster,
-	
 	get_centers,
 	get_weights,
 	get_assignment,
@@ -51,11 +50,12 @@ export(
 #	merge_DSC,
 	prune_clusters,
 	microToMacro,	
-	get_evaluation,
-	animate_cluster,
-	animate_data,
-	cluster_evaluation
 	
+	evaluate,
+	evaluate_cluster,
+	
+	animate_cluster,
+	animate_data
       )
 
 ### DSD Methods

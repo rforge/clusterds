@@ -1,3 +1,22 @@
+#######################################################################
+# stream -  Infrastructure for Data Stream Mining
+# Copyright (C) 2013 Michael Hahsler, Matthew Bolanos, John Forrest 
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this program; if not, write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+
+
 kmeansW <- setRefClass("kmeansW", 
 	fields = list(
 		data	    = "data.frame",
@@ -46,7 +65,11 @@ kmeansW$methods(cluster = function(x, weight = rep(1,nrow(x)), ...) {
 		assignment <<- kmeansW$cluster
 		centers <<- data.frame(kmeansW$centers)
 		details <<- kmeansW
-	    } else assignment <<- 1:nrow(data)
+	    } else {
+        assignment <<- 1:nrow(data)
+        centers <<- x
+        details <<- NULL
+	    }
 	
 	    weights <<- sapply(1:k, FUN =
 		    function(i) sum(dataWeights[assignment==i], na.rm=TRUE))

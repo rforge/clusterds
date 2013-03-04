@@ -1,5 +1,6 @@
-\name{get_evaluation}
-\alias{get_evaluation}
+\name{evaluate}
+\alias{evaluate}
+\alias{evaluate_cluster}
 \alias{print.stream_eval}
 \title{Evaluate Clusterings}
 
@@ -9,8 +10,11 @@
 }
 
 \usage{
-	get_evaluation(dsc, dsd, method, n = 1000, 
+    evaluate(dsc, dsd, method, n = 1000, 
 	    type=c("auto", "micro", "macro"), assign="micro", ...)
+    evaluate_cluster(dsc, dsd, macro=NULL, method, n = 1000,
+	    type=c("auto", "micro", "macro"), assign="micro",
+	    horizon=100, ...)
 }
 
 \arguments{
@@ -24,6 +28,8 @@
 	assignment is done to micro-clusters while type is macro, micro-cluster
 	assignments are translated to macro-cluster assignments using 
 	information on what micro-clusters constitute each macro-cluster.}
+	\item{macro}{A DSC_macro object for reclustering.}
+	\item{horizon}{Number of points after which evaluation is done (see detail section).}
 	\item{...}{Unused arguments are ignored.}
 }
 
@@ -41,7 +47,7 @@
 		\item	\code{"recall"},
 		\item	\code{"F1"} F1 measure, 
 		\item	\code{"purity"} (of found clusters), 
-		\item	\code{"classPurity"} (of real clusters), 
+		\item	\code{"classPurity"} (of real clusters; see Wan et al (2009)), 
 		\item	\code{"fpr"} false positive rate,
 		\item	\code{"SSQ"} sum of squares, 
 		\item	\code{"Euclidean"} Euclidean dissimilarity of
@@ -80,10 +86,16 @@ points and ad what level (micro or macro) to evaluate.
 
 Many of the above measures are implemented package \pkg{clue} in function
 \code{cl_agreement().}
+
+\code{evaluate_cluster()} is used to evaluate an evolving data stream using
+the method described by Wan et al. (2009). Of the \code{n} data points
+\code{horizon} many points are clustered and then the evaluation
+measure is calculated on the same data points. The idea is to find out if 
+the clustering algorithm was able to adapt to the changing stream.
 }
 
 \value{
-    \code{get_evaluation} returns an object of class \code{stream_eval}
+    \code{evaluate} returns an object of class \code{stream_eval}
     which is a numeric vector of the values of the requested measures
     and two attribures, \code{"type"} and
     \code{"assign"}, to see at what level the evaluation was done.
@@ -117,6 +129,9 @@ Machine Learning Research, 3, 583-617.
 R. Tibshirani and G. Walter (2005).  Cluster validation by
 Prediction Strength.  Journal of Computational and Graphical
 Statistics, 14/3, 511-528.
+
+L Wan, W.K. Ng, X.H. Dang, P.S. Yu and K. Zhang (2009). Density-Based 
+Clustering of Data Streams at Multiple Resolutions, 3(3).
 }
 
 \seealso{
@@ -131,14 +146,27 @@ dsd <- DSD_GaussianStatic(k=3, d=2)
 micro <- DSC_DenStream()
 cluster(micro, dsd, 1000)
 # Evaluate micro-clusters
-get_evaluation(micro, dsd, c("f1","rand"))
+evaluate(micro, dsd, c("f1","rand"))
 
 macro <- DSC_KmeansW(2)
 recluster(macro, micro)
 # Evaluate macro-clusters by assigning to micro-clusters
-get_evaluation(macro, dsd, c("f1","rand"))
+evaluate(macro, dsd, c("f1","rand"))
 # Evaluate macro-clusters by assigning to macro-clusters
 # This gives a similar result as the micro-cluster assignment since
 # the real clusters are spherical (multidimensional Gaussians).
-get_evaluation(macro, dsd, c("f1","rand"), assign="macro")
+evaluate(macro, dsd, c("f1","rand"), assign="macro")
+
+
+# Evaluate an evolving data stream
+dsd <- DSD_GaussianMoving()
+micro <- DSC_DenStream(initPoints=100)
+evaluate_cluster(micro, dsd, method=c("purity","crand"), n=600, horizon= 100, 
+                 assign="micro")
+
+reset_stream(dsd)
+micro <- DSC_DenStream(initPoints=100)
+macro <- DSC_KmeansW(3)
+evaluate_cluster(micro, dsd, macro, method=c("purity","crand"), n=600, 
+                 horizon=100, assign="micro")
 }

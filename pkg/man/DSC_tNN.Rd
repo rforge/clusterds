@@ -84,7 +84,7 @@ plot(tnn, dsd)
 plot(tnn, dsd, type="macro")
 
 # evaluate first using macro and then using micro-clusters
-get_evaluation(tnn, dsd, "cRand")
-get_evaluation(tnn, dsd, "cRand", type="macro")
-get_evaluation(tnn, dsd, "cRand", type="macro", assign="macro")
+evaluate(tnn, dsd, "cRand")
+evaluate(tnn, dsd, "cRand", type="macro")
+evaluate(tnn, dsd, "cRand", type="macro", assign="macro")
 }

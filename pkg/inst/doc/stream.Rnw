@@ -34,7 +34,6 @@
 %\usepackage{Sweave} 
 %\VignetteIndexEntry{Introduction to stream}
 
-
 \author{John Forrest\\Microsoft
 \And Matthew Bola\~nos\\Southern Methodist University
 \AND Michael Hahsler\\Southern Methodist University}
@@ -107,7 +106,7 @@ work with ``static'' data sets, meaning that the complete data set is
 available as a whole to perform all necessary 
 computations.
 Well known methods like $k$-means clustering, decision tree induction and
-the apriori algorithm to find frequent itemsets scan the complete 
+the APRIORI algorithm to find frequent itemsets scan the complete 
 data set repeatedly to produce 
 their results \citep{stream:Hastie+Tibshirani+Friedman:2001}. 
 However, in recent years more and more applications need to work with data
@@ -175,10 +174,16 @@ the hope that other researchers will
 use \pkg{stream} to develop, study and improve their own algorithms.
 
 
-The paper is organized as follows... 
+The paper is organized as follows. We briefly review data stream mining
+in Section~\ref{sec:mining}. In Section~\ref{sec:design} we cover the \pkg{stream}
+framework including the design of the class hierarchy to represent different data streams
+and data stream clustering algorithms, evaluation of algorithms and how to
+extend the framework with new data stream sources and algorithms. We provide 
+comprehensive examples in Section~\ref{sec:examples} and conclude with 
+Section~\ref{sec:conclusion}.
 %%%
 
-\section{Data Stream Algorithms} \label{sec:mining}
+\section{Data Stream Mining} \label{sec:mining}
 
 Due to advances in data gathering techniques, it is often the case that data is
 no longer viewed as a static collection, but rather as a dynamic set, or
@@ -213,8 +218,8 @@ proposed
     stream_clust:Tasoulis:2006,
     stream_clust:Tasoulis:2007,
     stream_clust:Udommanetanakit:2007,
-    stream_clust:Tu:2009,
-    stream_clust:Wan:2009,
+    stream:Tu:2009,
+    stream:Wan:2009,
     stream_clust:Kranen:2011}.
 Most data stream clustering algorithms use a two-stage
     online/offline approach: 
@@ -222,7 +227,7 @@ Most data stream clustering algorithms use a two-stage
 \begin{enumerate}
     \item \textbf{Online:} Summarize the data using a set of $k^\prime$ micro-clusters
     organized in a space efficient data structure which also enables fast
-    lookup.  Micro-clusters are representatives for sets of similar data points
+    look-up.  Micro-clusters are representatives for sets of similar data points
     and are created using a single pass over the data (typically in real time
     when the data stream arrives).
     Micro-clusters are typically represented by cluster
@@ -230,7 +235,7 @@ Most data stream clustering algorithms use a two-stage
     Each new
     data point is assigned to its closest (in terms of a similarity function)
     micro-cluster.  Some algorithms use a grid instead and micro-clusters represent
-    non-empty grid cells (e.g.,~\cite{stream_clust:Tu:2009, stream_clust:Wan:2009}).
+    non-empty grid cells (e.g.,~\cite{stream:Tu:2009, stream:Wan:2009}).
     If a new data point cannot be assigned to an existing
     micro-cluster, a new micro-cluster is created. The algorithm might
     also perform some housekeeping (merging or deleting micro-clusters) to keep the
@@ -388,7 +393,7 @@ mining in data streams
 by \cite{stream:Jin:2007}
 which describe several algorithms for mining frequent itemsets. 
 
-\section{Existing Solution: The MOA Framework} \label{sec:background:moa}
+\subsection{Existing Solution: The MOA Framework} \label{sec:background:moa}
 
 MOA (short for Massive Online Analysis) 
 is a framework 
@@ -724,14 +729,14 @@ number of clusters or with the sum of the weight of all clusters (\code{weight})
 The resulting clustering is a static copy (\code{DSC_Static}) and further clustering
 cannot be performed with it. Reclustering, however,  can be performed on it.
 
-\section{Evaluating Data Stream Mining}
+\section{Evaluating Data Stream Mining}\label{sec:evaluation}
 Evaluation of data stream mining is an important issue. We will only discuss 
 the evaluation of data stream clustering here and refer the interested 
 reader to the books by \cite{stream:Aggarwal:2007} and \cite{stream:Gama:2010}.
 
 
 
-\section{Evaluating Data Stream Clustering}
+\subsection{Evaluating Data Stream Clustering}\label{sec:evaluation}
 Evaluation of clustering and in particular data stream clustering
 is discussed in the literature extensively and there are many evaluation criteria
 available. 
@@ -740,9 +745,14 @@ For the evaluation of conventional clustering we refer the reader to the popular
 Evaluation of data stream clustering is treated in the book by \cite{stream:Gama:2010}.
 
 
-Evaluation in \pkg{stream} is performed via 
-\centerline{\code{get\_evaluation(dsc, dsd, method, n = 1000, type=c("auto", "micro", "macro"), assign="micro"}.}
-\code{n} data points are taken from \code{dsd} and assigned to their closest cluster in the 
+Evaluation in \pkg{stream} is performed via
+
+\begin{center}
+\code{get\_evaluation(dsc, dsd, method, n = 1000, type=c("auto", "micro", "macro"),}\\
+\code{assign="micro")},
+\end{center}
+
+where \code{n} data points are taken from \code{dsd} and assigned to their closest cluster in the 
 clustering 
 in \code{dsc} using Euclidean distance. 
 By default the points are assigned to micro-clusters (\code{assign}).
@@ -763,7 +773,7 @@ evaluation measures are available.
 We will not describe each measure, since most of them are standard measures 
 which can be found in many text books \citep[e.g.,][]{clust:Jain:1988,Kaufman:1990}.
 The following evaluation measures are currently implemented (method name used in 
-\code{get_evaluation} are typed as code):
+\code{evaluate} are typed as code:
 \begin{itemize}
 	    \item   \code{"precision"} 
 	    \item   \code{"recall"}
@@ -792,12 +802,8 @@ The following evaluation measures are currently implemented (method name used in
 %	    (see Tibshirani and Walter (2005)).
 \end{itemize}
 
-Many measures are the average over all clusters. For example, purity is
-the average purity over all clusters.
 
-
-
-\section{Extending the stream Framework} \label{sec:design:extension}
+\subsection{Extending the stream Framework} \label{sec:design:extension}
 
 Since stream mining is a relatively young field and many advances are
 expected in the near future,
@@ -991,7 +997,6 @@ plot. Noise points are plotted as gray crosses.
 
 \code{DSD_RandomRBFGeneratorEvents} creates dynamic data streams where clusters move over time which is called in the data mining community concept drift.
 
-\marginpar{set seed does not work for Java!}
 <<moa1, fig=TRUE, include=FALSE>>= 
 set.seed(1000) 
 dsd <- DSD_RandomRBFGeneratorEvents(k=3, d=2) 
@@ -1121,7 +1126,7 @@ is possible and will described in the next example.
 
 An important feature of \pkg{stream} is the ability to replay portions of a 
 data stream. With this feature we can capture a special feature of the
-data (e.g., an anomality) and then adapt our algorithm and test if the 
+data (e.g., an anomaly) and then adapt our algorithm and test if the 
 change improved the behavior on exactly that data.
 Also, this feature can be used to
 conduct experiments where different algorithms need to 
@@ -1238,7 +1243,7 @@ points.
 \subsection{Evaluating results} \label{examples:evaluation}
 
 In this example we will show how to display evaluation measures after clustering
-data using a DSC object with the \code{get_evaluation()} function.
+data using a DSC object with the \code{evaluate()} function.
 To use the function simply pass in the \code{DSC} object 
 used for clustering
 as well as the \code{DSD}
@@ -1249,20 +1254,47 @@ from DSD are used to compute the measures).
 library("stream")
 dsd <- DSD_GaussianStatic(k=3, d=2, mu=rbind(c(1.5,1.3),c(1,1),c(1.2,1)))
 
-tnn <- DSC_tNN(, r=.1)
+tnn <- DSC_tNN(, r=.1, macro=FALSE)
 cluster(tnn, dsd, 500)
 
-get_evaluation(tnn, dsd, n = 500)
+evaluate(tnn, dsd, n = 500)
 @
 
 Individual measures can be calculated using the method argument.
 <<>>=
-get_evaluation(tnn, dsd, method = c("f1", "rand"), n = 500)
+evaluate(tnn, dsd, method = c("purity", "crand"), n = 500)
 @
 
-\marginpar{evaluate measures over time}
 
-\subsection{Reclustering DSC objects with another DSC} \label{examples:recluster}
+For evolving streams it is important to evaluate how well the clustering
+algorithm is able to adapt to the changing cluster structure over time. 
+Several algorithms were evaluated with the scheme presented by
+\cite{stream:Aggarwal+Han+Wang+Yu:2003}, \cite{stream:Tu:2009} and \cite{stream:Wan+Ng+Dang+Yu+Zhang:2009}. In this approach a horizon is defined as 
+a number of data points which are first clustered and then the evaluation
+measure is calculated using the same data. Algorithms which can better
+adapt to the changing stream will achieve a better value.
+This evaluation strategy is implemented in stream as function 
+\code{evaluate_cluster}.
+The following examples evaluate DenStream and DenStream plus weighted
+$k$-means reclustering on an evolving stream.
+<<>>=
+dsd <- DSD_GaussianMoving()
+micro <- DSC_DenStream(initPoints=100)
+evaluate_cluster(micro, dsd, method=c("purity","crand"), n=600, horizon= 100, 
+                 assign="micro")
+@
+
+<<>>=
+reset_stream(dsd)
+micro <- DSC_DenStream(initPoints=100)
+macro <- DSC_KmeansW(3)
+evaluate_cluster(micro, dsd, macro, method=c("purity","crand"), n=600, 
+                 horizon=100, assign="micro")
+@
+
+
+\subsection{Reclustering DSC objects with another DSC}
+\label{examples:recluster}
 
 This examples show how to recluster a \code{DSC} object after creating it. 
 To begin, first create a \code{DSC} object and run the clustering algorithm.
@@ -1292,7 +1324,7 @@ km
 Now the macro clusters can be used for example for evaluation or plotted.
 
 <<>>= 
-get_evaluation(km, dsd,"f1")
+evaluate(km, dsd,"purity")
 @
 
 <<recluster, fig=TRUE, include=FALSE>>= 
@@ -1427,13 +1459,13 @@ helps to recover the original structure of the data while the large
 micro-cluster dominates the results for DenStream.
 Given more data, DenStream will eventually also find the correct clustering. 
 
-Finally, we can compare the clusterings using \code{get_evaluation}.
+Finally, we can compare the clusterings using \code{evaluate}.
 
 <<>>= 
 sapply(list(DenStream=km_denstream, CluStream=km_clustream), 
 FUN=function(x){
     reset_stream(dsd)
-    get_evaluation(x, dsd, c("purity","rand", "crand"))
+    evaluate(x, dsd, c("purity","rand", "crand"))
 })
 @
 
@@ -1451,24 +1483,17 @@ performance of these tasks. Data streams can be created with specific
 properties that may be difficult to simulate in real-world situations.
 
 
-Furthermore, the infrastructure that we have built can be extended upon in
-multiple directions. We have abstracted each component to only require a small
+Furthermore, the presented infrastructure can be extended by adding new algorithms. We have abstracted each component to only require a small
 set of functions that are defined in each base class. Writing the framework in
 \proglang{R} means that developers have the ability to design components either
 directly in \proglang{R}, or design components in \proglang{Java} or
 \proglang{C}/\proglang{C++}, and then write an \proglang{R} wrapper to use the
 high level code. 
 
-
-In the future, we plan on adding additional functionality to \pkg{stream}.
-Currently we only have implementations for clustering tasks; we would like to
-develop a classification module that also extends from the base DST class.
-Additionally, there are plans to develop an evaluation module that accompanies
-each DST class to provide immediate feedback on their performance. Finally, for
-each of the DST classes developed, we would like to include all of the
-available algorithms, both the latest innovations and the original algorithms
-that shaped the research for the respective area.
-
+Currently, \pkg{stream} only includes implementations for the data stream 
+clustering tasks. In the future we plan to also incorporate 
+classification and frequent pattern mining algorithms 
+as an extension of the base DST class.
 
 \bibliography{stream,stream_clust}
 

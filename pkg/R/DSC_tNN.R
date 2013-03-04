@@ -1,4 +1,20 @@
-#complain 
+#######################################################################
+# stream -  Infrastructure for Data Stream Mining
+# Copyright (C) 2013 Michael Hahsler, Matthew Bolanos, John Forrest 
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this program; if not, write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 
 tNN <- setRefClass("tNN",
@@ -82,7 +98,7 @@ tNN <- setRefClass("tNN",
 DSC_tNN <- function(r = 0.1, k=0, alpha = 0, minweight = 0, lambda = 1e-3, 
 	decay_interval=1000L, noise = 0.01, measure = "Euclidean", macro = TRUE) {
 
-    if(k==0 && alpha==0) {
+    if(k==0 && alpha==0 && macro) {
 	warning("You have to specify at least k or alpha! Using default alpha=.25 and minweight=0.1.")
 	minweight <- 0.1
 	alpha <- 0.25
