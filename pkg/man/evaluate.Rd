@@ -135,6 +135,7 @@ Clustering of Data Streams at Multiple Resolutions, 3(3).
 }
 
 \seealso{
+            \code{\link{animate_cluster}},
             \code{\link[clue]{cl_agreement}} in \pkg{clue}.
 }
 
@@ -144,18 +145,19 @@ Clustering of Data Streams at Multiple Resolutions, 3(3).
 dsd <- DSD_GaussianStatic(k=3, d=2)
 
 micro <- DSC_DenStream()
-cluster(micro, dsd, 1000)
-# Evaluate micro-clusters
-evaluate(micro, dsd, c("f1","rand"))
+cluster(micro, dsd, 500)
+# Evaluate micro-clusters 
+# Note: we use here only n=500 points for evaluation to speed up execution
+evaluate(micro, dsd, method=c("purity","crand"), n=500)
 
 macro <- DSC_KmeansW(2)
 recluster(macro, micro)
 # Evaluate macro-clusters by assigning to micro-clusters
-evaluate(macro, dsd, c("f1","rand"))
+evaluate(macro, dsd, method=c("purity","crand"), n=500)
 # Evaluate macro-clusters by assigning to macro-clusters
 # This gives a similar result as the micro-cluster assignment since
 # the real clusters are spherical (multidimensional Gaussians).
-evaluate(macro, dsd, c("f1","rand"), assign="macro")
+evaluate(macro, dsd, method=c("purity","crand"), n=500, assign="macro")
 
 
 # Evaluate an evolving data stream
@@ -165,8 +167,16 @@ evaluate_cluster(micro, dsd, method=c("purity","crand"), n=600, horizon= 100,
                  assign="micro")
 
 reset_stream(dsd)
-micro <- DSC_DenStream(initPoints=100)
+micro <- DSC_tNN(r=.1, macro=FALSE, lambda=.01, decay_interval=100)
 macro <- DSC_KmeansW(3)
 evaluate_cluster(micro, dsd, macro, method=c("purity","crand"), n=600, 
                  horizon=100, assign="micro")
+
+# visualize
+\dontrun{
+reset_stream(dsd)
+micro <- DSC_tNN(r=.1, macro=FALSE, lambda=.1, decay_interval=20)
+animate_cluster(micro, dsd, macro, n=600,
+	evaluationMethod=c("purity"), pointInterval=20, 
+	xlim=c(-.2,1.2), ylim=c(-.2,1.2))}
 }

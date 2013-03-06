@@ -312,6 +312,14 @@ microToMacro.DSC_tNN <- function(x, micro=NULL) {
     structure(mw$assignment[micro], names=micro)
 }
 
+
+### tNN cannot recluster other clusterings!
+recluster.tNN <- function(macro, dsc, type="auto", ...) {
+    stop(gettextf("recluster not implemented for class '%s'.",
+		    paste(class(macro), collapse=", ")))
+}
+
+
 ###########################################################################
 ### helpers
 

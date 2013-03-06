@@ -38,6 +38,7 @@ An object of class \code{DSD_GaussianMoving} (subclass of
 dsd <- DSD_GaussianMoving()
 
 # show an animation of the data
-animate_data(dsd, 500,  xlim=c(-.2,1.2), ylim=c(-.2,1.2), 
-    pointInterval=10)
+\dontrun{
+animate_data(dsd, 600,  xlim=c(-.2,1.2), ylim=c(-.2,1.2), 
+    pointInterval=10)}
 }

@@ -57,6 +57,11 @@ cluster.ani <- function(dsc=NULL, dsd, macro=NULL, n=1000,
     else
 	layout(matrix(c(1,1), 2, 1, byrow = TRUE))
 
+
+    ### do micro or macro 
+    if(!is.null(macro)) cl <- macro
+    else cl <- dsc
+
     points <- data.frame()
     assignment <- numeric()
     col <- gray.colors(horizon, start = 1, end = .7, gamma = 2.2)
@@ -64,57 +69,61 @@ cluster.ani <- function(dsc=NULL, dsd, macro=NULL, n=1000,
     evaluation <- rep(NA,n/pointInterval)
 
     for (i in 1:n) {
+### FIXME: do this in blocks!
 	d <- get_points(dsd, assignment=TRUE)
 	points <- rbind(points,d)
 	assignment <- c(assignment,attr(d,"assignment"))
+	
 	if(nrow(points) > horizon) {
 	    points <- points[(nrow(points)-horizon +1):nrow(points),]
-	    assignment <- assignment[(length(assignment)-horizon +1):length(assignment)]
+	    assignment <- assignment[
+		(length(assignment)-horizon +1):length(assignment)]
 	}
 
-	if(!is.null(dsc)) {
-	    cluster(dsc, DSD_Wrapper(d[1,]),1)}
+	## cluster?
+	if(!is.null(dsc)) cluster(dsc, DSD_Wrapper(d[1,]),1)
+	
 
-	    if(i %% pointInterval == 0) {
-		points_dsd <- DSD_Wrapper(points,assignment=assignment)
-		par(mar=c(4.1,4.1,2.1,2.1))
-		if(!is.null(dsc)) {
-		    plot(dsc, points_dsd,
-			    n=nrow(points),
-			    col_points=col[horizon-nrow(points)+1: horizon],...)
-		} else {
-		    plot(points_dsd,
-			    n=nrow(points),...)
-		}
 
-		reset_stream(points_dsd)
-
-		if(!is.null(evaluationMethod)) {
-		    par(mar=c(2.1,4.1,1.1,2.1))
-		    if(is.null(macro)) {
-			evaluation <- c(
-				evaluate(dsc,points_dsd,
-					evaluationMethod,n=nrow(points),...),
-				evaluation[-length(evaluation)])
-		    } else {
-			suppressWarnings(recluster(macro,dsc))
-			evaluation <- c(
-				evaluate(macro,points_dsd,
-					evaluationMethod,n=nrow(points), ...),
-				evaluation[-length(evaluation)])
-		    }
-
-		    plot(evaluation, type="o", col="blue",
-			    ylim=c(0,1), ann=FALSE, xaxt='n') 
-		    title(ylab=evaluationMethod)
-
-		}
-
-		if(save)
-		    ani.pause()
-		else
-		    Sys.sleep(interval)
+	if(i %% pointInterval == 0) {
+	    ## recluster
+	    if(!is.null(dsc) && !is.null(macro)) 
+		suppressWarnings(recluster(macro,dsc))
+	    
+	    ## plot points and clustering
+	    points_dsd <- DSD_Wrapper(points,assignment=assignment)
+	    
+	    par(mar=c(4.1,4.1,2.1,2.1))
+	    if(!is.null(dsc)) {
+		plot(cl, points_dsd,
+			n=nrow(points),
+			col_points=col[horizon-nrow(points)+1: horizon],...)
+	    } else {
+		plot(points_dsd,
+			n=nrow(points),...)
 	    }
 
+	    ## evaluation
+	    if(!is.null(evaluationMethod)) {
+		reset_stream(points_dsd)
+		
+		evaluation <- c(
+			evaluate(cl,points_dsd,
+				evaluationMethod,n=nrow(points),...),
+			evaluation[-length(evaluation)])
+
+		par(mar=c(2.1,4.1,1.1,2.1))
+		plot(evaluation, type="o", col="blue",
+			ylim=c(0,1), ann=FALSE, xaxt='n') 
+		title(ylab=evaluationMethod)
+
+	    }
+
+	    if(save)
+		ani.pause()
+	    else
+		Sys.sleep(interval)
 	}
+
     }
+}

@@ -17,7 +17,7 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 
-kmeansW <- setRefClass("kmeansW", 
+kmeansW_refClass <- setRefClass("kmeansW", 
 	fields = list(
 		data	    = "data.frame",
 		dataWeights = "numeric",
@@ -32,45 +32,46 @@ kmeansW <- setRefClass("kmeansW",
 
 	methods = list(
 		initialize = function(
+			k	    = 3,
 			iter.max    = 10,
 			nstart	    = 1
 			) {
 
-		    data	<<- data.frame()
-		    dataWeights	<<- numeric()
 		    iter.max	<<- iter.max 
 		    nstart	<<- nstart
-		    k		<<- numeric()
+		    k		<<- k
+		    data	<<- data.frame()
+		    dataWeights	<<- numeric()
 		    assignment	<<- numeric()
 		    weights	<<- numeric()
-		    centers <<- data.frame()
+		    centers	<<- data.frame()
 
 		    .self
 		}
 		)
 	)
 
-kmeansW$methods(cluster = function(x, weight = rep(1,nrow(x)), ...) {
+kmeansW_refClass$methods(cluster = function(x, weight = rep(1,nrow(x)), ...) {
 	    if(length(data)>0) {
 		warning("KmeansW: Previous data is being overwritten")
 	    }
-	    
+
 	    data <<- x
 	    dataWeights <<- weight
-	    
+
 	    if(nrow(x)>k) {
-		kmeansW <- kmeansW(x=data, weight=dataWeights, centers=k, 
+		km <- kmeansW(x=data, weight=dataWeights, centers=k, 
 			iter.max = iter.max, nstart = nstart)
 
-		assignment <<- kmeansW$cluster
-		centers <<- data.frame(kmeansW$centers)
-		details <<- kmeansW
+		assignment <<- km$cluster
+		centers <<- data.frame(km$centers)
+		details <<- km
 	    } else {
-        assignment <<- 1:nrow(data)
-        centers <<- x
-        details <<- NULL
+		assignment <<- 1:nrow(data)
+		centers <<- x
+		details <<- NULL
 	    }
-	
+
 	    weights <<- sapply(1:k, FUN =
 		    function(i) sum(dataWeights[assignment==i], na.rm=TRUE))
 	}
@@ -78,17 +79,11 @@ kmeansW$methods(cluster = function(x, weight = rep(1,nrow(x)), ...) {
 
 ### creator    
 DSC_KmeansW <- function(k, iter.max = 10, nstart = 1) {
-
-    kmeansW <- new("kmeansW", 
-	    iter.max = iter.max, nstart = nstart)
-
-    kmeansW$k <- k
-
-    l <- list(description = "Weighted k-Means",
-	    RObj = kmeansW)
-
-    class(l) <- c("DSC_KmeansW","DSC_Macro","DSC_R","DSC")
-    l
+    structure(list(
+		    description = "Weighted k-Means",
+		    RObj = kmeansW_refClass$new(k=k, iter.max = iter.max, 
+			    nstart = nstart)), 
+	    class=  c("DSC_KmeansW","DSC_Macro","DSC_R","DSC"))
 }
 
 get_macroclusters.DSC_KmeansW <- function(x) x$RObj$centers

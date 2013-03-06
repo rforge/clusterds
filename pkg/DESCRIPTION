@@ -9,3 +9,4 @@ Depends: R (>= 2.13.0), proxy (>= 0.4-7), rJava (>= 0.6-3), methods, hash, clust
 LinkingTo: Rcpp
 SystemRequirements: Java (>= 5.0)
 License: GPL-2
+Copyright: The MOA and WEKA code in inst/java/moa.jar is Copyright (C) The University of Waikato. All other code is Copyright (C) Matthew Bolanos, John Forrest and Michael Hahsler

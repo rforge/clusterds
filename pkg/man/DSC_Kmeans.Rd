@@ -38,9 +38,9 @@ on the algorithm.
 
 \examples{
 # 3 clusters with 5% noise
-dsd <- DSD_GaussianStatic(k=3, noise=0.05)
+dsd <- DSD_GaussianStatic(k=3, noise=0)
 
-dsc <- DSC_ClusTree()
+dsc <- DSC_BIRCH(radius=0.01)
 cluster(dsc, dsd, 500)
 
 # recluster micro-clusters
@@ -48,7 +48,8 @@ kmeans <- DSC_Kmeans(3)
 recluster(kmeans, dsc)
 plot(kmeans, dsd)
 
-# Kmeans can also directly cluster data
+# Kmeans can also directly cluster data (original data are considered 
+# micro-cluster centers)
 kmeans <- DSC_Kmeans(3)
 cluster(kmeans, dsd, 500)
 plot(kmeans, dsd)

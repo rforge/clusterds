@@ -44,16 +44,17 @@ animate_data(dsd, 500,  xlim=c(-.2,1.2), ylim=c(-.2,1.2),
     pointInterval=20)
 
 reset_stream(dsd)
-dsc <- DSC_tNN(.1, alpha=.2, lambda=.02, decay_interval=1, minweight=.1)
+dsc <- DSC_tNN(.1, alpha=.2, lambda=.03, decay_interval=1, minweight=.1)
 
 \dontrun{
 ### Note: type is a parameter passed on to plot (for DSC)
+reset_stream(dsd)
 animate_cluster(dsc, dsd, n=500, interval=.01,
        pointInterval=10, xlim=c(-.5,1.5),ylim=c(-.5,1.5), 
        type="macro")
 
+reset_stream(dsd)
 animate_cluster(dsc, dsd, n=600, interval=.01,
        pointInterval=20, xlim=c(-.5,1.5),ylim=c(-.5,1.5), 
-       type="macro", eval="crand")
-}
+       type="macro", eval="crand")}
 }

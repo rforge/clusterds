@@ -45,9 +45,9 @@ Stream Classification and Clustering. In Journal of Machine
 }
 \examples{
 # 3 clusters with 5% noise
-dsd <- DSD_GaussianStatic(k=3, noise=0.05)
+dsd <- DSD_GaussianStatic(k=3, noise=0)
 
-dsc <- DSC_ClusTree()
+dsc <- DSC_ClusTree(maxHeight=3)
 cluster(dsc, dsd, 500)
 dsc
 
@@ -57,5 +57,5 @@ plot(dsc, dsd)
 # reclustering
 kmeans <- DSC_KmeansW(3)
 recluster(kmeans,dsc)
-plot(kmeans,dsd,microclusters=TRUE)
+plot(kmeans, dsd)
 }

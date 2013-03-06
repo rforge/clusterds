@@ -36,13 +36,13 @@ contains the following items:
 # Cassini dataset
 dsd <- DSD_mlbenchGenerator("cassini")
 
-hierarchical <- DSC_Hierarchical(3,"single")
-cluster(hierarchical, dsd, 1000)
+hierarchical <- DSC_Hierarchical(3, "single")
+cluster(hierarchical, dsd, 500)
 plot(hierarchical, dsd)
 
 # Hierarchical can also recluster micro-clusters
-dsc <- DSC_ClusTree()
-cluster(dsc, dsd, 1000)
+dsc <- DSC_DenStream()
+cluster(dsc, dsd, 500)
 
 recluster(hierarchical,dsc)
 plot(hierarchical, dsd)

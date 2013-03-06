@@ -219,7 +219,7 @@ proposed
     stream_clust:Tasoulis:2007,
     stream_clust:Udommanetanakit:2007,
     stream:Tu:2009,
-    stream:Wan:2009,
+    stream:Wan+Ng+Dang+Yu+Zhang:2009,
     stream_clust:Kranen:2011}.
 Most data stream clustering algorithms use a two-stage
     online/offline approach: 
@@ -235,7 +235,7 @@ Most data stream clustering algorithms use a two-stage
     Each new
     data point is assigned to its closest (in terms of a similarity function)
     micro-cluster.  Some algorithms use a grid instead and micro-clusters represent
-    non-empty grid cells (e.g.,~\cite{stream:Tu:2009, stream:Wan:2009}).
+    non-empty grid cells (e.g.,~\cite{stream:Tu:2009, stream:Wan+Ng+Dang+Yu+Zhang:2009}).
     If a new data point cannot be assigned to an existing
     micro-cluster, a new micro-cluster is created. The algorithm might
     also perform some housekeeping (merging or deleting micro-clusters) to keep the
@@ -487,7 +487,6 @@ The detailed design of the DSD and DSC classes will
 be discussed in the following subsections.
 
 \subsection{Data Stream Data (DSD)} \label{sec:design:dsd}
-
 The first step in the \pkg{stream} workflow is to select a 
 data stream implemented as a
 Data Stream Data (DSD) object. This object can be a management layer on top of
@@ -726,11 +725,11 @@ Finally, clustering sometimes creates small clusters for noise or outliers in th
 a given percentage (given by \code{threshold}) of the clusters with the least weight.
 The percentage is either computed with the 
 number of clusters or with the sum of the weight of all clusters (\code{weight}).
-The resulting clustering is a static copy (\code{DSC_Static}) and further clustering
-cannot be performed with it. Reclustering, however,  can be performed on it.
+The resulting clustering is a static copy (\code{DSC_Static}). Further clustering
+cannot be performed by it, but it can be used as input for reclustering.
 
 \section{Evaluating Data Stream Mining}\label{sec:evaluation}
-Evaluation of data stream mining is an important issue. We will only discuss 
+Evaluation of data stream mining is an important issue. We will only briefly introduce 
 the evaluation of data stream clustering here and refer the interested 
 reader to the books by \cite{stream:Aggarwal:2007} and \cite{stream:Gama:2010}.
 
@@ -745,43 +744,43 @@ For the evaluation of conventional clustering we refer the reader to the popular
 Evaluation of data stream clustering is treated in the book by \cite{stream:Gama:2010}.
 
 
-Evaluation in \pkg{stream} is performed via
+Evaluation of data stream clustering is performed in \pkg{stream} via
 
 \begin{center}
-\code{get\_evaluation(dsc, dsd, method, n = 1000, type=c("auto", "micro", "macro"),}\\
+\code{evaluate(dsc, dsd, method, n = 1000, type=c("auto", "micro", "macro"),}\\
 \code{assign="micro")},
 \end{center}
 
 where \code{n} data points are taken from \code{dsd} and assigned to their closest cluster in the 
 clustering 
 in \code{dsc} using Euclidean distance. 
-By default the points are assigned to micro-clusters (\code{assign}).
-Then the assignments are aggregated to the level specified in \code{type}.
-So for a macro-clustering, the assignments will be translated into 
+By default the points are assigned to micro-clusters (\code{assign}),
+but it is also possible to direct assign them to macro-cluster centers.
+Then initial assignments are aggregated to the level specified in \code{type}.
+For example, for a macro-clustering, the initial assignments
+will be made by default to micro-clusters and then these assignments
+will be translated into 
 macro-cluster assignments using the micro- to macro-cluster relationships stored
 in the clustering. Then the evaluation measure specified in \code{method} is calculated.
+
 A simple measure is to evaluate the compactness of the data points assigned to each 
 cluster using the sum of squared distances between each data point and 
-the center of its cluster (method \code{"SSQ"}). 
+the center of its cluster (method \code{"SSQ"}). This is measure of
+internal cluster validity which does not require any information about
+the ground truth (i.e., true partitioning of the data into classes).
 
-Most evaluation measures require the ground truth (class label) for the data (\code{dsd}).
-If this is available then for each cluster the majority class in the assigned data points
-is found and is used as the class label for the cluster.
-Based on 
-the majority class and the class of all assigned points several 
-evaluation measures are available. 
-We will not describe each measure, since most of them are standard measures 
+Most evaluation measures perform external evaluation and 
+require the ground truth (class label) for the data (\code{dsd}).
+Then based on cluster membership of each new data point and the
+class label different measures can be computed.
+We will not describe each measure here since most of them are standard measures 
 which can be found in many text books \citep[e.g.,][]{clust:Jain:1988,Kaufman:1990}.
-The following evaluation measures are currently implemented (method name used in 
-\code{evaluate} are typed as code:
+We only list the measures currently available for \code{evaluate()} 
+(method name are under quotation marks):
 \begin{itemize}
-	    \item   \code{"precision"} 
-	    \item   \code{"recall"}
-	    \item   F1 measure (\code{"F1"}), 
-	    \item   \code{"purity"}
-	    \item   false positive rate (\code{"fpr"})
-	    \item   Rand index (\code{"Rand"})
-	    \item   Adjusted Rand index (\code{"cRand"}),
+	    \item   \code{"precision"}, \code{"recall"}, F1 measure (\code{"F1"}), 
+	    \item   \code{"purity"}, false positive rate (\code{"fpr"})
+	    \item   Rand index (\code{"Rand"}), adjusted Rand index (\code{"cRand"}),
 	    \item   Jaccard index (\code{"Jaccard"}), 
 	    \item   Euclidean dissimilarity of the memberships (\code{"Euclidean"})
 %		(See Dimitriadou, Weingessel and Hornik
@@ -829,7 +828,7 @@ the framework to implement all common functionality as functions at the level
 of \code{DSD} and \code{DSD_R} and only a minimal set of functions
 has to be implemented in order to add a new data stream implementation.
 
-For a new DSD implementation only a creator function and \code{get_points()}
+For a new DSD implementation only a creator function and a \code{get_points()}
 method for the class
 needs to be implemented.
 The creator function creates an object of the appropriate
@@ -846,9 +845,9 @@ rows. Also, if the ground truth (true cluster assignment) for the data is
 available, then this can be attached to the data.frame as an attribute
 called \code{"assignment"} as an integer vector (noise typically is represented
 by \code{NA}).
+
 For a complete example, look at the implementation 
 of \code{DSD_UniformNoise} in the package's source code.
-
 
 \subsection{Implementing new Data Stream Task (DST) Classes}
 
@@ -862,48 +861,49 @@ To implement a new clustering algorithm, a creator function
 (typically named after the algorithm) and a \code{cluster()} function
 is needed. The clustering algorithm itself is part 
 of the object created by the creator. To understand this slightly complicated
-approach consider again Figure~\ref{figure:interaction}.
+approach consider again Figure~\ref{figure:interaction} 
+(on page~\pageref{figure:interaction}).
 The framework provides 
 the function \code{cluster(dsc, dsd, n=1)} 
 which contains a loop to go through \code{n} new data points.
-In the loop a single data points is obtained from \code{dsd} using
-its \code{get_point()} function and then the data point is passed on to an
+In the loop a block of data points is obtained from \code{dsd} using
+its \code{get_point()} function and then the data points are passed on to an
 internal generic clustering function which has implementations 
 for \code{DSC_MOA} and \code{DSC_R}. The implementation for
 \code{DSC_MOA} takes care of all MOA-based clustering algorithms.
 For R-based implementation, the \code{DSC_R} version looks in
 the list of the \code{dsc} object 
 for an element called \code{"RObj"},
- which needs to be a mutable R object containing the clustering.   
+ which needs to be a reference class object. Reference classes have been
+ recently introduced with R-2.12 in package \pkg{methods}
+ as a construct for mutable objects.
  Mutability means that the object can be changed
 without creating a copy and assigning it back to itself as would be
 necessary in a purely functional programming language. 
-Mutability can be achieved in R by using the environment mechanism and 
-was introduces recently with R-2.12 as its own construct in the 
-form of reference classes
-in package \pkg{methods}.
-The RObj in DSC is expected to be a reference class with \code{cluster} method.
-However, different to regular function calls, 
-reference classes use a completely different object-oriented
-method invocation style which would confuse users of \pkg{stream}.
+The RObj in DSC is expected to be a reference class with a \code{cluster} method.
+Note at this point that methods of reference classes are called in a
+very different way from normal R function calls.
 For example, the cluster method of Robj is invoked by \code{RObj$cluster()}.
-We therefore decided to hide the implementation by wrapping
-it into a regular S3 DSC object which now contains a mutable clustering.
-This way a call of the from
-\code{cluster(dsc, dsd, 1)} will 
-instruct the reference class object to update its clustering while 
-For a complete example, look at the implementation 
-of \code{DSD_tNN} in the package's source code.
-hiding the implementation details from the user.
+However, this is not important for the end user since the cluster method
+is only used internally and never called directly by the user.
 
-To obtain the clustering result a function \code{get_centers()} which
-dispatched for the new class needs to be implemented.
-This function extracts the centers of the clusters from the 
-reference class object in \code{dsc} and returns them as a data.frame.
-If the clustering also supports weights, then a \code{get_weights()}
-may also be provided. 
+To obtain the clustering result, a methods called \code{get_microclusters} and
+\code{get_microweights} which
+dispatched for the new class need to be implemented.
+These methods extract the centers/weights of the clusters from the 
+reference class object in \code{dsc} and return them as a data.frame (centers)
+or a vector (weights).
+These methods are also not exposed to the user and are called internally
+from \code{get_centers} and \code{get_weights}.
+
+For a macro clustering algorithm, the \code{cluster} method performs reclustering
+and \code{get_macroclusters} and
+\code{get_macroweights} need to be implemented. In addition \code{microToMacro},
+a method which does micro- to macro-cluster
+matching, has to be provided.
+
 For a complete example, look at the implementation 
-of \code{DSD_tNN} in the package's source code.
+of \code{DSC_tNN} in the package's source code.
 
 \section{Examples} \label{sec:examples}
 
@@ -1479,19 +1479,20 @@ perform better.
 a variety of data stream generation tools as well as a component for performing
 data stream mining tasks. The flexibility offered by our framework allows the
 user to create a multitude of easily reproducible experiments to compare the
-performance of these tasks. Data streams can be created with specific
-properties that may be difficult to simulate in real-world situations.
+performance of these tasks.
 
-
-Furthermore, the presented infrastructure can be extended by adding new algorithms. We have abstracted each component to only require a small
+Furthermore, the presented infrastructure can be easily extended by adding new 
+data sources and algorithms. We have abstracted each 
+component to only require a small
 set of functions that are defined in each base class. Writing the framework in
 \proglang{R} means that developers have the ability to design components either
 directly in \proglang{R}, or design components in \proglang{Java} or
-\proglang{C}/\proglang{C++}, and then write an \proglang{R} wrapper to use the
-high level code. 
+\proglang{C}/\proglang{C++}, and then write a \proglang{R} light weight wrapper as
+we did for the MOA algorithms. This allows experimenting with a multitude
+of algorithms in a consistent way.
 
-Currently, \pkg{stream} only includes implementations for the data stream 
-clustering tasks. In the future we plan to also incorporate 
+Currently, \pkg{stream} focuses on the data stream 
+clustering task. In the future we plan to also incorporate 
 classification and frequent pattern mining algorithms 
 as an extension of the base DST class.
 

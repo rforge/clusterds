@@ -65,6 +65,6 @@ Research (JMLR).
 dsd <- DSD_RandomRBFGeneratorEvents()
 
 \dontrun{
-animate_data(dsd, n=5000, pointInterval=1000, xlim=c(0,1), ylim=c(0,1))
+animate_data(dsd, n=5000, pointInterval=100, xlim=c(0,1), ylim=c(0,1))
 }
 }

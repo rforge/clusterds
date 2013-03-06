@@ -61,7 +61,7 @@ dsd <- DSD_mlbenchGenerator("cassini")
 
 # tNN has a built in micro and micro-clusterer
 tnn <- DSC_tNN(r=.2, k=3, alpha=.08, lambda=0)
-cluster(tnn, dsd, 1000)
+cluster(tnn, dsd, 500)
 
 # see micro-clusters
 nclusters(tnn)
@@ -84,7 +84,8 @@ plot(tnn, dsd)
 plot(tnn, dsd, type="macro")
 
 # evaluate first using macro and then using micro-clusters
-evaluate(tnn, dsd, "cRand")
-evaluate(tnn, dsd, "cRand", type="macro")
-evaluate(tnn, dsd, "cRand", type="macro", assign="macro")
+\dontrun{
+evaluate(tnn, dsd, method="cRand")
+evaluate(tnn, dsd, method="cRand", type="macro")
+evaluate(tnn, dsd, method="cRand", type="macro", assign="macro")}
 }
