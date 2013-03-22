@@ -32,7 +32,7 @@ RcppExport SEXP CreateCenters(SEXP d) {
         for (int i = 0; i  < colNum; i++) {
             input[0][i] = rdata(i);
         }
-        flann::Index<flann::L2<float> >* index = new flann::Index<flann::L2<float> >(input,flann::KDTreeIndexParams(1));
+        flann::Index<flann::L2<float> >* index = new flann::Index<flann::L2<float> >(input,flann::KDTreeSingleIndexParams());
         
         index->buildIndex();
         
@@ -127,8 +127,8 @@ RcppExport SEXP GetAllPoints(SEXP x,SEXP n,SEXP c) {
     
     try {
         Rcpp::XPtr< flann::Index<flann::L2<float> >  > index(x);
-		Rcpp::NumericVector npoints(n);
-		Rcpp::NumericVector cn(c);
+		    Rcpp::NumericVector npoints(n);
+		    Rcpp::NumericVector cn(c);
         int colNum = cn[0];
         float data[colNum];
         for(int i=0;i<colNum;i++) {
@@ -171,12 +171,13 @@ RcppExport SEXP GetAllPoints(SEXP x,SEXP n,SEXP c) {
 
 
 
-RcppExport SEXP RadiusSearch(SEXP x,SEXP p,SEXP d) {
+RcppExport SEXP RadiusSearch(SEXP x,SEXP p,SEXP d,SEXP w) {
     
     try {
         Rcpp::XPtr< flann::Index<flann::L2<float> >  > index(x);
-		Rcpp::NumericVector rdata(p);
-		Rcpp::NumericVector radius(d);
+    		Rcpp::NumericVector rdata(p);
+      	Rcpp::NumericVector radius(d);
+      	Rcpp::NumericVector weights(w);
         int colNum = rdata.size();
         float data[colNum];
         int i=0;
@@ -194,8 +195,47 @@ RcppExport SEXP RadiusSearch(SEXP x,SEXP p,SEXP d) {
         Rcpp::IntegerVector iresults( indices[0].begin(), indices[0].end() );
         Rcpp::IntegerVector dresults( dists[0].begin(), dists[0].end() );
         
+        int num = indices[0].size();
         
-        
+        if(num>0) {
+          float partialWeight = 1/num;
+          
+          float tempCenters[num][colNum];
+          
+          for(int i=0;i<num;i++) {
+            float* indexPoint = index->getPoint(indices[0][i]);
+            std::string s;
+            std::stringstream out;
+            out << indices[0][i];
+            s = out.str();
+            float weight = weights[s];
+            for(int j=0;j<colNum;j++) {
+                tempCenters[i][j] = (*(indexPoint+j)*weight+data[j]*partialWeight)/(weight+partialWeight);
+            }
+          }
+          
+          for(int i=0;i<num;i++) {
+            bool valid=true;
+            for(int j=0;j<num;j++) {
+              if(i!=j) {
+                float sum=0;
+                for(int k=0;k<num;k++) {
+                  float temp=(tempCenters[i][k]-tempCenters[j][k]);
+                  sum += temp*temp;
+                }
+                if(sum<(radius[0]*radius[0])) {
+                  valid=false;
+                }
+              }
+            }
+            if(valid){
+              float* indexPoint = index->getPoint(indices[0][i]);
+              for(int j=0;j<colNum;j++) {
+                  *(indexPoint+j) = tempCenters[i][j];
+              }
+            }
+          }
+        }
         
         return Rcpp::DataFrame::create(Rcpp::Named("indices")=iresults, Rcpp::Named("dist")=dresults);
         

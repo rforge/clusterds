@@ -141,7 +141,7 @@ tNN_fast <- setRefClass("tNN_fast",
   		    flann <<- .Call("CreateCenters",as.numeric(point), PACKAGE="stream")
   		  } else {
   		    
-  		    inside <- .Call("RadiusSearch",flann,as.numeric(point),r^2, PACKAGE="stream")
+  		    inside <- .Call("RadiusSearch",flann,as.numeric(point),r^2,weights, PACKAGE="stream")
           inside <- inside[,1]
 
         if(length(inside)<1) { ### new cluster
@@ -155,13 +155,12 @@ tNN_fast <- setRefClass("tNN_fast",
 		    }else{ ### update existing cluster
 
 		  	  partialweight <- 1/length(inside) 
-
-
+		  	  
+          
 			    weights[as.character(inside)] <<- weights[as.character(inside)] + partialweight
 
 			    if(macro && length(inside)>1) {
-        
-			      .Call("AddRelations", rel, inside, PACKAGE="stream")
+            .Call("AddRelations", rel, inside, PACKAGE="stream")
           }
 		    }
 		  }	   
