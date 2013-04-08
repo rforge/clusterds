@@ -21,6 +21,82 @@
 
 #include <Rcpp.h>
 #include <flann/flann.hpp>
+#include <fstream>
+
+/*std::string get_file_contents(const char *filename)
+{
+  std::ifstream in(filename, std::ios::in | std::ios::binary);
+  if (in)
+  {
+    std::string contents;
+    in.seekg(0, std::ios::end);
+    contents.resize(in.tellg());
+    in.seekg(0, std::ios::beg);
+    in.read(&contents[0], contents.size());
+    in.close();
+    return(contents);
+  }
+}
+
+RcppExport SEXP Serialize(SEXP x) {
+    try {
+        Rcpp::XPtr< flann::Index<flann::L2<float> > > index(x);
+        char * fname = "/Users/matthewbolanos/Desktop/start.txt"; //tmpnam(NULL);
+        index->save(fname);
+        std::string temp(get_file_contents(fname));
+        Rcpp::RawVector result( temp.size() ) ;
+        std::copy( temp.begin(), temp.end(), result.begin() ) ;
+        //remove(fname);
+        
+        return result; // -Wall
+        
+    } catch( std::exception &ex ) {    // or use END_RCPP macro
+        forward_exception_to_r( ex );
+    } catch(...) {
+	    ::Rf_error( "c++ exception (unknown reason)" );
+    }
+    return R_NilValue; // -Wall
+}*/
+
+RcppExport SEXP DeserializeFlann(SEXP x,SEXP m) {
+    try {
+      
+        Rcpp::XPtr< flann::Index<flann::L2<float> >  > oldindex(x);
+        if(oldindex)
+          return x;
+        
+        Rcpp::NumericMatrix dataset(m);
+      
+        /*Rcpp::RawVector serialization(s);
+        char* fname = "/Users/matthewbolanos/Desktop/end.txt";
+        char temp[serialization.size()];
+        std::copy( serialization.begin(), serialization.end(), temp );
+        std::ofstream myFile (fname, std::ios::out | std::ios::binary);
+        myFile.write (temp, serialization.size());
+        myFile.close();*/
+        
+        flann::Matrix<float> input(new float[dataset.nrow()*dataset.ncol()], dataset.nrow(),  dataset.ncol());
+        
+        for (int i = 0; i  < dataset.ncol(); i++) {
+          for( int j = 0; j < dataset.nrow(); j++)
+            input[j][i] = dataset(j,i);
+        }
+        
+        flann::Index<flann::L2<float> >* index = new flann::Index<flann::L2<float> >(input,flann::KDTreeSingleIndexParams());
+        
+        index->buildIndex();
+        
+        Rcpp::XPtr< flann::Index<flann::L2<float> > > p(index, true);
+        
+        return p; // -Wall
+        
+    } catch( std::exception &ex ) {    // or use END_RCPP macro
+        forward_exception_to_r( ex );
+    } catch(...) {
+	    ::Rf_error( "c++ exception (unknown reason)" );
+    }
+    return R_NilValue; // -Wall
+}
 
 RcppExport SEXP CreateCenters(SEXP d) {
     
@@ -29,6 +105,7 @@ RcppExport SEXP CreateCenters(SEXP d) {
         int colNum = rdata.size();
         
         flann::Matrix<float> input(new float[colNum], 1,  colNum);
+        
         for (int i = 0; i  < colNum; i++) {
             input[0][i] = rdata(i);
         }
@@ -52,10 +129,12 @@ RcppExport SEXP AddPoint(SEXP x,SEXP d) {
     
     try {
         Rcpp::XPtr< flann::Index<flann::L2<float> > > index(x);
-		Rcpp::NumericVector rdata(d);
+		    Rcpp::NumericVector rdata(d);
         int colNum = rdata.size();
         
         flann::Matrix<float> input(new float[colNum], 1,  colNum);
+        
+        #pragma omp parallel for
         for (int i = 0; i  < colNum; i++) {
             input[0][i] = rdata(i);
         }

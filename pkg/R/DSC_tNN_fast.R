@@ -31,7 +31,12 @@ tNN_fast <- setRefClass("tNN_fast",
 		### minweights: min. weight for macro-clusters 	
 		minweight		= "numeric",
 		### k: number of macro-clusters (alternative to )
-		k			= "numeric"
+		k			= "numeric",
+    
+    #used for serializing
+    sflann = "ANY",
+    srelation = "ANY"
+    
 		),
 
 
@@ -116,14 +121,19 @@ tNN_fast <- setRefClass("tNN_fast",
   			    #remove microclusters
   			    removeKeys <- as.integer(names(weights)[remove])
   			    weights <<- weights[-remove]
-        
+            
+            
+            #TODO: set serialize variables to null
+            #TODO: throw "you should serialize error"
+  			    deserialize()
   			    .Call("RemovePoints",flann, removeKeys, PACKAGE="stream")
-  			    .Call("DeleteNodes", rel, removeKeys, PACKAGE="stream")
+  			    .Call("DeleteNodes", rel, removeKeys, srelation, PACKAGE="stream")
           }
   
   		    ### decay and remove weak relations
   		    if(macro) {  
-            .Call("AgeRelations", rel, alpha, PACKAGE="stream")
+  		      deserialize()
+            .Call("AgeRelations", rel, alpha, srelation, PACKAGE="stream")
           }
   		  }
   
@@ -140,13 +150,14 @@ tNN_fast <- setRefClass("tNN_fast",
           nclusters <<- nclusters + 1L
   		    flann <<- .Call("CreateCenters",as.numeric(point), PACKAGE="stream")
   		  } else {
-  		    
+  		    deserialize()
   		    inside <- .Call("RadiusSearch",flann,as.numeric(point),r^2,weights, PACKAGE="stream")
           inside <- inside[,1]
 
         if(length(inside)<1) { ### new cluster
   			  weights <<- c(weights, 1)
           names(weights) <<- c(names(weights[1:length(weights)-1]),nclusters)
+  			  deserialize()
   			  .Call("AddPoint",flann,as.numeric(point),columns, PACKAGE="stream")
   			  if(debug) cat("  + Creating Cluster", nclusters, "\n")
   			  nclusters <<- nclusters + 1L;
@@ -160,7 +171,7 @@ tNN_fast <- setRefClass("tNN_fast",
 			    weights[as.character(inside)] <<- weights[as.character(inside)] + partialweight
 
 			    if(macro && length(inside)>1) {
-            .Call("AddRelations", rel, inside, PACKAGE="stream")
+            .Call("AddRelations", rel, inside, srelation, PACKAGE="stream")
           }
 		    }
 		  }	   
@@ -170,6 +181,18 @@ tNN_fast <- setRefClass("tNN_fast",
                    
                    ###########################################################################
                    ### helpers
+                   
+                   serialize = function() {
+                     sflann <<- as.matrix(.Call("GetAllPoints",flann,nclusters,columns, PACKAGE="stream"))
+                     srelation <<- .Call("GetRelations",rel, PACKAGE="stream")
+                   },
+                   
+                   deserialize = function() {
+                     flann <<- .Call("DeserializeFlann",flann,sflann, PACKAGE="stream")
+                     rel <<- .Call("DeserializeRelations",rel,srelation, PACKAGE="stream")
+                     sflann <<- NULL
+                     srelation <<- NULL
+                   },
                    
                    # find strong MCs
                    strong_mcs = function(weak=FALSE) {
@@ -190,7 +213,8 @@ tNN_fast <- setRefClass("tNN_fast",
                      mc_weights <- weights
                      mcs <- as.integer(names(weights))
                      
-                     relations <- .Call("GetRelations",rel, PACKAGE="stream")
+                     deserialize()
+                     relations <- .Call("GetRelations",rel,srelation, PACKAGE="stream")
                      
                      reltemp <- as.matrix(relations[,c(1,2)])
                      reltemp <-  matrix(match(reltemp, mcs), ncol=2) ### translate from names to index
@@ -272,6 +296,7 @@ tNN_fast <- setRefClass("tNN_fast",
     
 get_microclusters.DSC_tNN_fast <- function(x) {
     ### we have to rename the micro-clusters
+    x$RObj$deserialize()
     mc <- as.data.frame(.Call("GetAllPoints",x$RObj$flann,x$RObj$nclusters,x$RObj$columns, PACKAGE="stream"))
     if(nrow(mc)<1) return(data.frame())
     
@@ -320,6 +345,9 @@ microToMacro.DSC_tNN_fast <- function(x, micro=NULL) {
     structure(mw$assignment[micro], names=micro)
 }
 
+serialize.DSC_tNN_fast <- function(x) {
+  x$RObj$serialize()
+}
 
 
 ### special plotting for DSC_tNN_fast

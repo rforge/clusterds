@@ -40,7 +40,8 @@ RcppExport SEXP AddRelations(SEXP x,SEXP i) {
     
     try {
         Rcpp::XPtr< std::map<std::pair<int,int>,double> > relations(x) ;
-		Rcpp::NumericVector inside(i);
+		    Rcpp::NumericVector inside(i);
+    
 		for(Rcpp::NumericVector::iterator ii = inside.begin(); ii != inside.end(); ++ii) {
 		    for(Rcpp::NumericVector::iterator jj = ii+1; jj != inside.end(); ++jj) {
 		        (*relations)[std::make_pair((*ii),(*jj))] += 1;
@@ -48,6 +49,36 @@ RcppExport SEXP AddRelations(SEXP x,SEXP i) {
 		} return R_NilValue;
         
     } catch( std::exception &ex ) {		// or use END_RCPP macro
+        forward_exception_to_r( ex );
+    } catch(...) {
+	    ::Rf_error( "c++ exception (unknown reason)" );
+    }
+    return R_NilValue; // -Wall
+}
+
+RcppExport SEXP DeserializeRelations(SEXP o,SEXP x) {
+    try {
+        Rcpp::XPtr< std::map<std::pair<int,int>,double> > oldrelations(o) ;
+        if(oldrelations) return o;
+        Rcpp::DataFrame df(x) ;
+        
+        std::map<std::pair<int,int>,double>* relations = new std::map<std::pair<int,int>,double>;
+        std::vector<int> key1 =  Rcpp::as< std::vector<int> >(df["node1"]);
+        std::vector<int> key2 =  Rcpp::as< std::vector<int> >(df["node2"]);
+        std::vector<double> weight =  Rcpp::as< std::vector<double> >(df["weight"]);
+        
+        Rcpp::XPtr< std::map<std::pair<int,int>,double> > p(relations, true);
+        
+        for(int i=0;i<weight.size();i++) {
+          (*relations)[std::make_pair(key1[i],key2[i])] = weight[i];
+        }
+        
+        return( p );
+        
+        
+        return R_NilValue;
+        
+    } catch( std::exception &ex ) {  	// or use END_RCPP macro
         forward_exception_to_r( ex );
     } catch(...) {
 	    ::Rf_error( "c++ exception (unknown reason)" );

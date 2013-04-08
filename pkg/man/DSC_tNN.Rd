@@ -5,9 +5,8 @@
     Implements the tNN (threshold Nearest Neighbor) data stream algorithm.}
 
 \usage{
-    DSC_tNN(r = 0.1, k = 0, alpha = 0, minweight = 0, 
-	lambda = 0.001, decay_interval = 1000L, noise = 0.01, 
-	measure = "Euclidean", macro = TRUE)
+    DSC_tNN(r = 0.1, k = 0, alpha = 0, minweight = 0, lambda = 0.001, decay_interval = 1000L, noise = 0.01, measure = "Euclidean", macro = TRUE)
+    DSC_tNN_fast(r = 0.1, k = 0, alpha = 0, minweight = 0, lambda = 0.001, decay_interval = 1000L, noise = 0.01, measure = "Euclidean", macro = TRUE)
 }
 
 \arguments{
@@ -32,6 +31,10 @@ incoming stream, if it is below the threshold value of dissimilarity value of
 any existing micro-clusters, and if so, merges the point with the 
 micro-cluster. Otherwise, a new micro-cluster is created to accommodate 
 the new data point.
+
+The fast version uses the FLANN library to quickly find nearest Neighbors along
+with other optimizations within C++. It is important to serialize the C++ objects
+before saving DSC_tNN_fast.
 
 Note: Although DSC_tNN is a micro clustering algoritm, macro clusters
 and weights are available.
@@ -88,4 +91,21 @@ plot(tnn, dsd, type="macro")
 evaluate(tnn, dsd, method="cRand")
 evaluate(tnn, dsd, method="cRand", type="macro")
 evaluate(tnn, dsd, method="cRand", type="macro", assign="macro")}
+
+#tNN-fast
+\dontrun{
+dsd <- DSD_GaussianStatic()
+fast <- DSC_tNN_fast()
+
+cluster(fast,dsd,1000)
+plot(fast,dsd)
+
+#Must serialize c objects before saving
+serialize(fast)
+
+save(fast,file="file")
+load("file")
+
+plot(fast,dsd)
+}
 }

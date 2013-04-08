@@ -80,7 +80,7 @@ S3method(reset_stream, DSD_ReadStream)
 ### DSC Methods
 S3method(plot, DSC)
 S3method(plot, DSC_tNN)
-#S3method(plot, DSC_tNN_fast)
+S3method(plot, DSC_tNN_fast)
 S3method(print, DSC)
 S3method(get_assignment, DSC)
 S3method(nclusters, DSC)
@@ -98,10 +98,11 @@ S3method(microToMacro, DSC_Kmeans)
 S3method(microToMacro, DSC_KmeansW)
 S3method(microToMacro, DSC_DBSCAN)
 S3method(microToMacro, DSC_tNN)
-#S3method(microToMacro, DSC_tNN_fast)
+S3method(microToMacro, DSC_tNN_fast)
 
 S3method(get_copy, DSC_R)
 S3method(get_copy, DSC_MOA)
 
 ### other
 S3method(print, stream_eval)
+S3method(serialize, DSC_tNN_fast)
