@@ -18,7 +18,6 @@ export(
 	
 	# DSC_R
 	DSC_tNN,
-	DSC_tNN_fast,
 	
 	# DSD
 	DSD_RandomRBFGeneratorEvents,

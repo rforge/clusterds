@@ -96,7 +96,7 @@ tNN <- setRefClass("tNN",
 
 
 DSC_tNN <- function(r = 0.1, k=0, alpha = 0, minweight = 0, lambda = 1e-3, 
-	decay_interval=1000L, noise = 0.01, measure = "Euclidean", macro = TRUE) {
+	decay_interval=1000L, noise = 0.01, measure = "Euclidean", macro = TRUE, fast = TRUE) {
 
     if(k==0 && alpha==0 && macro) {
 	warning("You have to specify at least k or alpha! Using default alpha=.25 and minweight=0.1.")
@@ -104,13 +104,16 @@ DSC_tNN <- function(r = 0.1, k=0, alpha = 0, minweight = 0, lambda = 1e-3,
 	alpha <- 0.25
     }
 
-    tNN <- tNN$new(r, k, lambda, as.integer(decay_interval), 
-	    minweight, noise, alpha, measure, macro)
-
-    l <- list(description = "tNN", RObj = tNN)
-
-    class(l) <- c("DSC_tNN", "DSC_Micro", "DSC_R", "DSC")
-
+    if(!fast) {
+      tNN <- tNN$new(r, k, lambda, as.integer(decay_interval), 
+  	    minweight, noise, alpha, measure, macro)
+      l <- list(description = "tNN", RObj = tNN)
+      class(l) <- c("DSC_tNN", "DSC_Micro", "DSC_R", "DSC")
+    } else {
+      tNN_fast <- tNN_fast$new(r, k, lambda, as.integer(decay_interval), minweight, noise, alpha, measure, macro)
+      l <- list(description = "tNN_fast", RObj = tNN_fast)
+      class(l) <- c("DSC_tNN_fast", "DSC_Micro", "DSC_R", "DSC")
+    }
     l
 }
 

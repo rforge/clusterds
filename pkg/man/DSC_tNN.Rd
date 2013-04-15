@@ -5,8 +5,7 @@
     Implements the tNN (threshold Nearest Neighbor) data stream algorithm.}
 
 \usage{
-    DSC_tNN(r = 0.1, k = 0, alpha = 0, minweight = 0, lambda = 0.001, decay_interval = 1000L, noise = 0.01, measure = "Euclidean", macro = TRUE)
-    DSC_tNN_fast(r = 0.1, k = 0, alpha = 0, minweight = 0, lambda = 0.001, decay_interval = 1000L, noise = 0.01, measure = "Euclidean", macro = TRUE)
+    DSC_tNN(r = 0.1, k = 0, alpha = 0, minweight = 0, lambda = 0.001, decay_interval = 1000L, noise = 0.01, measure = "Euclidean", macro = TRUE, fast = TRUE)
 }
 
 \arguments{
@@ -22,7 +21,8 @@
 	\item{noise}{The amount of noise that should be removed while clustering.}
 	\item{measure}{The measure used to calculate cluster proximity 
 	(see package \pkg{proxy}).}
-	\item{macro}{A flag that indicates if the macro clusters should be computed.}
+  \item{macro}{A flag that indicates if the macro clusters should be computed.}
+  \item{macro}{A flag that indicates if the c++ (fast) implementation should be used.}
 }
 
 \details{
@@ -34,7 +34,7 @@ the new data point.
 
 The fast version uses the FLANN library to quickly find nearest Neighbors along
 with other optimizations within C++. It is important to serialize the C++ objects
-before saving DSC_tNN_fast.
+before saving the fast version.
 
 Note: Although DSC_tNN is a micro clustering algoritm, macro clusters
 and weights are available.
@@ -95,7 +95,7 @@ evaluate(tnn, dsd, method="cRand", type="macro", assign="macro")}
 #tNN-fast
 \dontrun{
 dsd <- DSD_GaussianStatic()
-fast <- DSC_tNN_fast()
+fast <- DSC_tNN(fast = TRUE)
 
 cluster(fast,dsd,1000)
 plot(fast,dsd)
