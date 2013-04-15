@@ -345,6 +345,8 @@ microToMacro.DSC_tNN_fast <- function(x, micro=NULL) {
     structure(mw$assignment[micro], names=micro)
 }
 
+serialize <- function(x){ UseMethod("serialize") }
+
 serialize.DSC_tNN_fast <- function(x) {
   x$RObj$serialize()
 }

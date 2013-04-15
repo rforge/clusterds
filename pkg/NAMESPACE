@@ -50,6 +50,7 @@ export(
 #	merge_DSC,
 	prune_clusters,
 	microToMacro,	
+  serialize,
 	
 	evaluate,
 	evaluate_cluster,

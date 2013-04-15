@@ -93,6 +93,7 @@ RcppExport SEXP GetRelations(SEXP x) {
         Rcpp::NumericVector key1;
         Rcpp::NumericVector key2;
         Rcpp::NumericVector weight;
+        
         for( std::map<std::pair<int,int>,double>::iterator ii=relations->begin(); ii!=relations->end(); ++ii) {
             std::stringstream temp;
             key1.push_back((*ii).first.first);
@@ -115,8 +116,11 @@ RcppExport SEXP AgeRelations(SEXP x,SEXP a) {
         Rcpp::XPtr< std::map<std::pair<int,int>,double> > relations(x) ;
         Rcpp::NumericVector alpha(a);
         for( std::map<std::pair<int,int>,double>::iterator ii=relations->begin(); ii!=relations->end(); ++ii) {
+          #pragma omp task
+          {
             (*ii).second = (*ii).second*.5;
             if((*ii).second < .5*alpha[0]) relations->erase(ii);
+          }
         }
         return R_NilValue;
         
