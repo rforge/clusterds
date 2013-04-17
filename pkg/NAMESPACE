@@ -30,6 +30,7 @@ export(
 	DSD_mlbenchGenerator,
 	DSD_mlbenchData,
 	DSD_BarsAndGaussians,
+  DSD_ScaleStream,
 	
 	# DSD
 	get_points,
@@ -72,10 +73,12 @@ S3method(get_points, DSD_MOA)
 S3method(get_points, DSD_ReadStream)
 S3method(get_points, DSD_Target)
 S3method(get_points, DSD_Wrapper)
+S3method(get_points, DSD_ScaleStream)
 
 S3method(reset_stream, DSD)
 S3method(reset_stream, DSD_Wrapper)
 S3method(reset_stream, DSD_ReadStream)
+S3method(reset_stream, DSD_ScaleStream)
 
 ### DSC Methods
 S3method(plot, DSC)

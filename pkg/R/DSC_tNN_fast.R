@@ -83,22 +83,6 @@ tNN_fast <- setRefClass("tNN_fast",
 		),
 	)
 
-
-  DSC_tNN_fast <- function(r = 0.1, k=0, alpha = 0, minweight = 0, lambda = 1e-3, decay_interval=1000L, noise = 0.01, measure = "Euclidean", macro = TRUE) {
-    if(k==0 && alpha==0) {
-	    warning("You have to specify at least k or alpha! Using default alpha=.25 and minweight=0.1.")
-	    minweight <- 0.1
-	    alpha <- 0.25
-    }
-
-    tNN_fast <- tNN_fast$new(r, k, lambda, as.integer(decay_interval), minweight, noise, alpha, measure, macro)
-
-    l <- list(description = "tNN_fast", RObj = tNN_fast)
-    class(l) <- c("DSC_tNN_fast", "DSC_Micro", "DSC_R", "DSC")
-
-    l
-  }
-
   tNN_fast$methods(cluster = function(newdata, debug = FALSE) {
       'Cluster new data.' ### online help
       newdata <- as.data.frame(newdata)

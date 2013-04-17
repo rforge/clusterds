@@ -1,11 +1,13 @@
 \name{DSC_tNN}
 \alias{DSC_tNN}
+\alias{serialize}
 \title{Threshold Nearest Neighbor (tNN) Data Stream Clustering Algorithm}
 \description{
     Implements the tNN (threshold Nearest Neighbor) data stream algorithm.}
 
 \usage{
     DSC_tNN(r = 0.1, k = 0, alpha = 0, minweight = 0, lambda = 0.001, decay_interval = 1000L, noise = 0.01, measure = "Euclidean", macro = TRUE, fast = TRUE)
+    serialize(x)
 }
 
 \arguments{
@@ -22,7 +24,8 @@
 	\item{measure}{The measure used to calculate cluster proximity 
 	(see package \pkg{proxy}).}
   \item{macro}{A flag that indicates if the macro clusters should be computed.}
-  \item{macro}{A flag that indicates if the c++ (fast) implementation should be used.}
+  \item{fast}{A flag that indicates if the c++ (fast) implementation should be used.}
+  \item{x}{The dsc that should be serialized.}
 }
 
 \details{
@@ -34,7 +37,7 @@ the new data point.
 
 The fast version uses the FLANN library to quickly find nearest Neighbors along
 with other optimizations within C++. It is important to serialize the C++ objects
-before saving the fast version.
+before saving the fast version with \code{serialize()}.
 
 Note: Although DSC_tNN is a micro clustering algoritm, macro clusters
 and weights are available.

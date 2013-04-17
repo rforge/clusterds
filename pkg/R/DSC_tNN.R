@@ -111,7 +111,7 @@ DSC_tNN <- function(r = 0.1, k=0, alpha = 0, minweight = 0, lambda = 1e-3,
       class(l) <- c("DSC_tNN", "DSC_Micro", "DSC_R", "DSC")
     } else {
       tNN_fast <- tNN_fast$new(r, k, lambda, as.integer(decay_interval), minweight, noise, alpha, measure, macro)
-      l <- list(description = "tNN_fast", RObj = tNN_fast)
+      l <- list(description = "tNN", RObj = tNN_fast)
       class(l) <- c("DSC_tNN_fast", "DSC_Micro", "DSC_R", "DSC")
     }
     l

@@ -537,6 +537,13 @@ or a fixed portion of another data stream)
 as a data stream.
 \end{itemize}
 
+A DSD
+can also be scaled by wrapping it in a stream class using:
+\begin{itemize}
+\item \code{DSD_ScaleStream}, a
+DSD class that wraps a DSD and scales it using \code{scale} in \pkg{base}.
+\end{itemize}
+
 As depicted in the class diagram, 
 other data steam implementations can be easily added in the future.
 
