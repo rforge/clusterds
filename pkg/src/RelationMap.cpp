@@ -116,7 +116,7 @@ RcppExport SEXP AgeRelations(SEXP x,SEXP a) {
         Rcpp::XPtr< std::map<std::pair<int,int>,double> > relations(x) ;
         Rcpp::NumericVector alpha(a);
         for( std::map<std::pair<int,int>,double>::iterator ii=relations->begin(); ii!=relations->end(); ++ii) {
-          #pragma omp task
+          //#pragma omp task
           {
             (*ii).second = (*ii).second*.5;
             if((*ii).second < .5*alpha[0]) relations->erase(ii);

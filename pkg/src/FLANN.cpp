@@ -37,7 +37,7 @@ RcppExport SEXP DeserializeFlann(SEXP x,SEXP m) {
         
         flann::Matrix<float> input(new float[dataset.nrow()*dataset.ncol()], dataset.nrow(),  dataset.ncol());
         
-        #pragma omp parallel for
+        //#pragma omp parallel for
         for( int j = 0; j < dataset.nrow(); j++) {
           for (int i = 0; i  < dataset.ncol(); i++) 
             input[j][i] = dataset(j,i);
@@ -188,14 +188,14 @@ RcppExport SEXP GetAllPoints(SEXP x,SEXP n,SEXP c) {
         
         int num = indices[0].size();
         
-        #pragma omp parallel for ordered schedule(dynamic)
+        //#pragma omp parallel for ordered schedule(dynamic)
         for(int i=0;i<num;i++) {
             float* indexPoint = index->getPoint(indices[0][i]);
             for(int j=0;j<colNum;j++) {
                 results(i,j)=(*(indexPoint+j));
             }
             
-            #pragma omp ordered
+            //#pragma omp ordered
             rownames.push_back(indices[0][i]);
         }
         
