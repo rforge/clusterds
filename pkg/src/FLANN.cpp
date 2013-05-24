@@ -1,23 +1,4 @@
-// -*- mode: C++; c-indent-level: 4; c-basic-offset: 4; tab-width: 8 -*-
-//
-// DataFrame.cpp: Rcpp R/C++ interface class library data frame example
-//
-// Copyright (C) 2011        Dirk Eddelbuettel and Romain Francois
-//
-// This file is part of Rcpp.
-//
-// Rcpp is free software: you can redistribute it and/or modify it
-// under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 2 of the License, or
-// (at your option) any later version.
-//
-// Rcpp is distributed in the hope that it will be useful, but
-// WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with Rcpp.  If not, see <http://www.gnu.org/licenses/>.
+// FLANN.cpp: Rcpp R/C++ interface for kd-tree
 
 #include <Rcpp.h>
 #include <flann/flann.hpp>
@@ -117,7 +98,7 @@ RcppExport SEXP RemovePoints(SEXP x,SEXP d) {
     try {
         Rcpp::XPtr< flann::Index<flann::L2<float> > > index(x);
 		Rcpp::NumericVector rdata(d);
-        int colNum = rdata.size();
+        //int colNum = rdata.size();
         
         for(Rcpp::NumericVector::iterator ii = rdata.begin(); ii != rdata.end(); ++ii) {
             index->removePoint((*ii));
@@ -169,13 +150,17 @@ RcppExport SEXP GetAllPoints(SEXP x,SEXP n,SEXP c) {
 		    Rcpp::NumericVector npoints(n);
 		    Rcpp::NumericVector cn(c);
         int colNum = cn[0];
-        float data[colNum];
+        
+	float *data = new float[colNum];
         for(int i=0;i<colNum;i++) {
             data[i] = 0;
             i++;
         }
-        flann::Matrix<float> dataset = flann::Matrix<float>(data,1,colNum);
         
+	flann::Matrix<float> dataset = flann::Matrix<float>(data,1,colNum);
+        
+	delete [] data;
+
         std::vector< std::vector<int> > indices;
         std::vector< std::vector<float> > dists;
         
@@ -222,14 +207,15 @@ RcppExport SEXP RadiusSearch(SEXP x,SEXP p,SEXP d,SEXP w) {
       	Rcpp::NumericVector radius(d);
       	Rcpp::NumericVector weights(w);
         int colNum = rdata.size();
-        float data[colNum];
+	    
+	float *data = new float[colNum];
         int i=0;
         for(Rcpp::NumericVector::iterator ii = rdata.begin(); ii != rdata.end(); ++ii) {
             data[i] = (*ii);
             i++;
         }
         flann::Matrix<float> dataset = flann::Matrix<float>(data,1,colNum);
-        
+
         std::vector< std::vector<int> > indices;
         std::vector< std::vector<float> > dists;
         
@@ -243,7 +229,8 @@ RcppExport SEXP RadiusSearch(SEXP x,SEXP p,SEXP d,SEXP w) {
         if(num>0) {
           float partialWeight = 1/num;
           
-          float tempCenters[num][colNum];
+          //float tempCenters[num][colNum];
+          float *tempCenters = new float[num * colNum];
           
           for(int i=0;i<num;i++) {
             float* indexPoint = index->getPoint(indices[0][i]);
@@ -253,7 +240,8 @@ RcppExport SEXP RadiusSearch(SEXP x,SEXP p,SEXP d,SEXP w) {
             s = out.str();
             float weight = weights[s];
             for(int j=0;j<colNum;j++) {
-                tempCenters[i][j] = (*(indexPoint+j)*weight+data[j]*partialWeight)/(weight+partialWeight);
+                //tempCenters[i][j] = (*(indexPoint+j)*weight+data[j]*partialWeight)/(weight+partialWeight);
+                tempCenters[i+j*num] = (*(indexPoint+j)*weight+data[j]*partialWeight)/(weight+partialWeight);
             }
           }
           
@@ -263,7 +251,8 @@ RcppExport SEXP RadiusSearch(SEXP x,SEXP p,SEXP d,SEXP w) {
               if(i!=j) {
                 float sum=0;
                 for(int k=0;k<num;k++) {
-                  float temp=(tempCenters[i][k]-tempCenters[j][k]);
+                  //float temp=(tempCenters[i][k]-tempCenters[j][k]);
+                  float temp=(tempCenters[i+k*num]-tempCenters[j+k*num]);
                   sum += temp*temp;
                 }
                 if(sum<(radius[0]*radius[0])) {
@@ -274,11 +263,15 @@ RcppExport SEXP RadiusSearch(SEXP x,SEXP p,SEXP d,SEXP w) {
             if(valid){
               float* indexPoint = index->getPoint(indices[0][i]);
               for(int j=0;j<colNum;j++) {
-                  *(indexPoint+j) = tempCenters[i][j];
+                  //*(indexPoint+j) = tempCenters[i][j];
+                  *(indexPoint+j) = tempCenters[i+j*num];
               }
             }
           }
+	  delete [] tempCenters;
         }
+        
+	delete [] data;
         
         return Rcpp::DataFrame::create(Rcpp::Named("indices")=iresults, Rcpp::Named("dist")=dresults);
         
