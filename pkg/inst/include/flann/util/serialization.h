@@ -90,6 +90,13 @@ BASIC_TYPE_SERIALIZER(float);
 BASIC_TYPE_SERIALIZER(double);
 BASIC_TYPE_SERIALIZER(bool);
 
+// MFH: So it compiles on Win64
+#ifdef LLONG_MAX
+BASIC_TYPE_SERIALIZER(long long int);
+#endif
+#ifdef ULLONG_MAX
+BASIC_TYPE_SERIALIZER(unsigned long long int);
+#endif
 
 
 // serializer for std::vector

@@ -241,7 +241,7 @@ RcppExport SEXP RadiusSearch(SEXP x,SEXP p,SEXP d,SEXP w) {
             float weight = weights[s];
             for(int j=0;j<colNum;j++) {
                 //tempCenters[i][j] = (*(indexPoint+j)*weight+data[j]*partialWeight)/(weight+partialWeight);
-                tempCenters[i+j*num] = (*(indexPoint+j)*weight+data[j]*partialWeight)/(weight+partialWeight);
+                tempCenters[i*num+j] = (*(indexPoint+j)*weight+data[j]*partialWeight)/(weight+partialWeight);
             }
           }
           
@@ -252,7 +252,7 @@ RcppExport SEXP RadiusSearch(SEXP x,SEXP p,SEXP d,SEXP w) {
                 float sum=0;
                 for(int k=0;k<num;k++) {
                   //float temp=(tempCenters[i][k]-tempCenters[j][k]);
-                  float temp=(tempCenters[i+k*num]-tempCenters[j+k*num]);
+                  float temp=(tempCenters[i*num+k]-tempCenters[j*num+k]);
                   sum += temp*temp;
                 }
                 if(sum<(radius[0]*radius[0])) {
@@ -264,7 +264,7 @@ RcppExport SEXP RadiusSearch(SEXP x,SEXP p,SEXP d,SEXP w) {
               float* indexPoint = index->getPoint(indices[0][i]);
               for(int j=0;j<colNum;j++) {
                   //*(indexPoint+j) = tempCenters[i][j];
-                  *(indexPoint+j) = tempCenters[i+j*num];
+                  *(indexPoint+j) = tempCenters[i*num+j];
               }
             }
           }
