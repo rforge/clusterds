@@ -716,9 +716,8 @@ For reclustering, the following traditional clustering algorithms
 are available as objects of class \code{DSC_Macro}:
 \begin{itemize}
 \item
-\code{DSC_Kmeans}, interface to R's $k$-means implementation.
-\item
-\code{DSC_KmeansW}, a version of $k$-means where the data points 
+\code{DSC_Kmeans}, interface to R's $k$-means implementation or a a version of 
+$k$-means where the data points 
 (micro-clusters) are weighted by the micro-cluster weights, i.e.,
 a micro-cluster representing more data points has more weight.
 \item
@@ -1294,7 +1293,7 @@ evaluate_cluster(micro, dsd, method=c("purity","crand"), n=600, horizon= 100,
 <<>>=
 reset_stream(dsd)
 micro <- DSC_DenStream(initPoints=100)
-macro <- DSC_KmeansW(3)
+macro <- DSC_Kmeans(k=3)
 evaluate_cluster(micro, dsd, macro, method=c("purity","crand"), n=600, 
                  horizon=100, assign="micro")
 @
@@ -1323,7 +1322,7 @@ weighted $k$-means, hierarchical clustering, and DBSCAN. Here we use
 weighted $k$-means.
 
 <<>>= 
-km <- DSC_KmeansW(3)
+km <- DSC_Kmeans(k=3)
 recluster(km, tnn)
 km
 @
@@ -1432,9 +1431,9 @@ We use weighted $k$-means for reclustering
 where we use $k=3$, the true number of clusters.
 
 <<>>= 
-km_denstream <- DSC_KmeansW(3)
+km_denstream <- DSC_Kmeans(k=3)
 recluster(km_denstream, denstream)
-km_clustream <- DSC_KmeansW(3)
+km_clustream <- DSC_Kmeans(k=3)
 recluster(km_clustream, clustream)
 @
 

@@ -38,7 +38,8 @@ DSD_mlbenchGenerator <- function(method, ...) {
     # creating the DSD object
     l <- list(description = paste("mlbench",method),
 	    method = method,
-	    variables = list(...)
+	    variables = list(...),
+      k=NA, d=NA
 	    )
     class(l) <- c("DSD_mlbenchGenerator","DSD_R","DSD")
     l

@@ -4,34 +4,37 @@ import(rJava)
 import(MASS)
 
 export(
-	# DSC_MOA
-	DSC_DenStream,
+	# DSC
+	DSC_Static,
+  DSC_Sample,
+  DSC_BIRCH,
+	DSC_tNN,  
+  
+  DSC_DenStream,
 	DSC_CluStream,
 	DSC_ClusTree,
-	DSC_Kmeans,
-	DSC_KmeansW,
+	
+  DSC_Kmeans,
 	DSC_DBSCAN,
 	DSC_Hierarchical,
-	DSC_BIRCH,
-	DSC_Sample,
-	DSC_Static,
-	
-	# DSC_R
-	DSC_tNN,
 	
 	# DSD
-	DSD_RandomRBFGeneratorEvents,
+	DSD_Wrapper,
+  DSD_ScaleStream,
+  DSD_ReadStream,
+  
+  DSD_mlbenchGenerator,
+	DSD_mlbenchData,
+  
+  DSD_RandomRBFGeneratorEvents,
 	DSD_GaussianStatic,
 	DSD_GaussianMoving,
+  DSD_Cubes,
 	DSD_UniformNoise,
-	DSD_ReadStream,
-	DSD_Wrapper,
 	DSD_Target,
-	DSD_mlbenchGenerator,
-	DSD_mlbenchData,
-	DSD_BarsAndGaussians,
-  DSD_ScaleStream,
-	
+  DSD_BarsAndGaussians,
+
+  # functions
 	# DSD
 	get_points,
 	write_stream,
@@ -98,7 +101,6 @@ S3method(recluster, DSC_Macro)
 
 S3method(microToMacro, DSC_Hierarchical)
 S3method(microToMacro, DSC_Kmeans)
-S3method(microToMacro, DSC_KmeansW)
 S3method(microToMacro, DSC_DBSCAN)
 S3method(microToMacro, DSC_tNN)
 S3method(microToMacro, DSC_tNN_fast)

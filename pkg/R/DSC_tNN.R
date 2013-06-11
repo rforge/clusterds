@@ -96,7 +96,7 @@ tNN <- setRefClass("tNN",
 
 
 DSC_tNN <- function(r = 0.1, k=0, alpha = 0, minweight = 0, lambda = 1e-3, 
-	decay_interval=1000L, noise = 0.01, measure = "Euclidean", macro = TRUE, fast = TRUE) {
+	decay_interval=1000L, noise = 0.01, measure = "Euclidean", macro = TRUE, fast = FALSE) {
 
     if(k==0 && alpha==0 && macro) {
 	warning("You have to specify at least k or alpha! Using default alpha=.25 and minweight=0.1.")

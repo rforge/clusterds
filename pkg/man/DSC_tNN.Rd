@@ -6,7 +6,7 @@
     Implements the tNN (threshold Nearest Neighbor) data stream algorithm.}
 
 \usage{
-    DSC_tNN(r = 0.1, k = 0, alpha = 0, minweight = 0, lambda = 0.001, decay_interval = 1000L, noise = 0.01, measure = "Euclidean", macro = TRUE, fast = TRUE)
+    DSC_tNN(r = 0.1, k = 0, alpha = 0, minweight = 0, lambda = 0.001, decay_interval = 1000L, noise = 0.01, measure = "Euclidean", macro = TRUE, fast = FALSE)
     serialize(x)
 }
 
