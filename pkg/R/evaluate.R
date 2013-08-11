@@ -18,20 +18,24 @@
 
 ## evaluate clusterings
 
-evaluate <- function (dsc, dsd, method, n = 1000, 
-                      type=c("auto", "micro", "macro"), assign="micro", ...) {
-  
-  methods <- c(
+.eval_methods  <- c(
     "numMicroClusters","numMacroClusters","numClasses",
     "precision", "recall", "F1",
     "purity", "fpr",
     "SSQ",
     "Euclidean", "Manhattan", "Rand", "cRand",
     "NMI", "KP", "angle", "diag", "FM", "Jaccard", "PS", 
-    "classPurity")
+    "classPurity", "tNNRelations", "tNNTotalMicroClusters")
+
+
+evaluate <- function (dsc, dsd, method, n = 1000, 
+                      type=c("auto", "micro", "macro"), assign="micro", ...) {
   
-  if(missing(method)) method <- methods
-  if(is.null(method)) method <- methods
+  methods <- .eval_methods
+  
+  # last two methods are tNN specific
+  if(missing(method)) method <- head(methods, length(methods)-2L)
+  if(is.null(method)) method <- head(methods, length(methods)-2L)
   else method <- methods[pmatch(tolower(method),tolower(methods))] 
   
   ### figure out type
@@ -121,15 +125,7 @@ evaluate_cluster <- function(dsc, dsd, macro=NULL, method,
                       centers, dsc) {
   
   #make a vector of all of the methods and then do a lot of if statements
-  methods <- c(
-    "numMicroClusters", "numMacroClusters","numClasses",
-    "precision", "recall", "F1",
-    "purity", "fpr",
-    "SSQ",
-    "Euclidean", "Manhattan", "Rand", "cRand",
-    "NMI", "KP", "angle", "diag", "FM", "Jaccard", "PS",
-    "classPurity")
-  
+  methods <- .eval_methods
   
   #finds index of partial match in array of methods
   method <- methods[pmatch(tolower(method),tolower(methods))] 
@@ -167,7 +163,11 @@ evaluate_cluster <- function(dsc, dsd, macro=NULL, method,
                 #	purity	    = clue_agreement(predict, actual, "purity"),
                 PS		    = clue_agreement(predict, actual, "PS"),
                 
-                classPurity	    = recall(actual, predict)
+                classPurity	    = recall(actual, predict),
+                
+                # tNN specific
+                tNNRelations = { if(!is(dsc, "DSC_tNN")) NA else length(dsc$RObj$relations) }, 
+                tNNTotalMicroClusters = { if(!is(dsc, "DSC_tNN")) NA else nrow(dsc$RObj$centers) }
   )
   
   res
