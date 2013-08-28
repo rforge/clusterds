@@ -110,8 +110,8 @@ the APRIORI algorithm to find frequent itemsets scan the complete
 data set repeatedly to produce 
 their results \citep{stream:Hastie+Tibshirani+Friedman:2001}. 
 However, in recent years more and more applications need to work with data
-which are not static, but the result of a 
-continuous data generation process which even might evolve over time. 
+which is not static, but the result of a 
+continuous data generation process which might even evolve over time. 
 Some examples are web click-stream
 data, computer network monitoring data, telecommunication connection data,
 readings from sensor nets and stock quotes.
@@ -152,11 +152,10 @@ able to satisfy these requirements and thus are only usable if
 techniques like sampling or time windows are used to extract small,
 quasi-static subsets. 
 While these approaches are important, 
-new algorithms are needed and have been introduced over the last decade 
-to deal with the special challenges posed by data streams.
+new algorithms to deal with the special challenges posed by data streams are needed and have been introduced over the last decade.
 
 Even though R is an ideal platform to develop and test prototypes
-for data stream algorithms, currently R does not have an infrastructure 
+for data stream algorithms, R currently does not have an infrastructure 
 to support data streams. 
 \begin{enumerate}
 \item Data sets are typically represented
@@ -1339,9 +1338,8 @@ plot(km, dsd)
 
 
 \begin{figure} 
-\begin{minipage}[b]{.48\linewidth} \centering
+\centering
 \includegraphics{stream-recluster}
-\end{minipage}
 \caption{A data stream clustered with tNN and then reclustered with
 weighted $k$-means and $k=3$.} 
 \label{figure:recluster} 

@@ -74,10 +74,12 @@ get_microclusters.DSC_MOA <- function(x, ...) {
     mCluster <- .jcall(mClusters, "Ljava/lang/Object;", "get", i-1L)
     mCluster <- .jcast(mCluster, "Lmoa/cluster/Cluster")
     center <- .jcall(mCluster, "[D", "getCenter") 
-    weight <- .jcall(mCluster, "D", "getWeight") 
-    m <- rbind(m, center)
+  #  weight <- .jcall(mCluster, "D", "getWeight") 
+    if(i==1) m <- matrix(ncol=length(center), nrow=length)
+    m[i,] <- center
   }
   
+  m <- as.data.frame(m)
   colnames(m) <- paste("X", 1:ncol(m), sep="")
   
   

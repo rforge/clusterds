@@ -83,7 +83,7 @@ kmeans_refClass$methods(cluster = function(x, weight = rep(1,nrow(x)), ...) {
   }
   
   clusterWeights <<- sapply(1:k, FUN =
-                              function(i) sum(assignment==i))
+                              function(i) sum(weights[assignment==i]))
   
 }
 )

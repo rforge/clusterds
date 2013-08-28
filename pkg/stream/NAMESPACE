@@ -1,7 +1,17 @@
 useDynLib(stream)
 
+import(methods)
 import(rJava)
-import(MASS)
+import(proxy)
+import(birch) 
+import(hash) 
+
+importFrom(mlbench, "mlbench.2dnormals","mlbench.cassini","mlbench.circle",
+    "mlbench.cuboids","mlbench.friedman1", "mlbench.friedman2",
+    "mlbench.friedman3","mlbench.hypercube", "mlbench.peak",
+    "mlbench.ringnorm", "mlbench.shapes","mlbench.simplex","mlbench.smiley",
+    "mlbench.spirals","mlbench.threenorm", "mlbench.twonorm",
+    "mlbench.waveform","mlbench.xor")
 
 export(
 	# DSC
@@ -86,7 +96,6 @@ S3method(reset_stream, DSD_ScaleStream)
 ### DSC Methods
 S3method(plot, DSC)
 S3method(plot, DSC_tNN)
-S3method(plot, DSC_tNN_fast)
 S3method(print, DSC)
 S3method(get_assignment, DSC)
 S3method(nclusters, DSC)
@@ -103,11 +112,9 @@ S3method(microToMacro, DSC_Hierarchical)
 S3method(microToMacro, DSC_Kmeans)
 S3method(microToMacro, DSC_DBSCAN)
 S3method(microToMacro, DSC_tNN)
-S3method(microToMacro, DSC_tNN_fast)
 
 S3method(get_copy, DSC_R)
 S3method(get_copy, DSC_MOA)
 
 ### other
 S3method(print, stream_eval)
-S3method(serialize, DSC_tNN_fast)

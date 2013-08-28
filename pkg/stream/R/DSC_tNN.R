@@ -96,7 +96,7 @@ tNN <- setRefClass("tNN",
 
 
 DSC_tNN <- function(r = 0.1, k=0, alpha = 0, minweight = 0, lambda = 1e-3, 
-	decay_interval=1000L, noise = 0.01, measure = "Euclidean", macro = TRUE, fast = FALSE) {
+	decay_interval=1000L, noise = 0.01, measure = "Euclidean", macro = TRUE) {
 
     if(k==0 && alpha==0 && macro) {
 	warning("You have to specify at least k or alpha! Using default alpha=.25 and minweight=0.1.")
@@ -104,16 +104,10 @@ DSC_tNN <- function(r = 0.1, k=0, alpha = 0, minweight = 0, lambda = 1e-3,
 	alpha <- 0.25
     }
 
-    if(!fast) {
-      tNN <- tNN$new(r, k, lambda, as.integer(decay_interval), 
-  	    minweight, noise, alpha, measure, macro)
-      l <- list(description = "tNN", RObj = tNN)
-      class(l) <- c("DSC_tNN", "DSC_Micro", "DSC_R", "DSC")
-    } else {
-      tNN_fast <- tNN_fast$new(r, k, lambda, as.integer(decay_interval), minweight, noise, alpha, measure, macro)
-      l <- list(description = "tNN", RObj = tNN_fast)
-      class(l) <- c("DSC_tNN_fast", "DSC_Micro", "DSC_R", "DSC")
-    }
+    tNN <- tNN$new(r, k, lambda, as.integer(decay_interval), 
+	    minweight, noise, alpha, measure, macro)
+    l <- list(description = "tNN", RObj = tNN)
+    class(l) <- c("DSC_tNN", "DSC_Micro", "DSC_R", "DSC")
     l
 }
 
@@ -456,7 +450,8 @@ plot.DSC_tNN <- function(x, dsd = NULL, n = 1000,
 		    edges <- cbind(edges, 
 			    w=apply(edges, MARGIN=1, FUN=function(ij) s[ij[1], ij[2]]))
 
-		    edges <- cbind(edges, stream:::map(edges[,3], range=c(1,5)))
+		    #edges <- cbind(edges, stream:::map(edges[,3], range=c(1,5)))
+		    edges <- cbind(edges, map(edges[,3], range=c(1,5)))
 
 		    for(i in 1:nrow(edges)){
 			lines(rbind(p[edges[i,1],],p[edges[i,2],]),

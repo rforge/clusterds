@@ -26,7 +26,7 @@ animate_cluster <- function(dsc, dsd, macro=NULL, n=1000,
                 pointInterval, horizon, 
                 evaluationMethod, save=FALSE,...)
   } else {
-    saveMovie(cluster.ani(dsc, dsd, macro, n, interval, 
+      animation::saveMovie(cluster.ani(dsc, dsd, macro, n, interval, 
                           pointInterval, horizon, 
                           evaluationMethod, save=TRUE,...), 
               interval = interval, outdir = outdir)
@@ -41,7 +41,7 @@ animate_data <- function(dsd, n=1000,
     cluster.ani(NULL, dsd, NULL, n, interval, pointInterval, 
                 horizon, NULL, save=FALSE,...)
   } else {
-    saveMovie(cluster.ani(NULL, dsd, NULL, n, interval, pointInterval, 
+      animation::aveMovie(cluster.ani(NULL, dsd, NULL, n, interval, pointInterval, 
                           horizon, NULL, save=TRUE,...), 
               interval = interval, outdir = outdir)
   }
@@ -117,7 +117,7 @@ cluster.ani <- function(dsc=NULL, dsd, macro=NULL, n=1000,
       }
       
       if(save)
-        ani.pause()
+        animation::ani.pause()
       else
         Sys.sleep(interval)
     }

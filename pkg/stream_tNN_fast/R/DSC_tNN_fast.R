@@ -376,7 +376,8 @@ plot.DSC_tNN_fast <- function(x, dsd = NULL, n = 1000,
 		    edges <- cbind(edges, 
 			    w=apply(edges, MARGIN=1, FUN=function(ij) s[ij[1], ij[2]]))
 
-		    edges <- cbind(edges, stream:::map(edges[,3], range=c(1,5)))
+		    #edges <- cbind(edges, stream:::map(edges[,3], range=c(1,5)))
+		    edges <- cbind(edges, map(edges[,3], range=c(1,5)))
 
 		    for(i in 1:nrow(edges)){
 			lines(rbind(p[edges[i,1],],p[edges[i,2],]),

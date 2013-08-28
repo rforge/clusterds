@@ -231,9 +231,9 @@ ssq <- function(points, centers) {
 }
 
 clue_agreement <- function(predict, actual, method) {
-  predict <- as.cl_hard_partition(predict)
-  actual <- as.cl_hard_partition(actual)
-  as.numeric(cl_agreement(cl_ensemble(predict, actual), method=method))
+  predict <- clue::as.cl_hard_partition(predict)
+  actual <- clue::as.cl_hard_partition(actual)
+  as.numeric(clue::cl_agreement(clue::cl_ensemble(predict, actual), method=method))
 }
 
 ### silhouette <- function(d,c,assignment = NULL) {}
