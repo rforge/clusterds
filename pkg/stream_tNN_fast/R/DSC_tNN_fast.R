@@ -83,6 +83,8 @@ tNN_fast <- setRefClass("tNN_fast",
 		),
 	)
 
+
+
   tNN_fast$methods(cluster = function(newdata, debug = FALSE) {
       'Cluster new data.' ### online help
       newdata <- as.data.frame(newdata)
@@ -278,6 +280,22 @@ tNN_fast <- setRefClass("tNN_fast",
                    }
 )
     
+DSC_tNN_fast <- function(r = 0.1, k=0, alpha = 0, minweight = 0, lambda = 1e-3, 
+                    decay_interval=1000L, noise = 0.01, measure = "Euclidean", macro = TRUE) {
+  
+  if(k==0 && alpha==0 && macro) {
+    warning("You have to specify at least k or alpha! Using default alpha=.25 and minweight=0.1.")
+    minweight <- 0.1
+    alpha <- 0.25
+  }
+  
+  tNN <- tNN_fast$new(r, k, lambda, as.integer(decay_interval), 
+                 minweight, noise, alpha, measure, macro)
+  l <- list(description = "tNN", RObj = tNN)
+  class(l) <- c("DSC_tNN", "DSC_Micro", "DSC_R", "DSC")
+  l
+}
+
 get_microclusters.DSC_tNN_fast <- function(x) {
     ### we have to rename the micro-clusters
     x$RObj$deserialize()

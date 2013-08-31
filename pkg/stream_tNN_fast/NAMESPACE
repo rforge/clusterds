@@ -1,4 +1,4 @@
-useDynLib(stream_tNN_fast)
+useDynLib(streamtNNfast)
 
 import(stream)
 import(Rcpp)
