@@ -10,4 +10,5 @@ export(
   
 S3method(plot, DSC_tNN_fast)
 S3method(microToMacro, DSC_tNN_fast)
+S3method(get_centers, DSC_tNN_fast)
 S3method(serialize, DSC_tNN_fast)

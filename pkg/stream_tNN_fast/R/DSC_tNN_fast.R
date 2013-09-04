@@ -292,7 +292,7 @@ DSC_tNN_fast <- function(r = 0.1, k=0, alpha = 0, minweight = 0, lambda = 1e-3,
   tNN <- tNN_fast$new(r, k, lambda, as.integer(decay_interval), 
                  minweight, noise, alpha, measure, macro)
   l <- list(description = "tNN", RObj = tNN)
-  class(l) <- c("DSC_tNN", "DSC_Micro", "DSC_R", "DSC")
+  class(l) <- c("DSC_tNN_fast", "DSC_Micro", "DSC_R", "DSC")
   l
 }
 
@@ -307,6 +307,8 @@ get_microclusters.DSC_tNN_fast <- function(x) {
     rownames(mc) <- NULL
     mc
 }
+
+
 
 get_microweights.DSC_tNN_fast <- function(x) {
     x$RObj$weights[as.character(x$RObj$strong_mcs())]
