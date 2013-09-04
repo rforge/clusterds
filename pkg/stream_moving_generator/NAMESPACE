@@ -1,0 +1,8 @@
+useDynLib(streamMovingGenerator)
+
+import(stream)
+
+export(
+	DSD_MovingGenerator
+	)
+  
