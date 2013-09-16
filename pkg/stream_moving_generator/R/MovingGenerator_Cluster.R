@@ -23,39 +23,62 @@ get_attributes <- function(x, time, ...)
 
 movingGenerator_cluster_refClass <- setRefClass("movingGenerator_cluster", 
                                fields = list(
-                                 keyframes = "data.frame"
+                                 keyframes = "data.frame",
+                                 dimension = "numeric"
                                ), 
                                
                                methods = list(
-                                 initialize = function() {
-                                   
-                                   keyframes	<<- data.frame(t =  numeric(0),r = numeric(0))
-                                   
+                                 initialize = function(d) {
+                                   dimension  <<- d
+                                   keyframes	<<- data.frame(t =  numeric(0),v = numeric(0), d = numeric(0))
+                                   lapply(1:d,function(x){
+                                     keyframes[paste("X",x,sep="")] <<- numeric(0)
+                                   })
                                    .self
                                  }
                                  
                                ),
 )
 
-movingGenerator_cluster_refClass$methods(get_points = function(t) {
-  t
-},
-                                         add_Keyframe = function(t,r) {
-                                           keyframes <<- rbind(keyframes,setNames(as.list(c(t,r)), c("time","radius")))
-                                           keyframes <<- keyframes[with(keyframes, order(time)), ]
-}
+movingGenerator_cluster_refClass$methods(
+  add_keyframe = function(t,v,d,...) {
+   keyframes <<- rbind(keyframes,setNames(as.list(c(t,v,d,...)), c("time","variance","density",paste("X",1:dimension,sep=""))))
+   keyframes <<- keyframes[with(keyframes, order(time)), ]
+  },
+  get_attributes = function(time) {
+    x <- matrix(get_attribute(time,c("variance","density",paste("X",1:dimension,sep=""))),ncol=(dimension+2),byrow=TRUE)
+    colnames(x) <- c("variance","density",paste("X",1:dimension,sep=""))
+    x
+  },
+  get_attribute = function(time,attributes) {
+    unlist(lapply(time,function(t){
+    outer <- findInterval(t, c(-Inf, keyframes$time))
+    inner <- outer -1
+    if(outer==1) {
+      return(unlist(lapply(attributes,function(attribute){
+        get(attribute,keyframes)[1]
+      })))
+    }
+    if(inner==nrow(keyframes)) {
+      return(unlist(lapply(attributes,function(attribute){
+        get(attribute,keyframes)[nrow(keyframes)]
+      })))
+    }
+    return(unlist(lapply(attributes,function(attribute){
+      (get(attribute,keyframes)[inner]-get(attribute,keyframes)[outer])/(keyframes$time[inner]-keyframes$time[outer])*(t-keyframes$time[inner])+get(attribute,keyframes)[inner]  
+    })))
+  }))  
+  }
 )
 
 ### creator    
-MovingGenerator_Cluster<- function(k, weighted = TRUE, iter.max = 10, nstart = 1,
-                                   algorithm = c("Hartigan-Wong", "Lloyd", "Forgy",
-                                                 "MacQueen")) {
+MovingGenerator_Cluster<- function(dimension = 2) {
   
   desc <- "Moving Generator Cluster"
   
   
   structure(list(description = desc,
-                 RObj = movingGenerator_cluster_refClass$new()),
+            RObj = movingGenerator_cluster_refClass$new(d = dimension)),
             class = c("MovingGenerator_Cluster"))
 }
 
@@ -63,16 +86,10 @@ get_points.MovingGenerator_Cluster <- function(x, time = 1) {
   x$RObj$get_points(time)
 }
 
-add_keyframe.MovingGenerator_Cluster <- function(x, t = 1, r = 1) {
-  x$RObj$add_Keyframe(t,r)
+add_keyframe.MovingGenerator_Cluster <- function(x, t, v = 1, d = 1,...) {
+  x$RObj$add_keyframe(t,v,d,...)
 }
 
 get_attributes.MovingGenerator_Cluster <- function(x, t) {
-  outer <- findInterval(t, c(-Inf, x$RObj$keyframes$time))
-  inner <- outer -1
-  if(outer==1)
-    return(x$RObj$keyframes$radius[1])
-  if(inner==length(x$RObj$keyframes))
-    return(x$RObj$keyframes$radius[length(x$RObj$keyframes)])
-  (x$RObj$keyframes$radius[outer]+x$RObj$keyframes$radius[inner])/2
+  x$RObj$get_attributes(t)
 }
