@@ -28,7 +28,7 @@ movingGenerator_cluster_refClass <- setRefClass("movingGenerator_cluster",
                                ), 
                                
                                methods = list(
-                                 initialize = function(d) {
+                                 initialize = function(d = 2) {
                                    dimension  <<- d
                                    keyframes	<<- data.frame(t =  numeric(0),v = numeric(0), d = numeric(0))
                                    lapply(1:d,function(x){
