@@ -1,4 +1,4 @@
-Package: streamtNNfast
+Package: streamMovingGenerator
 Version: 0.0-1
 Date: 2013-xx-xx
 Title: Fast implementation for tNN in stream
