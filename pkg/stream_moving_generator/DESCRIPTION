@@ -1,11 +1,10 @@
 Package: streamMovingGenerator
 Version: 0.0-1
 Date: 2013-xx-xx
-Title: Fast implementation for tNN in stream
+Title: Moving Generator
 Author: Matthew Bolanos, Michael Hahsler
 Maintainer: Michael Hahsler <mhahsler@lyle.smu.edu>
-Description: Fast implementation for tNN in stream using k-d trees and red-black trees.
-Depends: stream , Rcpp
-LinkingTo: Rcpp
+Description: Allows for the creation of custom moving data.
+Depends: stream, methods
 License: GPL-2
 Copyright: All other code is Copyright (C) Matthew Bolanos and Michael Hahsler
