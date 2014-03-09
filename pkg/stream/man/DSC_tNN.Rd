@@ -1,9 +1,8 @@
 \name{DSC_tNN}
 \alias{DSC_tNN}
-\alias{serialize}
 \title{Threshold Nearest Neighbor (tNN) Data Stream Clustering Algorithm}
 \description{
-    Implements the tNN (threshold Nearest Neighbor) data stream algorithm.}
+    Implements the tNN (threshold Nearest Neighbor) data stream clustering algorithm.}
 
 \usage{
     DSC_tNN(r = 0.1, k = 0, alpha = 0, minweight = 0, lambda = 0.001, 
@@ -57,32 +56,27 @@ Stream Clustering in R, Journal of Statistical Software, 35(5), 1-31, URL \url{h
 }
 
 \examples{
-# Cassini
-dsd <- DSD_mlbenchGenerator("cassini")
+set.seed(0)
+dsd <- DSD_GaussianStatic(k=3, noise=0.05)
 
 # tNN has a built in micro and micro-clusterer
-tnn <- DSC_tNN(r=.2, k=3, alpha=.08, lambda=0)
+tnn <- DSC_tNN(r=.05, alpha=0.25, minweight=0.1, noise=0.01)
 cluster(tnn, dsd, 500)
 
 # see micro-clusters
 nclusters(tnn)
 head(get_centers(tnn))
+plot(tnn, dsd)
 
 # see macro-clusters
 nclusters(tnn, type="macro")
 get_centers(tnn, type="macro")
-
+plot(tnn, dsd, type="macro")
 
 # see how micro and macro-clusters relate
 # each microcluster has an entry with the macro-cluster id
 # Note: unassigned micro-clusters (noise) have an NA
 microToMacro(tnn)
-
-
-# plot micro-clusters
-plot(tnn, dsd)
-# plot macro-clusters
-plot(tnn, dsd, type="macro")
 
 # evaluate first using macro and then using micro-clusters
 \dontrun{

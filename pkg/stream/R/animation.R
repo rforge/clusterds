@@ -16,41 +16,31 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
+animation::ani.options(interval=.1)
 
 animate_cluster <- function(dsc, dsd, macro=NULL, n=1000,
-                            interval=.1, pointInterval=100, horizon=5*pointInterval, 
-                            evaluationMethod=NULL, outdir=NULL,...) {
+  interval=.1, pointInterval=100, horizon=5*pointInterval, 
+  evaluationMethod=NULL, ...) {
   
-  if(is.null(outdir)) {
-    cluster.ani(dsc, dsd, macro, n, interval, 
-                pointInterval, horizon, 
-                evaluationMethod, save=FALSE,...)
-  } else {
-      animation::saveMovie(cluster.ani(dsc, dsd, macro, n, interval, 
-                          pointInterval, horizon, 
-                          evaluationMethod, save=TRUE,...), 
-              interval = interval, outdir = outdir)
-  }
+  cluster.ani(dsc, dsd, macro, n, interval, 
+    pointInterval, horizon, 
+    evaluationMethod,...)
 }
 
 animate_data <- function(dsd, n=1000, 
-                         interval=.1, pointInterval=100, horizon=5*pointInterval, 
-                         outdir=NULL,...) {
+  interval=.1, pointInterval=100, horizon=5*pointInterval, 
+  ...) {
   
-  if(is.null(outdir)) {
-    cluster.ani(NULL, dsd, NULL, n, interval, pointInterval, 
-                horizon, NULL, save=FALSE,...)
-  } else {
-      animation::aveMovie(cluster.ani(NULL, dsd, NULL, n, interval, pointInterval, 
-                          horizon, NULL, save=TRUE,...), 
-              interval = interval, outdir = outdir)
-  }
+  cluster.ani(NULL, dsd, NULL, n, interval, pointInterval, 
+    horizon, NULL,...)
 }
 
 
 cluster.ani <- function(dsc=NULL, dsd, macro=NULL, n=1000,
                         interval=.1, pointInterval=100, horizon=5*pointInterval, 
-                        evaluationMethod=NULL, save=TRUE, ...) {
+                        evaluationMethod=NULL, ...) {
+  
+  animation::ani.record(reset = TRUE)
   
   if(!is.null(evaluationMethod)) {
     layout(matrix(c(1,2), 2, 1, byrow = TRUE), heights=c(3,1))
@@ -82,8 +72,6 @@ cluster.ani <- function(dsc=NULL, dsd, macro=NULL, n=1000,
     ## cluster?
     if(!is.null(dsc)) cluster(dsc, DSD_Wrapper(d[1,]),1)
     
-    
-    
     if(i %% pointInterval == 0) {
       ## recluster
       if(!is.null(dsc) && !is.null(macro)) 
@@ -91,6 +79,16 @@ cluster.ani <- function(dsc=NULL, dsd, macro=NULL, n=1000,
       
       ## plot points and clustering
       points_dsd <- DSD_Wrapper(points,assignment=assignment)
+      
+      ## eval part 1
+      if(!is.null(evaluationMethod)) {
+        reset_stream(points_dsd)
+        
+        evaluation[i/pointInterval,2] <- evaluate(cl,points_dsd,
+          evaluationMethod,n=nrow(points),...)
+
+        reset_stream(points_dsd)
+      }
       
       par(mar=c(4.1,4.1,2.1,2.1))
       if(!is.null(dsc)) {
@@ -102,24 +100,17 @@ cluster.ani <- function(dsc=NULL, dsd, macro=NULL, n=1000,
              n=nrow(points),...)
       }
       
-      ## evaluation
+      ## eval part 2
       if(!is.null(evaluationMethod)) {
-        reset_stream(points_dsd)
-        
-        evaluation[i/pointInterval,2] <- evaluate(cl,points_dsd,
-                                      evaluationMethod,n=nrow(points),...)
-        
         par(mar=c(2.1,4.1,1.1,2.1))
         plot(evaluation, type="l", col="blue",
              ylim=c(0,1), xlim=c(1,n), ann=FALSE) 
         title(ylab=evaluationMethod)
-        
       }
       
-      if(save)
-        animation::ani.pause()
-      else
-        Sys.sleep(interval)
+      animation::ani.record()
+      
+      if(interval>0) Sys.sleep(interval)
     }
     
   }

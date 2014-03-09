@@ -17,7 +17,7 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 
-DSD_mlbenchData <- function(data, loop=FALSE, random=FALSE, scale = FALSE) {
+DSD_mlbenchData <- function(data=NULL, loop=FALSE, random=FALSE, scale = FALSE) {
 
     datas <- c("BostonHousing", "BostonHousing2", "BreastCancer", 
 	    "DNA", "Glass", "Ionosphere", "LetterRecognition", 
@@ -28,7 +28,7 @@ DSD_mlbenchData <- function(data, loop=FALSE, random=FALSE, scale = FALSE) {
     #finds index of partial match in array of datas
     m <- pmatch(tolower(data),tolower(datas))
     
-    if(missing(data)) {
+    if(is.null(data)) {
 	cat("Available data sets:\n")
 	print(datas)
 	return(invisible(datas))

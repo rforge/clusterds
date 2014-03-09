@@ -18,7 +18,8 @@ export(
 	DSC_Static,
   DSC_Sample,
   DSC_BIRCH,
-	DSC_tNN,  
+	DSC_tNN, 
+  DSC_DStream,
   
   DSC_DenStream,
 	DSC_CluStream,
@@ -63,7 +64,6 @@ export(
 #	merge_DSC,
 	prune_clusters,
 	microToMacro,	
-  serialize,
 	
 	evaluate,
 	evaluate_cluster,
@@ -96,6 +96,8 @@ S3method(reset_stream, DSD_ScaleStream)
 ### DSC Methods
 S3method(plot, DSC)
 S3method(plot, DSC_tNN)
+S3method(plot, DSC_DStream)
+
 S3method(print, DSC)
 S3method(get_assignment, DSC)
 S3method(nclusters, DSC)

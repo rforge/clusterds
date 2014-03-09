@@ -703,6 +703,7 @@ leave notes are used as micro-clusters.
 \item\code{DSC_CluStream}, the CluStream algorithm from MOA \citep{stream:Aggarwal+Han+Wang+Yu:2003}.
 \item\code{DSC_DenStream}, the DenStream algorithm from MOA \citep{stream:Cao+Ester+Qian+Zhou:2006}.
 \item\code{DSC_ClusTree}, the ClusTree algorithm from MOA \citep{stream:Kranen+Assent+Baldauf+Seidl:2009}.
+\item\code{DSC_DStream}, the D-Stream algorithm \citep{stream:Tu:2009}.
 %\item
 %CobWeb \citep{stream:Fisher:1987}
 \item\code{DSC_tNN}, a simple data stream clustering algorithm called threshold nearest-neighbors \citep{stream:Hahsler+Dunham:2010,stream:Hahsler+Dunham:2010b}
@@ -997,10 +998,12 @@ plot(dsd, n=500)
 
 Figure \ref{figure:static} shows 
 the resulting plot. 
-The assignment value is used to change the color in the 
+The assignment value is automatically used to change the color in the 
 plot. Noise points are plotted as gray crosses.
 
-\code{DSD_RandomRBFGeneratorEvents} creates dynamic data streams where clusters move over time which is called in the data mining community concept drift.
+Stream also supports data streams which contain concept drift. An example
+for such a data stream generator is MOA's
+\code{DSD_RandomRBFGeneratorEvents} where clusters move over time.
 
 <<moa1, fig=TRUE, include=FALSE>>= 
 set.seed(1000) 
@@ -1008,10 +1011,10 @@ dsd <- DSD_RandomRBFGeneratorEvents(k=3, d=2)
 dsd
 @
 
-$k$ and $d$ again represent the number of clusters and the dimensionality
+$k$ and $d$ represent the number of clusters and the dimensionality
 of the data, respectively. 
-In the following we request 4 times 500 data points from the stream and 
-create a plot. 
+To show concept drift, we request four times 500 data points from the stream and 
+plot them. 
 
 <<eval=FALSE>>=
 plot(dsd, 500)
@@ -1021,43 +1024,49 @@ plot(dsd, 500)
 @
 
 <<moa1, fig=TRUE, include=FALSE, echo=FALSE>>=
-plot(get_points(dsd, 500)) 
+plot(dsd, 500) 
 @
 <<moa2, fig=TRUE, include=FALSE, echo=FALSE>>= 
-plot(get_points(dsd, 500)) 
+plot(dsd, 500) 
 @
 <<moa3, fig=TRUE, include=FALSE, echo=FALSE>>= 
-plot(get_points(dsd, 500)) 
+plot(dsd, 500) 
 @
 <<moa4, fig=TRUE, include=FALSE, echo=FALSE>>= 
-plot(get_points(dsd, 500)) 
+plot(dsd, 500) 
 @
 
 \begin{figure} 
 \begin{minipage}{.48\linewidth} \centering
-\includegraphics[width=\linewidth]{stream-moa1} \\(a) 
+\includegraphics[width=\linewidth]{stream-moa1} \\(a) Position 500 
 \end{minipage}
 \begin{minipage}{.48\linewidth} \centering
-\includegraphics[width=\linewidth]{stream-moa2} \\(b) 
+\includegraphics[width=\linewidth]{stream-moa2} \\(b) Position 1000
 \end{minipage} \\
 \begin{minipage}{.48\linewidth} \centering
-\includegraphics[width=\linewidth]{stream-moa3} \\(c) 
+\includegraphics[width=\linewidth]{stream-moa3} \\(c) Position 1500
 \end{minipage}
 \begin{minipage}{.48\linewidth} \centering
-\includegraphics[width=\linewidth]{stream-moa4} \\(d) 
+\includegraphics[width=\linewidth]{stream-moa4} \\(d) Position 2000
 \end{minipage}
-\caption{The concept drift of DSD\_MOA} 
+\caption{Data points from DSD\_RandomRBFGeneratorEvents at different positions 
+in the stream. Note that clusters change position over time.} 
 \label{figure:moa} 
 \end{figure}
 
 Figure \ref{figure:moa} shows the 
-results of the four plot instructions.
-It shows that the 3 clusters move over time (the ).
-
-An animation of the plot can also be generated using \code{data_animation()}.
+four plots where clusters move over time.
+An animation of the data can also be generated using \code{animate_data()}.
+The animation is recoded using package \pkg{animation} and can 
+be replayed and saved using \code{ani.replay()}.
 
 <<eval=FALSE>>=
-data_animation(dsd, 5000)
+animate_data(dsd, n=2000, pointInterval=100, xlim=c(0,1), ylim=c(0,1))
+
+library(animation)
+ani.replay()
+
+saveHTML(ani.replay())
 @
 
 \subsection{Reading and writing data streams} \label{examples:disk}
@@ -1239,7 +1248,8 @@ plot(birch, dsd)
 @
 
 \begin{figure} \centering \includegraphics[width=.5\linewidth]{stream-cluster}
-\caption{Plotting the micro-clusters on top of data points}
+\caption{Plotting the micro-clusters produced by BIRCH together with the
+original data points.}
 \label{figure:cluster} \end{figure}
 
 The resulting plot is shown in Figure~\ref{figure:cluster}. The micro-clusters are plotted in red on top of grey data
@@ -1249,27 +1259,26 @@ points.
 
 In this example we will show how to display evaluation measures after clustering
 data using a DSC object with the \code{evaluate()} function.
-To use the function simply pass in the \code{DSC} object 
-used for clustering
-as well as the \code{DSD}
-object to test the quality of the clustering algorithm ($n$ data points
-from DSD are used to compute the measures).
+The function takes a \code{DSC} object 
+containing a clustering and a \code{DSD} with evaluation data to
+compute several quality measures for clustering. Here we use the data stream
+and the BIRCH clustering objects 
+created in the previous section.
 
 <<>>= 
-library("stream")
-dsd <- DSD_GaussianStatic(k=3, d=2, mu=rbind(c(1.5,1.3),c(1,1),c(1.2,1)))
-
-tnn <- DSC_tNN(, r=.1, macro=FALSE)
-cluster(tnn, dsd, 500)
-
-evaluate(tnn, dsd, n = 500)
+evaluate(birch, dsd, n = 500)
 @
+
+The number of points used for the evaluation are passed on as the
+argument $n$.
+Note that the clustering only contains micro-clusters. Therefore 
+\code{numMacroClusters} shows \code{NA}.
 
 Individual measures can be calculated using the method argument.
-<<>>=
-evaluate(tnn, dsd, method = c("purity", "crand"), n = 500)
-@
 
+<<>>=
+evaluate(birch, dsd, method = c("purity", "crand"), n = 500)
+@
 
 For evolving streams it is important to evaluate how well the clustering
 algorithm is able to adapt to the changing cluster structure over time. 
@@ -1279,24 +1288,25 @@ a number of data points which are first clustered and then the evaluation
 measure is calculated using the same data. Algorithms which can better
 adapt to the changing stream will achieve a better value.
 This evaluation strategy is implemented in stream as function 
-\code{evaluate_cluster}.
+\code{evaluate_cluster()}.
 The following examples evaluate DenStream and DenStream plus weighted
 $k$-means reclustering on an evolving stream.
 <<>>=
-dsd <- DSD_GaussianMoving()
-micro <- DSC_DenStream(initPoints=100)
-evaluate_cluster(micro, dsd, method=c("purity","crand"), n=600, horizon= 100, 
-                 assign="micro")
+set.seed(1000)
+dsd <- DSD_RandomRBFGeneratorEvents(k=3, d=2)
+micro <- DSC_CluStream(k=30)
+evaluate_cluster(micro, dsd, method=c("purity","crand"), n=500, horizon= 100)
 @
 
-<<>>=
-reset_stream(dsd)
-micro <- DSC_DenStream(initPoints=100)
-macro <- DSC_Kmeans(k=3)
-evaluate_cluster(micro, dsd, macro, method=c("purity","crand"), n=600, 
-                 horizon=100, assign="micro")
+The dynamic clustering can also be visualized using \code{animate_cluster()}.
+Animations can be replayed and saved using the package \pkg{animation}.
+<<eval=FALSE>>=
+animate_cluster(micro, dsd, evaluationMethod="crand", n=2000, horizon=100, 
+  xlim=c(0,1), ylim=c(0,1))
+library(animation)
+ani.replay()
+saveHTML(ani.replay())
 @
-
 
 \subsection{Reclustering DSC objects with another DSC}
 \label{examples:recluster}
@@ -1306,12 +1316,11 @@ To begin, first create a \code{DSC} object and run the clustering algorithm.
 
 <<>>= 
 library("stream")
+set.seed(1000) 
+dsd <- DSD_GaussianStatic(k=3, d=2, noise=0.05)
+clustream <- DSC_CluStream(k=30)
 
-dsd <- DSD_GaussianStatic(k=3, d=2, mu=rbind(c(1.5,1.3),c(1,1),c(1.2,1)))
-
-tnn <- DSC_tNN(r=.04, macro=FALSE)
-cluster(tnn, dsd, 1000)
-tnn
+cluster(clustream, dsd, 1000)
 @
 
 This will produce micro-clusters which can then be reclustered. To achieve this,
@@ -1321,41 +1330,47 @@ weighted $k$-means, hierarchical clustering, and DBSCAN. Here we use
 weighted $k$-means.
 
 <<>>= 
-km <- DSC_Kmeans(k=3)
-recluster(km, tnn)
+km <- DSC_Kmeans(k=3, weighted=TRUE)
+recluster(km, clustream)
 km
 @
 
-Now the macro clusters can be used for example for evaluation or plotted.
-
-<<>>= 
-evaluate(km, dsd,"purity")
-@
+We can plot the resulting clustering which is shown in Figure~\ref{figure:recluster}.
 
 <<recluster, fig=TRUE, include=FALSE>>= 
 plot(km, dsd) 
 @
 
-
 \begin{figure} 
 \centering
-\includegraphics{stream-recluster}
-\caption{A data stream clustered with tNN and then reclustered with
+\includegraphics[width=.5\linewidth]{stream-recluster}
+\caption{A data stream clustered with Clustream and then reclustered with
 weighted $k$-means and $k=3$.} 
 \label{figure:recluster} 
 \end{figure}
+
+Evaluation on a macro clustering model automatically
+uses the micro clusters. For evaluation, $n$ new data points are 
+requested from the data stream and each is assigned to its neares micro-cluster.
+The assignment is evaluated using the ground truth provided by the 
+data stream generator.
+<<>>= 
+evaluate(km, dsd, method=c("purity", "crand"), n=500)
+@
+
+Alternatively, the new data points can also be assigned to the closest 
+macro-cluster.
+<<>>=
+evaluate(km, dsd, c(method="purity", "crand"), n=500, assign="macro")
+@
 
 
 \subsection{Full experimental comparison} \label{examples:full}
 
 This example shows the \pkg{stream} framework being used from start to finish.
 It encompasses the creation of data streams, data clusterers, the online
-clustering of data points as micro-clusters, and then the comparison of the
-offline clustering of 2 data stream clustering algorithms by applying the
-weighted $k$-means algorithm. As such, less detail will be given in the topics
-already covered in the previous examples and more detail will be given on the
-comparison of the 2 data stream clustering algorithms.
-
+clustering of data points as micro-clusters, and then the comparison of
+offline reclustering.
 
 First, we set up the data. 
 We extract 1000 data points and
@@ -1375,25 +1390,29 @@ dsd <- DSD_Wrapper(d, k=3)
 dsd
 @
 
-Next, we create the two clustering algorithms and cluster the same 
-1000 data points with both. Note that we have to reset the stream
-before we cluster the data points for the second clustering 
+Next, we create the thre clustering algorithms and cluster the same 
+1000 data points with all of them. Note that we have to reset the stream
+before we cluster the data points for the next clustering 
 algorithm.
 
 <<>>= 
-denstream <- DSC_DenStream() 
-clustream <- DSC_CluStream() 
+denstream <- DSC_DenStream(epsilon=0.1) 
+clustream <- DSC_CluStream(k=100) 
+dstream <- DSC_DStream(gridsize=0.05)
 @
 
 <<>>=
 cluster(denstream, dsd, 1000) 
 reset_stream(dsd) 
 cluster(clustream, dsd, 1000)
+reset_stream(dsd) 
+cluster(dstream, dsd, 1000)
 @
 
 <<>>=
 denstream
 clustream
+dstream
 @
 
 After the clustering operations, we plot the calculated micro-clusters and the
@@ -1401,14 +1420,24 @@ original data.
 
 <<denstream, fig=TRUE, include=FALSE>>= 
 reset_stream(dsd) 
-plot(denstream,dsd) 
+plot(denstream, dsd) 
 @
 
 <<clustream, fig=TRUE, include=FALSE>>= 
 reset_stream(dsd) 
-plot(clustream,dsd) 
+plot(clustream, dsd) 
 @
 
+<<dstream, fig=TRUE, include=FALSE>>= 
+reset_stream(dsd) 
+plot(dstream, dsd) 
+@
+
+For D-Stream there is an alternative visualization which shows the density 
+of the used grid.
+<<dstream2, fig=TRUE, include=FALSE>>= 
+plot(dstream, image=TRUE)
+@
 
 \begin{figure} 
 \begin{minipage}[b]{.48\linewidth} \centering
@@ -1417,64 +1446,91 @@ plot(clustream,dsd)
 \begin{minipage}[b]{.48\linewidth} \centering
 \includegraphics{stream-clustream} \\(b) CluStream 
 \end{minipage}
-\caption{Plotting 2 sets of different micro-clusters 
+
+\begin{minipage}[b]{.48\linewidth} \centering
+\includegraphics{stream-dstream} \\(c) D-Stream 
+\end{minipage}
+\begin{minipage}[b]{.48\linewidth} \centering
+\includegraphics{stream-dstream2} \\(d) D-Stream grid 
+\end{minipage}
+\caption{Plotting three sets of different micro-clusters 
 against the generated data} 
 \label{figure:denstream+clustream} 
 \end{figure}
 
+Next, we will recluster the micro-clusters generated by DenStream,
+CluStream and D-Stream. Different reclustering algorithms were suggested by the
+creators of each of the algorithm. 
+Althoug, any off-line reclustering strategy can be applied to any
+on-line clustering algorithm, 
+we will apply here the suggested
+reclustering strategies. For DenStream weighted DBSCAN is used. For CluStream
+we use weighted $k$-means clustering and for D-Stream finding 
+dense grid clusters is used.
 
-Next, we will see how well the micro-clusters generated by DenStream and
-CluStream recluster, which is typically an off-line process. 
-We use weighted $k$-means for reclustering
-where we use $k=3$, the true number of clusters.
 
-<<>>= 
-km_denstream <- DSC_Kmeans(k=3)
-recluster(km_denstream, denstream)
-km_clustream <- DSC_Kmeans(k=3)
-recluster(km_clustream, clustream)
+<<>>=  
+denstream_dbscan <- DSC_DBSCAN(eps=0.1, weighted=TRUE)
+recluster(denstream_dbscan, denstream)
+
+clustream_kmeans <- DSC_Kmeans(k=3, weighted=TRUE)
+recluster(clustream_kmeans, clustream)
+
+dstream_grids <- DSC_Hierarchical(h=.05+1e-3, method="single")
+recluster(dstream_grids, dstream)
 @
 
-<<denstreamkmeans, fig=TRUE, include=FALSE>>= 
+<<denstream_dbscan, fig=TRUE, include=FALSE>>= 
 reset_stream(dsd) 
-plot(km_denstream,dsd) 
+plot(denstream_dbscan, dsd) 
 @
 
-<<clustreamkmeans, fig=TRUE, include=FALSE>>= 
+<<clustream_kmeans, fig=TRUE, include=FALSE>>= 
 reset_stream(dsd) 
-plot(km_clustream, dsd) 
+plot(clustream_kmeans, dsd) 
+@
+
+<<dstream_grids, fig=TRUE, include=FALSE>>= 
+reset_stream(dsd) 
+plot(dstream_grids, dsd) 
 @
 
 \begin{figure} \begin{minipage}[b]{.48\linewidth} \centering
-\includegraphics{stream-denstreamkmeans} \\(a) DenStream with Weighted $k$-means 
+\includegraphics{stream-denstream_dbscan} \\(a) DenStream with weighted DBSCAN 
 \end{minipage}
 \begin{minipage}[b]{.48\linewidth} \centering
-\includegraphics{stream-clustreamkmeans} \\(b) CluStream with Weighted $k$-means
+\includegraphics{stream-clustream_kmeans} \\(b) CluStream with Weighted $k$-means
 \end{minipage}
-\caption{Plotting the results of a \textit{k-means} operation on each stream
-clustering algorithm} 
+
+\begin{minipage}[b]{.48\linewidth} \centering
+\includegraphics{stream-dstream_grids} \\(c) D-Stream with CluStream with dense 
+grid clusters
+\end{minipage}
+\caption{Reclustering results.} 
 \label{figure:denstream+clustream+kmeans} 
 \end{figure}
 
 
-The clusters are shown in Figure \ref{figure:denstream+clustream+kmeans}.
-We see that the move even distribution of micro-clusters from CluStream
-helps to recover the original structure of the data while the large 
-micro-cluster dominates the results for DenStream.
-Given more data, DenStream will eventually also find the correct clustering. 
-
+The final clusters are shown in Figure \ref{figure:denstream+clustream+kmeans}.
+%We see that the move even distribution of micro-clusters from CluStream
+%helps to recover the original structure of the data while the large 
+%micro-cluster dominates the results for DenStream.
+%Given more data, DenStream will eventually also find the correct clustering. 
+%
 Finally, we can compare the clusterings using \code{evaluate}.
 
 <<>>= 
-sapply(list(DenStream=km_denstream, CluStream=km_clustream), 
+sapply(list(DenStream=denstream_dbscan, 
+  CluStream=clustream_kmeans, 
+  DStream=dstream_grids), 
 FUN=function(x){
     reset_stream(dsd)
     evaluate(x, dsd, c("purity","rand", "crand"))
 })
 @
 
-Here we also see that the reclustered micro-clusters from CluStream
-perform better.
+%Here we also see that the reclustered micro-clusters from CluStream
+%perfom better.
 
 
 \section{Conclusion and Future Work} \label{sec:conclusion}

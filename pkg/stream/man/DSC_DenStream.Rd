@@ -1,5 +1,7 @@
 \name{DSC_DenStream}
 \alias{DSC_DenStream}
+\alias{denstream}
+\alias{DenStream}
 \title{DenStream Data Stream Clusterer}
 \description{
 Class implements the DenStream cluster algorithm for data streams.
@@ -47,6 +49,7 @@ Classification and Clustering. In Journal of Machine Learning Research
 	\code{\link{DSC_MOA}}
 }
 \examples{
+set.seed(0)
 # 3 clusters with 5% noise
 dsd <- DSD_GaussianStatic(k=3, noise=0.05)
 
@@ -57,8 +60,8 @@ dsc
 # plot micro-clusters
 plot(dsc, dsd)
 
-# reclustering
-kmeans <- DSC_Kmeans(k=3)
-recluster(kmeans,dsc)
-plot(kmeans, dsd)
+# reclustering. DenStream uses weighted DBSCAN
+dbscan <- DSC_DBSCAN(eps=0.1, weighted=TRUE)
+recluster(dbscan, dsc)
+plot(dbscan, dsd)
 }

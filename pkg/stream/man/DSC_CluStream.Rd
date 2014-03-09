@@ -57,8 +57,8 @@ dsc
 # plot micro-clusters
 plot(dsc, dsd)
 
-# reclustering
-kmeans <- DSC_Kmeans(k=3)
+# reclustering. CluStream uses weighted k-means
+kmeans <- DSC_Kmeans(k=3, weighted=TRUE)
 recluster(kmeans,dsc)
 plot(kmeans, dsd)
 }
