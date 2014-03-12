@@ -42,27 +42,27 @@ tNN <- setRefClass("tNN",
     relations 		= "hash",
     
     ### Macro-clustering
-    macro			= "logical",	# do macro?
+    shared_density		= "logical",	# do macro?
     ### alpha: intersection factor (area of the intersection)
     alpha			= "numeric",
+    ### k: number of macro-clusters (alternative to alpha)
+    k			= "integer",
     ### minweights: min. weight for macro-clusters 	
-    minweight		= "numeric",
-    ### k: number of macro-clusters (alternative to )
-    k			= "numeric"
+    minweight		= "numeric"
   ),
   
   
   methods = list(
     initialize = function(
       r		= 0.1,
-      k		= 0,
       lambda		= 1e-3,
       decay_interval  = 1000L,
-      minweight	= 0.1,
       noise		= 0.01,
-      alpha 		= 0.25,
       measure		= "Euclidean",
-      macro		= TRUE
+      shared_density		= FALSE,
+      alpha 		= 0.25,
+      k		= 0,
+      minweight	= 0.1
     ) {
       
       relations 		<<- hash()
@@ -70,16 +70,16 @@ tNN <- setRefClass("tNN",
       lambda		<<- lambda
       decay_interval	<<- decay_interval
       decay_factor	<<- 2^(-lambda*decay_interval)
-      minweight		<<- minweight
       noise		<<- noise
-      alpha		<<- alpha
       measure		<<- measure
-      macro		<<- macro
-      
+      shared_density		<<- shared_density
+      alpha		<<- alpha
+      minweight		<<- minweight
+
       if(is.null(k))
-        k		<<- 0
+        k		<<- 0L
       else
-        k		<<- k
+        k		<<- as.integer(k)
       
       weights		<<- numeric()
       total_weight	<<- 0
@@ -95,17 +95,18 @@ tNN <- setRefClass("tNN",
 )
 
 
-DSC_tNN <- function(r = 0.1, k=0, alpha = 0, minweight = 0, lambda = 1e-3, 
-  decay_interval=1000L, noise = 0.01, measure = "Euclidean", macro = TRUE) {
+DSC_tNN <- function(r = 0.1, lambda = 1e-3,  decay_interval=1000L, noise = 0.01, 
+  measure = "Euclidean", 
+  shared_density = FALSE, alpha = 0, k=0, minweight = 0) {
   
-  if(k==0 && alpha==0 && macro) {
+  if(k==0 && alpha==0 && shared_density) {
     warning("You have to specify at least k or alpha! Using default alpha=.25 and minweight=0.1.")
     minweight <- 0.1
     alpha <- 0.25
   }
   
-  tNN <- tNN$new(r, k, lambda, as.integer(decay_interval), 
-    minweight, noise, alpha, measure, macro)
+  tNN <- tNN$new(r, lambda, as.integer(decay_interval), 
+    noise, measure, shared_density, alpha, k, minweight)
   l <- list(description = "tNN", RObj = tNN)
   class(l) <- c("DSC_tNN", "DSC_Micro", "DSC_R", "DSC")
   l
@@ -171,7 +172,7 @@ tNN$methods(list(
         }
         
         ### decay and remove weak relations
-        if(macro) {  
+        if(shared_density) {  
           if(length(relations) > 0) {
             keys <- keys(relations)
             new_val <- values(relations) * decay_factor
@@ -236,7 +237,7 @@ tNN$methods(list(
           
           weights[inside] <<- weights[inside] + partialweight
           
-          if(macro && length(inside)>1) {
+          if(shared_density && length(inside)>1) {
             relationUpdate <- outer(mcs[inside], mcs[inside], 
               function(x,y){paste(x,y,sep="-")})
             relationUpdate <- relationUpdate[upper.tri(relationUpdate)]
@@ -273,7 +274,7 @@ tNN$methods(list(
       o[(cs >= total_weight*noise)[-1]]
   },
   
-  shared_density = function(matrix=FALSE) {
+  get_shared_density = function(matrix=FALSE) {
     mc_weights <- weights
     mcs <- rownames(centers)
     
@@ -304,7 +305,7 @@ tNN$methods(list(
   },
   
   get_membership_weights = function() {
-    s <- shared_density()
+    s <- get_shared_density()
     
     if(nrow(s)<2) assignment <- 1:nclusters(dsc, type="micro")
     else if(alpha>0) { ### use alpha
@@ -363,7 +364,7 @@ tNN$methods(list(
   },
   
   get_macroclusters = function() {
-    if(!macro) stop("No macro-clusters available!")
+    if(!shared_density) stop("No macro-clusters available (use shared_density)!")
     
     mw <-  get_membership_weights()
     assignment <- mw$assignment
@@ -382,7 +383,7 @@ tNN$methods(list(
   },
   
   get_macroweights = function() {
-    if(!macro) stop("No macro-clusters available!")
+    if(!shared_density) stop("No macro-clusters available (use shared density)!")
     get_membership_weights()$weight
   },
   
@@ -401,14 +402,7 @@ get_macroclusters.DSC_tNN <- function(x) x$RObj$get_macroclusters()
 get_macroweights.DSC_tNN <- function(x) x$RObj$get_macroweights()
 
 microToMacro.DSC_tNN <- function(x, micro=NULL) x$RObj$microToMacro(micro=micro)
-shared_density <- function(x, matrix=FALSE) x$RObj$shared_density(matrix=matrix)
-
-### tNN cannot recluster other clusterings!
-recluster.tNN <- function(macro, dsc, type="auto", ...) {
-  stop(gettextf("recluster not implemented for class '%s'.",
-    paste(class(macro), collapse=", ")))
-}
-
+get_shared_density <- function(x, matrix=FALSE) x$RObj$get_shared_density(matrix=matrix)
 
 ### special plotting for DSC_tNN
 ### FIXME: only show edges that really are used
@@ -426,7 +420,7 @@ plot.DSC_tNN <- function(x, dsd = NULL, n = 1000,
   NextMethod()
   
   
-  if(x$RObj$macro && type %in% c("macro")
+  if(x$RObj$shared_density && type %in% c("macro")
     && (ncol(x$RObj$centers)<=2 || method=="plot")) {
     
     p <- get_centers(x, type="micro")
@@ -442,7 +436,7 @@ plot.DSC_tNN <- function(x, dsd = NULL, n = 1000,
       }
       
       ### add edges connecting macro-clusters
-      s <- shared_density(x, matrix=TRUE)
+      s <- get_shared_density(x, matrix=TRUE)
       s[lower.tri(s)] <- NA
       edges <- which(s>0, arr.ind=TRUE)
       

@@ -69,7 +69,12 @@ export(
 	evaluate_cluster,
 	
 	animate_cluster,
-	animate_data
+	animate_data,
+  
+  ### DSC_tNN
+  get_shared_density,
+  ### DSC_DStream
+  get_attraction
       )
 
 ### DSD Methods

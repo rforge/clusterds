@@ -1,29 +1,36 @@
 \name{DSC_tNN}
 \alias{DSC_tNN}
+\alias{tnn}
+\alias{tNN}
+\alias{get_shared_density}
 \title{Threshold Nearest Neighbor (tNN) Data Stream Clustering Algorithm}
 \description{
     Implements the tNN (threshold Nearest Neighbor) data stream clustering algorithm.}
 
 \usage{
-    DSC_tNN(r = 0.1, k = 0, alpha = 0, minweight = 0, lambda = 0.001, 
-	decay_interval = 1000L, noise = 0.01, measure = "Euclidean", 
-	macro = TRUE)
+DSC_tNN(r = 0.1, lambda = 0.001, decay_interval = 1000L, 
+  noise = 0.01, measure = "Euclidean", 
+	shared_density = FALSE, alpha=0, k=0, minweight = 0)
+get_shared_density(x, matrix=FALSE)  
 }
 
 \arguments{
 	\item{r}{The threshold in the nearest neighborhood algorithm.}
-	\item{k}{The number of macro clusters to be returned if macro is true.}
-	\item{alpha}{The minimum proportion of shared points between to 
-	    clusters to warrant combining them.}
-	\item{minweight}{The minimum number of weight a micro-cluster
-	    needs to have.}
 	\item{lambda}{The lambda used in the fading function.}
 	\item{decay_interval}{Fading is only called every 
 	    \code{decay_interval} points.}
 	\item{noise}{The amount of noise that should be removed while clustering.}
 	\item{measure}{The measure used to calculate cluster proximity 
 	(see package \pkg{proxy}).}
-  \item{macro}{A flag that indicates if the macro clusters should be computed.}
+  \item{shared_density}{Record shared density information. If set to \code{TRUE}
+    then macro-clusters and macro-weights are available. }
+	\item{k}{The number of macro clusters to be returned if macro is true.}
+  \item{alpha}{The minimum proportion of shared points between to 
+    clusters to warrant combining them.}
+  \item{minweight}{The minimum number of weight a micro-cluster
+    needs to have.}
+  \item{x}{A DSC_tNN object to get the shared density information from.}
+  \item{matrix}{get shared density as a matrix.}
 }
 
 \details{
@@ -59,16 +66,16 @@ Stream Clustering in R, Journal of Statistical Software, 35(5), 1-31, URL \url{h
 set.seed(0)
 dsd <- DSD_GaussianStatic(k=3, noise=0.05)
 
-# tNN has a built in micro and micro-clusterer
-tnn <- DSC_tNN(r=.05, alpha=0.25, minweight=0.1, noise=0.01)
+# tNN + shared density 
+tnn <- DSC_tNN(r=.05, minweight=0.1, noise=0.01, shared_density=TRUE, alpha=.25)
 cluster(tnn, dsd, 500)
 
-# see micro-clusters
+# check micro-clusters
 nclusters(tnn)
 head(get_centers(tnn))
 plot(tnn, dsd)
 
-# see macro-clusters
+# check macro-clusters (since we have enabled shared density in tNN)
 nclusters(tnn, type="macro")
 get_centers(tnn, type="macro")
 plot(tnn, dsd, type="macro")

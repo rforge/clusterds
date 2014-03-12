@@ -27,6 +27,8 @@ DSC_DenStream(epsilon = 0.1, beta = 0.001, mu = 1,
 
 \details{
 Interface to the DenStream implementation in MOA.
+  
+DenStream applies weighted DBSCAN for reclustering (see Examples section below).
 }
 \value{
 An object of class \code{DSC_DenStream} (subclass of

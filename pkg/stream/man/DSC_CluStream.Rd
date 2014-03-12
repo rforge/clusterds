@@ -23,6 +23,9 @@ DSC_CluStream(horizon = 1000, k = 100, t = 2)
 
 \details{
 This is an interface to the MOA implementation of CluStream.
+
+CluStream applies a weighted k-means algorithm for reclustering (see 
+Examples section below).
 }
 
 \value{

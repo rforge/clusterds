@@ -379,7 +379,7 @@ to the survey by \cite{stream:Gaber:2007}.
 
 The aim of frequent pattern mining is to discover frequently 
 occurring patterns (e.g., itemsets, subsequences, subtrees, subgraphs)
-in large datasets. Patterns are then used to summarize the dataset and
+in large data sets. Patterns are then used to summarize the data set and
 can provide insights into the data. Although finding all frequent pattern  
 is a computationally expensive task, many efficient algorithms
 have been developed for static data sets. Most notably the \emph{APRIORI} 
@@ -506,9 +506,9 @@ random Gaussian distribution.
 Gaussian distribution.
 \item\code{DSD_UniformNoise}, generates uniform noise in a $d$-dimensional
 (hyper) cube.
-\item\code{DSD_mlbenchGenerator}, a class uses the generators for artificial datasets defined in 
+\item\code{DSD_mlbenchGenerator}, a class uses the generators for artificial data sets defined in 
 the \code{mlbench} package.
-\item\code{DSD_mlbenchData}, a DSD that wraps datasets found within the \code{mlbench} package.
+\item\code{DSD_mlbenchData}, a DSD that wraps data sets found within the \code{mlbench} package.
 \item\code{DSD_Target}, a DSD that generates a ball in circle data set.
 \item\code{DSD_BarsAndGaussians}, a DSD that generates 
 two bars and two Gaussians clusters with different density.
@@ -1464,9 +1464,16 @@ creators of each of the algorithm.
 Althoug, any off-line reclustering strategy can be applied to any
 on-line clustering algorithm, 
 we will apply here the suggested
-reclustering strategies. For DenStream weighted DBSCAN is used. For CluStream
-we use weighted $k$-means clustering and for D-Stream finding 
-dense grid clusters is used.
+reclustering strategies. For DenStream weighted DBSCAN is used. 
+Thew parameter eps (reachability distance) is choosen the epsilon-neighborhood
+parameter of DenStrean.
+For CluStream
+we use weighted $k$-means clustering with
+$k$ as the actual number of clusters in the data set.
+For D-Stream finding 
+dense grid clusters is used. Note that for D-Stream we have we have to add a
+small amount to to the gridsize so that the single-link hierarchical clustering
+joins adjacent dense grids.
 
 
 <<>>=  

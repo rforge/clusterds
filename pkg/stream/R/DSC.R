@@ -130,6 +130,7 @@ plot.DSC <- function(x, dsd = NULL, n = 500,
     
     if(k<1) {
       warning("No clusters, no plot produced!")
+      plot(NA, NA, xlim=c(0,0), ylim=c(0,0))
       return()
     }
     

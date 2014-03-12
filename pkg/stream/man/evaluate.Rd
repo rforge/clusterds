@@ -146,13 +146,13 @@ Clustering of Data Streams at Multiple Resolutions, 3(3).
 # Create stream
 dsd <- DSD_GaussianStatic(k=3, d=2)
 
-micro <- DSC_DenStream()
+micro <- DSC_DStream(gridsize=0.1)
 cluster(micro, dsd, 500)
 # Evaluate micro-clusters 
 # Note: we use here only n=500 points for evaluation to speed up execution
 evaluate(micro, dsd, method=c("numMicro","numMacro","purity","crand"), n=500)
 
-macro <- DSC_Kmeans(k=2)
+macro <- DSC_Kmeans(k=3)
 recluster(macro, micro)
 # Evaluate macro-clusters by assigning to micro-clusters
 evaluate(macro, dsd, method=c("purity","crand"), n=500)
@@ -170,17 +170,19 @@ evaluate_cluster(micro, dsd, method=c("purity","crand"), n=600, horizon= 100,
             assign="micro")
 
 reset_stream(dsd)
-micro <- DSC_tNN(r=.1, macro=FALSE, lambda=.01, decay_interval=100)
-macro <- DSC_Kmeans(k=3)
+micro <- DSC_DStream(gridsize=0.05, lambda=0.1,  gaptime=20)
+macro <- DSC_Hierarchical(h=0.1+1e-9, method="single")
 evaluate_cluster(micro, dsd, macro, 
             method=c("numMicro","numMacro","purity","crand"), n=600, 
             horizon=100, assign="micro")
 
-# visualize
 \dontrun{
+# animate the clustering process
 reset_stream(dsd)
-micro <- DSC_tNN(r=.1, macro=FALSE, lambda=.1, decay_interval=20)
+micro <- DSC_DStream(gridsize=0.05, lambda=0.1, gaptime=20)
+macro <- DSC_Hierarchical(h=0.1+1e-9, method="single")
 animate_cluster(micro, dsd, macro, n=600,
-	evaluationMethod=c("purity"), pointInterval=20, 
-	xlim=c(-.2,1.2), ylim=c(-.2,1.2))}
+	evaluationMethod=c("crand"), pointInterval=20, 
+	xlim=c(-.2,1.2), ylim=c(-.2,1.2))
+}
 }

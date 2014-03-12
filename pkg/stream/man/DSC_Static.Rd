@@ -36,13 +36,13 @@ The list also contains either
 # 3 clusters with 5% noise
 dsd <- DSD_GaussianStatic(k=3, noise=0.05)
 
-tnn <- DSC_tNN(r=0.05, lambda=.01, macro=FALSE)
-cluster(tnn, dsd, 500)
-tnn
-
+dstream <- DSC_DStream(gridsize=0.05, lambda=.01)
+cluster(dstream, dsd, 500)
+dstream
+plot(dstream, dsd)
+  
 # create a static copy of the clustering
-static <- DSC_Static(tnn)
+static <- DSC_Static(dstream)
 static
-
 plot(static, dsd)
 }
