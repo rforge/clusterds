@@ -63,7 +63,10 @@ animate_cluster(dsc, dsd, n=500, interval=.01,
        pointInterval=10, xlim=c(-.5,1.5),ylim=c(-.5,1.5), 
        type="macro")
 
-reset_stream(dsd)
+dsc <- DSC_tNN(r=.1, lambda=.03, decay_interval=1, shared_density=TRUE,
+  alpha=.2, minweight=.1)  
+
+  reset_stream(dsd)
 animate_cluster(dsc, dsd, n=500, interval=.01,
        pointInterval=10, xlim=c(-.5,1.5),ylim=c(-.5,1.5), 
        type="macro", evaluationMethod="crand")

@@ -23,7 +23,7 @@ tNN <- setRefClass("tNN",
     r			= "numeric",
     measure			= "character",
     lambda			= "numeric",
-    decay_interval		= "integer",
+    gap_time		= "integer",
     ### noise: min. weight for micro-clusters given as a 
     ### percentile of the total weight of the clustering (i.e.,
     ### noise% of the data points is considered noise)
@@ -39,10 +39,11 @@ tNN <- setRefClass("tNN",
     total_weight		= "numeric",
     npoints			= "integer",
     centers			= "data.frame",
+    last_update  = "integer",
     relations 		= "hash",
     
     ### Macro-clustering
-    shared_density		= "logical",	# do macro?
+    shared_density		= "logical",
     ### alpha: intersection factor (area of the intersection)
     alpha			= "numeric",
     ### k: number of macro-clusters (alternative to alpha)
@@ -56,7 +57,7 @@ tNN <- setRefClass("tNN",
     initialize = function(
       r		= 0.1,
       lambda		= 1e-3,
-      decay_interval  = 1000L,
+      gap_time  = 1000L,
       noise		= 0.01,
       measure		= "Euclidean",
       shared_density		= FALSE,
@@ -68,14 +69,14 @@ tNN <- setRefClass("tNN",
       relations 		<<- hash()
       r			<<- r
       lambda		<<- lambda
-      decay_interval	<<- decay_interval
-      decay_factor	<<- 2^(-lambda*decay_interval)
+      gap_time	<<- gap_time
+      decay_factor	<<- 2^(-lambda)
       noise		<<- noise
       measure		<<- measure
       shared_density		<<- shared_density
       alpha		<<- alpha
       minweight		<<- minweight
-
+      
       if(is.null(k))
         k		<<- 0L
       else
@@ -95,7 +96,7 @@ tNN <- setRefClass("tNN",
 )
 
 
-DSC_tNN <- function(r = 0.1, lambda = 1e-3,  decay_interval=1000L, noise = 0.01, 
+DSC_tNN <- function(r = 0.1, lambda = 1e-3,  gap_time=1000L, noise = 0.01, 
   measure = "Euclidean", 
   shared_density = FALSE, alpha = 0, k=0, minweight = 0) {
   
@@ -105,7 +106,7 @@ DSC_tNN <- function(r = 0.1, lambda = 1e-3,  decay_interval=1000L, noise = 0.01,
     alpha <- 0.25
   }
   
-  tNN <- tNN$new(r, lambda, as.integer(decay_interval), 
+  tNN <- tNN$new(r, lambda, as.integer(gap_time), 
     noise, measure, shared_density, alpha, k, minweight)
   l <- list(description = "tNN", RObj = tNN)
   class(l) <- c("DSC_tNN", "DSC_Micro", "DSC_R", "DSC")
@@ -113,12 +114,13 @@ DSC_tNN <- function(r = 0.1, lambda = 1e-3,  decay_interval=1000L, noise = 0.01,
 }
 
 tNN$methods(list(
+  
   cluster = function(newdata, debug = FALSE) {
     'Cluster new data.' ### online help
     
     newdata <- as.data.frame(newdata)
     
-    if(debug) cat("Debug cluster for tNN!\n")
+    if(debug) cat("Debug clustering for tNN!\n")
     
     for(i in 1:nrow(newdata)) {
       npoints <<- npoints + 1L
@@ -126,59 +128,48 @@ tNN$methods(list(
       if(debug && !i%%100) cat("Processed",i,"points\n")
       
       ### decay and remove clusters
-      if(decay_factor<1 && !npoints%%decay_interval) {
-        #decrease weight for microclusters
-        weights <<- weights * decay_factor
-        
-        total_weight <<- total_weight * decay_factor
-        
+      if(decay_factor<1 && !npoints%%gap_time) {
+        ### remove clusters
         weight_remove <- .5
-        remove <- which(weights <= weight_remove)
+        remove <- which(get_current_weights() <= weight_remove)
         
-        # we need the keys in the following
-        keys <- keys(relations)
+        if(debug) cat("  - Removing", length(remove), "micro-clusters.\n")
         
-        if(length(remove)>0) {
-          ### get mc names
-          mcs <- rownames(centers)
-          
-          if(debug) cat("  - Removing clusters",
-            paste(mcs[remove], collapse=", "), 
-            "\n")
-          
-          #remove microclusters
-          weights <<- weights[-remove]
-          centers <<- centers[-remove,]
-          
-          #remove microclusters in relations
-          removekeys_id <- c(
-            grep(paste("^",mcs[remove],"-",
-              sep="",collapse="|"), 
-              keys, value = FALSE), 
-            grep(paste("-",mcs[remove],"$"
-              ,sep="",collapse="|"), 
-              keys, value = FALSE)
-          )
-          removekeys_id <- unique(removekeys_id)
-          removekeys <- keys[removekeys_id]
-          
-          if(length(removekeys)>0) {
-            if(debug) cat("  - Removing relation (cluster)",
-              paste(removekeys, collapse=", "), 
-              "\n")
+        if(length(remove)) {
+          # remove relations
+          if(shared_density) {  
+            keys <- keys(relations)
+            mcs <- rownames(centers)
             
-            del(removekeys, relations)
+            #remove microclusters in relations
+            removekeys_id <- c(
+              grep(paste("^",mcs[remove],"-",
+                sep="",collapse="|"), 
+                keys, value = FALSE), 
+              grep(paste("-",mcs[remove],"$"
+                ,sep="",collapse="|"), 
+                keys, value = FALSE)
+            )
+            removekeys_id <- unique(removekeys_id)
+            removekeys <- keys[removekeys_id]
+            
+            if(length(removekeys)>0) {
+              if(debug) cat("  - Removing relation (cluster)",
+                paste(removekeys, collapse=", "), 
+                "\n")
+              
+              del(removekeys, relations)
+            }
           }
-        }
-        
-        ### decay and remove weak relations
-        if(shared_density) {  
+          
+          # remove weak relations
           if(length(relations) > 0) {
             keys <- keys(relations)
-            new_val <- values(relations) * decay_factor
-            values(relations) <<- new_val
+            vals <- values(relations, simplify=FALSE)
             
-            removekeys <- keys[new_val <= weight_remove]
+            ws <- sapply(vals, FUN=function(v) v[2]*decay_factor^(npoints-v[1]))
+            
+            removekeys <- keys[ws <= weight_remove]
             
             if(length(removekeys)>0) {
               if(debug) cat("  - Removing relation (relation)",
@@ -187,9 +178,12 @@ tNN$methods(list(
               
               del(removekeys, relations)
             }
-            
-            
           }
+          
+          # remove microclusters
+          weights <<- weights[-remove]
+          last_update <<- last_update[-remove]
+          centers <<- centers[-remove,]
         }
       }
       
@@ -197,76 +191,86 @@ tNN$methods(list(
       point <- newdata[i,]
       mcs <- rownames(centers) ### names
       
-      total_weight <<- total_weight +1
+      total_weight <<- total_weight * decay_factor + 1
       
-      
-      if(nrow(centers)==0) {
-        #create first micro-cluster
+      if(nrow(centers)<1) {   ### create first micro-cluster
         weights <<- 1
         centers <<- as.data.frame(point)
         rownames(centers) <<- 1
+        last_update <<- npoints
+        
+        if(debug) cat("  + Creating micro-cluster with ID 1.\n")
+        
       } else {
-        inside <- which(dist(point,centers,method=distFun)<r)
+        inside <- which(dist(point, centers, method=distFun) < r)
         
-        
-        if(length(inside)<1) { ### new cluster
-          weights <<- c(weights,1)
-          
+        if(length(inside) < 1) { ### new cluster (cannot have shared density)
+          weights <<- c(weights, 1)
           centers <<- rbind(centers,point)
           rownames(centers)[nrow(centers)] <<-
-            as.integer(rownames(centers)[nrow(centers)-1])+1L
+            as.integer(rownames(centers)[nrow(centers)-1]) + 1L
+          last_update <<- c(last_update, npoints)
           
-          if(debug) cat("  + Creating Cluster",
+          if(debug) cat("  + Creating micro-cluster with ID",
             rownames(centers)[nrow(centers)], "\n")
           
         }else{ ### update existing cluster
-          
           partialweight <- 1/length(inside) 
           
           newCenters <- data.frame(matrix((as.numeric(as.matrix(
-            centers[inside,])*rep(weights[inside])+rep(as.numeric(point)*partialweight,each=length(inside))))/rep(partialweight+weights[inside],ncol(point)),
+            centers[inside,]) * rep(weights[inside]) + 
+              rep(as.numeric(point) * partialweight,each=length(inside)))) / 
+              rep(partialweight+weights[inside], ncol(point)),
             ncol=ncol(point)),
             row.names=rownames(centers[inside,]))
           
           distance <- dist(newCenters,method=distFun)
           
-          test <- apply(distance,1,function(x){all(x>r|x==0)})
-          if(length(which(test)) > 0) {
+          test <- apply(distance, 1, function(x) all(x>r|x==0) )
+          if(length(which(test)) > 0) 
             centers[inside[which(test)],] <<- newCenters[which(test),]
-          }
           
-          weights[inside] <<- weights[inside] + partialweight
+          weights[inside] <<- weights[inside] * 
+            decay_factor^(npoints-last_update[inside]) + partialweight
+          last_update[inside] <<- npoints
           
-          if(shared_density && length(inside)>1) {
+          # shared density
+          if(shared_density && length(inside) > 1) {
             relationUpdate <- outer(mcs[inside], mcs[inside], 
-              function(x,y){paste(x,y,sep="-")})
+              function(x,y) paste(x,y,sep="-") )
             relationUpdate <- relationUpdate[upper.tri(relationUpdate)]
             
-            if(length(relationUpdate)>0){
+            if(length(relationUpdate) > 0){
               if(debug) cat("  + Updating/Create Relations",
                 paste(relationUpdate, collapse=", "), "\n")
               
-              for(rel in relationUpdate) {
-                count <- relations[[rel]]
-                if(is.null(count)) count <- 1
-                else count <- count +1
-                relations[[rel]] <<- count
+              for(j in relationUpdate) {
+                ### relation is c(last_update, count)
+                rel <- relations[[j]]
+                if(is.null(rel)) rel <- c(npoints, 1)
+                else rel <- c(npoints, 
+                  rel[2] * decay_factor^(npoints-rel[1]) + 1)
+                relations[[j]] <<- rel
               }
             }
-            
           }
         }
-      }	   
+      }
     }
+  },
+  
+  get_current_weights = function() {
+    weights * decay_factor^(npoints-last_update) 
   },
   
   # find strong MCs
   strong_mcs = function(weak=FALSE) {
     
-    o <- order(weights, decreasing=FALSE)
+    ws <- get_current_weights()
+    o <- order(ws, decreasing=FALSE)
     
     # first element represents weight of already deleted MCs!
-    cs <- cumsum(c(total_weight-sum(weights), weights[o]))
+    cs <- cumsum(c(total_weight-sum(ws), ws[o]))
     
     if(weak)
       o[(cs < total_weight*noise)[-1]]
@@ -275,27 +279,25 @@ tNN$methods(list(
   },
   
   get_shared_density = function(matrix=FALSE) {
-    mc_weights <- weights
+    mc_weights <- get_current_weights()
     mcs <- rownames(centers)
     
     rel <- t(sapply(strsplit(keys(relations), "-"), as.integer))
     rel <-  matrix(match(rel, mcs), ncol=2) ### translate from names to index
-    val <- values(relations)
     
-    if(nrow(rel) <1) return(matrix(nrow=0, ncol=0))
-    
-    avg_weight <- apply(rel, MARGIN=1, FUN= function(x) mean(mc_weights[x]))
-    
-    ### similarity
-    ss <- val/avg_weight
-    ### create a distance
-    
-    ### unconnected is 2 times the largest distance
     s <- matrix(0, ncol=length(mcs), nrow=length(mcs))
     
-    for(i in 1:nrow(rel)) {
-      s[rel[i,1], rel[i,2]] <- ss[i]
-      s[rel[i,2], rel[i,1]] <- ss[i]
+    if(nrow(rel) > 0){
+      ### fix decay
+      vals <- sapply(values(relations, simplify=FALSE), 
+        FUN=function(v) v[2]* decay_factor^(npoints-v[1]) )
+      
+      ### get shared density relative to the density on the clusters
+      avg_weight <- apply(rel, MARGIN=1, FUN= function(x) mean(mc_weights[x]))
+      ss <- vals/avg_weight
+      
+      ### unconnected is 2 times the largest distance
+      for(i in 1:nrow(rel)) s[rel[i,2], rel[i,1]] <- s[rel[i,1], rel[i,2]] <- ss[i]
     }
     
     strong <- strong_mcs()
@@ -362,12 +364,12 @@ tNN$methods(list(
   },
   
   get_microweights = function() {
-    weights[strong_mcs()]
+    get_current_weights()[strong_mcs()]
   },
   
   get_macroclusters = function() {
     if(!shared_density) stop("No macro-clusters available (use shared_density)!")
-
+    
     mcs <- get_microclusters()
     if(nrow(mcs)<1) return(data.frame())
     
@@ -379,7 +381,7 @@ tNN$methods(list(
     
     if(length(uniqueassign) <1) return(data.frame())
     
-
+    
     
     ### find weighted centroids
     as.data.frame(t(sapply(uniqueassign, FUN=function(i) {

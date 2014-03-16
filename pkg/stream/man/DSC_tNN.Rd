@@ -8,7 +8,7 @@
     Implements the tNN (threshold Nearest Neighbor) data stream clustering algorithm.}
 
 \usage{
-DSC_tNN(r = 0.1, lambda = 0.001, decay_interval = 1000L, 
+DSC_tNN(r = 0.1, lambda = 0.001, gap_time = 1000L, 
   noise = 0.01, measure = "Euclidean", 
 	shared_density = FALSE, alpha=0, k=0, minweight = 0)
 get_shared_density(x, matrix=FALSE)  
@@ -17,8 +17,8 @@ get_shared_density(x, matrix=FALSE)
 \arguments{
 	\item{r}{The threshold in the nearest neighborhood algorithm.}
 	\item{lambda}{The lambda used in the fading function.}
-	\item{decay_interval}{Fading is only called every 
-	    \code{decay_interval} points.}
+	\item{gap_time}{weak micro-clusters (and weak shared density entries) 
+    are removed every \code{gap_time} points.}
 	\item{noise}{The amount of noise that should be removed while clustering.}
 	\item{measure}{The measure used to calculate cluster proximity 
 	(see package \pkg{proxy}).}
@@ -67,7 +67,7 @@ set.seed(0)
 dsd <- DSD_GaussianStatic(k=3, noise=0.05)
 
 # tNN + shared density 
-tnn <- DSC_tNN(r=.05, minweight=0.1, noise=0.01, shared_density=TRUE, alpha=.25)
+tnn <- DSC_tNN(r=.05, minweight=0.1, noise=0.05, shared_density=TRUE, alpha=.25)
 cluster(tnn, dsd, 500)
 
 # check micro-clusters
@@ -89,5 +89,6 @@ microToMacro(tnn)
 \dontrun{
 evaluate(tnn, dsd, method="cRand")
 evaluate(tnn, dsd, method="cRand", type="macro")
-evaluate(tnn, dsd, method="cRand", type="macro", assign="macro")}
+evaluate(tnn, dsd, method="cRand", type="macro", assign="macro")
+}
 }
