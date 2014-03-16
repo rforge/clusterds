@@ -307,7 +307,10 @@ tNN$methods(list(
   get_membership_weights = function() {
     s <- get_shared_density()
     
-    if(nrow(s)<2) assignment <- 1:nclusters(dsc, type="micro")
+    nclusters <- nrow(get_microclusters())
+    if(nclusters <1) return(list(assignment=integer(0), weight=numeric(0)))
+    
+    if(nrow(s)<2) assignment <- 1:nclusters
     else if(alpha>0) { ### use alpha
       s[s < alpha] <- 0
       s[s>0] <- 1
@@ -319,8 +322,7 @@ tNN$methods(list(
       
       ### FIXME: If k>number of connected components then components would
       ###  be merged randomly! So we add for these the redular distance!
-      
-      d2 <- dist(get_centers(dsc, type="micro"), method=distFun) 
+      d2 <- dist(get_microclusters(), method=distFun) 
       unconnected <- d==1
       d[unconnected] <- d[unconnected] + d2[unconnected]
       
@@ -365,6 +367,11 @@ tNN$methods(list(
   
   get_macroclusters = function() {
     if(!shared_density) stop("No macro-clusters available (use shared_density)!")
+
+    mcs <- get_microclusters()
+    if(nrow(mcs)<1) return(data.frame())
+    
+    mcw <- get_microweights()
     
     mw <-  get_membership_weights()
     assignment <- mw$assignment
@@ -372,8 +379,7 @@ tNN$methods(list(
     
     if(length(uniqueassign) <1) return(data.frame())
     
-    mcs <- get_microclusters()
-    mcw <- get_microweights()
+
     
     ### find weighted centroids
     as.data.frame(t(sapply(uniqueassign, FUN=function(i) {

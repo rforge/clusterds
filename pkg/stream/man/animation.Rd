@@ -29,7 +29,8 @@ animate_cluster(dsc, dsd, macro=NULL, n=1000, interval=.1,
 }
 
 \details{
-Animations are recorded using the library animation and can be replayed and
+Animations are recorded using the library animation and can be replayed
+  (which gives a smoother experience since the is no more computation done) and
   saved in various formats (see Examples section below).
 }
 
@@ -47,13 +48,15 @@ animate_data(dsd, 500,  xlim=c(-.2,1.2), ylim=c(-.2,1.2),
 \dontrun{
 ### animations can be replayed with the animation package
 library(animation)
+animation::ani.options(interval=.1) ## change speed
 ani.replay()
   
 ### animations can also be saved as HTML, animated gifs, etc.
 saveHTML(ani.replay())  
   
 ### Note: type is a parameter passed on to plot (for DSC)
-dsc <- DSC_tNN(.1, alpha=.2, lambda=.03, decay_interval=1, minweight=.1)
+dsc <- DSC_tNN(r=.1, lambda=.03, decay_interval=1, shared_density=TRUE,
+  alpha=.2, minweight=.1)
 
 reset_stream(dsd)
 animate_cluster(dsc, dsd, n=500, interval=.01,

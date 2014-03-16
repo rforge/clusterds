@@ -7,7 +7,8 @@
 
 \usage{
     DSC_Kmeans(k, weighted = TRUE, iter.max = 10, nstart = 1,
-	    algorithm = c("Hartigan-Wong", "Lloyd", "Forgy", "MacQueen"))
+	    algorithm = c("Hartigan-Wong", "Lloyd", "Forgy", "MacQueen"),
+      min_weight = NULL)
 }
 
 \arguments{
@@ -19,6 +20,8 @@
 	\item{nstart}{if centers is a number, how many random sets should be
 	chosen?}
 	\item{algorithm}{character: may be abbreviated.}
+  \item{min_weight}{micro-clusters with a weight less than this will be 
+    ignored for reclustering.}
 }
 
 \details{

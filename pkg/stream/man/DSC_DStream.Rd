@@ -10,8 +10,8 @@
 
 \usage{
 DSC_DStream(gridsize = 0.1, d=NA_integer_, lambda = 1e-3, 
-   gaptime=1000L, Cm=1, Cl=.5, attraction=FALSE, epsilon=.25)
-get_attraction(x, dist=FALSE)
+   gaptime=1000L, Cm=1, Cl=.5, attraction=FALSE, epsilon=.25, Cm2=Cm, k=NULL)
+get_attraction(x, dist=FALSE, relative=FALSE)
 }
 
 \arguments{
@@ -24,16 +24,24 @@ get_attraction(x, dist=FALSE)
 	\item{lambda}{The lambda used in the fading function (Note: in the paper the 
     authors use denote the decay factor as lambda, while here the decay factor
     will be computed from lambda using \eqn{2^-lambda}).}
-	\item{gaptime}{grid density are decayed and sporadic grids are removed every
+	\item{gaptime}{sporadic grids are removed every
     gaptime points.}
-	\item{Cm}{threshold used to detect dense grids (Cm >= 1).}
+	\item{Cm}{threshold used to detect dense grids (as a proportion of the 
+	    average expected density).}
 	\item{Cl}{threshold to detect transitional and sporadic grids (0 > Cl > 1).}
   \item{attraction}{compute and store information about the attraction between
     adjacent grids.}
   \item{epsilon}{overlap parameter for attraction as a proportion of 
     \code{gridsize}.}
+  \item{Cm2}{threshold on attraction to join two dense grid cells (as a 
+    proportion on the average expected attraction).}
+  \item{k}{alternative to Cm2 (not in the original algorithm). 
+    Create k clusters based on attraction. In case 
+    of more than k unconnected components, closer groups of MCs are joined.}
   \item{x}{DSC_DStream object to get attraction values from.}
   \item{dist}{make attraction symmetric and transform into a distance.}
+  \item{relative}{calculates relative attraction (normalized by the cluster 
+    weight).}
 }
 
 \details{
@@ -48,7 +56,8 @@ D-Stream creates an equally spaced grid and estimates the density in each
   and h of just above gridsize (see Examples section below).
   
   The 2009 version of the algorithm adds the concept of attraction between 
-  grids cells. This approach is not implemented yet.
+  grids cells. If \code{attraction=TRUE} is used then the algorithm also
+  produces macro-clusters and weights.
 }
 
 \value{
@@ -72,6 +81,7 @@ dsd <- DSD_GaussianStatic(k=3, noise=0.05)
 
 dstream <- DSC_DStream(gridsize=.05)
 cluster(dstream, dsd, 500)
+dstream
 
 # see micro-clusters
 nclusters(dstream)
@@ -93,10 +103,8 @@ dsd <- DSD_GaussianStatic(k=3, noise=0.05)
 
 dstream <- DSC_DStream(gridsize=.05, attraction=TRUE, epsilon=.25)
 cluster(dstream, dsd, 500)
+dstream
 
-get_attraction(dstream)
-
-### FIXME: make a reclusterer
-plot(get_centers(dstream), col=cutree(hclust(get_attraction(dstream, dist=TRUE), 
-  method="single"), h=1-1e-9))
+plot(dstream, dsd)
+plot(dstream, type="macro", dsd)
 }

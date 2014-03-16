@@ -8,12 +8,14 @@
     }
 
 \usage{
-	DSC_Static(x, type=c("auto", "micro", "macro"))
+	DSC_Static(x, type=c("auto", "micro", "macro"), k_largest=NULL, min_weight=NULL)
 }
 
 \arguments{
 	\item{x}{The clustering (a DSD object) to copy.}
 	\item{type}{which clustering to copy.}
+	\item{k_largest}{only copy the k largest (highest weight) clusters.}
+	\item{min_weight}{only copy clusters with a weight larger or equal to \code{min_weight}.}
 }
 
 %\details{
@@ -33,7 +35,7 @@ The list also contains either
 }
 
 \examples{
-# 3 clusters with 5% noise
+set.seed(1000)
 dsd <- DSD_GaussianStatic(k=3, noise=0.05)
 
 dstream <- DSC_DStream(gridsize=0.05, lambda=.01)
@@ -45,4 +47,14 @@ plot(dstream, dsd)
 static <- DSC_Static(dstream)
 static
 plot(static, dsd)
+  
+# copy the 5 largest clusters
+static2 <- DSC_Static(dstream, k_largest=5)
+static2
+plot(static2, dsd)
+
+# copy all clusters with a weight of at least .3
+static3 <- DSC_Static(dstream, min_weight=.3)
+static3
+plot(static3, dsd)
 }

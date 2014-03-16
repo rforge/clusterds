@@ -19,10 +19,10 @@
 
 DStream <- setRefClass("DStream",
   fields = list(
-    ### dimensionality
-    d	              = "integer",
     ### this is a vector of length d (size of a grid cell)
     gridsize		    = "numeric",
+    ### dimensionality
+    d	              = "integer",
     ### decay (note lambda is different than in the paper!)
     lambda			    = "numeric",
     gaptime         = "integer",
@@ -37,14 +37,15 @@ DStream <- setRefClass("DStream",
     ### attraction boundary (FIXME: Needs to be implemented)
     attraction      = "logical",
     epsilon		      = "numeric",
+    Cm2		          = "numeric",
+    k               = "integer",
     
     ### store the grid
     grid	 		      = "hash",
     npoints         = "integer",
     decay_factor		= "numeric",
     mins            = "numeric", ### we need mins and maxs to get N
-    maxs            = "numeric",
-    attractions     = "hash"
+    maxs            = "numeric"
   ),
   
   methods = list(
@@ -56,17 +57,23 @@ DStream <- setRefClass("DStream",
       Cm = 1,
       Cl = .5,
       attraction = FALSE,
-      epsilon = .25
+      epsilon = .25,
+      Cm2 = NULL,
+      k = NULL
     ) {
       
       d  <<- d
       gridsize <<- gridsize
       lambda <<- lambda
-      gaptime	<<- gaptime
+      gaptime	<<- as.integer(gaptime)
       Cm <<- Cm
       Cl <<- Cl
       attraction <<- attraction
       epsilon <<- epsilon
+      if(is.null(Cm2)) Cm2 <<- Cm
+      else Cm2 <<- Cm2
+      if(is.null(k)) k <<- 0L
+      else k <<- as.integer(k)
       
       grid  <<- hash()
       npoints <<- 0L
@@ -81,11 +88,12 @@ DStream <- setRefClass("DStream",
 )
 
 
-  DSC_DStream <- function(gridsize = 0.1, d=NA_integer_, lambda = 1e-3, 
-    gaptime=1000L, Cm=1, Cl=.5, attraction=FALSE, epsilon=.25) {
+DSC_DStream <- function(gridsize = 0.1, d=NA_integer_, lambda = 1e-3, 
+  gaptime=1000L, Cm=1, Cl=.5, attraction=FALSE, epsilon=.25, 
+  Cm2 = Cm, k=NULL) {
   
   dstream <- DStream$new(gridsize, as.integer(d), lambda, 
-    as.integer(gaptime), Cm, Cl, as.logical(attraction), epsilon)
+    as.integer(gaptime), Cm, Cl, as.logical(attraction), epsilon, Cm2, k)
   l <- list(description = "DStream", RObj = dstream)
   class(l) <- c("DSC_DStream", "DSC_Micro", "DSC_R", "DSC")
   l
@@ -99,108 +107,114 @@ DStream$methods(list(
     
     newdata <- as.matrix(newdata)
     
-    ### first data point
+    ### first data point (guess dimensions)
     if(is.na(d)) {
       d <<- ncol(newdata)
       if(length(gridsize) != d) gridsize <<- rep(gridsize[1], d)
       if(length(epsilon) != d) epsilon <<- rep(epsilon[1], d)
     }
     
+    if(ncol(newdata) != d) stop("Dimensionality mismatch!")
+    
     for(i in 1:nrow(newdata)) {
       point <- newdata[i, ]
       npoints <<- npoints + 1L
       
-      ### decay and remove sporadic grids
+      ### remove sporadic grids
       if(decay_factor<1 && !npoints%%gaptime) {
         if(length(grid)>0) {
-          values(grid) <<- vg <- values(grid) * decay_factor^gaptime
-          if(attraction) values(attractions) <<- lapply(values(attractions, 
-            simplify=FALSE), "*", decay_factor^gaptime)
-          
           ### remove sporadic grids
           N <- prod(maxs-mins+1L)
-          remove <- vg < Cl*(1-decay_factor)/N/(1-decay_factor)
+          
+          remove <- sapply(values(grid, simplify=FALSE), FUN=function(gv) {
+            gv[["weight"]]*decay_factor^(npoints-gv[["t"]]) < 
+              Cl*(1-decay_factor^(npoints-gv[["t"]]+1)/N/(1-decay_factor))
+          })
+          
           if(debug) cat("Removing ", sum(remove) ," sporadic grids\n")
           for (k in keys(grid)[remove]) {
             grid[[k]] <<- NULL
-            if(attraction) attractions[[k]] <<- NULL
           }
         } 
       }
-        
+      
       # find grid cell and insert point
       grid_id <- floor(point/gridsize)
       key <- paste(grid_id, collapse=":")
       
+      ### new entry?
       val <- grid[[key]]
-      if(is.null(val)) grid[[key]] <<- 1
-      else grid[[key]] <<- val+1
+      if(is.null(val)) {
+        val <- list(t=npoints, weight=1)
+        if(attraction) val[["attr"]] <- numeric(d*2)
+      } else {
+        val[["weight"]] <- val[["weight"]] * decay_factor^(npoints-val[["t"]]) + 1
+      }
+      
+      ### attraction
+      if(attraction) {   
+        cell_vol <- prod(gridsize)
+        eps <- gridsize*epsilon
+        cube_vol <- prod(eps)
+        
+        ### calculate the volume of the intersection of the cube (for the point)
+        ### with the grid cells adjacent to grid_id
+        get_center <- function(gid) gid*gridsize + gridsize/2 
+        
+        ### go over all adjacent cells
+        ### rows are dimensions and cols are prev/next
+        overlap <- matrix(0, ncol=2, nrow=d)
+        
+        if(attraction) {
+          for(j in 1:d) {
+            center <- get_center(grid_id)  
+            ### previous cell
+            o <- -point[j]+center[j] - (gridsize[j]/2-eps[j])
+            if(o>0) overlap[j,1] <- o
+            
+            ### next cell
+            o <- point[j]-center[j] - (gridsize[j]/2-eps[j])
+            if(o>0) overlap[j,2] <- o
+          }        
+          
+          if(any(overlap>0)) {
+            ### calculate intersection hypercube
+            overlap_max <- apply(overlap, MARGIN=1, max)  
+            overlap2 <- overlap
+            for(j in 1:d) {
+              overlap2[j,] <- overlap2[j,]*prod(2*eps[-j]-overlap_max[-j])
+            }
+            
+            ### overlap is vector with two entries by dimension (prev/next)
+            overlap2 <- as.vector(overlap2/prod(2*eps))
+            
+            ### save attraction (including decay)
+            if(is.null(val[["attr"]])) val[["attr"]] <- overlap2
+            else val[["attr"]] <- val[["attr"]] * 
+              decay_factor^(npoints-val[["t"]]) + overlap2
+          }
+        }
+      }
+        
+      
+      ### update t and data structure
+      val[["t"]] <- npoints
+      grid[[key]] <<- val
       
       ### update maxs/mins
       maxs <<- apply(cbind(maxs, grid_id), MARGIN=1, max, na.rm=TRUE)
       mins <<- apply(cbind(mins, grid_id), MARGIN=1, min, na.rm=TRUE)
-
-      ### attraction
-      cell_vol <- prod(gridsize)
-      eps <- gridsize*epsilon
-      cube_vol <- prod(eps)
       
-      ### calculate the volume of the intersection of the cube (for the point)
-      ### with the grid cells adjacent to grid_id
-      
-      get_center <- function(gid) gid*gridsize + gridsize/2 
-      
-      #test <- function() {
-      #  d <- 2
-      #  gridsize <- c(1,1)
-      #  eps <- c(.25,.25)
-      ##  point <- c(1.125, 1.125)
-        #point <- c(1.175, 1.175)
-      #  grid_id <- floor(point/gridsize)
-      #}
-      
-      ### go over all adjacent cells
-      ### rows are dimensions and cols are prev/next
-      overlap <- matrix(0, ncol=2, nrow=d)
-      
-      for(j in 1:d) {
-        center <- get_center(grid_id)  
-        ### previous cell
-        o <- -point[j]+center[j] - (gridsize[j]/2-eps[j])
-        if(o>0) overlap[j,1] <- o
-        
-        ### next cell
-        o <- point[j]-center[j] - (gridsize[j]/2-eps[j])
-        if(o>0) overlap[j,2] <- o
-      }        
-        
-      if(any(overlap>0)) {
-        ### calculate intersection hypercube
-        overlap_max <- apply(overlap, MARGIN=1, max)  
-        overlap2 <- overlap
-        for(j in 1:d) {
-          overlap2[j,] <- overlap2[j,]*prod(2*eps[-j]-overlap_max[-j])
-        }
-        
-        ### overlap is vector with two entries by dimension (prev/next)
-        overlap2 <- as.vector(overlap2/prod(2*eps))
-        
-        ### save attraction
-        a <- attractions[[key]]
-        if(is.null(a)) attractions[[key]] <<- overlap2
-        else attractions[[key]] <<- a+overlap2
-      }
-        
       if(debug && !i%%100) cat("Processed",i,"points\n")
-      
     }
   },
   
-  ### FIXME: make this toArray!
-  toMatrix = function(type=c("transitional", "dense", "all")) {
-    type <- match.arg(type)
-
-    coords <- get_micro(weight=TRUE, translate=FALSE, type=type)
+  ### This is for plotting images. Could be toArray!
+  #  toMatrix = function(grid_type=c("transitional", "dense", "all")) {
+  toMatrix = function(grid_type=c("dense", "transitional", "all")) {
+    grid_type <- match.arg(grid_type)
+    
+    coords <- get_micro(weight=TRUE, translate=FALSE, grid_type=grid_type)
     
     ns <- (maxs-mins)+1L
     mat <- matrix(NA, nrow=ns[1], ncol=ns[2])
@@ -213,13 +227,21 @@ DStream$methods(list(
     mat
   },
   
-  get_attraction = function(dist=FALSE) {
-    mc_ids <- get_micro(translate=FALSE, type="transitional")
+  
+  get_attraction = function(dist=FALSE, relative=FALSE, 
+    #    grid_type="transitional") {
+    grid_type="dense") {
+    
+    if(!attraction) stop("No attraction values stored. Create the DSC_DStream with attraction=TRUE.")
+    mc_ids <- get_micro(translate=FALSE, grid_type=grid_type)
     n <- nrow(mc_ids)
     attr_matrix <- matrix(0, ncol=n, nrow=n)
-    
-    atts <- values(attractions, simplify=FALSE)
-    ids <- do.call(rbind, lapply(strsplit(names(atts), ":"), as.numeric))
+
+    ### not enough mcs for attraction
+    if(n<2) {
+      if(dist) return(as.dist(attr_matrix))
+      else return(attr_matrix)
+    }
     
     .findID <- function(id, ids) {
       which(apply(sapply(1:length(id), FUN=function(k) ids[,k]==id[k]), MARGIN=1, 
@@ -231,9 +253,15 @@ DStream$methods(list(
       ))
     }
     
-    for(i in 1:length(atts)) {
+    gv <- values(grid, simplify=FALSE)
+    ids <- do.call(rbind, lapply(strsplit(names(gv), ":"), as.numeric))
+    
+    for(i in 1:length(gv)) {
       id <- ids[i,]
-      vals <- matrix(atts[[i]], nrow=d, ncol=2)
+      vals <- matrix(gv[[i]][["attr"]], nrow=d, ncol=2)
+      ### decay
+      vals <- vals * decay_factor ^ (npoints - gv[[i]][["t"]]) 
+      
       for(j in 1:d) {
         ### prev
         id2 <- id
@@ -251,14 +279,26 @@ DStream$methods(list(
         }
       }
     }
-    if(dist) return(1/(1+as.dist(attr_matrix+t(attr_matrix))))
-      
-      attr_matrix  
+    
+    if(relative) {
+      w <- get_micro(weight=TRUE)[["weight"]]
+      attr_matrix <- attr_matrix/w
+    }
+    
+    if(dist) return(as.dist(-attr_matrix-t(attr_matrix)))
+    
+    attr_matrix  
   },
   
   get_micro = function(weight=FALSE, translate=TRUE, 
-    type=c("transitional","dense", "all")) {
-    type <- match.arg(type)
+    #   grid_type=c("transitional","dense", "all")) {
+    grid_type=c("dense", "transitional", "all")) {
+    grid_type <- match.arg(grid_type)
+    
+    if(length(grid)<1) {
+      if(weight) return(data.frame(weight=numeric(0)))
+      else return(data.frame())
+    }
     
     if(translate) {
       coords <- as.data.frame(t(sapply(keys(grid), 
@@ -270,39 +310,115 @@ DStream$methods(list(
         USE.NAMES=FALSE)))
     }
     
-    vals <- values(grid)
-    
     N <- prod(maxs-mins+1L)
+    gv <- values(grid, simplify=FALSE)
     
     ### add missing decay
-    vals <- vals*decay_factor^(npoints%%gaptime)
+    ws <- sapply(gv, FUN=function(g) {
+        g[["weight"]] * decay_factor ^ (npoints - g[["t"]])
+      }) 
     
-    if(type=="transitional") {
+    if(grid_type=="transitional") {
       ### sparse grid threshold 0<Cl<1 -> Dl = Cl/(N*(1-decay_factor))
-      take <- vals > Cl/N/(1-decay_factor)
+      take <- ws > Cl/N/(1-decay_factor)
       coords <- coords[take,]
-      vals <- vals[take]
-    } else if(type=="dense") {
+      ws <- ws[take]
+    } else if(grid_type=="dense") {
       ### dense grid threshold Cm > 1 -> Dm = Cm/(N*(1-decay_factor))
-      take <- vals > Cm/N/(1-decay_factor)
+      take <- ws > Cm/N/(1-decay_factor)
       coords <- coords[take,]
-      vals <- vals[take]
+      ws <- ws[take]
     }
-      
-    if(weight) coords[["weight"]] <- vals
+    
+    if(weight) coords[["weight"]] <- ws
     rownames(coords) <- NULL
     coords
+  },
+  
+  microToMacro = function(micro=NULL, grid_type="dense") {
+    d_attr <- get_attraction(dist=TRUE, relative=TRUE, grid_type=grid_type)
+    
+    mcs <- get_micro()
+    if(nrow(mcs) < 1) return(integer(0))
+    if(nrow(mcs) == 1) {
+      assignment <- 1L
+      names(assignemnt) <- rownames(mcs)
+    } else{ 
+      ### use k?
+      if(k>0)  {
+        ### FIXME: If k>number of connected components then components would
+        ###  be merged randomly! So we add for these the regular distance!      
+        
+        d_dist <- dist(mcs) 
+        unconnected <- d_attr==0 ### an attraction count of 0!
+        d_attr[unconnected] <- d_attr[unconnected] + d_dist[unconnected]
+        
+        assignment <- cutree(hclust(d_attr, method="single"), k=k)
+      } else assignment <- cutree(hclust(d_attr, method="single"), 
+        h=-.5*epsilon[1]/2/2*Cm2)
+      ### 50% chance to be on the correct side
+      ### epsilon/2 chance to be close enough /2 on average
+    }
+    
+    if(!is.null(micro)) assignment <- assignment[micro]
+    else micro <- 1:length(assignment)
+    
+    structure(assignment, names=micro)
+  },
+  
+  get_macro = function(weight=FALSE) {
+    if(!attraction) stop("No attraction values stored. Create DSC_DStream with attraction=TRUE.")
+    
+    mcs <- get_micro(weight=TRUE)
+    
+    ### no mcs
+    if(nrow(mcs) < 1) {
+      if(weight) return(data.frame(weight=numeric(0)))
+      else return(data.frame())
+    }
+    
+    ### single mc
+    if(nrow(mcs) == 1) {
+      if(weight) return(mcs)
+      else return(mcs[,-ncol(mcs)])
+    }
+    
+    mc <- mcs[,-ncol(mcs)]
+    w <- mcs[,ncol(mcs)]
+    m2m <- microToMacro(grid_type="dense")
+    
+    m_ids <- sort(unique(m2m), decreasing=FALSE)
+    ### find centroids
+    centers <- as.data.frame(t(as.data.frame(sapply(m_ids, FUN=function(i) 
+      colMeans(mc[m2m==i,])))))
+    
+    ### find weights
+    if(weight) {
+      ws <- sapply(m_ids, FUN=function(i) sum(w[m2m==i]))
+      centers[["weight"]] <- ws
+    }
+    
+    rownames(centers) <- NULL
+    centers
   }
+          )
 )
-)
 
-get_microclusters.DSC_DStream <- function(x) 
-  x$RObj$get_micro(weight=FALSE, type="transitional")
+get_microclusters.DSC_DStream <- function(x, ...)  
+  x$RObj$get_micro(weight=FALSE, ...)
 
-get_microweights.DSC_DStream <- function(x) 
-  x$RObj$get_micro(weight=TRUE, type="transitional")[["weight"]]
+get_microweights.DSC_DStream <- function(x, ...) 
+  x$RObj$get_micro(weight=TRUE, ...)[["weight"]]
 
-get_attraction <- function(x, dist=FALSE) x$RObj$get_attraction(dist=dist)
+get_attraction <- function(x, dist=FALSE, relative=FALSE) 
+  x$RObj$get_attraction(dist=dist, relative=relative)
+
+get_macroclusters.DSC_DStream <- function(x, ...) 
+  x$RObj$get_macro(weight=FALSE, ...)
+get_macroweights.DSC_DStream <- function(x, ...) 
+  x$RObj$get_macro(weight=TRUE, ...)[["weight"]]
+microToMacro.DSC_DStream <- function(x, micro=NULL, ...) 
+  x$RObj$microToMacro(micro=micro, ...)
 
 ### add plot as an image
 plot.DSC_DStream <- function(x, ..., image=FALSE) {
@@ -310,7 +426,8 @@ plot.DSC_DStream <- function(x, ..., image=FALSE) {
   
   if(x$RObj$d!=2) stop("Image visualization only works for 2D data!") 
   
-  mat <- x$RObj$toMatrix("transitional")
+  #  mat <- x$RObj$toMatrix("transitional")
+  mat <- x$RObj$toMatrix("dense")
   
   image(mat, col=gray.colors(256), axes=FALSE)
   box()

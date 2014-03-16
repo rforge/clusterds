@@ -16,7 +16,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-animation::ani.options(interval=.1)
+
 
 animate_cluster <- function(dsc, dsd, macro=NULL, n=1000,
   interval=.1, pointInterval=100, horizon=5*pointInterval, 
