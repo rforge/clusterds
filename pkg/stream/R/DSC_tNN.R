@@ -61,7 +61,7 @@ tNN <- setRefClass("tNN",
       noise		= 0.01,
       measure		= "Euclidean",
       shared_density		= FALSE,
-      alpha 		= 0.25,
+      alpha 		= 0,
       k		= 0,
       minweight	= 0.1
     ) {
@@ -301,7 +301,7 @@ tNN$methods(list(
     }
     
     strong <- strong_mcs()
-    s <- s[strong,strong]
+    s <- s[strong, strong]
     if(!matrix) s <- as.simil(s)
     s
   },
@@ -446,7 +446,8 @@ plot.DSC_tNN <- function(x, dsd = NULL, n = 1000,
       ### add edges connecting macro-clusters
       s <- get_shared_density(x, matrix=TRUE)
       s[lower.tri(s)] <- NA
-      edges <- which(s>0, arr.ind=TRUE)
+      
+      edges <- which(s>x$RObj$alpha, arr.ind=TRUE)
       
       if(length(edges)>0) { # length instead of nrow (s can be empty!)
         edges <- cbind(edges, 
