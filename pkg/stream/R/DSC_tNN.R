@@ -96,7 +96,7 @@ tNN <- setRefClass("tNN",
 )
 
 
-DSC_tNN <- function(r = 0.1, lambda = 1e-3,  gap_time=1000L, noise = 0.01, 
+DSC_tNN <- function(r, lambda = 1e-3,  gap_time=1000L, noise = 0.01, 
   measure = "Euclidean", 
   shared_density = FALSE, alpha = 0, k=0, minweight = 0) {
   
@@ -267,6 +267,7 @@ tNN$methods(list(
   strong_mcs = function(weak=FALSE) {
     
     ws <- get_current_weights()
+    # sum will approach 1/(1-decay_factor) 
     o <- order(ws, decreasing=FALSE)
     
     # first element represents weight of already deleted MCs!
@@ -279,6 +280,9 @@ tNN$methods(list(
   },
   
   get_shared_density = function(matrix=FALSE) {
+    
+    if(!shared_density) stop("No shared density available (use shared_density=TRUE)!")
+    
     mc_weights <- get_current_weights()
     mcs <- rownames(centers)
     
@@ -307,46 +311,67 @@ tNN$methods(list(
   },
   
   get_membership_weights = function() {
-    s <- get_shared_density()
-    
-    nclusters <- nrow(get_microclusters())
-    if(nclusters <1) return(list(assignment=integer(0), weight=numeric(0)))
-    
-    if(nrow(s)<2) assignment <- 1:nclusters
-    else if(alpha>0) { ### use alpha
-      s[s < alpha] <- 0
-      s[s>0] <- 1
-      d <- 1-s
-      assignment <- cutree(hclust(d, method="single"), h=.5)
-    }else{ ### use k
-      if(alpha<0) warning("You need to specify at leasy alpha or k!")
-      d <- 1/(1+s)
-      
-      ### FIXME: If k>number of connected components then components would
-      ###  be merged randomly! So we add for these the redular distance!
-      d2 <- dist(get_microclusters(), method=distFun) 
-      unconnected <- d==1
-      d[unconnected] <- d[unconnected] + d2[unconnected]
-      
-      assignment <- cutree(hclust(d, method="single"), k=k)
-    }
-    
-    ### aggregate macro-cluster weights
+    mcs <- get_microclusters()
     w <- get_microweights()
-    w <- aggregate(w, by=list(assignment), FUN=sum)$x
+    nclusters <- nrow(mcs)
     
-    ### deal with k and minweight (only if alpha is given!)
-    if(alpha>0) {
-      if(k>0 && length(w)>k) {
-        take <- order(w, decreasing=TRUE)[1:k]
-        w <- w[take]
-        assignment <- match(assignment, take)
+    if(nclusters < 1L) return(list(assignment=integer(0L), weight=numeric(0L)))
+    if(nclusters == 1L) return(list(assignment=1L, weight=w[1L]))
+    
+    if(shared_density) { ### use shared density
+      s <- get_shared_density()
+      
+      # filter shared density
+      if(alpha>0) s[s < alpha] <- 0
+      
+      if(k > 0L) { ### use k
+        d <- 1/(1+s)
+        
+        hc <- hclust(d, method="single")
+        ### find unconnected components
+        assignment <- cutree(hc, h=1-1e-9)
+        
+        ### not enought components?
+        if(length(unique(assignment)) < k) assignment <- cutree(hc, k=k)
+        
+        ### only take the largest k...
+        #if(length(unique(assignment)) > k) {
+        #  order(table(assignment), decreasing=TRUE)[1:k]
+        #}
+        
+        ### or join using distance
+        ### FIXME: If k>number of connected components then components would
+        ###  be merged randomly! So we add for these the redular distance!
+        #d2 <- dist(mcs, method=distFun) 
+        #unconnected <- d==1
+        #d[unconnected] <- d[unconnected] + d2[unconnected]
+        
+      }else{ ### use alpha
+        s[s>0] <- 1
+        d <- 1-s
+        assignment <- cutree(hclust(d, method="single"), h=.5)
       }
+      
+      ### aggregate macro-cluster weights
+      w <- aggregate(w, by=list(assignment), FUN=sum)$x
+      
+      ### deal with minweight
+      #if(alpha>0) {
+      #  if(k>0 && length(w)>k) {
+      #    take <- order(w, decreasing=TRUE)[1:k]
+      #    w <- w[take]
+      #    assignment <- match(assignment, take)
+      #  }
       if(minweight>0) {
         take <- which(w>=(minweight*sum(w)))
         w <- w[take]
         assignment <- match(assignment, take)
       }
+      #}
+    }else{ ### use adjacent (touching) clusters
+      mcs <- get_microclusters()
+      d_pos <- dist(mcs)
+      assignment <- cutree(hclust(d_pos, method="single"), h=2*r[1])
     }
     
     return(list(assignment=assignment, weight=w))
@@ -368,7 +393,6 @@ tNN$methods(list(
   },
   
   get_macroclusters = function() {
-    if(!shared_density) stop("No macro-clusters available (use shared_density)!")
     
     mcs <- get_microclusters()
     if(nrow(mcs)<1) return(data.frame())
@@ -391,7 +415,6 @@ tNN$methods(list(
   },
   
   get_macroweights = function() {
-    if(!shared_density) stop("No macro-clusters available (use shared density)!")
     get_membership_weights()$weight
   },
   
@@ -416,51 +439,60 @@ get_shared_density <- function(x, matrix=FALSE) x$RObj$get_shared_density(matrix
 ### FIXME: only show edges that really are used
 plot.DSC_tNN <- function(x, dsd = NULL, n = 1000,
   col_points="gray",
-  col_clusters="red",
+  col_clusters=c("red", "blue"),
   weights=TRUE,
   scale=c(1,5),
   cex =1,
   pch=NULL,
   ...,
   method="pairs",
-  type=c("auto", "micro", "macro")) {
+  type=c("auto", "micro", "macro", "both", "shared_density")) {
   
-  NextMethod()
+  type=match.arg(type)
+  if(type == "shared_density") { 
+    sd <- TRUE
+    type <- "macro"
+  } else sd <- FALSE
   
   
-  if(x$RObj$shared_density && type %in% c("macro")
-    && (ncol(x$RObj$centers)<=2 || method=="plot")) {
+  r <- NextMethod()
+  
+  if(!sd) return(invisible(r))
+  
+  if(!x$RObj$shared_density) stop("No shared density available!")
+  
+  if(ncol(x$RObj$centers)>2 && method!="plot") stop("Only available 
+    to plot 2D data or the first 2 dimensions!")
+  
+  p <- get_centers(x, type="micro")
+  
+  if(nrow(p)>0) {
+    points(p, col="black")
     
-    p <- get_centers(x, type="micro")
-    
-    if(nrow(p)>0) {
-      points(p, col="black")
-      
-      ### add threshold circles
-      for(i in 1:nrow(p)){
-        lines(ellipsePoints(x$RObj$r, x$RObj$r, 
-          loc=as.numeric(p[i,]), n=60),
-          col = "black", lty=3)
-      }
-      
-      ### add edges connecting macro-clusters
-      s <- get_shared_density(x, matrix=TRUE)
-      s[lower.tri(s)] <- NA
-      
-      edges <- which(s>x$RObj$alpha, arr.ind=TRUE)
-      
-      if(length(edges)>0) { # length instead of nrow (s can be empty!)
-        edges <- cbind(edges, 
-          w=apply(edges, MARGIN=1, FUN=function(ij) s[ij[1], ij[2]]))
-        
-        #edges <- cbind(edges, stream:::map(edges[,3], range=c(1,5)))
-        edges <- cbind(edges, map(edges[,3], range=c(1,5)))
-        
-        for(i in 1:nrow(edges)){
-          lines(rbind(p[edges[i,1],],p[edges[i,2],]),
-            col="black",lwd=edges[i,4])
-        }
-      }   
+    ### add threshold circles
+    for(i in 1:nrow(p)){
+      lines(ellipsePoints(x$RObj$r, x$RObj$r, 
+        loc=as.numeric(p[i,]), n=60),
+        col = "black", lty=3)
     }
+    
+    ### add edges connecting macro-clusters
+    s <- get_shared_density(x, matrix=TRUE)
+    s[lower.tri(s)] <- NA
+    
+    edges <- which(s>x$RObj$alpha, arr.ind=TRUE)
+    
+    if(length(edges)>0) { # length instead of nrow (s can be empty!)
+      edges <- cbind(edges, 
+        w=apply(edges, MARGIN=1, FUN=function(ij) s[ij[1], ij[2]]))
+      
+      #edges <- cbind(edges, stream:::map(edges[,3], range=c(1,5)))
+      edges <- cbind(edges, map(edges[,3], range=c(1,5)))
+      
+      for(i in 1:nrow(edges)){
+        lines(rbind(p[edges[i,1],],p[edges[i,2],]),
+          col="black",lwd=edges[i,4])
+      }
+    }   
   }
 }

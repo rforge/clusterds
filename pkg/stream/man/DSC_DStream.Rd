@@ -9,8 +9,8 @@
     Implements the D-Stream data stream clustering algorithm.}
 
 \usage{
-DSC_DStream(gridsize = 0.1, d=NA_integer_, lambda = 1e-3, 
-   gaptime=1000L, Cm=1, Cl=.5, attraction=FALSE, epsilon=.25, Cm2=Cm, k=NULL)
+DSC_DStream(gridsize, d=NA_integer_, lambda = 1e-3, 
+   gaptime=1000L, Cm=1, Cl=.5, attraction=FALSE, epsilon=.3, Cm2=3, k=NULL)
 get_attraction(x, dist=FALSE, relative=FALSE)
 }
 
@@ -30,7 +30,8 @@ get_attraction(x, dist=FALSE, relative=FALSE)
 	    average expected density).}
 	\item{Cl}{threshold to detect transitional and sporadic grids (0 > Cl > 1).}
   \item{attraction}{compute and store information about the attraction between
-    adjacent grids.}
+    adjacent grids. If \code{TRUE} then attraction is used to create macro-clusters,
+  otherwise macro-clusters are created by merging adjacent dense grids.}
   \item{epsilon}{overlap parameter for attraction as a proportion of 
     \code{gridsize}.}
   \item{Cm2}{threshold on attraction to join two dense grid cells (as a 
@@ -91,20 +92,18 @@ head(get_centers(dstream))
 plot(dstream, dsd)
 plot(dstream, image=TRUE)
 
-# reclustering: standard D-Stream uses reachability (use just 
-#   above gridsize as h)
-macro <- DSC_Hierarchical(h=.05+1e-9, method="single")
-recluster(macro, dstream)
-plot(macro, dsd)
+# standard D-Stream uses reachability
+nclusters(dstream, type="macro")
+get_centers(dstream, type="macro")
+plot(dstream, type="both")
 
 # use attraction for reclustering
 set.seed(0)
 dsd <- DSD_GaussianStatic(k=3, noise=0.05)
 
-dstream <- DSC_DStream(gridsize=.05, attraction=TRUE, epsilon=.25)
+dstream <- DSC_DStream(gridsize=.05, attraction=TRUE, epsilon=.15)
 cluster(dstream, dsd, 500)
 dstream
 
-plot(dstream, dsd)
-plot(dstream, type="macro", dsd)
+plot(dstream, type="both", dsd)
 }

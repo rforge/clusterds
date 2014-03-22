@@ -8,7 +8,7 @@
     Implements the tNN (threshold Nearest Neighbor) data stream clustering algorithm.}
 
 \usage{
-DSC_tNN(r = 0.1, lambda = 0.001, gap_time = 1000L, 
+DSC_tNN(r, lambda = 0.001, gap_time = 1000L, 
   noise = 0.01, measure = "Euclidean", 
 	shared_density = FALSE, alpha=0, k=0, minweight = 0)
 get_shared_density(x, matrix=FALSE)  
@@ -23,7 +23,8 @@ get_shared_density(x, matrix=FALSE)
 	\item{measure}{The measure used to calculate cluster proximity 
 	(see package \pkg{proxy}).}
   \item{shared_density}{Record shared density information. If set to \code{TRUE}
-    then macro-clusters and macro-weights are available. }
+    then shared density is used for reclustering, otherwise reachability is
+    used (overlapping clusters with less than 2r distance are clustered together). }
 	\item{k}{The number of macro clusters to be returned if macro is true.}
   \item{alpha}{The minimum proportion of shared points between to 
     clusters to warrant combining them.}
@@ -66,9 +67,18 @@ Stream Clustering in R, Journal of Statistical Software, 35(5), 1-31, URL \url{h
 set.seed(0)
 dsd <- DSD_GaussianStatic(k=3, noise=0.05)
 
-# tNN + shared density 
+# tNN with reachability
+tnn <- DSC_tNN(r=.05, minweight=0.1, noise=0.05)
+cluster(tnn, dsd, 500)
+tnn
+plot(tnn, type="both")
+
+# tNN with shared density 
 tnn <- DSC_tNN(r=.05, minweight=0.1, noise=0.05, shared_density=TRUE, alpha=.25)
 cluster(tnn, dsd, 500)
+tnn
+plot(tnn, type="both")
+
 
 # check micro-clusters
 nclusters(tnn)
@@ -79,6 +89,10 @@ plot(tnn, dsd)
 nclusters(tnn, type="macro")
 get_centers(tnn, type="macro")
 plot(tnn, dsd, type="macro")
+
+# plot the shared density graph
+plot(tnn, dsd, type="shared_density")
+
 
 # see how micro and macro-clusters relate
 # each microcluster has an entry with the macro-cluster id

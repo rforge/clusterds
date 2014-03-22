@@ -9,9 +9,9 @@
     \method{plot}{DSD}(x, n = 500, col= NULL, 
 	    pch= NULL, ..., method="pairs")
     \method{plot}{DSC}(x, dsd = NULL, n = 500,
-	    col_points="gray", col_clusters="red",
+	    col_points="gray", col_clusters=c("red", "blue"),
 	    weights=TRUE, scale=c(1,5), cex=1, pch=NULL, ..., method="pairs", 
-	    type = c("auto", "micro", "macro"))
+	    type = c("auto", "micro", "macro", "both"))
 }
 
 \arguments{

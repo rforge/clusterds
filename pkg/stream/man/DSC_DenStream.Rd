@@ -7,7 +7,7 @@
 Class implements the DenStream cluster algorithm for data streams.
 }
 \usage{
-DSC_DenStream(epsilon = 0.1, beta = 0.001, mu = 1, 
+DSC_DenStream(epsilon, beta = 0.001, mu = 1, 
     initPoints = 100, minPoints = 10, 
     horizon = 1000, lambda = NULL)
 }

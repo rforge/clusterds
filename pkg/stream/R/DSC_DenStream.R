@@ -29,7 +29,7 @@
 
 
 
-DSC_DenStream <- function(epsilon=0.1, beta=0.001, mu=1, 
+DSC_DenStream <- function(epsilon, beta=0.001, mu=1, 
 	initPoints=100, minPoints=10, 
 	horizon=1000, lambda=NULL) {
   

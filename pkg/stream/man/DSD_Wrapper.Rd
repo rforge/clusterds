@@ -1,11 +1,12 @@
 \name{DSD_Wrapper}
 \alias{DSD_Wrapper}
-\title{A Data Stream Wrapper for Data Frames and Matrices)}
+\title{A Data Stream Wrapper for Data Frames, Matrices and Streams)}
 \description{
 This class wraps either a data frame or matrix in memory and
-provides access to the data as a data stream. 
+provides access to the data in a streamin fashion. 
 The data can either be looped or replayed manually to give
 the exact same data several times.
+The Wrapper can also be used to record and replay a part of a data stream.
 }
 
 \usage{DSD_Wrapper(x, n, k=NA, loop=FALSE, assignment = NULL)}
@@ -45,8 +46,8 @@ replayer <- DSD_Wrapper(d, k=3)
 replayer
 
 # creating 2 clusterers of different algorithms
-dsc1 <- DSC_CluStream()
-dsc2 <- DSC_DenStream(initPoints=100)
+dsc1 <- DSC_CluStream(k=100)
+dsc2 <- DSC_DenStream(epsilon=0.1, initPoints=100)
 
 # clustering the same data in 2 DSC objects
 cluster(dsc1, replayer, 500)

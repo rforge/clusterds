@@ -33,7 +33,7 @@ get_weights <- function(x, type=c("auto", "micro", "macro"), scale=NULL, ...)
   UseMethod("get_weights")
 get_weights.default <- function(x, type=c("auto", "micro", "macro"), 
   scale=NULL, ...) {
-  m <- rep(1,nclusters(x, type=type))
+  m <- rep(1, nclusters(x, type=type))
   if(!is.null(scale)) {
     if(length(unique(m)) ==1)  w <- rep(mean(scale), length(w))
     else m <- map(m, range=scale, from.range=c(0, 
@@ -116,29 +116,53 @@ print.DSC <- function(x, ...) {
 #plot.DSC will call super question.
 plot.DSC <- function(x, dsd = NULL, n = 500, 
   col_points="gray",  
-  col_clusters="red", 
+  col_clusters=c("red", "blue"), 
   weights=TRUE,
   scale=c(1,5),
   cex =1,
   pch=NULL,
   ..., 
   method="pairs", 
-  type=c("auto", "micro", "macro")) {
+  type=c("auto", "micro", "macro", "both")) {
   
-  ## method can be pairs, plot or pc (projection with PCA)
-  k <- nclusters(x, type=type)
+  type <- match.arg(type)
   
-  if(k<1) {
-    warning("No clusters, no plot produced!")
-    plot(NA, NA, xlim=c(0,0), ylim=c(0,0))
-    return()
+  if(type !="both") { 
+    ## method can be pairs, plot or pc (projection with PCA)
+    centers <- get_centers(x, type=type)
+    k <- nrow(centers)
+    
+    if(k<1) {
+      warning("No clusters to plot!")
+      plot(NA, NA, xlim=c(0,0), ylim=c(0,0))
+      return()
+    }
+    
+    if(weights) cex_clusters <- get_weights(x, type=type, scale=scale)
+    else cex_clusters <- rep(cex, k)
+    col <- rep(col_clusters[1], k)
+    mpch <- rep(1, k)
+  }else{ ### both
+    centers_mi <- get_centers(x, type="micro")
+    centers_ma <- get_centers(x, type="macro")
+    k_mi <- nrow(centers_mi)
+    k_ma <- nrow(centers_ma)
+    
+    if(k_mi<1) {
+      warning("No clusters to plot!")
+      plot(NA, NA, xlim=c(0,0), ylim=c(0,0))
+      return()
+    }
+    
+    centers <- rbind(centers_mi, centers_ma)
+    
+    if(weights) cex_clusters <- c(get_weights(x, type="micro", scale=scale), 
+        get_weights(x, type="macro", scale=scale*1.5))
+    else cex_clusters <- c(rep(cex, k_mi), rep(cex*2,+k_ma))
+      
+    col <- c(rep(col_clusters[1], k_mi), rep(col_clusters[2], k_ma))
+    mpch <- c(rep(1, k_mi), rep(3, k_ma))
   }
-  
-  centers <- get_centers(x, type=type)
-  if(weights) cex_clusters <- get_weights(x, type=type, scale=scale)
-  else cex_clusters <- rep(cex, k)
-  col <- rep(col_clusters, k)
-  mpch <- rep(1, k)
   
   ### prepend data if given
   if(!is.null(dsd)) {
@@ -155,7 +179,7 @@ plot.DSC <- function(x, dsd = NULL, n = 500,
     ### handle noise
     noise <- is.na(mpch)
     mpch[noise] <- 20
-    cex_clusters[noise] <- cex_clusters[noise]*.3
+    cex_clusters[noise] <- cex_clusters[noise]*.5
     
   }
   

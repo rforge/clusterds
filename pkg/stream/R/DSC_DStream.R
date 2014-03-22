@@ -57,8 +57,8 @@ DStream <- setRefClass("DStream",
       Cm = 1,
       Cl = .5,
       attraction = FALSE,
-      epsilon = .25,
-      Cm2 = NULL,
+      epsilon = .3,
+      Cm2 = 3,
       k = NULL
     ) {
       
@@ -70,8 +70,7 @@ DStream <- setRefClass("DStream",
       Cl <<- Cl
       attraction <<- attraction
       epsilon <<- epsilon
-      if(is.null(Cm2)) Cm2 <<- Cm
-      else Cm2 <<- Cm2
+      Cm2 <<- Cm2
       if(is.null(k)) k <<- 0L
       else k <<- as.integer(k)
       
@@ -88,9 +87,9 @@ DStream <- setRefClass("DStream",
 )
 
 
-DSC_DStream <- function(gridsize = 0.1, d=NA_integer_, lambda = 1e-3, 
-  gaptime=1000L, Cm=1, Cl=.5, attraction=FALSE, epsilon=.25, 
-  Cm2 = Cm, k=NULL) {
+DSC_DStream <- function(gridsize, d=NA_integer_, lambda = 1e-3, 
+  gaptime=1000L, Cm=1, Cl=.5, attraction=FALSE, epsilon=.3, 
+  Cm2=3, k=NULL) {
   
   dstream <- DStream$new(gridsize, as.integer(d), lambda, 
     as.integer(gaptime), Cm, Cl, as.logical(attraction), epsilon, Cm2, k)
@@ -195,7 +194,7 @@ DStream$methods(list(
           }
         }
       }
-        
+      
       
       ### update t and data structure
       val[["t"]] <- npoints
@@ -228,7 +227,7 @@ DStream$methods(list(
   },
   
   
-  get_attraction = function(dist=FALSE, relative=FALSE, 
+  get_attraction = function(relative=FALSE, 
     #    grid_type="transitional") {
     grid_type="dense") {
     
@@ -236,7 +235,7 @@ DStream$methods(list(
     mc_ids <- get_micro(translate=FALSE, grid_type=grid_type)
     n <- nrow(mc_ids)
     attr_matrix <- matrix(0, ncol=n, nrow=n)
-
+    
     ### not enough mcs for attraction
     if(n<2) {
       if(dist) return(as.dist(attr_matrix))
@@ -285,8 +284,6 @@ DStream$methods(list(
       attr_matrix <- attr_matrix/w
     }
     
-    if(dist) return(as.dist(-attr_matrix-t(attr_matrix)))
-    
     attr_matrix  
   },
   
@@ -315,8 +312,8 @@ DStream$methods(list(
     
     ### add missing decay
     ws <- sapply(gv, FUN=function(g) {
-        g[["weight"]] * decay_factor ^ (npoints - g[["t"]])
-      }) 
+      g[["weight"]] * decay_factor ^ (npoints - g[["t"]])
+    }) 
     
     if(grid_type=="transitional") {
       ### sparse grid threshold 0<Cl<1 -> Dl = Cl/(N*(1-decay_factor))
@@ -336,28 +333,50 @@ DStream$methods(list(
   },
   
   microToMacro = function(micro=NULL, grid_type="dense") {
-    d_attr <- get_attraction(dist=TRUE, relative=TRUE, grid_type=grid_type)
     
     mcs <- get_micro()
-    if(nrow(mcs) < 1) return(integer(0))
-    if(nrow(mcs) == 1) {
+    if(nrow(mcs) < 1) return(integer(0)) ### no mcs
+    
+    if(nrow(mcs) == 1) { ### single mc
       assignment <- 1L
       names(assignemnt) <- rownames(mcs)
     } else{ 
-      ### use k?
-      if(k>0)  {
-        ### FIXME: If k>number of connected components then components would
-        ###  be merged randomly! So we add for these the regular distance!      
+      
+      if(attraction) { ### use attraction
         
-        d_dist <- dist(mcs) 
-        unconnected <- d_attr==0 ### an attraction count of 0!
-        d_attr[unconnected] <- d_attr[unconnected] + d_dist[unconnected]
-        
-        assignment <- cutree(hclust(d_attr, method="single"), k=k)
-      } else assignment <- cutree(hclust(d_attr, method="single"), 
-        h=-.5*epsilon[1]/2/2*Cm2)
-      ### 50% chance to be on the correct side
-      ### epsilon/2 chance to be close enough /2 on average
+        if(k > 0L)  { ### use k?
+          a <- get_attraction(grid_type=grid_type)
+          d_attr <- as.dist(-a-t(a))
+          
+          hc <- hclust(d_attr, method="single")
+          ### find unconnected components
+          assignment <- cutree(hc, h=0-1e-9)
+          
+          ### not enought components?
+          if(length(unique(assignment)) < k) assignment <- cutree(hc, k=k)
+          
+          ### FIXME: If k>number of connected components then components would
+          ###  be merged randomly! So we add for these the regular distance!      
+          
+          #d_dist <- dist(mcs) 
+          #unconnected <- d_attr==0 ### an attraction count of 0!
+          #d_attr[unconnected] <- d_attr[unconnected] + d_dist[unconnected]
+          #assignment <- cutree(hclust(d_attr, method="single"), k=k)
+          
+        }else{ ### use Cm2 
+          a <- get_attraction(grid_type=grid_type)
+          d_attr <- as.dist(-a-t(a))
+          
+          P <- 2*sum(maxs-mins) ### number of possible attraction values
+          ### actually we should check each direction independently
+          assignment <- cutree(hclust(d_attr, method="single"), 
+            h=-2*Cm2/P/(1+decay_factor))
+        }
+      }else{ ### use adjacency 
+        mcs <- get_micro(grid_type=grid_type)
+        d_pos <- dist(mcs)
+        assignment <- cutree(hclust(d_pos, method="single"), h=gridsize[1]+1e-9)
+      }
     }
     
     if(!is.null(micro)) assignment <- assignment[micro]
@@ -367,7 +386,7 @@ DStream$methods(list(
   },
   
   get_macro = function(weight=FALSE) {
-    if(!attraction) stop("No attraction values stored. Create DSC_DStream with attraction=TRUE.")
+    #if(!attraction) stop("No attraction values stored. Create DSC_DStream with attraction=TRUE.")
     
     mcs <- get_micro(weight=TRUE)
     
@@ -401,7 +420,7 @@ DStream$methods(list(
     rownames(centers) <- NULL
     centers
   }
-          )
+)
 )
 
 get_microclusters.DSC_DStream <- function(x, ...)  

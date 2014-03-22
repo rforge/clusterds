@@ -1,9 +1,12 @@
 Changes in version 0.3-0
-    * added D-Stream
+    * added D-Stream (with attraction)
     * improved support for animations
-    * new decay models for tNN
+    * tnn: new decay models, tNN without shared density now reclusters 
+        using reachability
+    * plot gained the type "both" that plots micro and macro-clusters
     * DSC_Hierarchical and DSC_Kmeans gained min_weight to filter low weight
         micro-clusters before reculstering
+    * removed default radius, etc. for most clustering algorithms
 
 Changes in version 0.2-0 (2/21/14)
     * major restructuring

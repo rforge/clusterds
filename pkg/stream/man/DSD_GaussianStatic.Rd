@@ -6,7 +6,7 @@ A data stream generator that produces a data stream with static Gaussians.
 }
 
 \usage{
-DSD_GaussianStatic(k=2, d=2, mu, sigma, p, noise=0, noise_range)
+DSD_GaussianStatic(k=2, d=2, mu, sigma, p, separation=0.2, noise=0, noise_range)
 }
 
 \arguments{
@@ -16,6 +16,8 @@ DSD_GaussianStatic(k=2, d=2, mu, sigma, p, noise=0, noise_range)
   \item{sigma}{A list of length \code{k} of covariance matrices.}
   \item{p}{A vector of probabilities that determines the likelihood of
 		   generated a data point from a particular cluster.}
+  \item{separation}{Minimum distance between cluster centers to reduce overlap 
+    between clusters (0-.8).}
   \item{noise}{Noise probability between 0 and 1.
   Noise is uniformly distributed within noise range (see below).
   } 
