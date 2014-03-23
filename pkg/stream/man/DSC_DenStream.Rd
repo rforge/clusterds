@@ -9,7 +9,7 @@ Class implements the DenStream cluster algorithm for data streams.
 \usage{
 DSC_DenStream(epsilon, beta = 0.001, mu = 1, 
     initPoints = 100, minPoints = 10, 
-    horizon = 1000, lambda = NULL)
+    horizon = 1000, lambda = NULL, macro=TRUE)
 }
 
 \arguments{
@@ -23,6 +23,8 @@ DSC_DenStream(epsilon, beta = 0.001, mu = 1,
   \item{minPoints}{minimum number of points to form initial micro-clusters using DBSCAN.}
   \item{horizon}{used to compute lambda.}
   \item{lambda}{override computed lambda (decay).}
+  \item{macro}{if macro is set to \code{TRUE} then macro clusters are generated
+    using density reachability described in the DenStream paper below. }
 }
 
 \details{
@@ -62,8 +64,11 @@ dsc
 # plot micro-clusters
 plot(dsc, dsd)
 
-# reclustering. DenStream uses weighted DBSCAN
-dbscan <- DSC_DBSCAN(eps=0.1, weighted=TRUE)
-recluster(dbscan, dsc)
-plot(dbscan, dsd)
+# show macro-clusters (using density reachability)
+plot(dsc, dsd, type="both")
+
+# reclustering. DenStream micro-clusters with k-means instead
+km <- DSC_Kmeans(k=3, weighted=TRUE)
+recluster(km, dsc)
+plot(km, dsd, type="both")
 }

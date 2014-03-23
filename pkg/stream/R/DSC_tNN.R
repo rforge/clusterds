@@ -36,8 +36,7 @@ tNN <- setRefClass("tNN",
     
     ### data
     weights			= "numeric",
-    total_weight		= "numeric",
-    npoints			= "integer",
+    t			      = "integer",
     centers			= "data.frame",
     last_update  = "integer",
     relations 		= "hash",
@@ -83,8 +82,7 @@ tNN <- setRefClass("tNN",
         k		<<- as.integer(k)
       
       weights		<<- numeric()
-      total_weight	<<- 0
-      npoints		<<- 0L
+      t		<<- 0L
       centers		<<- data.frame()
       
       distFun		<<- pr_DB[[measure]]
@@ -98,13 +96,7 @@ tNN <- setRefClass("tNN",
 
 DSC_tNN <- function(r, lambda = 1e-3,  gap_time=1000L, noise = 0.01, 
   measure = "Euclidean", 
-  shared_density = FALSE, alpha = 0, k=0, minweight = 0) {
-  
-  if(k==0 && alpha==0 && shared_density) {
-    warning("You have to specify at least k or alpha! Using default alpha=.25 and minweight=0.1.")
-    minweight <- 0.1
-    alpha <- 0.25
-  }
+  shared_density = FALSE, alpha = 0.25, k=0, minweight = 0) {
   
   tNN <- tNN$new(r, lambda, as.integer(gap_time), 
     noise, measure, shared_density, alpha, k, minweight)
@@ -123,15 +115,15 @@ tNN$methods(list(
     if(debug) cat("Debug clustering for tNN!\n")
     
     for(i in 1:nrow(newdata)) {
-      npoints <<- npoints + 1L
+      t <<- t + 1L
       
       if(debug && !i%%100) cat("Processed",i,"points\n")
       
       ### decay and remove clusters
-      if(decay_factor<1 && !npoints%%gap_time) {
+      if(decay_factor<1 && !t%%gap_time) {
         ### remove clusters
-        weight_remove <- .5
-        remove <- which(get_current_weights() <= weight_remove)
+        w_min <- decay_factor^gap_time
+        remove <- which(get_current_weights() <= w_min)
         
         if(debug) cat("  - Removing", length(remove), "micro-clusters.\n")
         
@@ -167,9 +159,9 @@ tNN$methods(list(
             keys <- keys(relations)
             vals <- values(relations, simplify=FALSE)
             
-            ws <- sapply(vals, FUN=function(v) v[2]*decay_factor^(npoints-v[1]))
+            ws <- sapply(vals, FUN=function(v) v[2]*decay_factor^(t-v[1]))
             
-            removekeys <- keys[ws <= weight_remove]
+            removekeys <- keys[ws <= w_min]
             
             if(length(removekeys)>0) {
               if(debug) cat("  - Removing relation (relation)",
@@ -191,13 +183,12 @@ tNN$methods(list(
       point <- newdata[i,]
       mcs <- rownames(centers) ### names
       
-      total_weight <<- total_weight * decay_factor + 1
       
       if(nrow(centers)<1) {   ### create first micro-cluster
         weights <<- 1
         centers <<- as.data.frame(point)
         rownames(centers) <<- 1
-        last_update <<- npoints
+        last_update <<- t
         
         if(debug) cat("  + Creating micro-cluster with ID 1.\n")
         
@@ -209,7 +200,7 @@ tNN$methods(list(
           centers <<- rbind(centers,point)
           rownames(centers)[nrow(centers)] <<-
             as.integer(rownames(centers)[nrow(centers)-1]) + 1L
-          last_update <<- c(last_update, npoints)
+          last_update <<- c(last_update, t)
           
           if(debug) cat("  + Creating micro-cluster with ID",
             rownames(centers)[nrow(centers)], "\n")
@@ -231,8 +222,8 @@ tNN$methods(list(
             centers[inside[which(test)],] <<- newCenters[which(test),]
           
           weights[inside] <<- weights[inside] * 
-            decay_factor^(npoints-last_update[inside]) + partialweight
-          last_update[inside] <<- npoints
+            decay_factor^(t-last_update[inside]) + partialweight
+          last_update[inside] <<- t
           
           # shared density
           if(shared_density && length(inside) > 1) {
@@ -247,9 +238,9 @@ tNN$methods(list(
               for(j in relationUpdate) {
                 ### relation is c(last_update, count)
                 rel <- relations[[j]]
-                if(is.null(rel)) rel <- c(npoints, 1)
-                else rel <- c(npoints, 
-                  rel[2] * decay_factor^(npoints-rel[1]) + 1)
+                if(is.null(rel)) rel <- c(t, 1)
+                else rel <- c(t, 
+                  rel[2] * decay_factor^(t-rel[1]) + 1)
                 relations[[j]] <<- rel
               }
             }
@@ -260,23 +251,32 @@ tNN$methods(list(
   },
   
   get_current_weights = function() {
-    weights * decay_factor^(npoints-last_update) 
+    weights * decay_factor^(t-last_update) 
   },
   
   # find strong MCs
   strong_mcs = function(weak=FALSE) {
     
     ws <- get_current_weights()
-    # sum will approach 1/(1-decay_factor) 
-    o <- order(ws, decreasing=FALSE)
+
+    # without noise all are strong!
+    if(noise==0) {
+      if(weak) return(integer(0))
+      else return(seq(1, length(ws)))
+    }  
     
+    o <- order(ws, decreasing=FALSE)
     # first element represents weight of already deleted MCs!
-    cs <- cumsum(c(total_weight-sum(ws), ws[o]))
+    # sum will approach 1/(1-decay_factor) 
+    if(decay_factor<1) w_total <- (1-decay_factor^(t-1))/(1-decay_factor)
+    else w_total <- npoints
+    
+    cs <- cumsum(c(w_total-sum(ws), ws[o]))
     
     if(weak)
-      o[(cs < total_weight*noise)[-1]]
+      o[(cs < w_total*noise)[-1]]
     else	
-      o[(cs >= total_weight*noise)[-1]]
+      o[(cs >= w_total*noise)[-1]]
   },
   
   get_shared_density = function(matrix=FALSE) {
@@ -294,7 +294,7 @@ tNN$methods(list(
     if(nrow(rel) > 0){
       ### fix decay
       vals <- sapply(values(relations, simplify=FALSE), 
-        FUN=function(v) v[2]* decay_factor^(npoints-v[1]) )
+        FUN=function(v) v[2]* decay_factor^(t-v[1]) )
       
       ### get shared density relative to the density on the clusters
       avg_weight <- apply(rel, MARGIN=1, FUN= function(x) mean(mc_weights[x]))

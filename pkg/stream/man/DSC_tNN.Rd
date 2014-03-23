@@ -10,7 +10,7 @@
 \usage{
 DSC_tNN(r, lambda = 0.001, gap_time = 1000L, 
   noise = 0.01, measure = "Euclidean", 
-	shared_density = FALSE, alpha=0, k=0, minweight = 0)
+	shared_density = FALSE, alpha=0.25, k=0, minweight = 0)
 get_shared_density(x, matrix=FALSE)  
 }
 
@@ -67,32 +67,29 @@ Stream Clustering in R, Journal of Statistical Software, 35(5), 1-31, URL \url{h
 set.seed(0)
 dsd <- DSD_GaussianStatic(k=3, noise=0.05)
 
-# tNN with reachability
-tnn <- DSC_tNN(r=.05, minweight=0.1, noise=0.05)
+# tNN with reachability (we use more noise to reduce the micro-clusters
+# at the fringes of the Gaussians)
+tnn <- DSC_tNN(r=.05, noise=0.1)
 cluster(tnn, dsd, 500)
 tnn
-plot(tnn, type="both")
-
-# tNN with shared density 
-tnn <- DSC_tNN(r=.05, minweight=0.1, noise=0.05, shared_density=TRUE, alpha=.25)
-cluster(tnn, dsd, 500)
-tnn
-plot(tnn, type="both")
-
 
 # check micro-clusters
 nclusters(tnn)
 head(get_centers(tnn))
 plot(tnn, dsd)
 
-# check macro-clusters (since we have enabled shared density in tNN)
-nclusters(tnn, type="macro")
-get_centers(tnn, type="macro")
-plot(tnn, dsd, type="macro")
+# plot macro-clusters
+plot(tnn, dsd, type="both")
+
+
+# tNN with shared density
+tnn <- DSC_tNN(r=.05, noise=0.05, minweight=0.1, shared_density=TRUE, alpha=0.2)
+cluster(tnn, dsd, 500)
+tnn
+plot(tnn, dsd, type="both")
 
 # plot the shared density graph
 plot(tnn, dsd, type="shared_density")
-
 
 # see how micro and macro-clusters relate
 # each microcluster has an entry with the macro-cluster id

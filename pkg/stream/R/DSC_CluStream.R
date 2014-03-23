@@ -43,35 +43,36 @@
 #
 
 DSC_CluStream <- function(
-	horizon=1000, 
-	k=100,
-	t=2
-	) {
+  k=100,
+  horizon=1000, 
+  t=2
+) {
   
   if (horizon < 0)
     stop("invalid horizon, must be > 0")
-
+  
   if (k < 0)
     stop("invalid k, must be > 0")
-
+  
   paramList <- list(h = as.integer(horizon),
-                    k = as.integer(k),
-		    t = t)
-
+    k = as.integer(k),
+    t = t)
+  
   # converting the param list to a cli string to use in java
   cliParams <- convert_params(paramList)
-
+  
   # initializing the clusterer
   clusterer <- .jnew("moa/clusterers/clustream/Clustream")
   options <- .jcall(clusterer, "Lmoa/options/Options;", "getOptions")
   .jcall(options, "V", "setViaCLIString", cliParams)
   .jcall(clusterer, "V", "prepareForUse")
-
+  
   # initializing the R object
   l <- list(description = "CluStream",
-            options = cliParams,
-            javaObj = clusterer)
-
+    options = cliParams,
+    javaObj = clusterer
+  )
+  
   class(l) <- c("DSC_CluStream","DSC_Micro","DSC_MOA","DSC")
   
   l

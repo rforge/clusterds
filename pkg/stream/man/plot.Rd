@@ -48,21 +48,23 @@
 }
 
 \examples{
+set.seed(100)
 dsd <- DSD_GaussianStatic(k=3)
 
 ## plot data
 plot(dsd, n=500)
 
 ## create and plot micro-clusters
-micro <- DSC_DenStream(initPoints=100)
-cluster(micro, dsd, 500)
+denstream <- DSC_DenStream(epsilon=0.05, initPoints=100)
+cluster(denstream, dsd, 500)
 plot(micro)
 
 ## plot on data
-plot(micro, dsd)
+plot(denstream, dsd)
 
-## create and plot macro-clusters
-macro <- DSC_Kmeans(k=3)
-recluster(macro, micro)
-plot(macro, dsd)
+## plot macro-clusters (DenStream also creates macro-clusters)
+plot(denstream, dsd, type="macro")
+
+## plot micro and macro-clusters
+plot(denstream, dsd, type="both")
 }

@@ -8,12 +8,12 @@
     }
 
 \usage{
-DSC_CluStream(horizon = 1000, k = 100, t = 2)
+DSC_CluStream(k = 100, horizon = 1000, t = 2)
 }
 
 \arguments{
-  \item{horizon}{Defines the time window to be used in CluStream}
   \item{k}{Defines the maximum number of micro-clusters used in CluStream}
+  \item{horizon}{Defines the time window to be used in CluStream}
   \item{t}{Maximal boundary factor (=Kernel radius factor). 
   When deciding to add a new data point to a
   micro-cluster, the maximum boundary is defined as a factor of \code{t} of the
@@ -50,18 +50,20 @@ Clustering. In Journal of Machine Learning Research (JMLR).
 }
 
 \examples{
+set.seed(0)
 # 3 clusters with 5% noise
-dsd <- DSD_GaussianStatic(k=3, noise=0.05)
+dsd <- DSD_GaussianStatic(k=3)
 
-dsc <- DSC_CluStream()
-cluster(dsc, dsd, 1000)
+# cluster with CluStream  
+dsc <- DSC_CluStream(k=20, horizon=100)
+cluster(dsc, dsd, 500)
 dsc
 
 # plot micro-clusters
 plot(dsc, dsd)
 
-# reclustering. CluStream uses weighted k-means
+# reclustering. Use weighted k-means for CluStream
 kmeans <- DSC_Kmeans(k=3, weighted=TRUE)
-recluster(kmeans,dsc)
-plot(kmeans, dsd)
+recluster(kmeans, dsc)
+plot(kmeans, dsd, type="both")
 }
