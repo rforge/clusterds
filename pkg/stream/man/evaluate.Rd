@@ -140,47 +140,45 @@ Clustering of Data Streams at Multiple Resolutions, 3(3).
             \code{\link{animate_cluster}},
             \code{\link[clue]{cl_agreement}} in \pkg{clue}.
 }
-
+ 
 
 \examples{
 # Create stream
 set.seed(0)
 dsd <- DSD_GaussianStatic(k=3, d=2)
 
-micro <- DSC_DStream(gridsize=0.1)
-cluster(micro, dsd, 500)
-plot(micro, dsd)
+dstream <- DSC_DStream(gridsize=0.1)
+cluster(dstream, dsd, 500)
+plot(dstream, dsd)
 # Evaluate micro-clusters 
 # Note: we use here only n=500 points for evaluation to speed up execution
-evaluate(micro, dsd, method=c("numMicro","numMacro","purity","crand"), n=500)
+evaluate(dstream, dsd, method=c("numMicro","numMacro","purity","crand"), n=500)
 
-macro <- DSC_Kmeans(k=3)
-recluster(macro, micro)
-plot(macro, dsd)
-# Evaluate macro-clusters by assigning to micro-clusters
-evaluate(macro, dsd, method=c("purity","crand"), n=500)
-# Evaluate macro-clusters by assigning to macro-clusters
-# This gives a similar result as the micro-cluster assignment since
-# the real clusters are spherical (multidimensional Gaussians).
-evaluate(macro, dsd, method=c("numMicro","numMacro","purity","crand"), 
-  n=500, assign="macro")
+# DStream also provides macro clusters. Evaluate macro clusters with type="macro"
+plot(dstream, dsd, type="macro")
+evaluate(dstream, dsd, type ="macro", 
+  method=c("numMicro","numMacro","purity","crand"), n=500)
 
+# Points are by default assigned to the closest micro clusters for evalution. 
+# However, points can also be assigned to the closest macro-cluster using
+# assign="macro".
+evaluate(dstream, dsd, type ="macro", assign="macro",
+  method=c("numMicro","numMacro","purity","crand"), n=500)
 
 # Evaluate an evolving data stream
 dsd <- DSD_GaussianMoving()
-micro <- DSC_DStream(gridsize=0.05, lambda=0.1,  gaptime=20)
-macro <- DSC_Hierarchical(h=0.1+1e-9, method="single")
-evaluate_cluster(micro, dsd, macro, 
-            method=c("numMicro","numMacro","purity","crand"), n=600, 
-            horizon=100, assign="micro")
+dstream <- DSC_DStream(gridsize=0.05, lambda=0.1)
+evaluate_cluster(dstream, dsd, type="macro", assign="micro",
+  method=c("numMicro","numMacro","purity","crand"), 
+  n=600, horizon=100)
 
 \dontrun{
 # animate the clustering process
 reset_stream(dsd)
-micro <- DSC_DStream(gridsize=0.05, lambda=0.1, gaptime=20)
-macro <- DSC_Hierarchical(h=0.1+1e-9, method="single")
-animate_cluster(micro, dsd, macro, n=600,
-	evaluationMethod=c("crand"), pointInterval=20, 
-	xlim=c(-.2,1.2), ylim=c(-.2,1.2))
+dstream <- DSC_DStream(gridsize=0.1, lambda=0.1)
+animate_cluster(dstream, dsd, 
+  n=600, pointInterval=20, 
+  evaluationMethod=c("crand"), evaluationType="macro", evaluationAssign="micro",
+  type="both", xlim=c(-.2,1.2), ylim=c(-.2,1.2))
 }
 }

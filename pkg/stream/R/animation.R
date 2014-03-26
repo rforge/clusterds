@@ -20,11 +20,13 @@
 
 animate_cluster <- function(dsc, dsd, macro=NULL, n=1000,
   interval=.1, pointInterval=100, horizon=5*pointInterval, 
-  evaluationMethod=NULL, ...) {
+  evaluationMethod=NULL, evaluationType="micro", evaluationAssign="micro", 
+  ...) {
   
   cluster.ani(dsc, dsd, macro, n, interval, 
     pointInterval, horizon, 
-    evaluationMethod,...)
+    evaluationMethod, evaluationType, evaluationType, 
+    ...)
 }
 
 animate_data <- function(dsd, n=1000, 
@@ -37,8 +39,8 @@ animate_data <- function(dsd, n=1000,
 
 
 cluster.ani <- function(dsc=NULL, dsd, macro=NULL, n=1000,
-                        interval=.1, pointInterval=100, horizon=5*pointInterval, 
-                        evaluationMethod=NULL, ...) {
+  interval=.1, pointInterval=100, horizon=5*pointInterval, 
+  evaluationMethod=NULL, evaluationType="micro", evaluationAssign="micro", ...) {
   
   animation::ani.record(reset = TRUE)
   
@@ -85,26 +87,27 @@ cluster.ani <- function(dsc=NULL, dsd, macro=NULL, n=1000,
         reset_stream(points_dsd)
         
         evaluation[i/pointInterval,2] <- evaluate(cl,points_dsd,
-          evaluationMethod,n=nrow(points),...)
-
+          method=evaluationMethod, type=evaluationType, 
+          assign=evaluationAssign, n=nrow(points))
+        
         reset_stream(points_dsd)
       }
       
       par(mar=c(4.1,4.1,2.1,2.1))
       if(!is.null(dsc)) {
         plot(cl, points_dsd,
-             n=nrow(points),
-             col_points=col[horizon-nrow(points)+1: horizon],...)
+          n=nrow(points),
+          col_points=col[horizon-nrow(points)+1: horizon],...)
       } else {
         plot(points_dsd,
-             n=nrow(points),...)
+          n=nrow(points),...)
       }
       
       ## eval part 2
       if(!is.null(evaluationMethod)) {
         par(mar=c(2.1,4.1,1.1,2.1))
         plot(evaluation, type="l", col="blue",
-             ylim=c(0,1), xlim=c(1,n), ann=FALSE) 
+          ylim=c(0,1), xlim=c(1,n), ann=FALSE) 
         title(ylab=evaluationMethod)
       }
       

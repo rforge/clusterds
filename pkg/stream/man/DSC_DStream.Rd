@@ -88,9 +88,9 @@ dstream
 nclusters(dstream)
 head(get_centers(dstream))
 
-# plot
+# plot (DStream provides additional type="image")
 plot(dstream, dsd)
-plot(dstream, image=TRUE)
+plot(dstream, type="image")
 
 # standard D-Stream uses reachability
 nclusters(dstream, type="macro")

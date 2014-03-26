@@ -1,5 +1,6 @@
 \name{animation}
 \alias{animate}
+\alias{animation}
 \alias{animate_data}
 \alias{animate_cluster}
 \title{Animates the plotting of a DSD and the clustering process}
@@ -10,10 +11,11 @@ Generates an animation of a data stream or a data steam clustering.
 
 \usage{
 animate_data(dsd, n=1000, interval=.1, 
-    pointInterval=100, horizon=5*pointInterval,...)
+    pointInterval=100, horizon=5*pointInterval, ...)
 animate_cluster(dsc, dsd, macro=NULL, n=1000, interval=.1, 
     pointInterval=100, horizon=5*pointInterval, 
-    evaluationMethod=NULL,...)
+    evaluationMethod=NULL, evaluationType="micro", evaluationAssign="micro", 
+    ...)
 }
 
 \arguments{
@@ -25,6 +27,9 @@ animate_cluster(dsc, dsd, macro=NULL, n=1000, interval=.1,
   \item{pointInterval}{the number of new points needed before a new frame is created}
   \item{horizon}{the max number of data points to be shown at a time}
   \item{evaluationMethod}{the evaluation method that should be graphed below the animation}
+  \item{evaluationType}{evaluate "micro" or "macro"-clusters?}
+  \item{evaluationAssign}{assign new points to the closest "micro" or "macro"-cluster
+    to calculate the evaluation measure.}
   \item{...}{extra arguments for plot.}
 }
 
@@ -54,21 +59,22 @@ ani.replay()
 ### animations can also be saved as HTML, animated gifs, etc.
 saveHTML(ani.replay())  
   
-### Note: type is a parameter passed on to plot (for DSC)
-dsc <- DSC_tNN(r=.1, lambda=.03, decay_interval=1, shared_density=TRUE,
-  alpha=.2, minweight=.1)
-
+### animate the clustering process 
 reset_stream(dsd)
-animate_cluster(dsc, dsd, n=500, interval=.01,
-       pointInterval=10, xlim=c(-.5,1.5),ylim=c(-.5,1.5), 
-       type="macro")
+dsc <- DSC_tNN(r=.2, lambda=.1, shared_density=TRUE,
+  alpha=.2)
 
-dsc <- DSC_tNN(r=.1, lambda=.03, decay_interval=1, shared_density=TRUE,
-  alpha=.2, minweight=.1)  
+animate_cluster(dsc, dsd, n=600, interval=.1, pointInterval=10, 
+  # the following are arguments for plot
+  xlim=c(-.5,1.5), ylim=c(-.5,1.5), type="shared")
 
-  reset_stream(dsd)
-animate_cluster(dsc, dsd, n=500, interval=.01,
-       pointInterval=10, xlim=c(-.5,1.5),ylim=c(-.5,1.5), 
-       type="macro", evaluationMethod="crand")
+### animate the clustering process with evaluation
+reset_stream(dsd)
+dsc <- DSC_tNN(r=.2, lambda=.1, shared_density=TRUE,
+  alpha=.2)  
+
+animate_cluster(dsc, dsd, n=600, interval=.1, pointInterval=10, 
+  evaluationMethod="crand", evaluationType="macro", evaluationAssign="micro",
+  xlim=c(-.5,1.5),ylim=c(-.5,1.5), type="shared")
 }
 }

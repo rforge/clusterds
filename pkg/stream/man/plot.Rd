@@ -57,7 +57,7 @@ plot(dsd, n=500)
 ## create and plot micro-clusters
 denstream <- DSC_DenStream(epsilon=0.05, initPoints=100)
 cluster(denstream, dsd, 500)
-plot(micro)
+plot(denstream)
 
 ## plot on data
 plot(denstream, dsd)

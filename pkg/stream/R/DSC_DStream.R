@@ -440,8 +440,11 @@ microToMacro.DSC_DStream <- function(x, micro=NULL, ...)
   x$RObj$microToMacro(micro=micro, ...)
 
 ### add plot as an image
-plot.DSC_DStream <- function(x, ..., image=FALSE) {
-  if(!image) return(plot.DSC(x, ...))
+plot.DSC_DStream <- function(x, ...) {
+  ### find type
+  type <- list(...)$type
+  
+  if(is.null(type) || !pmatch(tolower(type), "image", nomatch=0)) return(plot.DSC(x, ...))
   
   if(x$RObj$d!=2) stop("Image visualization only works for 2D data!") 
   
