@@ -28,6 +28,7 @@ export(
   DSC_Kmeans,
 	DSC_DBSCAN,
 	DSC_Hierarchical,
+  DSC_Reachability,
 	
 	# DSD
 	DSD_Wrapper,

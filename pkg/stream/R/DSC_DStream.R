@@ -54,8 +54,8 @@ DStream <- setRefClass("DStream",
       d = NA_integer_,
       lambda = 1e-3,
       gaptime = 1000L,
-      Cm = 1,
-      Cl = .5,
+      Cm = 3,
+      Cl = .8,
       attraction = FALSE,
       epsilon = .3,
       Cm2 = 3,
@@ -88,8 +88,8 @@ DStream <- setRefClass("DStream",
 
 
 DSC_DStream <- function(gridsize, d=NA_integer_, lambda = 1e-3, 
-  gaptime=1000L, Cm=1, Cl=.5, attraction=FALSE, epsilon=.3, 
-  Cm2=3, k=NULL) {
+  gaptime=1000L, Cm=3, Cl=.8, attraction=FALSE, epsilon=.3, 
+  Cm2=Cm, k=NULL) {
   
   dstream <- DStream$new(gridsize, as.integer(d), lambda, 
     as.integer(gaptime), Cm, Cl, as.logical(attraction), epsilon, Cm2, k)
@@ -317,12 +317,16 @@ DStream$methods(list(
     
     if(grid_type=="transitional") {
       ### sparse grid threshold 0<Cl<1 -> Dl = Cl/(N*(1-decay_factor))
-      take <- ws > Cl/N/(1-decay_factor)
+      #take <- ws > Cl/N/(1-decay_factor)
+      ### for small t we use the exact total weight!
+      take <- ws > Cl/N * (1-decay_factor^(npoints+1L))/(1-decay_factor)
       coords <- coords[take,]
       ws <- ws[take]
     } else if(grid_type=="dense") {
       ### dense grid threshold Cm > 1 -> Dm = Cm/(N*(1-decay_factor))
-      take <- ws > Cm/N/(1-decay_factor)
+      ### for small t we use the exact total weight!
+      #take <- ws > Cm/N/(1-decay_factor)
+      take <- ws > Cm/N * (1-decay_factor^(npoints+1L))/(1-decay_factor)
       coords <- coords[take,]
       ws <- ws[take]
     }
@@ -375,7 +379,8 @@ DStream$methods(list(
       }else{ ### use adjacency 
         mcs <- get_micro(grid_type=grid_type)
         d_pos <- dist(mcs)
-        assignment <- cutree(hclust(d_pos, method="single"), h=gridsize[1]+1e-9)
+        assignment <- cutree(hclust(d_pos, method="single"), 
+          h=gridsize[1]+gridsize[1]*1e-9)
       }
     }
     

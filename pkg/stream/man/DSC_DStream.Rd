@@ -10,7 +10,7 @@
 
 \usage{
 DSC_DStream(gridsize, d=NA_integer_, lambda = 1e-3, 
-   gaptime=1000L, Cm=1, Cl=.5, attraction=FALSE, epsilon=.3, Cm2=3, k=NULL)
+   gaptime=1000L, Cm=3, Cl=.8, attraction=FALSE, epsilon=.3, Cm2=Cm, k=NULL)
 get_attraction(x, dist=FALSE, relative=FALSE)
 }
 
