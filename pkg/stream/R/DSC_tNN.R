@@ -62,8 +62,16 @@ tNN <- setRefClass("tNN",
       shared_density		= FALSE,
       alpha 		= 0,
       k		= 0,
-      minweight	= 0.1
+      minweight	= 0
     ) {
+
+      if(alpha <0 || alpha>1) stop("alpha needs to be in [0,1]")
+      if(noise <0 || noise>1) stop("noise needs to be in [0,1]")
+      if(lambda <0 || lambda>1) stop("lambda needs to be in [0,1]")
+      if(minweight <0 ||minweight>1) stop("minweight needs to be in [0,1]")
+      
+      gap_time <- as.integer(gap_time)
+      if(gap_time<1) stop("gap_time needs to be 1, 2, 3,...")
       
       relations 		<<- hash()
       r			<<- r
@@ -96,11 +104,18 @@ tNN <- setRefClass("tNN",
 
 DSC_tNN <- function(r, lambda = 1e-3,  gap_time=1000L, noise = 0.01, 
   measure = "Euclidean", 
-  shared_density = FALSE, alpha = 0.25, k=0, minweight = 0) {
+  shared_density = FALSE, alpha = 0, k=0, minweight = 0) {
   
   tNN <- tNN$new(r, lambda, as.integer(gap_time), 
     noise, measure, shared_density, alpha, k, minweight)
-  l <- list(description = "tNN", RObj = tNN)
+  
+  l <- list(
+    description = "tNN", 
+    RObj = tNN,
+    macro = new.env()
+    )
+  
+  l$macro$newdata <- FALSE
   class(l) <- c("DSC_tNN", "DSC_Micro", "DSC_R", "DSC")
   l
 }
@@ -310,13 +325,30 @@ tNN$methods(list(
     s
   },
   
-  get_membership_weights = function() {
+ 
+  get_microclusters = function() {
+    ### we have to rename the micro-clusters
+    mc <- centers
+    mc <- mc[strong_mcs(),]
+    rownames(mc) <- NULL
+    
+    if(nrow(mc)<1) return(data.frame())
+    
+    mc
+  },
+  
+  get_microweights = function() {
+    get_current_weights()[strong_mcs()]
+  },
+  
+  get_macro_clustering = function() {
     mcs <- get_microclusters()
     w <- get_microweights()
     nclusters <- nrow(mcs)
     
-    if(nclusters < 1L) return(list(assignment=integer(0L), weight=numeric(0L)))
-    if(nclusters == 1L) return(list(assignment=1L, weight=w[1L]))
+    if(nclusters < 1L) 
+      return(list(centers=data.frame(), microToMacro=integer(0L), weight=numeric(0L)))
+    if(nclusters == 1L) return(list(centers=mcs, microToMacro=1L, weight=w[1L]))
     
     if(shared_density) { ### use shared density
       s <- get_shared_density()
@@ -328,7 +360,7 @@ tNN$methods(list(
         d <- 1/(1+s)
         
         hc <- hclust(d, method="single")
-        ### find unconnected components
+        ### find connected components
         assignment <- cutree(hc, h=1-1e-9)
         
         ### not enought components?
@@ -352,87 +384,67 @@ tNN$methods(list(
         assignment <- cutree(hclust(d, method="single"), h=.5)
       }
       
-      ### aggregate macro-cluster weights
-      w <- aggregate(w, by=list(assignment), FUN=sum)$x
+   
+    }else{ ### use adjacent clusters overlap by alpha (packing factor)
+      d_pos <- dist(mcs, method=distFun)
+      ### alpha = 0 -> 2r (default)
+      ### alpha = 1 -> r
+      h <- r + r*(1-alpha)
+      assignment <- cutree(hclust(d_pos, method="single"), h=h)
       
-      ### deal with minweight
-      #if(alpha>0) {
-      #  if(k>0 && length(w)>k) {
-      #    take <- order(w, decreasing=TRUE)[1:k]
-      #    w <- w[take]
-      #    assignment <- match(assignment, take)
-      #  }
-      if(minweight>0) {
-        take <- which(w>=(minweight*sum(w)))
-        w <- w[take]
-        assignment <- match(assignment, take)
+      ### use k if we don't get enough components!
+      if(length(unique(assignment)) < k) {
+        assignment <- cutree(hclust(d_pos, method="single"), k=k)
       }
-      #}
-    }else{ ### use adjacent (touching) clusters
-      mcs <- get_microclusters()
-      d_pos <- dist(mcs)
-      assignment <- cutree(hclust(d_pos, method="single"), h=2*r[1])
+    }
+   
+    ### use minweight filtering of macro-clusters
+    if(minweight>0) {
+      w_macro <- aggregate(w, by=list(assignment), FUN=sum)$x
+      take <- which(w_macro>=(minweight*sum(w_macro)))
+      assignment <- match(assignment, take)
     }
     
-    return(list(assignment=assignment, weight=w))
-  },
-  
-  get_microclusters = function() {
-    ### we have to rename the micro-clusters
-    mc <- centers
-    mc <- mc[strong_mcs(),]
-    rownames(mc) <- NULL
+    ### find centroids
+    macro <- .centroids(mcs, w, assignment)
+    macro$microToMacro <- assignment
     
-    if(nrow(mc)<1) return(data.frame())
-    
-    mc
-  },
-  
-  get_microweights = function() {
-    get_current_weights()[strong_mcs()]
-  },
-  
-  get_macroclusters = function() {
-    
-    mcs <- get_microclusters()
-    if(nrow(mcs)<1) return(data.frame())
-    
-    mcw <- get_microweights()
-    
-    mw <-  get_membership_weights()
-    assignment <- mw$assignment
-    uniqueassign <- na.omit(unique(assignment))
-    
-    if(length(uniqueassign) <1) return(data.frame())
-    
-    
-    
-    ### find weighted centroids
-    as.data.frame(t(sapply(uniqueassign, FUN=function(i) {
-      take <- which(assignment==i)
-      colSums(mcs[take,]*mcw[take])/sum(mcw[take])	
-    })))
-  },
-  
-  get_macroweights = function() {
-    get_membership_weights()$weight
-  },
-  
-  microToMacro = function(micro=NULL) {
-    if(is.null(micro)) micro <- 1:nrow(get_microclusters()) ### is nclusters
-    mw <- get_membership_weights()
-    
-    structure(mw$assignment[micro], names=micro)
+    macro
   }
 ))
 
 get_microclusters.DSC_tNN <- function(x) x$RObj$get_microclusters()
 get_microweights.DSC_tNN <- function(x) x$RObj$get_microweights()
 
-get_macroclusters.DSC_tNN <- function(x) x$RObj$get_macroclusters()
-get_macroweights.DSC_tNN <- function(x) x$RObj$get_macroweights()
+get_macroclusters.DSC_tNN <- function(x) {
+  if(x$macro$newdata) {
+    x$macro$macro <- x$RObj$get_macro_clustering()
+    x$macro$newdata <- FALSE
+  }
 
-microToMacro.DSC_tNN <- function(x, micro=NULL) x$RObj$microToMacro(micro=micro)
+  x$macro$macro$centers
+}
+  
+get_macroweights.DSC_tNN <- function(x) {
+  if(x$macro$newdata) {
+    x$macro$macro <- x$RObj$get_macro_clustering()
+    x$macro$newdata <- FALSE
+  }
+  
+  x$macro$macro$weights
+}
+
+microToMacro.DSC_tNN <- function(x, micro=NULL){
+  if(x$macro$newdata) {
+    x$macro$macro <- x$RObj$get_macro_clustering()
+    x$macro$newdata <- FALSE
+  }
+  
+  assignment <- x$macro$macro$microToMacro
+  if(!is.null(micro)) assignment <- assignment[micro]
+  assignment
+}
+
 get_shared_density <- function(x, matrix=FALSE) x$RObj$get_shared_density(matrix=matrix)
 
 ### special plotting for DSC_tNN

@@ -26,34 +26,26 @@
 # -i initPoints	10000 (number of points to use for initialization)
 
 
-DSC_DenStream <- function(epsilon, beta=0.001, mu=1, 
-  initPoints=100, minPoints=10, 
-  horizon=1000, lambda=NULL, macro=TRUE) {
+DSC_DenStream <- function(epsilon,  mu=1, beta=0.001, lambda=0.001,
+  initPoints=100, minPoints=10) {
   
-  if (horizon < 1)
-    stop("invalid horizon, range: >= 1")
+  ### note: we do not use horizon!
+  horizon <- 1000
+  if (horizon < 1) stop("invalid horizon, range: >= 1")
+  if (epsilon <= 0) stop("invalid epsilon")
+  if (minPoints < 0) stop("invalid minPoints, must be > 0")
+  if (beta <= 0 || beta >= 1) stop("invalid beta, range: 0 < beta < 1 ")
+  if (mu <= 0) stop("invalid mu, must be > 0")
+  if (initPoints < 0) stop("invalid initPoints, must be > 0")
   
-  if (epsilon <= 0)
-    stop("invalid epsilon")
-  
-  if (minPoints < 0)
-    stop("invalid minPoints, must be > 0")
-  
-  if (beta <= 0 || beta >= 1)
-    stop("invalid beta, range: 0 to 1 exclusive")
-  
-  if (mu <= 0)
-    stop("invalid mu, must be > 0")
-  
-  if (initPoints < 0)
-    stop("invalid initPoints, must be > 0")
-  
-  paramList <- list(h = horizon,
+  paramList <- list(
+    h = horizon,
     e = epsilon,
     p = minPoints,
     b = beta,
     m = mu,
-    i = initPoints)
+    i = initPoints
+    )
   
   # converting the param list to a cli string to use in java
   cliParams <- convert_params(paramList)
@@ -64,41 +56,49 @@ DSC_DenStream <- function(epsilon, beta=0.001, mu=1,
   .jcall(options, "V", "setViaCLIString", cliParams)
   .jcall(clusterer, "V", "prepareForUse")
   
-  # overwrite lambda
+  # overwrite lambda (this might not be necessary in the next version of MOA)
   if(!is.null(lambda))
     .jfield(clusterer,"lambda")<-lambda
   
   # initializing the R object
-  l <- list(description = "DenStream",
+  l <- list(
+    description = "DenStream",
     options = cliParams,
     javaObj = clusterer,
-    eps = epsilon,
-    macro = macro)
+    macro = new.env(),
+    eps = epsilon
+    )
+  
+  l$macro$newdata <- FALSE
+  l$macro$macro <-DSC_Hierarchical(h=(2+1e-9)*epsilon, method="single") 
   
   class(l) <- c("DSC_DenStream","DSC_Micro","DSC_MOA","DSC")
   l
 }
 
 get_macroclusters.DSC_DenStream <- function(x) {
-  if(! x$macro) stop("Not implemented yet!")
+  if(x$macro$newdata) {
+    recluster(x$macro$macro, x, overwrite=TRUE)
+    x$macro$newdata <- FALSE
+  }
   
-  macro <- DSC_Hierarchical(h=2*x$eps+1e-9, method="single")
-  recluster(macro, x)
-  get_centers(macro, type="macro")
+  get_centers(x$macro$macro, type="macro")
 }
 
 get_macroweights.DSC_DenStream <- function(x) {
-  if(! x$macro) stop("Not implemented yet!")
+  if(x$macro$newdata) {
+    recluster(x$macro$macro, x, overwrite=TRUE)
+    x$macro$newdata <- FALSE
+  }
   
-  macro <- DSC_Hierarchical(h=2*x$eps+1e-9, method="single")
-  recluster(macro, x)
-  get_weights(macro, type="macro")
+  get_weights(x$macro$macro, type="macro")
 }
 
 microToMacro.DSC_DenStream <- function(x, micro=NULL) {
-  if(! x$macro) stop("Not implemented yet!")
-  
-  macro <- DSC_Hierarchical(h=2*x$eps+1e-9, method="single")
-  recluster(macro, x)
-  microToMacro(macro, micro)  
+  if(x$macro$newdata) {
+    recluster(x$macro$macro, x, overwrite=TRUE)
+    x$macro$newdata <- FALSE
+  }
+
+  microToMacro(x$macro$macro, micro)  
 }

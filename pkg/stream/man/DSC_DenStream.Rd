@@ -7,24 +7,20 @@
 Class implements the DenStream cluster algorithm for data streams.
 }
 \usage{
-DSC_DenStream(epsilon, beta = 0.001, mu = 1, 
-    initPoints = 100, minPoints = 10, 
-    horizon = 1000, lambda = NULL, macro=TRUE)
+DSC_DenStream(epsilon, mu = 1, beta = 0.001, lambda = 0.001,
+    initPoints = 100, minPoints = 10)
 }
 
 \arguments{
   \item{epsilon}{defines the epsilon-neighborhood in which the 
   density of each micro-cluster is calculated (i.e.,
-  the radius).}
-  \item{beta}{the outlier threshold, used in conjunction with \code{mu}
-  (range: 0 to 1)} 
-  \item{mu}{the weight a micro-cluster must exceed mu times beta (range: 0 to max(double)).}
+  the maximal radius).}
+  \item{mu}{minimum weight for core-micro-clusters (w>=mu). Range: 0 to max(double).}
+  \item{beta}{multiplier for mu to detect outlier micro-clusters (w<beta x mu). 
+  Range: 0 to 1} 
+  \item{lambda}{decay constant.}
   \item{initPoints}{number of points to use for initialization via DBSCAN.}
   \item{minPoints}{minimum number of points to form initial micro-clusters using DBSCAN.}
-  \item{horizon}{used to compute lambda.}
-  \item{lambda}{override computed lambda (decay).}
-  \item{macro}{if macro is set to \code{TRUE} then macro clusters are generated
-    using density reachability described in the DenStream paper below. }
 }
 
 \details{
@@ -57,7 +53,7 @@ set.seed(0)
 # 3 clusters with 5% noise
 dsd <- DSD_GaussianStatic(k=3, noise=0.05)
 
-dsc <- DSC_DenStream(epsilon=.05,minPoints=3,initPoints=100)
+dsc <- DSC_DenStream(epsilon=.05)
 cluster(dsc, dsd, 500)
 dsc
 

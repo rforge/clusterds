@@ -10,7 +10,7 @@
 \usage{
 DSC_tNN(r, lambda = 0.001, gap_time = 1000L, 
   noise = 0.01, measure = "Euclidean", 
-	shared_density = FALSE, alpha=0.25, k=0, minweight = 0)
+	shared_density = FALSE, alpha=0, k=0, minweight = 0)
 get_shared_density(x, matrix=FALSE)  
 }
 
@@ -24,10 +24,11 @@ get_shared_density(x, matrix=FALSE)
 	(see package \pkg{proxy}).}
   \item{shared_density}{Record shared density information. If set to \code{TRUE}
     then shared density is used for reclustering, otherwise reachability is
-    used (overlapping clusters with less than 2r distance are clustered together). }
+    used (overlapping clusters with less than \eqn{r*(1-alpha)} distance are clustered together). }
 	\item{k}{The number of macro clusters to be returned if macro is true.}
-  \item{alpha}{The minimum proportion of shared points between to 
-    clusters to warrant combining them.}
+  \item{alpha}{For shared density: The minimum proportion of shared points between to 
+    clusters to warrant combining them (a suitable value for 2D data is .3). 
+    For reachability clustering it is a distance factor.}
   \item{minweight}{The minimum number of weight a micro-cluster
     needs to have.}
   \item{x}{A DSC_tNN object to get the shared density information from.}
@@ -41,7 +42,7 @@ any existing micro-clusters, and if so, merges the point with the
 micro-cluster. Otherwise, a new micro-cluster is created to accommodate 
 the new data point.
 
-Note: Although DSC_tNN is a micro clustering algoritm, macro clusters
+Note: Although DSC_tNN is a micro clustering algorithm, macro clusters
 and weights are available.
 
 }

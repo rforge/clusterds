@@ -46,17 +46,17 @@ plot(hierarchical, dsd)
 
 # Hierarchical can also recluster micro-clusters
 dsc <- DSC_tNN(r=.2)
-cluster(dsc, dsd, 1000)
+cluster(dsc, dsd, 500)
 
 # reclustering by specifying k
 hierarchical <- DSC_Hierarchical(k=3, method="single")
 recluster(hierarchical, dsc)
 hierarchical
-plot(hierarchical, dsd)
+plot(hierarchical, dsd, type="both")
 
 # reclustering by specifying height
-hierarchical <- DSC_Hierarchical(h=.25, method="single")
+hierarchical <- DSC_Hierarchical(h=.4, method="single")
 recluster(hierarchical, dsc)
 hierarchical
-plot(hierarchical, dsd)
+plot(hierarchical, dsd, type="both")
 }

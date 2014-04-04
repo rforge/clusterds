@@ -8,7 +8,7 @@
     }
 
 \usage{
-DSC_CluStream(k = 100, horizon = 1000, t = 2)
+DSC_CluStream(k = 100, horizon = 1000, t = 2, k_macro=NULL)
 }
 
 \arguments{
@@ -19,6 +19,8 @@ DSC_CluStream(k = 100, horizon = 1000, t = 2)
   micro-cluster, the maximum boundary is defined as a factor of \code{t} of the
   RMS deviation of the data points in the micro-cluster from the centroid. 
   }
+  \item{k_macro}{Number of macro-clusters to produce using weighted k-means. \code{NULL}
+  disables automatic reclustering.}
 }
 
 \details{
@@ -55,7 +57,7 @@ set.seed(0)
 dsd <- DSD_GaussianStatic(k=3)
 
 # cluster with CluStream  
-dsc <- DSC_CluStream(k=20, horizon=100)
+dsc <- DSC_CluStream(k=20)
 cluster(dsc, dsd, 500)
 dsc
 
@@ -66,4 +68,11 @@ plot(dsc, dsd)
 kmeans <- DSC_Kmeans(k=3, weighted=TRUE)
 recluster(kmeans, dsc)
 plot(kmeans, dsd, type="both")
+  
+# use k-means automatically
+dsc <- DSC_CluStream(k=20, k_macro=3)
+cluster(dsc, dsd, 500)
+dsc
+
+plot(dsc, dsd, type="both")
 }

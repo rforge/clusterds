@@ -45,7 +45,8 @@
 DSC_CluStream <- function(
   k=100,
   horizon=1000, 
-  t=2
+  t=2,
+  k_macro=NULL
 ) {
   
   if (horizon < 0)
@@ -68,12 +69,50 @@ DSC_CluStream <- function(
   .jcall(clusterer, "V", "prepareForUse")
   
   # initializing the R object
-  l <- list(description = "CluStream",
+  l <- list(
+    description = "CluStream",
     options = cliParams,
-    javaObj = clusterer
+    javaObj = clusterer,
+    macro = new.env()
   )
+  
+  l$macro$newdata <- FALSE
+  if(!is.null(k_macro)) l$macro$macro <-DSC_Kmeans(k=k_macro, weighted=TRUE, nstart=5) 
   
   class(l) <- c("DSC_CluStream","DSC_Micro","DSC_MOA","DSC")
   
   l
+}
+
+get_macroclusters.DSC_CluStream <- function(x) {
+  if(is.null(x$macro$macro)) stop("No k_macro set!")
+  
+  if(x$macro$newdata) {
+    recluster(x$macro$macro, x, overwrite=TRUE)
+    x$macro$newdata <- FALSE
+  }
+  
+  get_centers(x$macro$macro, type="macro")
+}
+
+get_macroweights.DSC_CluStream <- function(x) {
+  if(is.null(x$macro$macro)) stop("No k_macro set!")
+
+  if(x$macro$newdata) {
+    recluster(x$macro$macro, x, overwrite=TRUE)
+    x$macro$newdata <- FALSE
+  }
+  
+  get_weights(x$macro$macro, type="macro")
+}
+
+microToMacro.DSC_CluStream <- function(x, micro=NULL) {
+  if(is.null(x$macro$macro)) stop("No k_macro set!")
+
+  if(x$macro$newdata) {
+    recluster(x$macro$macro, x, overwrite=TRUE)
+    x$macro$newdata <- FALSE
+  }
+  
+  microToMacro(x$macro$macro, micro)  
 }

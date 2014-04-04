@@ -93,7 +93,14 @@ DSC_DStream <- function(gridsize, d=NA_integer_, lambda = 1e-3,
   
   dstream <- DStream$new(gridsize, as.integer(d), lambda, 
     as.integer(gaptime), Cm, Cl, as.logical(attraction), epsilon, Cm2, k)
-  l <- list(description = "DStream", RObj = dstream)
+  
+  l <- list(
+    description = "DStream", 
+    RObj = dstream,
+    macro = new.env()
+    )
+  
+  l$macro$newdata <- FALSE
   class(l) <- c("DSC_DStream", "DSC_Micro", "DSC_R", "DSC")
   l
 }
@@ -216,9 +223,14 @@ DStream$methods(list(
     coords <- get_micro(weight=TRUE, translate=FALSE, grid_type=grid_type)
     
     ns <- (maxs-mins)+1L
-    mat <- matrix(NA, nrow=ns[1], ncol=ns[2])
+    mat <- matrix(0, nrow=ns[1], ncol=ns[2])
+
+    ### coords can be negative!
+    coords[,1] <- coords[,1] - mins[1]+1L
+    coords[,2] <- coords[,2] - mins[2]+1L
+    
     for(i in 1:nrow(coords)) {
-      mat[coords[i,1]-mins[1]+1L, coords[i,2]-mins[2]+1L] <- coords[["weight"]][i]
+      mat[coords[i,1], coords[i,2]] <- coords[["weight"]][i]
     }
     
     rownames(mat) <- (mins[1]:maxs[1]) * gridsize[1]+gridsize[1]/2
@@ -343,7 +355,7 @@ DStream$methods(list(
     
     if(nrow(mcs) == 1) { ### single mc
       assignment <- 1L
-      names(assignemnt) <- rownames(mcs)
+      names(assignment) <- rownames(mcs)
     } else{ 
       
       if(attraction) { ### use attraction
@@ -356,8 +368,9 @@ DStream$methods(list(
           ### find unconnected components
           assignment <- cutree(hc, h=0-1e-9)
           
+          maxk <- min(k, nrow(mcs))
           ### not enought components?
-          if(length(unique(assignment)) < k) assignment <- cutree(hc, k=k)
+          if(length(unique(assignment)) < maxk) assignment <- cutree(hc, k=maxk)
           
           ### FIXME: If k>number of connected components then components would
           ###  be merged randomly! So we add for these the regular distance!      
@@ -390,40 +403,28 @@ DStream$methods(list(
     structure(assignment, names=micro)
   },
   
-  get_macro = function(weight=FALSE) {
-    #if(!attraction) stop("No attraction values stored. Create DSC_DStream with attraction=TRUE.")
+  get_macro_clustering = function() {
     
     mcs <- get_micro(weight=TRUE)
     
     ### no mcs
-    if(nrow(mcs) < 1) {
-      if(weight) return(data.frame(weight=numeric(0)))
-      else return(data.frame())
-    }
+    if(nrow(mcs) < 1)
+      return(list(centers=data.frame(), weights=numeric(0), microToMacro=integer(0)))
     
     ### single mc
-    if(nrow(mcs) == 1) {
-      if(weight) return(mcs)
-      else return(mcs[,-ncol(mcs)])
-    }
+    if(nrow(mcs) == 1)
+      return(centers=mcs, weights=mcs[,-ncol(mcs)], microToMacro=structure(1L, names="1"))
     
+    ### general case
     mc <- mcs[,-ncol(mcs)]
     w <- mcs[,ncol(mcs)]
     m2m <- microToMacro(grid_type="dense")
     
-    m_ids <- sort(unique(m2m), decreasing=FALSE)
     ### find centroids
-    centers <- as.data.frame(t(as.data.frame(sapply(m_ids, FUN=function(i) 
-      colMeans(mc[m2m==i,])))))
+    macro <- .centroids(mc, w, m2m)
+    macro$microToMacro <- m2m 
     
-    ### find weights
-    if(weight) {
-      ws <- sapply(m_ids, FUN=function(i) sum(w[m2m==i]))
-      centers[["weight"]] <- ws
-    }
-    
-    rownames(centers) <- NULL
-    centers
+    macro
   }
 )
 )
@@ -437,28 +438,63 @@ get_microweights.DSC_DStream <- function(x, ...)
 get_attraction <- function(x, dist=FALSE, relative=FALSE) 
   x$RObj$get_attraction(dist=dist, relative=relative)
 
-get_macroclusters.DSC_DStream <- function(x, ...) 
-  x$RObj$get_macro(weight=FALSE, ...)
-get_macroweights.DSC_DStream <- function(x, ...) 
-  x$RObj$get_macro(weight=TRUE, ...)[["weight"]]
-microToMacro.DSC_DStream <- function(x, micro=NULL, ...) 
-  x$RObj$microToMacro(micro=micro, ...)
+get_macroclusters.DSC_DStream <- function(x, ...){
+  if(x$macro$newdata) {
+    x$macro$macro <- x$RObj$get_macro_clustering()
+    x$macro$newdata <- FALSE
+  }
+  
+  x$macro$macro$centers
+}
+  
+get_macroweights.DSC_DStream <- function(x, ...) {
+  if(x$macro$newdata) {
+    x$macro$macro <- x$RObj$get_macro_clustering()
+    x$macro$newdata <- FALSE
+  }
+  
+  x$macro$macro$weights
+}
+  
+microToMacro.DSC_DStream <- function(x, micro=NULL, ...) {
+  if(x$macro$newdata) {
+    x$macro$macro <- x$RObj$get_macro_clustering()
+    x$macro$newdata <- FALSE
+  }
+  
+  assignment <- x$macro$macro$microToMacro
+  if(!is.null(micro)) assignment <- assignment[micro]
+  assignment
+}
 
 ### add plot as an image
-plot.DSC_DStream <- function(x, ...) {
+plot.DSC_DStream <- function(x, dsd=NULL, n=500, ...) {
   ### find type
   type <- list(...)$type
   
-  if(is.null(type) || !pmatch(tolower(type), "image", nomatch=0)) return(plot.DSC(x, ...))
+  if(is.null(type) || !pmatch(tolower(type), "image", nomatch=0)) 
+    return(plot.DSC(x, dsd=dsd, n=n, ...))
   
   if(x$RObj$d!=2) stop("Image visualization only works for 2D data!") 
   
   #  mat <- x$RObj$toMatrix("transitional")
   mat <- x$RObj$toMatrix("dense")
+  mat[mat==0] <- NA
   
-  image(mat, col=gray.colors(256), axes=FALSE)
-  box()
-  axis(side=1, labels=colnames(mat), at =seq(0,1, length.out=ncol(mat)))
-  axis(side=2, labels=rownames(mat), at =seq(0,1, length.out=nrow(mat)))
+  image(x=as.numeric(rownames(mat)), 
+    y=as.numeric(colnames(mat)), 
+    z=mat, 
+    col=rev(gray.colors(100)), axes=TRUE, 
+    xlab="", ylab="")
+
+  if(!is.null(dsd)) {
+    ps <- get_points(dsd, n=n, assignment=TRUE)
+    pch <- attr(ps, "assignment")
+    
+    ### handle noise (samll circle)
+    pch[is.na(pch)] <- 20
+    points(ps, col=rgb(0,0,0,alpha=.3), cex=.5, pch=pch)
+  }
+    
 }
 

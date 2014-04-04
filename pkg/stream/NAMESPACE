@@ -120,6 +120,8 @@ S3method(microToMacro, DSC_Hierarchical)
 S3method(microToMacro, DSC_Kmeans)
 S3method(microToMacro, DSC_DBSCAN)
 S3method(microToMacro, DSC_tNN)
+S3method(microToMacro, DSC_DStream)
+S3method(microToMacro, DSC_CluStream)
 
 S3method(get_copy, DSC_R)
 S3method(get_copy, DSC_MOA)

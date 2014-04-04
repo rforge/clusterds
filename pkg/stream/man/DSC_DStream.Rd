@@ -91,11 +91,17 @@ head(get_centers(dstream))
 # plot (DStream provides additional type="image")
 plot(dstream, dsd)
 plot(dstream, type="image")
+plot(dstream, dsd, type="image")
 
 # standard D-Stream uses reachability
 nclusters(dstream, type="macro")
 get_centers(dstream, type="macro")
 plot(dstream, type="both")
+
+# use image and add centers
+plot(dstream, type="image")
+points(get_centers(dstream, type="macro"), col="blue", pch=3, lwd=2, 
+  cex=get_weights(dstream, type="macro", scale=c(1,5)))
 
 # use attraction for reclustering
 set.seed(0)
