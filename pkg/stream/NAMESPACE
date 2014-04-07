@@ -46,6 +46,15 @@ export(
 	DSD_Target,
   DSD_BarsAndGaussians,
 
+
+  DSD_MG,
+
+  # MGCs
+  MGC_Linear,
+  MGC_Function,
+  MGC_Random,
+  MGC_Noise,
+
   # functions
 	# DSD
 	get_points,
@@ -53,6 +62,13 @@ export(
 	reset_stream,
 	close_stream,
 	scale_stream,
+
+  add_keyframe,
+  remove_keyframe,
+  get_keyframes,
+  add_cluster,
+  get_clusters,
+  remove_cluster,
 	
 	# DSC
 	cluster,
@@ -128,3 +144,15 @@ S3method(get_copy, DSC_MOA)
 
 ### other
 S3method(print, stream_eval)
+
+S3method(add_cluster, DSD_MG)
+S3method(reset_stream, DSD_MG)
+S3method(get_points, DSD_MG)
+S3method(get_clusters, DSD_MG)
+S3method(print, DSD_MG)
+S3method(remove_cluster, DSD_MG)
+S3method(print, MGC)
+S3method(print, MGC_Linear)
+S3method(add_keyframe, MGC_Linear)
+S3method(get_keyframes, MGC_Linear)
+S3method(remove_keyframe, MGC_Linear)
