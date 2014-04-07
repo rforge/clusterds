@@ -31,7 +31,6 @@ MGC_Linear_refClass <- setRefClass("MGC_Linear",
                             
                             methods = list(
                               initialize = function(d = 2) {
-                                dimension  <<- d
                                 keyframes  <<- data.frame(time =  numeric(0),variance = list(), density = numeric(0), cluster = numeric(0), points = list())
                                 .self
                               }
@@ -41,6 +40,7 @@ MGC_Linear_refClass <- setRefClass("MGC_Linear",
 
 MGC_Linear_refClass$methods(
   add_keyframe = function(t,v,d,p,c) {
+    dimension <<- length(c)
     keyframes <<- rbind(keyframes,data.frame(time=t,variance=I(list(v)),density=d,cluster=c,points=I(list(p))))
     keyframes <<- keyframes[with(keyframes, order(time)), ]
   },

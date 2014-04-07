@@ -52,12 +52,12 @@ MGC_Random_refClass$methods(
 )
 
 ### creator    
-MGC_Random<- function(start,variance,density,randomness) {
+MGC_Random<- function(variance,density, center,randomness) {
   
   desc <- "Randoma Moving Generator Cluster"
   
   
   structure(list(description = desc,
-                 RObj = MGC_Random_refClass$new(start,variance,density,randomness)),
+                 RObj = MGC_Random_refClass$new(center,variance,density,randomness)),
             class = c("MGC_Random","MGC"))
 }

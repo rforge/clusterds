@@ -16,11 +16,11 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-add_cluster <- function(x, time, ...) 
+add_cluster <- function(x, c) 
   UseMethod("add_cluster")
-get_clusters <- function(x, time, ...) 
+get_clusters <- function(x) 
   UseMethod("get_clusters")
-remove_cluster <- function(x, time, ...) 
+remove_cluster <- function(x, i) 
   UseMethod("remove_cluster")
 
 dsd_MG_refClass <- setRefClass("dsd_MG", 
@@ -42,7 +42,7 @@ dsd_MG_refClass <- setRefClass("dsd_MG",
 
 dsd_MG_refClass$methods(
   add_cluster = function(c) {
-    clusters <<- append(clusters, c$RObj)
+    clusters <<- append(clusters, list(c))
   },
   get_points = function(n,assignment = FALSE) {
     j <- 0
@@ -50,7 +50,7 @@ dsd_MG_refClass$methods(
     a <- numeric()
     
     while(j < n) {
-      attributes <- do.call(rbind, lapply(clusters,function(x){x$get_attributes(t)}))
+      attributes <- do.call(rbind, lapply(clusters,function(x){x$RObj$get_attributes(t)}))
       
       cluster <- unlist(attributes[,1])
       density <- unlist(attributes[,2])
@@ -69,7 +69,7 @@ dsd_MG_refClass$methods(
         clusterOrder <- sample(x=s,size=k, replace=TRUE, prob=prob)
         
         data <- rbind(data,t(sapply(clusterOrder, FUN = function(i) {
-            clusters[[i]]$get_points(t)
+            clusters[[i]]$RObj$get_points(t)
         })))
        
         a <- c(a,unlist(lapply(clusterOrder,function(x){
@@ -109,8 +109,8 @@ add_cluster.DSD_MG <- function(x, c) {
   x$RObj$add_cluster(c)
 }
 
-reset_stream.DSD_MG <- function(x) {
-  x$RObj$t <- 1
+reset_stream.DSD_MG <- function(dsd) {
+  dsd$RObj$t <- 1
 }
 
 print.DSD_MG <- function(x, ...) {
