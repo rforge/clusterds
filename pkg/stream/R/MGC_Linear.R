@@ -31,7 +31,7 @@ MGC_Linear_refClass <- setRefClass("MGC_Linear",
                             
                             methods = list(
                               initialize = function(d = 2) {
-                                keyframes  <<- data.frame(time =  numeric(0),variance = list(), density = numeric(0), cluster = numeric(0), points = list())
+                                keyframes  <<- data.frame(time =  numeric(0),variance = list(), density = numeric(0), cluster = numeric(0), centers = list())
                                 .self
                               }
                               
@@ -40,12 +40,12 @@ MGC_Linear_refClass <- setRefClass("MGC_Linear",
 
 MGC_Linear_refClass$methods(
   add_keyframe = function(t,v,d,p,c) {
-    dimension <<- length(c)
-    keyframes <<- rbind(keyframes,data.frame(time=t,variance=I(list(v)),density=d,cluster=c,points=I(list(p))))
+    dimension <<- length(p)
+    keyframes <<- rbind(keyframes,data.frame(time=t,variance=I(list(v)),density=d,cluster=c,centers=I(list(p))))
     keyframes <<- keyframes[with(keyframes, order(time)), ]
   },
   get_points = function(time) {
-    attributes <- get_attribute(time,c("points","variance"))
+    attributes <- get_attribute(time,c("centers","variance"))
     MASS::mvrnorm(1, mu=unlist(attributes[[1]]), Sigma=diag(unlist(attributes[[2]]),dimension))
   },
   get_attributes = function(time) {

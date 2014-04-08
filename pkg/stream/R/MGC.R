@@ -18,4 +18,5 @@
 
 print.MGC <- function(x, ...) {
   cat(paste(x$description, " (", paste(class(x), collapse=", "), ")", '\n', sep=""))
+  cat(paste('In', x$RObj$dimension, 'dimensions', '\n'))
 }

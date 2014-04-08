@@ -19,13 +19,15 @@
 MGC_Noise_refClass <- setRefClass("MGC_Noise", 
                                    fields = list(
                                      density = "numeric",
-                                     range = "numeric"
+                                     range = "matrix",
+                                     dimension = "numeric"
                                    ), 
                                    
                                    methods = list(
                                      initialize = function(d,r) {
                                        density  <<- d
                                        range <<- r
+                                       dimension <<- nrow(r)
                                        .self
                                      }
                                      
@@ -39,8 +41,8 @@ MGC_Noise_refClass$methods(
     x
   },
   get_points = function(time) {
-    unlist(lapply(seq(1, length(range), by=2),function(x){
-      runif(1, range[x], range[x+1])
+    unlist(apply(range,1,function(x){
+      runif(1, x[1], x[2])
     }))
   }
 )

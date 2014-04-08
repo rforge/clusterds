@@ -83,8 +83,8 @@ An \code{MGC_Noise} allows for a creation of noise within a \code{DSD_MG}.
   
   #Example of an MGC_Noise
   dsd <- DSD_MG()
-  c1 <- MGC_Random(c(50,50),1,1,1)
-  c2 <- MGC_Noise(1,c(-20,120,-20,120))
+  c1 <- MGC_Random(1,1,c(50,50),1)
+  c2 <- MGC_Noise(1,rbind(c(-20,120),c(-20,120)))
   
   add_cluster(dsd,c1)
   add_cluster(dsd,c2)
