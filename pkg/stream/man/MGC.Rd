@@ -12,14 +12,13 @@ Moving Generator Cluster
 Creates an evolving cluster for a \code{DSD_MG}. 
 }
 \usage{
-MGC_Linear(dimension = 2) 
+MGC_Linear() 
 MGC_Function(variance, density, center, cluster = NA)
 MGC_Random(variance, density, center, randomness) 
 MGC_Noise(density, range)
 }
 
 \arguments{
-  \item{dimension}{The dimension of the \code{MGC}.}
   \item{variance}{The variance of the cluster. For \code{MGC_Function}, this attribute is a function. Otherwise, the variance of the cluster is a static number or a list that has a length equal to the cluster's dimensionality.}
   \item{center}{A list that defines the center of the cluster. The list should have a length equal to the dimensionality. For \code{MGC_Function}, this list consists of functions that define the movement of the cluster. For \code{MGC_Random}, this attribute defines the beginning location for the \code{MGC} before it begins moving.}
   \item{density}{The density of the cluster. For \code{MGC_Function}, this attribute is a function and defines the density of a cluster at a given timestamp.}

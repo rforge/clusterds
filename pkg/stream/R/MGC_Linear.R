@@ -30,8 +30,9 @@ MGC_Linear_refClass <- setRefClass("MGC_Linear",
                             ), 
                             
                             methods = list(
-                              initialize = function(d = 2) {
+                              initialize = function() {
                                 keyframes  <<- data.frame(time =  numeric(0),variance = list(), density = numeric(0), cluster = numeric(0), centers = list())
+                                dimension <<- 0
                                 .self
                               }
                               
@@ -74,13 +75,13 @@ MGC_Linear_refClass$methods(
 )
 
 ### creator    
-MGC_Linear<- function(dimension = 2) {
+MGC_Linear<- function() {
   
   desc <- "Linear Moving Generator Cluster"
   
   
   structure(list(description = desc,
-                 RObj = MGC_Linear_refClass$new(d = dimension)),
+                 RObj = MGC_Linear_refClass$new()),
             class = c("MGC_Linear","MGC"))
 }
 
@@ -99,5 +100,8 @@ remove_keyframe.MGC_Linear <- function(x, time) {
 
 print.MGC_Linear <- function(x, ...) {
   cat(paste(x$description, " (", paste(class(x), collapse=", "), ")", '\n', sep=""))
-  cat(paste('With', nrow(x$RObj$keyframes), 'keyframes', 'in', x$RObj$dimension, 'dimensions', '\n'))
+  temp <- '?'
+  if(x$RObj$dimension > 0)
+    temp <- x$RObj$dimension
+  cat(paste('With', nrow(x$RObj$keyframes), 'keyframes', 'in', temp, 'dimensions', '\n'))
 }
