@@ -16,7 +16,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-add_keyframe <- function(x, time, variance = 1, density = 1, center, cluster = NA, reset = FALSE) 
+add_keyframe <- function(x, time, density =1, variance = 1, center, cluster = NA, reset = FALSE) 
   UseMethod("add_keyframe")
 get_keyframes <- function(x) 
   UseMethod("get_keyframes")
@@ -87,12 +87,15 @@ MGC_Linear<- function() {
   desc <- "Linear Moving Generator Cluster"
   
   
-  structure(list(description = desc,
+  x <- structure(list(description = desc,
                  RObj = MGC_Linear_refClass$new()),
             class = c("MGC_Linear","MGC"))
+
+  x
 }
 
-add_keyframe.MGC_Linear <- function(x, time, variance = 1, density = 1, center, cluster = NA, reset = FALSE) {
+add_keyframe.MGC_Linear <- function(x, time, density = 1, variance = 1, 
+  center, cluster = NA, reset = FALSE) {
   x$RObj$keyframes <- x$RObj$keyframes[which(x$RObj$keyframes$time!=time),]
   x$RObj$add_keyframe(time,variance,density, center, cluster, reset)
 }

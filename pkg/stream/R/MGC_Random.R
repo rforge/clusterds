@@ -52,7 +52,7 @@ MGC_Random_refClass$methods(
 )
 
 ### creator    
-MGC_Random<- function(variance,density, center,randomness) {
+MGC_Random<- function(density, variance, center, randomness=1) {
   
   desc <- "Random Moving Generator Cluster"
   

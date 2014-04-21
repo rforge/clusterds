@@ -1,20 +1,30 @@
 \name{DSD_MG}
+\title{DSD Moving Generator}
 \alias{DSD_MG}
 \alias{DSD_MovingGenerator}
 \alias{MovingGenerator}
-\title{DSD Moving Generator}
+\alias{add_cluster}
+\alias{get_clusters}
+\alias{remove_cluster}
 
 \description{
   Creates an evolving DSD that consists of several \code{MGC}s.
 }
 
 \usage{
-  DSD_MG(dimension = 2, ...)
+DSD_MG(dimension = 2, ...)
+
+add_cluster(x, c)
+get_clusters(x) 
+remove_cluster(x, i)
 }
 
 \arguments{
   \item{dimension}{the dimension of the DSD object}
   \item{...}{initial set of \code{MGC}s}
+  \item{x}{A \code{DSD_MG} object.}
+  \item{c}{The cluster that should be added to the \code{DSD_MG} object.}
+  \item{i}{The index of the cluster that should be removed from the \code{DSD_MG} object.}
 }
 
 \details{
@@ -28,6 +38,24 @@
 
 
 \examples{
+dsd <- DSD_MG(dim = 2)
+
+### add two clusters
+c1 <- MGC_Random(variance=1, density=10, center=c(50,50), random=1)
+c2 <- MGC_Noise(density=1, range=rbind(c(-20,120), c(-20,120)))
+add_cluster(dsd, c1)
+add_cluster(dsd, c2)
+    
+get_clusters(dsd)
+plot(dsd)
+    
+### remove cluster 1
+remove_cluster(dsd,1)
+    
+get_clusters(dsd)
+plot(dsd)
+    
+  
   c1 <- MGC_Linear()
   c2 <- MGC_Linear()
   add_keyframe(c1,1,10,10,c(0,0),cluster=1)

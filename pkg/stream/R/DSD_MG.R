@@ -96,7 +96,8 @@ DSD_MG<- function(dimension = 2, ...) {
                  RObj = dsd_MG_refClass$new(d = dimension)),
             class = c("DSD_MG","DSD_R","DSD"))
   
-  lapply(list(...),function(c){x$RObj$add_cluster(c)})
+#  lapply(list(...),function(c){x$RObj$add_cluster(c)})
+  lapply(list(...), function(c) add_cluster(x, c))
   
   x
 }

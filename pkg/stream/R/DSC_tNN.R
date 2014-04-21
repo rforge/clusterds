@@ -60,7 +60,7 @@ tNN <- setRefClass("tNN",
       noise		= 0.01,
       measure		= "Euclidean",
       shared_density		= FALSE,
-      alpha 		= 0,
+      alpha 		= 0.1,
       k		= 0,
       minweight	= 0
     ) {
@@ -70,13 +70,12 @@ tNN <- setRefClass("tNN",
       if(lambda <0 || lambda>1) stop("lambda needs to be in [0,1]")
       if(minweight <0 ||minweight>1) stop("minweight needs to be in [0,1]")
       
-      gap_time <- as.integer(gap_time)
+      gap_time <<- as.integer(gap_time)
       if(gap_time<1) stop("gap_time needs to be 1, 2, 3,...")
       
       relations 		<<- hash()
       r			<<- r
       lambda		<<- lambda
-      gap_time	<<- gap_time
       decay_factor	<<- 2^(-lambda)
       noise		<<- noise
       measure		<<- measure
@@ -104,7 +103,7 @@ tNN <- setRefClass("tNN",
 
 DSC_tNN <- function(r, lambda = 1e-3,  gap_time=1000L, noise = 0.01, 
   measure = "Euclidean", 
-  shared_density = FALSE, alpha = 0, k=0, minweight = 0) {
+  shared_density = FALSE, alpha = 0.1, k = 0, minweight = 0) {
   
   tNN <- tNN$new(r, lambda, as.integer(gap_time), 
     noise, measure, shared_density, alpha, k, minweight)
@@ -140,7 +139,8 @@ tNN$methods(list(
         w_min <- decay_factor^gap_time
         remove <- which(get_current_weights() <= w_min)
         
-        if(debug) cat("  - Removing", length(remove), "micro-clusters.\n")
+        if(debug) cat("  - Removing", length(remove), "micro-clusters:",
+          paste(remove, collapse=", "), "\n")
         
         if(length(remove)) {
           # remove relations
@@ -161,7 +161,7 @@ tNN$methods(list(
             removekeys <- keys[removekeys_id]
             
             if(length(removekeys)>0) {
-              if(debug) cat("  - Removing relation (cluster)",
+              if(debug) cat("  - Removing", length(removekeys), "relations (cluster):",
                 paste(removekeys, collapse=", "), 
                 "\n")
               
@@ -172,14 +172,17 @@ tNN$methods(list(
           # remove weak relations
           if(length(relations) > 0) {
             keys <- keys(relations)
-            vals <- values(relations, simplify=FALSE)
+            vals <- values(relations)
             
-            ws <- sapply(vals, FUN=function(v) v[2]*decay_factor^(t-v[1]))
+            ### FIXME: does not work!
+            ws <- vals[2,] * decay_factor^(t-vals[1,])
+            #removekeys <- keys[ws <= w_min]
+            removekeys <- keys[ws <= w_min/2]
             
-            removekeys <- keys[ws <= w_min]
+            #removekeys <- keys[t-sapply(vals, "[", 1L)>gap_time]
             
             if(length(removekeys)>0) {
-              if(debug) cat("  - Removing relation (relation)",
+              if(debug) cat("  - Removing", length(removekeys), "relations (relation):",
                 paste(removekeys, collapse=", "), 
                 "\n")
               
@@ -198,14 +201,13 @@ tNN$methods(list(
       point <- newdata[i,]
       mcs <- rownames(centers) ### names
       
-      
       if(nrow(centers)<1) {   ### create first micro-cluster
         weights <<- 1
         centers <<- as.data.frame(point)
         rownames(centers) <<- 1
         last_update <<- t
         
-        if(debug) cat("  + Creating micro-cluster with ID 1.\n")
+        if(debug) cat("  + Creating micro-cluster with ID: 1\n")
         
       } else {
         inside <- which(dist(point, centers, method=distFun) < r)
@@ -217,30 +219,40 @@ tNN$methods(list(
             as.integer(rownames(centers)[nrow(centers)-1]) + 1L
           last_update <<- c(last_update, t)
           
-          if(debug) cat("  + Creating micro-cluster with ID",
+          if(debug) cat("  + Creating micro-cluster(s) with ID: ",
             rownames(centers)[nrow(centers)], "\n")
           
         }else{ ### update existing cluster
-          partialweight <- 1/length(inside) 
+
+          ### for moving
+          partialweight <- (1-dist(point, centers, method=distFun)[inside]/r)^2
+          partialweight <- partialweight/sum(partialweight)
           
-          newCenters <- data.frame(matrix((as.numeric(as.matrix(
-            centers[inside,]) * rep(weights[inside]) + 
-              rep(as.numeric(point) * partialweight,each=length(inside)))) / 
-              rep(partialweight+weights[inside], ncol(point)),
-            ncol=ncol(point)),
+          ### decay weights first
+          ws <- weights[inside] * 
+            decay_factor^(t-last_update[inside])
+          
+          newCenters <- data.frame(
+            (as.matrix(centers[inside,]) * ws + 
+              matrix(as.numeric(point), ncol=ncol(point), nrow=length(inside), 
+                byrow=TRUE) * partialweight) / (ws + partialweight),
             row.names=rownames(centers[inside,]))
           
+          ### weight the clusters get
+          partialweight <- 1/length(inside) 
+          
+          ### update weights
+          weights[inside] <<- ws + partialweight
+          last_update[inside] <<- t
+
+          ### check overlap
           distance <- dist(newCenters,method=distFun)
           
           test <- apply(distance, 1, function(x) all(x>r|x==0) )
           if(length(which(test)) > 0) 
             centers[inside[which(test)],] <<- newCenters[which(test),]
           
-          weights[inside] <<- weights[inside] * 
-            decay_factor^(t-last_update[inside]) + partialweight
-          last_update[inside] <<- t
-          
-          # shared density
+          ### shared density
           if(shared_density && length(inside) > 1) {
             relationUpdate <- outer(mcs[inside], mcs[inside], 
               function(x,y) paste(x,y,sep="-") )
@@ -249,13 +261,17 @@ tNN$methods(list(
             if(length(relationUpdate) > 0){
               if(debug) cat("  + Updating/Create Relations",
                 paste(relationUpdate, collapse=", "), "\n")
+
+              partialweight <- 1/length(inside) 
               
               for(j in relationUpdate) {
                 ### relation is c(last_update, count)
                 rel <- relations[[j]]
-                if(is.null(rel)) rel <- c(t, 1)
+#                if(is.null(rel)) rel <- c(t, 1)
+                if(is.null(rel)) rel <- c(t, partialweight)
                 else rel <- c(t, 
-                  rel[2] * decay_factor^(t-rel[1]) + 1)
+#                  rel[2] * decay_factor^(t-rel[1]) + 1)
+                  rel[2] * decay_factor^(t-rel[1]) + partialweight)
                 relations[[j]] <<- rel
               }
             }
@@ -308,19 +324,32 @@ tNN$methods(list(
     
     if(nrow(rel) > 0){
       ### fix decay
-      vals <- sapply(values(relations, simplify=FALSE), 
-        FUN=function(v) v[2]* decay_factor^(t-v[1]) )
+      vals <- values(relations)
+      vals <- vals[2,] * decay_factor^(t-vals[1,])
       
-      ### get shared density relative to the density on the clusters
+      ### get shared density relative to the density in the participating clusters
+      ### use average weight
       avg_weight <- apply(rel, MARGIN=1, FUN= function(x) mean(mc_weights[x]))
       ss <- vals/avg_weight
+
+      ### use max weight
+      #max_weight <- apply(rel, MARGIN=1, FUN= function(x) max(mc_weights[x]))
+      #ss <- vals/max_weight
       
       ### unconnected is 2 times the largest distance
       for(i in 1:nrow(rel)) s[rel[i,2], rel[i,1]] <- s[rel[i,1], rel[i,2]] <- ss[i]
     }
     
+    
     strong <- strong_mcs()
     s <- s[strong, strong]
+
+    ### filter alpha    
+    if(alpha>0) s[s < alpha] <- 0
+    
+    ### add lenght 2 paths
+    #s <- s%*%s + s
+    
     if(!matrix) s <- as.simil(s)
     s
   },
@@ -353,9 +382,6 @@ tNN$methods(list(
     if(shared_density) { ### use shared density
       s <- get_shared_density()
       
-      # filter shared density
-      if(alpha>0) s[s < alpha] <- 0
-      
       if(k > 0L) { ### use k
         d <- 1/(1+s)
         
@@ -386,10 +412,13 @@ tNN$methods(list(
       
    
     }else{ ### use adjacent clusters overlap by alpha (packing factor)
-      d_pos <- dist(mcs, method=distFun)
-      ### alpha = 0 -> 2r (default)
-      ### alpha = 1 -> r
-      h <- r + r*(1-alpha)
+      ### create a distance between 0 and 1 (<1 means reachable)
+      d_pos <- dist(mcs, method=distFun)/r -1
+      d_pos[d_pos>1] <- 1 ### 1 is max distance
+      
+      ### alpha = 0 -> 1(-e)    reachability at r
+      ### alpha = 1 -> 0     highest packing
+      h <- 1-alpha
       assignment <- cutree(hclust(d_pos, method="single"), h=h)
       
       ### use k if we don't get enough components!
@@ -498,8 +527,7 @@ plot.DSC_tNN <- function(x, dsd = NULL, n = 1000,
       edges <- cbind(edges, 
         w=apply(edges, MARGIN=1, FUN=function(ij) s[ij[1], ij[2]]))
       
-      #edges <- cbind(edges, stream:::map(edges[,3], range=c(1,5)))
-      edges <- cbind(edges, map(edges[,3], range=c(1,5)))
+      edges <- cbind(edges, map(edges[,3], range=c(.5,3)))
       
       for(i in 1:nrow(edges)){
         lines(rbind(p[edges[i,1],],p[edges[i,2],]),

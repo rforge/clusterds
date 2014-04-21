@@ -50,7 +50,7 @@ MGC_Function_refClass$methods(
 )
 
 ### creator    
-MGC_Function<- function(variance, density, center, cluster = NA) {
+MGC_Function<- function(density, variance, center, cluster = NA) {
   
   desc <- "Functional Moving Generator Cluster"
   

@@ -17,11 +17,19 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 
-DSD_BarsAndGaussians <- function(noise = 0) {
+DSD_BarsAndGaussians <- function(angle = NULL, noise = 0) {
+  
+  if(is.null(angle)) angle <- runif(1, 1, 360)
+  
+  rad <- angle/360 * 2*pi
+  rotation <- rbind(c(cos(rad),-sin(rad)),c(sin(rad),cos(rad)))
+  
   # creating the DSD object
   l <- list(description = "Bars and Gaussians",
     d = 2,
     k = 4,
+    angle = angle,
+    rotation = rotation,
     noise = noise)
   class(l) <- c("DSD_BarsAndGaussians","DSD_R","DSD")
   l
@@ -35,9 +43,9 @@ get_points.DSD_BarsAndGaussians <- function(x, n=1, assignment = FALSE,...) {
     prob=c(x$noise, 3/8*(1-x$noise), 1/8*(1-x$noise), 
       3/8*(1-x$noise), 1/8*(1-x$noise)), replace=TRUE)
   
-  dat <- as.data.frame(t(sapply(a, FUN=function(type) {
+  dat <- sapply(a, FUN=function(type) {
     ### noise  
-    if(is.na(type)) p <- runif(2, -6,6)
+    if(is.na(type)) p <- c(NA, NA)
     else {
       ### Gaussian 1
       if(type==1) {
@@ -69,8 +77,17 @@ get_points.DSD_BarsAndGaussians <- function(x, n=1, assignment = FALSE,...) {
     }
     
     p
-  })))
+  })
   
+  ### note: dat is already transposed!
+  dat <- x$rotation %*% dat
+  
+  
+  dat <- as.data.frame(t(dat))
+
+  ### add noise
+  n <- which(is.na(a))
+  if(length(n)) dat[n,] <- matrix(runif(2L*length(n), -8, 8), ncol=2L)
   
   if(assignment) attr(dat, "assignment") <- a
   

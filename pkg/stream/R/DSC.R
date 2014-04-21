@@ -128,6 +128,7 @@ plot.DSC <- function(x, dsd = NULL, n = 500,
   type <- match.arg(type)
   
   if(type !="both") { 
+    if(type =="auto") type <- get_type(type)
     ## method can be pairs, plot or pc (projection with PCA)
     centers <- get_centers(x, type=type)
     k <- nrow(centers)
@@ -139,10 +140,20 @@ plot.DSC <- function(x, dsd = NULL, n = 500,
     }
     
     if(weights) cex_clusters <- get_weights(x, type=type, scale=scale)
-    else cex_clusters <- rep(cex, k)
-    col <- rep(col_clusters[1], k)
-    mpch <- rep(1, k)
-  }else{ ### both
+    else cex_clusters <- rep(1, k)
+    
+    if(type=="micro") { 
+      col <- rep(col_clusters[1], k)
+      mpch <- rep(1, k)
+      lwd <- rep(1, k)
+    }else{
+      cex_clusters <- cex_clusters*1.5
+      col <- rep(col_clusters[2], k)
+      mpch <- rep(3, k)
+      lwd <- rep(2, k)
+    }
+    
+    }else{ ### both
     centers_mi <- get_centers(x, type="micro")
     centers_ma <- get_centers(x, type="macro")
     k_mi <- nrow(centers_mi)
@@ -162,6 +173,7 @@ plot.DSC <- function(x, dsd = NULL, n = 500,
       
     col <- c(rep(col_clusters[1], k_mi), rep(col_clusters[2], k_ma))
     mpch <- c(rep(1, k_mi), rep(3, k_ma))
+    lwd <- c(rep(1, k_mi), rep(2, k_ma))
   }
   
   ### prepend data if given
@@ -175,6 +187,7 @@ plot.DSC <- function(x, dsd = NULL, n = 500,
     col <- c(rep(col_points,n)[1:n], col)
     cex_clusters <- c(rep(cex, n), cex_clusters)
     mpch <- c(attr(d, "assignment"), mpch)
+    lwd <- c(rep(1,n), lwd)
     
     ### handle noise
     noise <- is.na(mpch)
@@ -187,14 +200,14 @@ plot.DSC <- function(x, dsd = NULL, n = 500,
   
   ### plot
   if(ncol(centers)>2 && method=="pairs") {
-    pairs(centers, col=col, cex=cex_clusters, pch=mpch, ...)
+    pairs(centers, col=col, cex=cex_clusters, pch=mpch, lwd=lwd, ...)
   }
   else if(ncol(centers)>2 && method=="pc") {
     ## we assume Euclidean here
     p <- prcomp(centers)
-    plot(p$x, col=col, cex=cex_clusters, pch=mpch, ...)
+    plot(p$x, col=col, cex=cex_clusters, pch=mpch, lwd=lwd, ...)
   }else { ## plot first 2 dimensions
-    plot(centers[,1:2], col=col, cex=cex_clusters, pch=mpch, ...)
+    plot(centers[,1:2], col=col, cex=cex_clusters, pch=mpch, lwd=lwd, ...)
   }
   
 }
