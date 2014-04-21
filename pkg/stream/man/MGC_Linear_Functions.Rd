@@ -10,7 +10,7 @@
   Allows for the addition and removal of keframes within an MGC_Linear.
 }
 \usage{
-  add_keyframe(x, time, variance = 1, density = 1, center, cluster = NA)
+  add_keyframe(x, time, variance = 1, density = 1, center, cluster = NA, reset = FALSE)
   get_keyframes(x) 
   remove_keyframe(x, time)
 }
@@ -22,6 +22,7 @@
   \item{density}{The density of the cluster at a particular keyframe.}
   \item{center}{The location of the cluster at a particular keyframe. Must be a list with a length equal to the cluster's dimensionality.}
   \item{cluster}{The name of the cluster.}
+  \item{reset}{If the stream should reset to the beginning at the keyframe.}
 }
 
 
@@ -36,7 +37,7 @@
   c1 <- MGC_Linear()
   add_keyframe(c1,1,10,10,c(0,0),cluster=1)
   add_keyframe(c1,50,10,10,c(50,50),cluster=1)
-  add_keyframe(c1,100,10,10,c(50,100),cluster=1)
+  add_keyframe(c1,100,10,10,c(50,100),cluster=1,reset=TRUE)
   
   get_keyframes(c1)
   
