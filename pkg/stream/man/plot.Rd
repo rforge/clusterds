@@ -49,7 +49,7 @@
 
 \examples{
 set.seed(100)
-dsd <- DSD_GaussianStatic(k=3)
+dsd <- DSD_Gaussians(k=3)
 
 ## plot data
 plot(dsd, n=500)

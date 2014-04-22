@@ -22,7 +22,7 @@
 #	- rangeVar (for genPositiveDefMat)
 #	- min/max on runif
 #
-DSD_GaussianStatic <- function(k=2, d=2, mu, sigma, p, separation=0.2, 
+DSD_Gaussians <- function(k=2, d=2, mu, sigma, p, separation=0.2, 
   noise = 0, noise_range) { 
   
   # if p isn't defined, we give all the clusters equal probability
@@ -89,11 +89,11 @@ DSD_GaussianStatic <- function(k=2, d=2, mu, sigma, p, separation=0.2,
     p = p,
     noise = noise,
     noise_range = noise_range)
-  class(l) <- c("DSD_GaussianStatic","DSD_R","DSD")
+  class(l) <- c("DSD_Gaussians","DSD_R","DSD")
   l
 }
 
-get_points.DSD_GaussianStatic <- function(x, n=1, assignment = FALSE, ...) {
+get_points.DSD_Gaussians <- function(x, n=1, assignment = FALSE, ...) {
   
   clusterOrder <- sample(x=c(1:x$k), 
     size=n, 

@@ -32,7 +32,7 @@ The object macro is altered and contains the clustering.
 \examples{
 set.seed(0)
 ### create a data stream and a micro-clustering
-dsd <- DSD_GaussianStatic(k=3, d=3)
+dsd <- DSD_Gaussians(k=3, d=3)
 
 clustream <- DSC_CluStream(k=50)
 cluster(clustream, dsd, 500)

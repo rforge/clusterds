@@ -41,7 +41,7 @@ on the algorithm.
 
 \examples{
 # 3 clusters with 5% noise
-dsd <- DSD_GaussianStatic(k=3, noise=0)
+dsd <- DSD_Gaussians(k=3, noise=0)
 
 dsc <- DSC_BIRCH(radius=0.01)
 cluster(dsc, dsd, 500)

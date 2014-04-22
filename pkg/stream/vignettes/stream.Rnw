@@ -500,10 +500,8 @@ classes which implement R-based data streams~(\code{DSD_R})
 and MOA-based stream generators~(\code{DSD_MOA}).
 \pkg{stream} currently provides the following generators: 
 \begin{itemize}
-\item \code{DSD_GaussianStatic}, a DSD that generates static cluster data with a
+\item \code{DSD_Gaussians}, a DSD that generates static cluster data with a
 random Gaussian distribution. 
-\item \code{DSD_GaussianMoving}, a DSD that generates moving cluster data with a
-Gaussian distribution.
 \item\code{DSD_UniformNoise}, generates uniform noise in a $d$-dimensional
 (hyper) cube.
 \item\code{DSD_mlbenchGenerator}, a class uses the generators for artificial data sets defined in 
@@ -827,8 +825,8 @@ The class hierarchy in Figure~\ref{figure:dsd} (on page~\pageref{figure:dsd})
 is implemented 
 in the S3 class system by using a vector
 of class names for the class attribute. For example, an object of
-class \code{DSD_GaussianStatic} will have the class attribute vector
-\code{c("DSD_GaussianStatic", "DSD_R", "DSD")} indicating that
+class \code{DSD_Gaussians} will have the class attribute vector
+\code{c("DSD_Gaussians", "DSD_R", "DSD")} indicating that
 the object also is an R implementation of DSD. This allows 
 the framework to implement all common functionality as functions at the level
 of \code{DSD} and \code{DSD_R} and only a minimal set of functions
@@ -940,14 +938,14 @@ data streams.
 library("stream") 
 set.seed(1000) 
 
-dsd <- DSD_GaussianStatic(k=3, d=2, noise=0.05) 
+dsd <- DSD_Gaussians(k=3, d=2, noise=0.05) 
 dsd 
 @
 
 After loading the \pkg{stream} package (and setting a seed for the random
 number generator to make the experiments reproducible), 
 we call the creator function for the class 
-\code{DSD_GaussianStatic} specifying the number of clusters as $k=4$,
+\code{DSD_Gaussians} specifying the number of clusters as $k=4$,
 the data dimensionality to $d=2$ and a noise of 5\%.
 This data stream generator chooses for each cluster randomly a mean
 and a covariance matrix. 
@@ -1087,7 +1085,7 @@ We start by creating a DSD object.
 <<echo=FALSE>>= 
 library("stream") 
 set.seed(1000) 
-dsd <- DSD_GaussianStatic(k=3, d=5) 
+dsd <- DSD_Gaussians(k=3, d=5) 
 dsd
 @
 
@@ -1160,7 +1158,7 @@ points as a data.frame in \code{points}.
 <<>>= 
 library("stream") 
 set.seed(1000) 
-dsd <- DSD_GaussianStatic(k=3, d=2) 
+dsd <- DSD_Gaussians(k=3, d=2) 
 p <- get_points(dsd, 100)
 head(p)
 @
@@ -1210,7 +1208,7 @@ with 5\% noise).
 <<>>= 
 library("stream") 
 set.seed(1000) 
-dsd <- DSD_GaussianStatic(k=3, d=2, noise=0.05)
+dsd <- DSD_Gaussians(k=3, d=2, noise=0.05)
 dsd
 @
 
@@ -1317,7 +1315,7 @@ To begin, first create a \code{DSC} object and run the clustering algorithm.
 <<>>= 
 library("stream")
 set.seed(1000) 
-dsd <- DSD_GaussianStatic(k=3, d=2, noise=0.05)
+dsd <- DSD_Gaussians(k=3, d=2, noise=0.05)
 clustream <- DSC_CluStream(k=30)
 
 cluster(clustream, dsd, 1000)
@@ -1380,7 +1378,7 @@ we provide both algorithms with exactly the same data.
 <<>>= 
 library("stream") 
 set.seed(1000) 
-d <- get_points(DSD_GaussianStatic(k=3, d=2, noise=0.01), n=1000,
+d <- get_points(DSD_Gaussians(k=3, d=2, noise=0.01), n=1000,
 assignment=TRUE) 
 head(d)
 @

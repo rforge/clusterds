@@ -54,7 +54,7 @@ Clustering. In Journal of Machine Learning Research (JMLR).
 \examples{
 set.seed(0)
 # 3 clusters with 5% noise
-dsd <- DSD_GaussianStatic(k=3)
+dsd <- DSD_Gaussians(k=3)
 
 # cluster with CluStream  
 dsc <- DSC_CluStream(k=20)

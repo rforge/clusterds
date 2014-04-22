@@ -16,6 +16,11 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
+
+keyframe <- function(time, density = 1, variance = 1, center, cluster = NA, 
+  reset = FALSE) list(time=time, density=density, variance=variance, 
+    center=center, cluster=cluster, reset=reset)
+
 add_keyframe <- function(x, time, density =1, variance = 1, center, cluster = NA, reset = FALSE) 
   UseMethod("add_keyframe")
 get_keyframes <- function(x) 
@@ -81,8 +86,9 @@ MGC_Linear_refClass$methods(
   }
 )
 
+
 ### creator    
-MGC_Linear<- function() {
+MGC_Linear<- function(keyframelist=NULL) {
   
   desc <- "Linear Moving Generator Cluster"
   
@@ -91,6 +97,9 @@ MGC_Linear<- function() {
                  RObj = MGC_Linear_refClass$new()),
             class = c("MGC_Linear","MGC"))
 
+  if(!is.null(keyframelist)) lapply(keyframelist, FUN=function(kf)
+    do.call("add_keyframe", c(list(x), kf)))
+  
   x
 }
 

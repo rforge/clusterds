@@ -36,7 +36,7 @@ Tian Zhang, Raghu Ramakrishnan, Miron Livny, An Efficient Data Clustering Method
 
 \examples{
 # 3 clusters with 5% noise
-dsd <- DSD_GaussianStatic(k=3, noise=0.05)
+dsd <- DSD_Gaussians(k=3, noise=0.05)
 
 dsc <- DSC_BIRCH(radius = .05)
 cluster(dsc, dsd, 1000)

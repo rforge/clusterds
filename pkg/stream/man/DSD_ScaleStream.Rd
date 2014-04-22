@@ -39,7 +39,7 @@
 
 \examples{
   # creating data and writing it to disk
-  dsd <- DSD_GaussianStatic(k=3, d=5)
+  dsd <- DSD_Gaussians(k=3, d=5)
   write_stream(dsd, "data.txt", n=100, sep=",")
   
   # reading the same data back (as a loop)

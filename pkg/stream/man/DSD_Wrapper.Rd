@@ -37,7 +37,7 @@ Returns a \code{DSD_Wrapper} object
 }
 
 \examples{
-dsd <- DSD_GaussianStatic(k=3, d=2)
+dsd <- DSD_Gaussians(k=3, d=2)
 d <- get_points(dsd, 500)
 head(d)
 

@@ -78,7 +78,7 @@ Li Tu and Yixin Chen. 2009. Stream data clustering based on grid density and att
 
 \examples{
 set.seed(0)
-dsd <- DSD_GaussianStatic(k=3, noise=0.05)
+dsd <- DSD_Gaussians(k=3, noise=0.05)
 
 dstream <- DSC_DStream(gridsize=.05)
 cluster(dstream, dsd, 500)
@@ -105,7 +105,7 @@ points(get_centers(dstream, type="macro"), col="blue", pch=3, lwd=2,
 
 # use attraction for reclustering
 set.seed(0)
-dsd <- DSD_GaussianStatic(k=3, noise=0.05)
+dsd <- DSD_Gaussians(k=3, noise=0.05)
 
 dstream <- DSC_DStream(gridsize=.05, attraction=TRUE, epsilon=.15)
 cluster(dstream, dsd, 500)

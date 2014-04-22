@@ -45,7 +45,7 @@ Stream Classification and Clustering. In Journal of Machine
 }
 \examples{
 # 3 clusters with 5% noise
-dsd <- DSD_GaussianStatic(k=3, noise=0)
+dsd <- DSD_Gaussians(k=3, noise=0)
 
 dsc <- DSC_ClusTree(maxHeight=3)
 cluster(dsc, dsd, 500)

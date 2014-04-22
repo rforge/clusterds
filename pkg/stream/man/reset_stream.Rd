@@ -28,7 +28,7 @@ environment variable is moved back to 1.
 
 \examples{
 # initializing the objects
-dsd <- DSD_GaussianStatic(k=3, d=2)
+dsd <- DSD_Gaussians(k=3, d=2)
 replayer <- DSD_Wrapper(get_points(dsd, 100), k=3)
 replayer
 

@@ -33,7 +33,7 @@ Internally the call is delegated to the appropriate
 
 \examples{
 # 3 clusters with 5% noise
-dsd <- DSD_GaussianStatic(k=3, noise=0.05)
+dsd <- DSD_Gaussians(k=3, noise=0.05)
 
 dsc <- DSC_CluStream()
 cluster(dsc, dsd, 1000)

@@ -1,10 +1,12 @@
 \name{MGC}
 \alias{MGC}
+\alias{MGC_Static}
 \alias{MGC_Random}
 \alias{MGC_Function}
 \alias{MGC_Noise}
 \alias{MGC_Linear}
 \alias{add_keyframe}
+\alias{keyframe}
 \alias{get_keyframes}
 \alias{remove_keyframe}
 
@@ -14,11 +16,14 @@
 Creates an evolving cluster for a \code{DSD_MG}. 
 }
 \usage{
+MGC_Static(density = 1, variance = 1, center, cluster = NA)
 MGC_Function(density, variance, center, cluster = NA)
 MGC_Random(density, variance, center, randomness = 1 ) 
 MGC_Noise(density, range)
 
-MGC_Linear() 
+MGC_Linear(keyframelist=NULL) 
+keyframe(time, density = 1, variance = 1, center, cluster = NA, 
+  reset = FALSE)
 add_keyframe(x, time, density = 1, variance = 1, center, cluster = NA, 
   reset = FALSE)
 get_keyframes(x) 
@@ -36,6 +41,8 @@ remove_keyframe(x, time)
   \item{time}{The time stamp the keyframe should be located or which keyframe should be removed.}
   \item{reset}{Should the cluster reset to the first keyframe (time 0) after
 this keyframe is finished?}
+  \item{keyframelist}{a list of keyframes to initialize the \code{MGC_Linear}
+  object with.}
 }
 
 \details{
@@ -59,7 +66,7 @@ An \code{MGC_Noise} allows for a creation of noise within a \code{DSD_MG}.
 ### Example of several MGC_Randoms
 dsd <- DSD_MG(dimension=2,
   MGC_Random(density=1, variance=1, center=c(50,50)),
-  MGC_Random(density=1, variance=1, center=c(50,50))
+  MGC_Random(density=1, variance=10, center=c(50,50))
 )
   
 \dontrun{animate_data(dsd,2500,xlim=c(0,100),ylim=c(0,100), horizon=100)}
@@ -104,20 +111,14 @@ add_cluster(dsd,c2)
 \dontrun{animate_data(dsd,2500,xlim=c(0,100),ylim=c(0,100), horiz=100)}
   
 ### two fixed and a moving cluster  
-dsd <- DSD_MG(dim = 2)
-c1 <- MGC_Linear()
-add_keyframe(c1, time = 0, dens=1, var=.01, center=c(0,0))
-add_cluster(dsd, c1)
-  
-c2 <- MGC_Linear()
-add_keyframe(c2, time = 0, dens=1, var=.01, center=c(1,1))
-add_cluster(dsd, c2)
-
-c3 <- MGC_Linear()
-add_keyframe(c3, time = 0, dens=1, var=.01, center=c(0,0))
-add_keyframe(c3, time = 1000, dens=1, var=.01, center=c(1,1))
-add_keyframe(c3, time = 2000, dens=1, var=.01, center=c(0,0), reset=TRUE)
-add_cluster(dsd, c3)
+dsd <- DSD_MG(dim = 2,
+  MGC_Static(dens=1, var=.01, center=c(0,0)),
+  MGC_Static(dens=1, var=.01, center=c(1,1)),
+  MGC_Linear(list(
+    keyframe(time = 0, dens=1, var=.01, center=c(0,0)),
+    keyframe(time = 1000, dens=1, var=.01, center=c(1,1)),
+    keyframe(time = 2000, dens=1, var=.01, center=c(0,0), reset=TRUE)
+  )))
 
 noise <- MGC_Noise(dens=.1, range=rbind(c(-.2,1.2),c(-.2,1.2)))
 add_cluster(dsd, noise)

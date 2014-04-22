@@ -1,12 +1,13 @@
-\name{DSD_GaussianStatic}
-\alias{DSD_GaussianStatic}
-\title{Static Gaussians Data Stream Generator}
+\name{DSD_Gaussians}
+\alias{DSD_Gaussians}
+\title{Mixture of Gaussians Data Stream Generator}
 \description{
-A data stream generator that produces a data stream with static Gaussians.
+A data stream generator that produces a data stream with a mixture of static 
+Gaussians.
 }
 
 \usage{
-DSD_GaussianStatic(k=2, d=2, mu, sigma, p, separation=0.2, noise=0, noise_range)
+DSD_Gaussians(k=2, d=2, mu, sigma, p, separation=0.2, noise=0, noise_range)
 }
 
 \arguments{
@@ -27,7 +28,7 @@ DSD_GaussianStatic(k=2, d=2, mu, sigma, p, separation=0.2, noise=0, noise_range)
 }
 
 \details{
-\code{DSD_GaussianStatic} creates a mixture of \code{k} \code{d}-dimensional
+\code{DSD_Gaussians} creates a mixture of \code{k} \code{d}-dimensional
 static Gaussians in approximately unit space.
 The centers \code{mu} and the covariance matrices \code{sigma}
 can be supplied or will be randomly generates. The probability vector \code{p}
@@ -39,7 +40,7 @@ and Dubes (1988).
 }
 
 \value{
-Returns a \code{DSD_GaussianStatic} 
+Returns a \code{DSD_Gaussians} 
 object (subclass of 
 \code{DSD_R}, \code{DSD}) which is a list of the defined
 params. The params are either passed in from the function or
@@ -64,13 +65,13 @@ Prentice-Hall, Inc., Upper Saddle River, NJ, USA.
 }
 \examples{
 # create data stream with three clusters in 2D
-dsd1 <- DSD_GaussianStatic(k=3, d=2)
+dsd1 <- DSD_Gaussians(k=3, d=2)
 
 # plotting the data
 plot(dsd1)
 
 # create data stream with specified clusters and 20% noise
-dsd2 <- DSD_GaussianStatic(k=2, d=2, 
+dsd2 <- DSD_Gaussians(k=2, d=2, 
     mu=rbind(c(-.5,-.5), c(.5,.5)), 
     noise=0.2, noise_range=rbind(c(-1,1),c(-1,1)))
 plot(dsd2)

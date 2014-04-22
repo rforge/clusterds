@@ -66,7 +66,7 @@ Stream Clustering in R, Journal of Statistical Software, 35(5), 1-31, URL \url{h
 
 \examples{
 set.seed(0)
-dsd <- DSD_GaussianStatic(k=3, noise=0.05)
+dsd <- DSD_Gaussians(k=3, noise=0.05)
 
 # tNN with reachability (you can increase noise to reduce the micro-clusters
 # at the fringes of the Gaussians)

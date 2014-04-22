@@ -46,8 +46,8 @@ Animations are recorded using the library animation and can be replayed
 
 
 \examples{
-dsd <- DSD_GaussianMoving()
-animate_data(dsd, 500,  xlim=c(-.2,1.2), ylim=c(-.2,1.2), 
+dsd <- DSD_Benchmark(1)
+animate_data(dsd, 1200,  xlim=c(-.2,1.2), ylim=c(-.2,1.2), 
     pointInterval=20)
 
 \dontrun{
@@ -64,7 +64,7 @@ reset_stream(dsd)
 dsc <- DSC_tNN(r=.2, lambda=.1, shared_density=TRUE,
   alpha=.2)
 
-animate_cluster(dsc, dsd, n=600, interval=.1, pointInterval=10, 
+animate_cluster(dsc, dsd, n=1200, interval=.1, pointInterval=10, 
   # the following are arguments for plot
   xlim=c(-.5,1.5), ylim=c(-.5,1.5), type="shared")
 
@@ -73,7 +73,7 @@ reset_stream(dsd)
 dsc <- DSC_tNN(r=.2, lambda=.1, shared_density=TRUE,
   alpha=.2)  
 
-animate_cluster(dsc, dsd, n=600, interval=.1, pointInterval=10, 
+animate_cluster(dsc, dsd, n=1200, interval=.1, pointInterval=10, 
   evaluationMethod="crand", evaluationType="macro", evaluationAssign="micro",
   xlim=c(-.5,1.5),ylim=c(-.5,1.5), type="shared")
 }

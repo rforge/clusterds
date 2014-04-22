@@ -39,12 +39,12 @@ export(
 	DSD_mlbenchData,
   
   DSD_RandomRBFGeneratorEvents,
-	DSD_GaussianStatic,
-	DSD_GaussianMoving,
+	DSD_Gaussians,
   DSD_Cubes,
 	DSD_UniformNoise,
 	DSD_Target,
   DSD_BarsAndGaussians,
+  DSD_Benchmark,
 
 
   DSD_MG,
@@ -54,6 +54,7 @@ export(
   MGC_Function,
   MGC_Random,
   MGC_Noise,
+  MGC_Static,
 
   # functions
 	# DSD
@@ -64,6 +65,7 @@ export(
 	scale_stream,
 
   add_keyframe,
+  keyframe,
   remove_keyframe,
   get_keyframes,
   add_cluster,
@@ -100,8 +102,7 @@ S3method(print, DSD_Wrapper)
 S3method(plot, DSD)
 S3method(write_stream, DSD)
 
-S3method(get_points, DSD_GaussianStatic)
-##S3method(get_points, DSD_GaussianMoving)
+S3method(get_points, DSD_Gaussians)
 S3method(get_points, DSD_mlbenchGenerator)
 S3method(get_points, DSD_BarsAndGaussians)
 S3method(get_points, DSD_MOA)

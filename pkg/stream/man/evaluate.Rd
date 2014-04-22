@@ -145,7 +145,7 @@ Clustering of Data Streams at Multiple Resolutions, 3(3).
 \examples{
 # Create stream
 set.seed(0)
-dsd <- DSD_GaussianStatic(k=3, d=2)
+dsd <- DSD_Gaussians(k=3, d=2)
 
 dstream <- DSC_DStream(gridsize=0.1)
 cluster(dstream, dsd, 500)
@@ -166,7 +166,7 @@ evaluate(dstream, dsd, type ="macro", assign="macro",
   method=c("numMicro","numMacro","purity","crand"), n=500)
 
 # Evaluate an evolving data stream
-dsd <- DSD_GaussianMoving()
+dsd <- DSD_Benchmark(1)
 dstream <- DSC_DStream(gridsize=0.05, lambda=0.1)
 evaluate_cluster(dstream, dsd, type="macro", assign="micro",
   method=c("numMicro","numMacro","purity","crand"), 
@@ -177,7 +177,7 @@ evaluate_cluster(dstream, dsd, type="macro", assign="micro",
 reset_stream(dsd)
 dstream <- DSC_DStream(gridsize=0.1, lambda=0.1)
 animate_cluster(dstream, dsd, 
-  n=600, pointInterval=20, 
+  n=1200, pointInterval=20, 
   evaluationMethod=c("crand"), evaluationType="macro", evaluationAssign="micro",
   type="both", xlim=c(-.2,1.2), ylim=c(-.2,1.2))
 }

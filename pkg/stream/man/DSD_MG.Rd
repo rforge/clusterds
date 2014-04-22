@@ -55,21 +55,22 @@ remove_cluster(dsd,1)
 get_clusters(dsd)
 plot(dsd)
     
+### simulate the clustering of a splitting cluster  
+c1 <- MGC_Linear()
+add_keyframe(c1,1,10,10,c(0,0),cluster=1)
+add_keyframe(c1,50,10,10,c(50,50),cluster=1)
+add_keyframe(c1,100,10,10,c(50,100),cluster=1)
+c2 <- MGC_Linear()
+add_keyframe(c2,1,10,10,c(0,0),cluster=1)
+add_keyframe(c2,50,10,10,c(50,50),cluster=2)
+add_keyframe(c2,100,10,10,c(100,50),cluster=2)
+
+dsd <- DSD_MG(dim = 2, c1, c2)
+
+tnn <- DSC_tNN(alpha=.5, r=10, lambda=0.1)
   
-  c1 <- MGC_Linear()
-  c2 <- MGC_Linear()
-  add_keyframe(c1,1,10,10,c(0,0),cluster=1)
-  add_keyframe(c1,50,10,10,c(50,50),cluster=1)
-  add_keyframe(c1,100,10,10,c(50,100),cluster=1)
-  add_keyframe(c2,1,10,10,c(0,0),cluster=1)
-  add_keyframe(c2,50,10,10,c(50,50),cluster=2)
-  add_keyframe(c2,100,10,10,c(100,50),cluster=2)
-  
-  dsd <- DSD_MG(2,c1,c2)
-  
-  tnn <- DSC_tNN(alpha=.5,r=10,lambda=0.1)
-  
-  \dontrun{
-    tnnPurity <- animate_cluster(tnn,dsd,n=2500,type="macro",xlim=c(0,100),ylim=c(0,100),evaluationMethod="purity",horizon=100)
-  }
+\dontrun{
+tnnPurity <- animate_cluster(tnn, dsd, n=2500, type="both", 
+  xlim=c(0,120), ylim=c(0,120), evaluationMethod="purity", horizon=100)
+}
 }

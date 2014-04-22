@@ -36,7 +36,7 @@ The list also contains either
 
 \examples{
 set.seed(1000)
-dsd <- DSD_GaussianStatic(k=3, noise=0.05)
+dsd <- DSD_Gaussians(k=3, noise=0.05)
 
 dstream <- DSC_DStream(gridsize=0.05, lambda=.01)
 cluster(dstream, dsd, 500)

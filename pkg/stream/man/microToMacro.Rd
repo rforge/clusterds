@@ -27,7 +27,7 @@ A vector of the same length as \code{micro} with the macro-cluster ids.
 }
 \examples{
 # 3 clusters with 5% noise
-dsd <- DSD_GaussianStatic(k=3, noise=0.05)
+dsd <- DSD_Gaussians(k=3, noise=0.05)
 
 # recluster a micro-clusters
 micro <- DSC_CluStream()

@@ -35,7 +35,7 @@ An object of class \code{DSC_DBSCAN} (a subclass of \code{DSC},
 
 \examples{
 # 3 clusters with 5% noise
-dsd <- DSD_GaussianStatic(k=3, noise=0.05)
+dsd <- DSD_Gaussians(k=3, noise=0.05)
 
 # Use DBSCAN to recluster micro clusters
 dsc <- DSC_ClusTree()

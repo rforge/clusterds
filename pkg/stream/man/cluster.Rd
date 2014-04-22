@@ -42,7 +42,7 @@ clustering result, call \code{get_centers()} on the DSC object.
 
 \examples{
 dsc <- DSC_CluStream()
-dsd <- DSD_GaussianStatic()
+dsd <- DSD_Gaussians()
 cluster(dsc, dsd, 500)
 plot(dsc, dsd)
 }
