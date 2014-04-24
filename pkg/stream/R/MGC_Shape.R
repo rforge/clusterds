@@ -16,37 +16,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-MGC_Noise_refClass <- setRefClass("MGC_Noise", 
-  fields = list(
-    density = "numeric",
-    range = "matrix",
-    dimension = "numeric"
-  ), 
-  
-  methods = list(
-    initialize = function(d,r) {
-      density  <<- d
-      range <<- r
-      dimension <<- nrow(r)
-      .self
-    }
-    
-  ),
-)
-
-MGC_Noise_refClass$methods(
-  get_attributes = function(time) {
-    c(cluster=0,density=density)
-  },
-  
-  get_points = function(time) {
-    apply(range, 1, function(x) runif(1, x[1], x[2]))
-  }
-)
-
-### creator    
-MGC_Noise<- function(density, range) {
-  structure(list(description = "Noise Moving Generator Cluster",
-    RObj = MGC_Noise_refClass$new(density, range)),
-    class = c("MGC_Noise","MGC"))
-}
+MGC_Shape_Gaussian <- function(center, parameter) rnorm(length(center), 
+  mean=center, sd=parameter)
+MGC_Shape_Block <- function(center, parameter) runif(length(center), 
+  min=-parameter/2, max=parameter/2)+center

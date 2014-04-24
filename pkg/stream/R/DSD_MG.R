@@ -42,48 +42,63 @@ dsd_MG_refClass <- setRefClass("dsd_MG",
 
 dsd_MG_refClass$methods(
   add_cluster = function(c) {
+    if(c$RObj$dimension != dimension) stop("Cluster dimensions do not match!")
     clusters <<- append(clusters, list(c))
   },
-  get_points = function(n,assignment = FALSE) {
-    j <- 0
-    data <- numeric()
-    a <- numeric()
+  
+  get_points = function(n, assignment = FALSE) {
+    if(length(clusters)==0) stop("DSD_MG does not contain any clusters!")
+
+    if(assignment) a <- integer(n)
+    data <- matrix(NA_real_, nrow=n, ncol=dimension)
     
+    j <- 0L
     while(j < n) {
-      attributes <- do.call(rbind, lapply(clusters,function(x){x$RObj$get_attributes(t)}))
+      attributes <- as.matrix(sapply(clusters, function(x) x$RObj$get_attributes(t)))
       
-      cluster <- unlist(attributes[,1])
-      density <- unlist(attributes[,2])
+      cluster <- attributes["cluster",]
+      density <- attributes["density",]
       
+      density[is.na(density)] <- 0
+      if(all(density==0)) stop("No MGC is producing points for this time point.")
+
       pointsPerSecond <- sum(density)
       pointsLeftInSecond <- pointsPerSecond - (t - floor(t))*pointsPerSecond
-      if((j + pointsLeftInSecond) > n)
-        k <- n-j
-      else 
-        k <- pointsLeftInSecond
-      t <<- t + k/pointsPerSecond
+      if((j + pointsLeftInSecond) <= n) k <- pointsLeftInSecond
+      else k <- n-j
+      
+      ### got to next timestep...
+      if(pointsLeftInSecond<1) {
+        t <<- ceiling(t)
+        next
+      }
+      
+      k <- floor(k)
       
       if(k>=1) {
-        s <- 1:length(clusters)
-        prob <- density
-        clusterOrder <- sample(x=s,size=k, replace=TRUE, prob=prob)
+        clusterOrder <- sample(x=1:length(clusters), size=k, replace=TRUE, 
+          prob=density/sum(density))
         
-        data <- rbind(data,t(sapply(clusterOrder, FUN = function(i) {
-            clusters[[i]]$RObj$get_points(t)
-        })))
-       
-        a <- c(a,unlist(lapply(clusterOrder,function(x){
-          if(!is.na(cluster[x]) && cluster[x] == 0) return(0)
-          if (any(is.na(cluster))) return(x)
-          cluster[x]
-        })))
-        j <- nrow(data)
+        data[(j+1):(j+k),] <- t(sapply(clusterOrder, FUN = function(i) {
+          clusters[[i]]$RObj$get_points(t)
+        }))
+        
+        if(assignment) {
+          cl <- cluster[clusterOrder]
+          cl[is.na(cl)] <- clusterOrder[is.na(cl)]
+          a[(j+1):(j+k)] <- cl
+        }
       }
+      
+      t <<- t + k/pointsPerSecond
+      j <- j+k
     }
+    
     data <- data.frame(data)
-    if(assignment)
-      attr(data,"assignment") <- a
-    data[1:n,]
+    
+    if(assignment) attr(data,"assignment") <- a
+    
+    data
   }
 )
 
@@ -96,7 +111,6 @@ DSD_MG<- function(dimension = 2, ...) {
                  RObj = dsd_MG_refClass$new(d = dimension)),
             class = c("DSD_MG","DSD_R","DSD"))
   
-#  lapply(list(...),function(c){x$RObj$add_cluster(c)})
   lapply(list(...), function(c) add_cluster(x, c))
   
   x
@@ -115,8 +129,10 @@ reset_stream.DSD_MG <- function(dsd) {
 }
 
 print.DSD_MG <- function(x, ...) {
-  cat(paste(x$description, " (", paste(class(x), collapse=", "), ")", '\n', sep=""))
-  cat(paste('With', length(x$RObj$clusters), 'clusters', 'in', x$RObj$dimension, 'dimensions', '\n'))
+  cat(paste(x$description, " (", paste(class(x), collapse=", "), ")", 
+    '\n', sep=""))
+  cat(paste('With', length(x$RObj$clusters), 'clusters', 'in', 
+    x$RObj$dimension, 'dimensions. Time is', round(x$RObj$t, 3), '\n'))
 }
 
 get_clusters.DSD_MG <- function(x) {

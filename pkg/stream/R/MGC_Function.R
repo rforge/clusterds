@@ -17,47 +17,45 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 MGC_Function_refClass <- setRefClass("MGC_Function", 
-                                   fields = list(
-                                     variance = "list",
-                                     points = "list",
-                                     density = "function",
-                                     dimension = "numeric",
-                                     cluster = "ANY"
-                                   ), 
-                                   
-                                   methods = list(
-                                     initialize = function(v,d,p,c) {
-                                       variance <<- v
-                                       density <<- d
-                                       points <<- p
-                                       cluster <<- c
-                                       dimension <<- length(points)
-                                       .self
-                                     }
-                                     
-                                   ),
+  fields = list(
+    dimension = "numeric",
+    density = "function",
+    center= "function",
+    parameter = "function",
+    cluster = "ANY",
+    shape = "function"
+  ), 
+  
+  methods = list(
+    initialize = function(den, cen, par, clu, sha) {
+      dimension <<- length(cen(1))
+      density <<- den
+      center <<- cen
+      parameter <<- par
+      cluster <<- clu
+      shape <<- sha
+      .self
+    }
+    
+  ),
 )
 
 MGC_Function_refClass$methods(
   get_attributes = function(time) {
-    x <- data.frame(cluster,density(time))
-    colnames(x) <- c("cluster","density")
-    x
+    c(cluster=cluster, density=density(time))
   },
+  
   get_points = function(time) {
-    MASS::mvrnorm(1, mu=unlist(lapply(points,function(x){x(time)})), Sigma=diag(unlist(lapply(variance,function(x){x(time)})),dimension))
+    shape(center=center(time), parameter=parameter(time))
   }
 )
 
 ### creator    
-MGC_Function<- function(density, variance, center, cluster = NA) {
+MGC_Function<- function(density, center, parameter, shape = NULL, cluster = NA) {
+  if(is.null(shape)) shape <- MGC_Shape_Gaussian
   
-  desc <- "Functional Moving Generator Cluster"
-  
-  if(class(variance) == "function")
-    variance <- list(variance)
-    
-  structure(list(description = desc,
-                 RObj = MGC_Function_refClass$new(v = variance, d = density, p = center, c = cluster)),
-            class = c("MGC_Function","MGC"))
+  structure(list(description = "Functional Moving Generator Cluster",
+    RObj = MGC_Function_refClass$new(den = density, cen = center, 
+      par = parameter, clu = cluster, sha = shape)),
+    class = c("MGC_Function","MGC"))
 }

@@ -9,6 +9,8 @@
 \alias{keyframe}
 \alias{get_keyframes}
 \alias{remove_keyframe}
+\alias{MGC_Shape_Gaussian}
+\alias{MGC_Shape_Block}
 
 
 \title{Moving Generator Cluster}
@@ -16,33 +18,35 @@
 Creates an evolving cluster for a \code{DSD_MG}. 
 }
 \usage{
-MGC_Static(density = 1, variance = 1, center, cluster = NA)
-MGC_Function(density, variance, center, cluster = NA)
-MGC_Random(density, variance, center, randomness = 1 ) 
+MGC_Static(density, center, parameter, shape = NULL , cluster = NA)
+MGC_Function(density, center, parameter, shape = NULL, cluster = NA )
+MGC_Random(density, center, parameter, randomness = 1, shape = NULL) 
 MGC_Noise(density, range)
 
-MGC_Linear(keyframelist=NULL) 
-keyframe(time, density = 1, variance = 1, center, cluster = NA, 
+MGC_Linear(dimension = 2, keyframelist = NULL, shape = NULL) 
+keyframe(time, density, center, parameter, cluster = NA, 
   reset = FALSE)
-add_keyframe(x, time, density = 1, variance = 1, center, cluster = NA, 
+add_keyframe(x, time, density, center, parameter, cluster = NA, 
   reset = FALSE)
 get_keyframes(x) 
 remove_keyframe(x, time)
 }
 
 \arguments{
-  \item{variance}{The variance of the cluster. For \code{MGC_Function}, this attribute is a function. Otherwise, the variance of the cluster is a static number or a list that has a length equal to the cluster's dimensionality.}
   \item{center}{A list that defines the center of the cluster. The list should have a length equal to the dimensionality. For \code{MGC_Function}, this list consists of functions that define the movement of the cluster. For \code{MGC_Random}, this attribute defines the beginning location for the \code{MGC} before it begins moving.}
-  \item{density}{The density of the cluster. For \code{MGC_Function}, this attribute is a function and defines the density of a cluster at a given timestamp.}
   \item{cluster}{The name of the cluster. The cluster attribute is useful if a user wishes to combine multiple \code{MGC}s to create a single macro cluster. To accomplish this, the user would simply assign each of the \code{MGC}s the same cluster name.}
+  \item{density}{The density of the cluster. For \code{MGC_Function}, this attribute is a function and defines the density of a cluster at a given timestamp.}
+  \item{dimension}{Dimensionality of the data stream.}
+  \item{keyframelist}{a list of keyframes to initialize the \code{MGC_Linear} object with.}
+  \item{parameter}{Parameters for the shape. For the defauld shape \code{MGC_Shape_Gaussian} the parameter is the standard deviation, one per dimension. If a single value is specified then it is recycled for all dimensions.}
   \item{randomness}{The maximum amount the cluster will move during one time step.}
   \item{range}{The area in which the noise should appear.}
-  \item{x}{An object of class \code{MGC_Linear}.}
+  \item{reset}{Should the cluster reset to the first keyframe (time 0) after this keyframe is finished?}
+  \item{shape}{A function creating the shape of the cluster. It gets passed on the 
+parameters argument from above. Available functions are \code{MGC_Shape_Gaussian} (the parameters
+are a vector containing standard deviations) and \code{MGC_Shape_Block} (parameters are the dimensions of the uniform block).}
   \item{time}{The time stamp the keyframe should be located or which keyframe should be removed.}
-  \item{reset}{Should the cluster reset to the first keyframe (time 0) after
-this keyframe is finished?}
-  \item{keyframelist}{a list of keyframes to initialize the \code{MGC_Linear}
-  object with.}
+  \item{x}{An object of class \code{MGC_Linear}.}
 }
 
 \details{
@@ -63,30 +67,41 @@ An \code{MGC_Noise} allows for a creation of noise within a \code{DSD_MG}.
 \code{\link{DSD_MG}} for details on how to use an \code{MGC} within a \code{DSD}
 }
 \examples{
+### Two static clusters
+dsd <- DSD_MG(dim=2,
+  MGC_Static(den = 1, center=c(1,1), par=.1),
+  MGC_Static(den = 1, center=c(2,1), par=.1, shape=MGC_Shape_Block)
+)
+
+plot(dsd, 1000)
+
 ### Example of several MGC_Randoms
 dsd <- DSD_MG(dimension=2,
-  MGC_Random(density=1, variance=1, center=c(50,50)),
-  MGC_Random(density=1, variance=10, center=c(50,50))
+  MGC_Random(density=100, parameter=3, center=c(50,50)),
+  MGC_Random(density=100, parameter=10, center=c(50,50), shape=MGC_Shape_Block)
 )
   
-\dontrun{animate_data(dsd,2500,xlim=c(0,100),ylim=c(0,100), horizon=100)}
+\dontrun{
+  animate_data(dsd,2500,xlim=c(0,100),ylim=c(0,100), horizon=100)
+}
   
   
 ### Example of several MGC_Functions
 dsd <- DSD_MG(dim = 2)
 
-### cluster moving from bottom-left to top-right increasing variance
+### block-shaped cluster moving from bottom-left to top-right increasing size
 c1 <- MGC_Function(
   density = function(t){100},
-  variance = function(t){.1*t},
-  center = c(function(t){t}, function(t){t})
+  parameter = function(t){1*t},
+  center = function(t) c(t,t),
+  shape = MGC_Shape_Block
   )
 
-### cluster moiving in a circle
+### cluster moving in a circle (default shape is Gaussian)
 c2 <- MGC_Function(
   density = function(t){25},
-  variance = function(t){5},
-  center= c(function(t){sin(t/10)*50+50}, function(t){cos(t/10)*50+50})
+  parameter = function(t){5},
+  center= function(t) c(sin(t/10)*50+50, cos(t/10)*50+50)
 )
   
 add_cluster(dsd,c1)
@@ -96,33 +111,34 @@ add_cluster(dsd,c2)
 ### Example of several MGC_Linears: A single cluster splits at time 50 into two.
 ### Note how the cluster label for c2 changes!
 dsd <- DSD_MG(dim = 2)
-c1 <- MGC_Linear()
-add_keyframe(c1, time=1,  dens=10, var=10, center=c(0,0),   cluster=1)
-add_keyframe(c1, time=50, dens=10, var=10, center=c(50,50), cluster=1)
-add_keyframe(c1, time=100,dens=10, var=10, center=c(50,100),cluster=1)
+c1 <- MGC_Linear(dim = 2)
+add_keyframe(c1, time=1,  dens=50, par=5, center=c(0,0))
+add_keyframe(c1, time=50, dens=50, par=5, center=c(50,50))
+add_keyframe(c1, time=100,dens=50, par=5, center=c(50,100))
 add_cluster(dsd,c1)
 
-c2 <- MGC_Linear()
-add_keyframe(c2, time=1,  dens=10, var=10, center=c(0,0),   cluster=1)
-add_keyframe(c2, time=50, dens=10, var=10, center=c(50,50), cluster=2)
-add_keyframe(c2, time=100,dens=10, var=10, center=c(100,50),cluster=2)
+c2 <- MGC_Linear(dim = 2, shape=MGC_Shape_Block)
+add_keyframe(c2, time=50, dens=25, par=c(10,10),  center=c(50,50))
+add_keyframe(c2, time=100,dens=25, par=c(30,30), center=c(100,50))
 add_cluster(dsd,c2)
 
-\dontrun{animate_data(dsd,2500,xlim=c(0,100),ylim=c(0,100), horiz=100)}
+\dontrun{animate_data(dsd,5000,xlim=c(0,100),ylim=c(0,100), horiz=100)}
   
 ### two fixed and a moving cluster  
 dsd <- DSD_MG(dim = 2,
-  MGC_Static(dens=1, var=.01, center=c(0,0)),
-  MGC_Static(dens=1, var=.01, center=c(1,1)),
-  MGC_Linear(list(
-    keyframe(time = 0, dens=1, var=.01, center=c(0,0)),
-    keyframe(time = 1000, dens=1, var=.01, center=c(1,1)),
-    keyframe(time = 2000, dens=1, var=.01, center=c(0,0), reset=TRUE)
+  MGC_Static(dens=1, par=.1, center=c(0,0)),
+  MGC_Static(dens=1, par=.1, center=c(1,1)),
+  MGC_Linear(dim=2,list(
+    keyframe(time = 0, dens=1, par=.1, center=c(0,0)),
+    keyframe(time = 1000, dens=1, par=.1, center=c(1,1)),
+    keyframe(time = 2000, dens=1, par=.1, center=c(0,0), reset=TRUE)
   )))
 
 noise <- MGC_Noise(dens=.1, range=rbind(c(-.2,1.2),c(-.2,1.2)))
 add_cluster(dsd, noise)
   
-\dontrun{animate_data(dsd, 3.1*4000, xlim=c(-.2,1.2), ylim=c(-.2,1.2), horiz=200)}
+\dontrun{
+animate_data(dsd, 3.1*4000, xlim=c(-.2,1.2), ylim=c(-.2,1.2), horiz=200)
+}
 }
 

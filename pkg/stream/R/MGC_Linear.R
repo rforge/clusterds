@@ -16,97 +16,131 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-
-keyframe <- function(time, density = 1, variance = 1, center, cluster = NA, 
-  reset = FALSE) list(time=time, density=density, variance=variance, 
-    center=center, cluster=cluster, reset=reset)
-
-add_keyframe <- function(x, time, density =1, variance = 1, center, cluster = NA, reset = FALSE) 
+add_keyframe <- function(x, time, density, center, parameter, cluster = NA, reset = FALSE) 
   UseMethod("add_keyframe")
 get_keyframes <- function(x) 
   UseMethod("get_keyframes")
 remove_keyframe <- function(x, time) 
   UseMethod("remove_keyframe")
 
+keyframe <- function(time, density, center, parameter, cluster = NA, 
+  reset = FALSE) list(time=time, density=density, parameter=parameter, 
+    center=center, cluster=cluster, reset=reset)
+
+
 MGC_Linear_refClass <- setRefClass("MGC_Linear", 
-                            fields = list(
-                              keyframes = "data.frame",
-                              dimension = "numeric",
-                              reset_time = "numeric"
-                            ), 
-                            
-                            methods = list(
-                              initialize = function() {
-                                keyframes  <<- data.frame(time =  numeric(0),variance = list(), density = numeric(0), cluster = numeric(0), centers = list(), reset = logical())
-                                dimension <<- 0
-                                reset_time <<- 0
-                                .self
-                              }
-                              
-                            ),
+  fields = list(
+    keyframes = "data.frame",
+    dimension = "numeric",
+    shape = "function"
+  ), 
+  
+  methods = list(
+    initialize = function(dimension, shape) {
+      keyframes  <<- data.frame(
+        time =  numeric(), 
+        parameter = list(), 
+        density = numeric(), 
+        cluster = numeric(), 
+        centers = list(),
+        reset = logical()
+        )
+      dimension <<- dimension
+      shape <<- shape
+      
+      .self
+    }
+    
+  ),
 )
 
 MGC_Linear_refClass$methods(
-  add_keyframe = function(t,v,d,p,c,r) {
-    dimension <<- length(p)
-    keyframes <<- rbind(keyframes,data.frame(time=t,variance=I(list(v)),density=d,cluster=c,centers=I(list(p)),reset=r))
-    keyframes <<- keyframes[with(keyframes, order(time)), ]
+  add_keyframe = function(t, par, d, c, clu, r) {
+    if(dimension != length(c)) stop("Dimension in keyframe do not match the MGC dimensions!")
+    
+    ### check if keyframe exists
+    exists <- which(keyframes$time==t)
+    if(length(exists)>0) {
+      warning("Existing keyframe at time ", t, " replaced!")
+      keyframes <<- keyframes[-exists,]
+    }
+    
+    keyframes <<- rbind(keyframes,
+      data.frame(
+        time=t, 
+        parameter=I(list(par)),
+        density=d, 
+        cluster=clu, 
+        centers=I(list(c)), 
+        reset=r)
+      )
+    keyframes <<- keyframes[order(keyframes$time), ]
   },
+  
   get_points = function(time) {
-    attributes <- get_attribute(time,c("centers","variance"))
-    MASS::mvrnorm(1, mu=unlist(attributes[[1]]), Sigma=diag(unlist(attributes[[2]]),dimension))
+    attributes <- get_attribute(time, c("centers","parameter"))
+    shape(center = attributes[["centers"]], parameter = attributes[["parameter"]])
   },
+  
   get_attributes = function(time) {
-    test <- keyframes$reset[which(keyframes$time==floor(time-reset_time))]
-    if(length(test) != 0 && test)
-      reset_time <<- time
-    
-    get_attribute(time,c("cluster","density"))
-    
+    x <- as.numeric(get_attribute(time, c("cluster","density")))
+    names(x) <- c("cluster","density")
+    x
   },
-  get_attribute = function(time,attributes) {
-    do.call(rbind, lapply((time-reset_time),function(t){
-      outer <- findInterval(t, c(-Inf, keyframes$time))
-      inner <- outer -1
-      if(outer==1) {
-        return((lapply(attributes,function(attribute){
-          get(attribute,keyframes)[1]
-        })))
-      }
-      if(inner==nrow(keyframes)) {
-        return((lapply(attributes,function(attribute){
-          get(attribute,keyframes)[nrow(keyframes)]
-        })))
-      }
-      return((lapply(attributes,function(attribute){
-        if(attribute == "cluster") return(get(attribute,keyframes)[inner])
-        (unlist(get(attribute,keyframes)[inner])-unlist(get(attribute,keyframes)[outer]))/(keyframes$time[inner]-keyframes$time[outer])*(t-keyframes$time[inner])+unlist(get(attribute,keyframes)[inner]) 
-      })))
-    })) 
+  
+  get_attribute = function(time, attributes=NULL) {
+    if(is.null(attributes)) attributes <- colnames(keyframes)
+    else kfs <- keyframes[, attributes]
+    
+    ### no keyframe
+    if(nrow(keyframes)<1) return(kfs)
+
+    ### reset?
+    if(any(keyframes$reset)) {
+      cycletime <- keyframes$time[min(which(keyframes$reset))]
+      t <- time %% cycletime + 1
+    } else t <- time
+    
+    nextkf <- findInterval(t, c(-Inf, keyframes$time))
+    currentkf <- nextkf - 1L
+
+    ### before first kf
+    if(currentkf==0) return(kfs[NULL,])
+    
+    ### at last kf
+    #if(nextkf>nrow(kfs)) return(kfs[nrow(kfs),]) 
+    if(nextkf>nrow(kfs)) return(lapply(kfs, "[[", nrow(kfs))) 
+    
+    ### in between two kf (weighted average)
+    w <- (t - keyframes$time[currentkf]) / (keyframes$time[nextkf] - keyframes$time[currentkf])
+    l <- lapply(kfs, FUN=function(x) (1-w)*x[[currentkf]]+w*x[[nextkf]])
+    
+    ### fix cluster attribute
+    cl <- attributes == "cluster"
+    if(any(cl)) for(i in which(cl)) l[[i]] <- kfs$cluster[[currentkf]]
+    
+    l
   }
 )
 
 
 ### creator    
-MGC_Linear<- function(keyframelist=NULL) {
+MGC_Linear<- function(dimension = 2, keyframelist=NULL, shape=NULL) {
+  if(is.null(shape)) shape <- MGC_Shape_Gaussian
   
-  desc <- "Linear Moving Generator Cluster"
+  x <- structure(list(description = "Linear Moving Generator Cluster",
+    RObj = MGC_Linear_refClass$new(dimension=dimension, shape=shape)),
+    class = c("MGC_Linear","MGC"))  
   
-  
-  x <- structure(list(description = desc,
-                 RObj = MGC_Linear_refClass$new()),
-            class = c("MGC_Linear","MGC"))
-
   if(!is.null(keyframelist)) lapply(keyframelist, FUN=function(kf)
     do.call("add_keyframe", c(list(x), kf)))
   
   x
 }
 
-add_keyframe.MGC_Linear <- function(x, time, density = 1, variance = 1, 
-  center, cluster = NA, reset = FALSE) {
-  x$RObj$keyframes <- x$RObj$keyframes[which(x$RObj$keyframes$time!=time),]
-  x$RObj$add_keyframe(time,variance,density, center, cluster, reset)
+add_keyframe.MGC_Linear <- function(x, time, density, center, parameter, 
+  cluster = NA, reset = FALSE) {
+  x$RObj$add_keyframe(t=time, par=parameter, d=density, c=center, clu=cluster, r=reset)
 }
 
 get_keyframes.MGC_Linear <- function(x) {

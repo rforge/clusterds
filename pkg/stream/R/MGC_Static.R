@@ -17,11 +17,20 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 ### creator    
-MGC_Static <- function(density = 1, variance = 1, center, cluster = NA) {
-    x <- MGC_Linear(list(keyframe(0, density=density, variance=variance, 
-		 center=center, cluster=cluster)))
+MGC_Static <- function(density = 1, center, parameter, 
+  shape = NULL, cluster = NA) {
+    if(is.null(shape)) shape <- MGC_Shape_Gaussian
+  
+    x <- MGC_Function( 
+      density = function(t) density,
+      parameter = function(t) parameter,
+      center= function(t) center,
+      shape = shape
+    )
     
-    class(x) <- c("MGC_Static", class(x))
-    x
+  x$description <- "Static Cluster"
+  
+  class(x) <- c("MGC_Static", class(x))
+  x
 }
 

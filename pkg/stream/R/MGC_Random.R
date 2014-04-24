@@ -17,47 +17,55 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 MGC_Random_refClass <- setRefClass("MGC_Random", 
-                                     fields = list(
-                                       start = "numeric",
-                                       current = "numeric",
-                                       variance = "numeric",
-                                       density = "numeric",
-                                       randomness = "numeric",
-                                       dimension = "numeric"
-                                     ), 
-                                     
-                                     methods = list(
-                                       initialize = function(s,v,d,r) {
-                                         start  <<- s
-                                         current <<- s
-                                         density <<- d
-                                         variance <<- v
-                                         randomness <<- r
-                                         dimension <<- length(s)
-                                         .self
-                                       }
-                                       
-                                     ),
+  fields = list(
+    start = "numeric",
+    current = "numeric",
+    parameter = "numeric",
+    density = "numeric",
+    lastUpdate = "numeric",
+    randomness = "numeric",
+    dimension = "numeric",
+    shape = "function"
+  ), 
+  
+  methods = list(
+    initialize = function(s,p,d,r,sha) {
+      start  <<- s
+      current <<- s
+      density <<- d
+      parameter <<- p
+      randomness <<- r
+      lastUpdate <<- 1
+      shape <<- sha
+      dimension <<- length(s)
+      .self
+    }
+    
+  ),
 )
 
 MGC_Random_refClass$methods(
   get_attributes = function(time) {
-    data.frame(cluster=NA,density)
+   
+      c(cluster=NA, density=density)
   },
+  
   get_points = function(time) {
     if(time == 1) current <<- start
-    current <<- current + runif(length(current), -randomness, randomness)
-    MASS::mvrnorm(1, mu=current, Sigma=diag(variance,dimension))
+    if(floor(time) > lastUpdate) {
+      current <<- current + runif(length(current), -randomness, randomness)
+      lastUpdate <<- floor(time)
+    }
+    
+    shape(center=current, parameter=parameter)
   }
 )
 
 ### creator    
-MGC_Random<- function(density, variance, center, randomness=1) {
+MGC_Random<- function(density, center, parameter, randomness=1, shape=NULL) {
+  if(is.null(shape)) shape <- MGC_Shape_Gaussian
   
-  desc <- "Random Moving Generator Cluster"
-  
-  
-  structure(list(description = desc,
-                 RObj = MGC_Random_refClass$new(center,variance,density,randomness)),
-            class = c("MGC_Random","MGC"))
+  structure(list(description = "Random Moving Generator Cluster",
+    RObj = MGC_Random_refClass$new(center, parameter, density, randomness, shape)),
+    class = c("MGC_Random","MGC"))
 }

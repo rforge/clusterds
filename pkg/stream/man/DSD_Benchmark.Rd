@@ -27,5 +27,5 @@ Returns a \code{DSD} object.
 
 \examples{
 dsd <- DSD_Benchmark(i=1)
-animate_data(dsd, n=2000, horizon=100)
+animate_data(dsd, n=2000, horizon=100, xlim=c(-.2,1.2), ylim=c(-.2,1.2)) 
 }

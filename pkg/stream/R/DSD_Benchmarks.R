@@ -19,12 +19,12 @@
 DSD_Benchmark <- function(i=1) {
     if(i==1) {
       return(DSD_MG(dimension = 2,
-        MGC_Static(density=1, variance=.005, center=c(0,0)),
-        MGC_Static(density=1, variance=.005, center=c(1,1)),
-        MGC_Linear(list(
-          keyframe(time = 0, density=1, variance=.005, center=c(0,0)),
-          keyframe(time = 500, density=1, variance=.005, center=c(1,1)),
-          keyframe(time = 1000, density=1, variance=.005, center=c(0,0), reset=TRUE)
+        MGC_Static(density=1, parameter=.1, center=c(0,0)),
+        MGC_Static(density=1, parameter=.1, center=c(1,1)),
+        MGC_Linear(dimension = 2, list(
+          keyframe(time = 0, density=1, parameter=.1, center=c(0,0)),
+          keyframe(time = 500, density=1, parameter=.1, center=c(1,1)),
+          keyframe(time = 1000, density=1, parameter=.1, center=c(0,0), reset=TRUE)
         ))))
     }
 

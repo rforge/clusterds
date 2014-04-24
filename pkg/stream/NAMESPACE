@@ -56,6 +56,9 @@ export(
   MGC_Noise,
   MGC_Static,
 
+  MGC_Shape_Gaussian,
+  MGC_Shape_Block,
+
   # functions
 	# DSD
 	get_points,

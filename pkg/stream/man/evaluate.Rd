@@ -29,18 +29,25 @@
 	assignments are translated to macro-cluster assignments using 
 	information on what micro-clusters constitute each macro-cluster.}
 	\item{macro}{A DSC_macro object for reclustering.}
-	\item{horizon}{Number of points after which evaluation is done (see detail section).}
+	\item{horizon}{Evaluation is done using horizon many previouse points
+    (see detail section).}
 	\item{verbose}{report progress?}
   \item{...}{Unused arguments are ignored.}
 }
 
 \details{
-	For evaluation, each data points are assigned
-	to its nearest cluster (using Euclidean distance to the cluster
-	centers). Then
-	for each cluster the majority class is determined. Based on 
-	the majority class and the class of all assigned points several 
-	evaluation measures are available:
+	For evaluation each data points are assigned
+	to its nearest cluster using Euclidean distance to the cluster
+	centers. Then for each cluster the majority class is determined. Based on 
+  the majority class several 
+	evaluation measures can be computed.
+  
+  For \code{evaluate_cluster} the most commonly used method introduced 
+  by Aggarwal et al (2003)
+  is applied. The data points used for evaluation are taken from the previously 
+  clustered horizon.
+  
+  The following evaluation measures are available:  
 	\itemize{
 		\item	\code{"numMicroClusters"} number of micro-clusters, 
     \item \code{"numMacroClusters"} number of macro-clusters, 
@@ -100,11 +107,14 @@ the clustering algorithm was able to adapt to the changing stream.
     \code{evaluate} returns an object of class \code{stream_eval}
     which is a numeric vector of the values of the requested measures
     and two attribures, \code{"type"} and
-    \code{"assign"}, to see at what level the evaluation was done.
-    
+    \code{"assign"}, to see at what level the evaluation was done. 
 }
 
 \references{
+C. C. Aggarwal, J. Han, J. Wang, P. S. Yu (2003). A Framework for 
+Clustering Evolving Data Streams. Proceedings of the 29th International 
+Conference on Very Large Data Bases - Volume 29. 
+
 E. Dimitriadou, A. Weingessel and K. Hornik (2002).  A combination
 scheme for fuzzy clustering.  International Journal of Pattern
 Recognition and Artificial Intelligence, 16, 901-912.
