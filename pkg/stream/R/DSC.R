@@ -128,7 +128,7 @@ plot.DSC <- function(x, dsd = NULL, n = 500,
   type <- match.arg(type)
   
   if(type !="both") { 
-    if(type =="auto") type <- get_type(type)
+    if(type =="auto") type <- get_type(x)
     ## method can be pairs, plot or pc (projection with PCA)
     centers <- get_centers(x, type=type)
     k <- nrow(centers)

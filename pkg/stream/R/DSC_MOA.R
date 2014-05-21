@@ -39,9 +39,8 @@ convert_params <- function(paramList=list()) {
   cliParams <- substr(cliParams, 1, nchar(cliParams)-1)
 }
 
-get_microclusters.DSC_MOA <- function(x, ...) {
-  
-  error <- tryCatch({
+get_microclusters.DSC_MOA <- function(x, ...) {   
+    error <- tryCatch({
     if (.jcall(x$javaObj, "Z", "implementsMicroClusterer")) {
       mClustering <- .jcall(x$javaObj, 
                             "Lmoa/cluster/Clustering;", "getMicroClusteringResult")

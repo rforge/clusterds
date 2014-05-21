@@ -8,6 +8,7 @@ Changes in version 0.3-0
         micro-clusters before reculstering
     * removed default radius, etc. for most clustering algorithms
     * DSC_DenStream does now internally recluster using density reachability 
+    * Added DSD_MG for simulating moving clusters
 
 Changes in version 0.2-0 (2/21/14)
     * major restructuring

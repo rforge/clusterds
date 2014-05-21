@@ -467,12 +467,12 @@ microToMacro.DSC_DStream <- function(x, micro=NULL, ...) {
   assignment
 }
 
-### add plot as an image
+### add plot as a grid
 plot.DSC_DStream <- function(x, dsd=NULL, n=500, ...) {
   ### find type
   type <- list(...)$type
   
-  if(is.null(type) || !pmatch(tolower(type), "image", nomatch=0)) 
+  if(is.null(type) || !pmatch(tolower(type), "grid", nomatch=0)) 
     return(plot.DSC(x, dsd=dsd, n=n, ...))
   
   if(x$RObj$d!=2) stop("Image visualization only works for 2D data!") 

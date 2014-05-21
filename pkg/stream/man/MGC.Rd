@@ -69,20 +69,20 @@ An \code{MGC_Noise} allows for a creation of noise within a \code{DSD_MG}.
 \examples{
 ### Two static clusters
 dsd <- DSD_MG(dim=2,
-  MGC_Static(den = 1, center=c(1,1), par=.1),
-  MGC_Static(den = 1, center=c(2,1), par=.1, shape=MGC_Shape_Block)
+  MGC_Static(den = 1, center=c(1, 0), par=.1),
+  MGC_Static(den = 1, center=c(2, 0), par=.4, shape=MGC_Shape_Block)
 )
 
-plot(dsd, 1000)
+plot(dsd)
 
 ### Example of several MGC_Randoms
 dsd <- DSD_MG(dimension=2,
-  MGC_Random(density=100, parameter=3, center=c(50,50)),
-  MGC_Random(density=100, parameter=10, center=c(50,50), shape=MGC_Shape_Block)
+  MGC_Random(den = 100, center=c(1, 0), par=.1, rand=.1),
+  MGC_Random(den = 100, center=c(2, 0), par=.4, shape=MGC_Shape_Block, rand=.1)
 )
   
 \dontrun{
-  animate_data(dsd,2500,xlim=c(0,100),ylim=c(0,100), horizon=100)
+  animate_data(dsd,2500,xlim=c(0,3),ylim=c(-2,2), horizon=100)
 }
   
   
@@ -96,6 +96,7 @@ c1 <- MGC_Function(
   center = function(t) c(t,t),
   shape = MGC_Shape_Block
   )
+add_cluster(dsd,c1)
 
 ### cluster moving in a circle (default shape is Gaussian)
 c2 <- MGC_Function(
@@ -103,10 +104,11 @@ c2 <- MGC_Function(
   parameter = function(t){5},
   center= function(t) c(sin(t/10)*50+50, cos(t/10)*50+50)
 )
-  
-add_cluster(dsd,c1)
 add_cluster(dsd,c2)
-\dontrun{animate_data(dsd,10000,xlim=c(0,100),ylim=c(0,100), horizon=100)}
+
+\dontrun{
+animate_data(dsd,10000,xlim=c(0,100),ylim=c(0,100), horizon=100)
+}
   
 ### Example of several MGC_Linears: A single cluster splits at time 50 into two.
 ### Note how the cluster label for c2 changes!
@@ -122,7 +124,9 @@ add_keyframe(c2, time=50, dens=25, par=c(10,10),  center=c(50,50))
 add_keyframe(c2, time=100,dens=25, par=c(30,30), center=c(100,50))
 add_cluster(dsd,c2)
 
-\dontrun{animate_data(dsd,5000,xlim=c(0,100),ylim=c(0,100), horiz=100)}
+\dontrun{
+animate_data(dsd,5000,xlim=c(0,100),ylim=c(0,100), horiz=100)
+}
   
 ### two fixed and a moving cluster  
 dsd <- DSD_MG(dim = 2,

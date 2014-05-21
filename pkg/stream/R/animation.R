@@ -25,7 +25,7 @@ animate_cluster <- function(dsc, dsd, macro=NULL, n=1000,
   
   cluster.ani(dsc, dsd, macro, n, interval, 
     pointInterval, horizon, 
-    evaluationMethod, evaluationType, evaluationType, 
+    evaluationMethod, evaluationType, evaluationAssign, 
     ...)
 }
 
@@ -43,6 +43,8 @@ cluster.ani <- function(dsc=NULL, dsd, macro=NULL, n=1000,
   evaluationMethod=NULL, evaluationType="micro", evaluationAssign="micro", ...) {
   
   animation::ani.record(reset = TRUE)
+  
+  op <- par(no.readonly = TRUE)
   
   if(!is.null(evaluationMethod)) {
     layout(matrix(c(1,2), 2, 1, byrow = TRUE), heights=c(3,1))
@@ -117,6 +119,8 @@ cluster.ani <- function(dsc=NULL, dsd, macro=NULL, n=1000,
     }
     
   }
+  
+  par(op)
   
   if(!is.null(evaluationMethod)) {
     colnames(evaluation) <- c("points", evaluationMethod)
