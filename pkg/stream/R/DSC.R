@@ -84,16 +84,17 @@ nclusters.DSC <- function(x, type=c("auto", "micro", "macro"), ...) {
   nrow(get_centers(x, type=type, ...))
 }
 
-get_assignment <- function(dsc, points, type=c("auto", "micro", "macro"), ...) 
+get_assignment <- function(dsc, points, type=c("auto", "micro", "macro"), 
+  method="Euclidean", ...) 
   UseMethod("get_assignment")
 get_assignment.DSC <- function(dsc, points, type=c("auto", "micro", "macro"), 
-  ...) {
+  method="Euclidean", ...) {
   d <- points
   
   c <- get_centers(dsc, type=type, ...)
   
   if(nrow(c)>0) {
-    dist <- dist(d,c)
+    dist <- dist(d, c, method=method)
     #Find the minimum distance and save the class
     predict <- apply(dist, 1, which.min)
   } else {

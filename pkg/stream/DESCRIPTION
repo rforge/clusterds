@@ -7,7 +7,6 @@ Maintainer: Michael Hahsler <mhahsler@lyle.smu.edu>
 Description: A framework for data stream modeling and associated data mining tasks such as clustering and classification. The development of this package was supported in part by NSF IIS-0948893 and NIH R21HG005912.
 Depends: R (>= 2.13.0), methods, proxy (>= 0.4-7), birch, hash
 Imports: clue, clusterGeneration, MASS, animation, mlbench
-Suggests: streamMOA
 SystemRequirements: Oracle Java (>= 5.0)
 License: GPL-2
 Copyright: All other code is Copyright (C) Matthew Bolanos, John Forrest and Michael Hahsler
