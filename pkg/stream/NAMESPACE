@@ -1,7 +1,6 @@
 useDynLib(stream)
 
 import(methods)
-import(rJava)
 import(proxy)
 import(birch) 
 import(hash) 
@@ -15,16 +14,13 @@ importFrom(mlbench, "mlbench.2dnormals","mlbench.cassini","mlbench.circle",
 
 export(
 	# DSC
-	DSC_Static,
   DSC_Sample,
   DSC_BIRCH,
 	DSC_tNN, 
   DSC_DStream,
+
+  DSC_Static,
   
-  DSC_DenStream,
-	DSC_CluStream,
-	DSC_ClusTree,
-	
   DSC_Kmeans,
 	DSC_DBSCAN,
 	DSC_Hierarchical,
@@ -38,7 +34,6 @@ export(
   DSD_mlbenchGenerator,
 	DSD_mlbenchData,
   
-  DSD_RandomRBFGeneratorEvents,
 	DSD_Gaussians,
   DSD_Cubes,
 	DSD_UniformNoise,
@@ -46,16 +41,13 @@ export(
   DSD_BarsAndGaussians,
   DSD_Benchmark,
 
-
-  DSD_MG,
-
   # MGCs
+  DSD_MG,
   MGC_Linear,
   MGC_Function,
   MGC_Random,
   MGC_Noise,
   MGC_Static,
-
   MGC_Shape_Gaussian,
   MGC_Shape_Block,
 
@@ -96,7 +88,14 @@ export(
   ### DSC_tNN
   get_shared_density,
   ### DSC_DStream
-  get_attraction
+  get_attraction,
+  
+  ### generics internally used
+  get_microclusters,
+  get_microweights,
+  get_macroclusters,
+  get_macroweights,
+  .cluster
       )
 
 ### DSD Methods
@@ -108,7 +107,6 @@ S3method(write_stream, DSD)
 S3method(get_points, DSD_Gaussians)
 S3method(get_points, DSD_mlbenchGenerator)
 S3method(get_points, DSD_BarsAndGaussians)
-S3method(get_points, DSD_MOA)
 S3method(get_points, DSD_ReadStream)
 S3method(get_points, DSD_Target)
 S3method(get_points, DSD_Wrapper)
@@ -141,14 +139,12 @@ S3method(microToMacro, DSC_Kmeans)
 S3method(microToMacro, DSC_DBSCAN)
 S3method(microToMacro, DSC_tNN)
 S3method(microToMacro, DSC_DStream)
-S3method(microToMacro, DSC_CluStream)
 
 S3method(get_copy, DSC_R)
-S3method(get_copy, DSC_MOA)
 
-### other
 S3method(print, stream_eval)
 
+### DSD_MGC
 S3method(add_cluster, DSD_MG)
 S3method(reset_stream, DSD_MG)
 S3method(get_points, DSD_MG)

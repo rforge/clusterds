@@ -34,14 +34,14 @@ set.seed(0)
 ### create a data stream and a micro-clustering
 dsd <- DSD_Gaussians(k=3, d=3)
 
-clustream <- DSC_CluStream(k=50)
-cluster(clustream, dsd, 500)
-clustream
+micro <- DSC_Sample(k=50)
+cluster(micro, dsd, 500)
+micro
   
-### recluster using weighted k-means
-kmeans <- DSC_Kmeans(k=3, weighted=TRUE)
-recluster(kmeans, clustream)
+### recluster using k-means
+kmeans <- DSC_Kmeans(k=3)
+recluster(kmeans, micro)
 
 ### plot clustering
-plot(kmeans, dsd, main="Macro-clusters (CluStream + weighted k-means)")
+plot(kmeans, dsd, main="Macro-clusters (Sampling + k-means)")
 }

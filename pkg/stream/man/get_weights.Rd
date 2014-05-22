@@ -35,8 +35,8 @@ Internally the call is delegated to the appropriate
 # 3 clusters with 5% noise
 dsd <- DSD_Gaussians(k=3, noise=0.05)
 
-dsc <- DSC_CluStream()
-cluster(dsc, dsd, 1000)
+dsc <- DSC_DStream(gridsize=0.05)
+cluster(dsc, dsd, 500)
 
 get_weights(dsc)
 }

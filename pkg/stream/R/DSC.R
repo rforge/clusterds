@@ -122,7 +122,7 @@ plot.DSC <- function(x, dsd = NULL, n = 500,
   cex=1,
   pch=NULL,
   ..., 
-  method="pairs", 
+  method="pairs", dim=NULL, 
   type=c("auto", "micro", "macro", "both")) {
   
   type <- match.arg(type)
@@ -198,6 +198,8 @@ plot.DSC <- function(x, dsd = NULL, n = 500,
   
   if(!is.null(pch)) mpch <- pch
   
+  if(!is.null(dim)) centers <- centers[,dim]
+  
   ### plot
   if(ncol(centers)>2 && method=="pairs") {
     pairs(centers, col=col, cex=cex_clusters, pch=mpch, lwd=lwd, ...)
@@ -207,7 +209,8 @@ plot.DSC <- function(x, dsd = NULL, n = 500,
     p <- prcomp(centers)
     plot(p$x, col=col, cex=cex_clusters, pch=mpch, lwd=lwd, ...)
   }else { ## plot first 2 dimensions
-    plot(centers[,1:2], col=col, cex=cex_clusters, pch=mpch, lwd=lwd, ...)
+    if(ncol(centers)>2) centers <- centers[,1:2]
+    plot(centers, col=col, cex=cex_clusters, pch=mpch, lwd=lwd, ...)
   }
   
 }

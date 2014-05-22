@@ -46,11 +46,17 @@ replayer <- DSD_Wrapper(d, k=3)
 replayer
 
 # creating 2 clusterers of different algorithms
-dsc1 <- DSC_CluStream(k=100)
-dsc2 <- DSC_DenStream(epsilon=0.1, initPoints=100)
+dsc1 <- DSC_tNN(r=0.1)
+dsc2 <- DSC_DStream(gridsize=0.1)
 
 # clustering the same data in 2 DSC objects
 cluster(dsc1, replayer, 500)
 reset_stream(replayer) # resetting the replayer to the first position
 cluster(dsc2, replayer, 500)
+
+# plot the resulting clusterings
+reset_stream(replayer) 
+plot(dsc1, replayer, main="tNN")
+reset_stream(replayer) 
+plot(dsc2, replayer, main="D-Stream") 
 }
