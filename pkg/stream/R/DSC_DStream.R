@@ -100,9 +100,10 @@ DSC_DStream <- function(gridsize, d=NA_integer_, lambda = 1e-3,
     macro = new.env()
     )
   
-  l$macro <- list(macro = list(centers=data.frame(), 
-    weights=numeric(0), microToMacro=integer(0)),
-    newdata = FALSE)
+  l$macro$macro <- list(centers=data.frame(), 
+    weights=numeric(0), microToMacro=integer(0))
+  l$macro$newdata <- FALSE
+  
   class(l) <- c("DSC_DStream", "DSC_Micro", "DSC_R", "DSC")
   l
 }
