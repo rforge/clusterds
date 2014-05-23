@@ -477,7 +477,12 @@ plot.DSC_DStream <- function(x, dsd=NULL, n=500, ...) {
   
   if(is.null(type) || !pmatch(tolower(type), "grid", nomatch=0)) 
     return(plot.DSC(x, dsd=dsd, n=n, ...))
-  
+
+  if(is.na(x$RObj$d)) {
+    warning("No data clustered yet")
+    return(invisible(NULL))
+  }
+    
   if(x$RObj$d!=2) stop("Image visualization only works for 2D data!") 
   
   #  mat <- x$RObj$toMatrix("transitional")

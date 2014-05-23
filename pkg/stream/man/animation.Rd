@@ -10,9 +10,9 @@ Generates an animation of a data stream or a data steam clustering.
 }
 
 \usage{
-animate_data(dsd, n=1000, interval=.1, 
+animate_data(dsd, n=1000, wait=.1, 
     pointInterval=100, horizon=5*pointInterval, ...)
-animate_cluster(dsc, dsd, macro=NULL, n=1000, interval=.1, 
+animate_cluster(dsc, dsd, macro=NULL, n=1000, wait=.1, 
     pointInterval=100, horizon=5*pointInterval, 
     evaluationMethod=NULL, evaluationType="micro", evaluationAssign="micro", 
     ...)
@@ -23,7 +23,7 @@ animate_cluster(dsc, dsd, macro=NULL, n=1000, interval=.1,
   \item{dsc}{a DSC object}
   \item{macro}{a \code{DSC_macro} object used for reclustering when performing evaluations.}
   \item{n}{the number of points to be plotted}
-  \item{interval}{the time interval between each frame}
+  \item{wait}{the time interval between each frame}
   \item{pointInterval}{the number of new points needed before a new frame is created}
   \item{horizon}{the max number of data points to be shown at a time}
   \item{evaluationMethod}{the evaluation method that should be graphed below the animation}
@@ -46,11 +46,11 @@ Animations are recorded using the library animation and can be replayed
 
 
 \examples{
-dsd <- DSD_Benchmark(1)
-animate_data(dsd, 1200,  xlim=c(-.2,1.2), ylim=c(-.2,1.2), 
-    pointInterval=20)
-
 \dontrun{
+dsd <- DSD_Benchmark(1)
+animate_data(dsd, n=5000,  xlim=c(0,1), ylim=c(0,1), 
+    pointInterval=100, wait=0)
+
 ### animations can be replayed with the animation package
 library(animation)
 animation::ani.options(interval=.1) ## change speed
@@ -59,22 +59,13 @@ ani.replay()
 ### animations can also be saved as HTML, animated gifs, etc.
 saveHTML(ani.replay())  
   
-### animate the clustering process 
-reset_stream(dsd)
-dsc <- DSC_tNN(r=.2, lambda=.1, shared_density=TRUE,
-  alpha=.2)
-
-animate_cluster(dsc, dsd, n=1200, interval=.1, pointInterval=10, 
-  # the following are arguments for plot
-  xlim=c(-.5,1.5), ylim=c(-.5,1.5), type="shared")
-
 ### animate the clustering process with evaluation
 reset_stream(dsd)
-dsc <- DSC_tNN(r=.2, lambda=.1, shared_density=TRUE,
-  alpha=.2)  
+dsc <- DSC_tNN(r=.1, lambda=.01, shared_density=TRUE,
+  alpha=.2, noise=.1)  
 
-animate_cluster(dsc, dsd, n=1200, interval=.1, pointInterval=10, 
+animate_cluster(dsc, dsd, n=5000, wait=.1, pointInterval=100, 
   evaluationMethod="crand", evaluationType="macro", evaluationAssign="micro",
-  xlim=c(-.5,1.5),ylim=c(-.5,1.5), type="shared")
+  xlim=c(0,1),ylim=c(0,1), type="shared")
 }
 }

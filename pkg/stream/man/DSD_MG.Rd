@@ -50,13 +50,18 @@ c2 <- MGC_Noise(density=1, range=rbind(c(-20,120), c(-20,120)))
 add_cluster(dsd, c2)
     
 get_clusters(dsd)
-plot(dsd)
+plot(dsd, xlim=c(-20,120), ylim=c(-20,120))
     
+\dontrun{
+animate_data(dsd, n=5000, xlim=c(-20,120), ylim=c(-20,120))
+}
+  
+  
 ### remove cluster 1
 remove_cluster(dsd,1)
     
 get_clusters(dsd)
-plot(dsd)
+plot(dsd, xlim=c(-20,120), ylim=c(-20,120))
     
 ### simulate the clustering of a splitting cluster  
 c1 <- MGC_Linear(dim = 2, keyframelist = list(
@@ -74,10 +79,10 @@ c2 <- MGC_Linear(dim = 2, keyframelist = list(
 dsd <- DSD_MG(dim = 2, c1, c2)
 dsd
   
-tnn <- DSC_tNN(alpha=.5, r=10, lambda=0.1)
+tnn <- DSC_tNN(r=10, lambda=0.1)
   
 \dontrun{
 tnnPurity <- animate_cluster(tnn, dsd, n=2500, type="both", 
-  xlim=c(-10,120), ylim=c(-10,120), evaluationMethod="purity", horizon=100)
+  xlim=c(-10,120), ylim=c(-10,120), evaluationMethod="purity", pointInterval=50)
 }
 }

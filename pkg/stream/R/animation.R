@@ -19,27 +19,27 @@
 
 
 animate_cluster <- function(dsc, dsd, macro=NULL, n=1000,
-  interval=.1, pointInterval=100, horizon=5*pointInterval, 
+  wait=.1, pointInterval=100, horizon=5*pointInterval, 
   evaluationMethod=NULL, evaluationType="micro", evaluationAssign="micro", 
   ...) {
   
-  cluster.ani(dsc, dsd, macro, n, interval, 
+  cluster.ani(dsc, dsd, macro, n, wait, 
     pointInterval, horizon, 
     evaluationMethod, evaluationType, evaluationAssign, 
     ...)
 }
 
 animate_data <- function(dsd, n=1000, 
-  interval=.1, pointInterval=100, horizon=5*pointInterval, 
+  wait=.1, pointInterval=100, horizon=5*pointInterval, 
   ...) {
   
-  cluster.ani(NULL, dsd, NULL, n, interval, pointInterval, 
+  cluster.ani(NULL, dsd, NULL, n, wait, pointInterval, 
     horizon, NULL,...)
 }
 
 
 cluster.ani <- function(dsc=NULL, dsd, macro=NULL, n=1000,
-  interval=.1, pointInterval=100, horizon=5*pointInterval, 
+  wait=.1, pointInterval=100, horizon=5*pointInterval, 
   evaluationMethod=NULL, evaluationType="micro", evaluationAssign="micro", ...) {
   
   animation::ani.record(reset = TRUE)
@@ -115,7 +115,7 @@ cluster.ani <- function(dsc=NULL, dsd, macro=NULL, n=1000,
       
       animation::ani.record()
       
-      if(interval>0) Sys.sleep(interval)
+      if(wait>0) Sys.sleep(wait)
     }
     
   }

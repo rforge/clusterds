@@ -222,9 +222,12 @@ use \pkg{stream} to develop, study and improve their own algorithms.
 The paper is organized as follows. We briefly review data stream mining
 in Section~\ref{sec:mining}. In Section~\ref{sec:design} we cover the \pkg{stream}
 framework including the design of the class hierarchy to represent different data streams
-and data stream clustering algorithms, evaluation of algorithms and how to
-extend the framework with new data stream sources and algorithms. We provide 
-comprehensive examples in Section~\ref{sec:examples} and conclude with 
+and data stream clustering algorithms. Evaluation of data stream clustering 
+algorithms is discussed in Section~\ref{sec:evaluation}. 
+In Section~\ref{sec:examples} we provide comprehensive examples.
+Extending the framework with new data stream sources and algorithms is briefely
+described in Section~\ref{sec:extension}
+and conclude with 
 Section~\ref{sec:conclusion}.
 %%%
 
@@ -1495,75 +1498,220 @@ requested from the data stream and each is assigned to its nearest micro-cluster
 The assignment is evaluated using the ground truth provided by the 
 data stream generator.
 <<>>= 
-evaluate(km, dsd, method=c("purity", "crand"), n=500)
+evaluate(km, dsd, method=c("purity", "crand", "SSQ"), n=500)
 @
 
 Alternatively, the new data points can also be assigned to the closest 
 macro-cluster.
 <<>>=
-evaluate(km, dsd, c(method="purity", "crand"), n=500, assign="macro")
+evaluate(km, dsd, c(method="purity", "crand", "SSQ"), n=500, assign="macro")
 @
 
-In this case the evaluation measures sightly decrease, since a 
-few data points
-in the fringes of the clusters are close
-to the correct micro-cluster, but at the same time are closer to
-to the wrong macro-cluster center.
+In this case the evaluation measures purity and corrected Rand sightly increase, 
+since the there are two micro-clusters covering the area between the top two 
+true clusters (see Figure~\ref{figure:recluster}(b)). These micro-clusters assigned all
+its points to one of the two clusterds.
+Assigning the points rather to the 
+macro-cluster centers splits these points better and therefore decreases the number of 
+incorrectly assigned points. The average within sum of square increases slightly
+since the number of macro-clusters is smaller than the number of micro-clusters.
 
-\subsection{Full experimental comparison} \label{examples:full}
-
-This example shows the \pkg{stream} framework being used from start to finish.
-It encompasses the creation of data streams, data clusterers, the online
-clustering of data points as micro-clusters, and then the comparison of
-offline reclustering.
-
-First, we set up the data. 
-We extract 1000 data points and
-put them in a \code{DSD_Wrapper} to make sure that
-we provide both algorithms with exactly the same data.
-
-<<echo=FALSE>>=
-set.seed(1000) 
-@
-<<>>= 
-library("stream") 
-dsd <- DSD_Wrapper(DSD_Gaussians(k=3, d=2, noise=0.01), n=1000)
-dsd
-@
-
-Next, we create the four clustering algorithms and cluster the same 
-1000 data points with all of them. Note that we have to reset the stream
-before we cluster the data points for the next clustering 
-algorithm.
-
-<<>>= 
-sample <- DSC_Sample(k=50) 
-dstream <- DSC_DStream(gridsize=0.05)
-@
-
-We will also use two MOA-based algorithms available via \pkg{streamMOA}.
-
-
-
-
-%Here we also see that the reclustered micro-clusters from CluStream
-%perfom better.
-
-From the evaluation results we see that sampling with hierarchical reclustering and CluStream perform best.  
-However, this is only due to the fact that we specified for these algorithms 
-the correct number of macro clusters and that the reclustering algorithms
-prefer spherical clusters which matches the generating model for the data.
-The density-based
-algorithms (DenStream and D-Stream) are not ther able to separate the overlapping 
-clusters or create small macro-clusters for poorly connected
-micro-clusters. 
+% \subsection{Full experimental comparison} \label{examples:full}
+% 
+% This example shows the \pkg{stream} framework being used from start to finish.
+% It encompasses the creation of data streams, data clusterers, the online
+% clustering of data points as micro-clusters, and then the comparison of
+% offline reclustering.
+% 
+% First, we set up the data. 
+% We extract 1000 data points and
+% put them in a \code{DSD_Wrapper} to make sure that
+% we provide both algorithms with exactly the same data.
+% 
+% <<echo=FALSE>>=
+% set.seed(1000) 
+% @
+% <<>>= 
+% library("stream") 
+% dsd <- DSD_Wrapper(DSD_Gaussians(k=3, d=2, noise=0.01), n=1000)
+% dsd
+% @
+% 
+% Next, we create the four clustering algorithms and cluster the same 
+% 1000 data points with all of them. Note that we have to reset the stream
+% before we cluster the data points for the next clustering 
+% algorithm.
+% 
+% <<>>= 
+% sample <- DSC_Sample(k=50) 
+% dstream <- DSC_DStream(gridsize=0.05)
+% @
+% 
+% We will also use two MOA-based algorithms available via \pkg{streamMOA}.
+% 
+% <<>>=
+% library(streamMOA)
+% denstream <- DSC_DenStream(epsilon=0.05) 
+% clustream <- DSC_CluStream(m=50, k=3) 
+% @
+% 
+% <<>>=
+% cluster(sample, dsd, 1000) 
+% sample
+% reset_stream(dsd) 
+% cluster(dstream, dsd, 1000)
+% dstream
+% reset_stream(dsd) 
+% cluster(denstream, dsd, 1000) 
+% denstream
+% reset_stream(dsd) 
+% cluster(clustream, dsd, 1000)
+% clustream
+% @
+% 
+% <<>>=
+% @
+% 
+% After the clustering operations, we plot the calculated micro-clusters and the
+% original data. 
+% 
+% <<sample, fig=TRUE, include=FALSE>>= 
+% reset_stream(dsd) 
+% plot(sample, dsd, xlim=c(0,1), ylim=c(0,1)) 
+% @
+% 
+% <<denstream, fig=TRUE, include=FALSE>>= 
+% reset_stream(dsd) 
+% plot(denstream, dsd, xlim=c(0,1), ylim=c(0,1)) 
+% @
+% 
+% <<clustream, fig=TRUE, include=FALSE>>= 
+% reset_stream(dsd) 
+% plot(clustream, dsd, xlim=c(0,1), ylim=c(0,1)) 
+% @
+% 
+% D-Stream uses a grid to estimate density.
+% The estimated densities can be also be visualized as grid.
+% <<dstream2, fig=TRUE, include=FALSE>>= 
+% reset_stream(dsd) 
+% plot(dstream, dsd, type="grid")
+% @
+% 
+% \begin{figure} 
+% \begin{minipage}[b]{.48\linewidth} \centering
+% \includegraphics{stream-sample} \\(a) Reservoir Sampling
+% \end{minipage}
+% \begin{minipage}[b]{.48\linewidth} \centering
+% \includegraphics{stream-denstream} \\(b) DenStream 
+% \end{minipage}
+% 
+% \begin{minipage}[b]{.48\linewidth} \centering
+% \includegraphics{stream-clustream} \\(c) CluStream 
+% \end{minipage}
+% \begin{minipage}[b]{.48\linewidth} \centering
+% \includegraphics{stream-dstream2} \\(d) D-Stream (grid representation)   
+% \end{minipage}
+% \caption{Comparing the micro-clusters created by three different clustering
+% algorithms.} 
+% \label{figure:denstream+clustream} 
+% \end{figure}
+% 
+% Next, we will look at macro-clusters. Some algorithms in \pkg{stream} already 
+% have a reclustering algorithm implemented. For example, 
+% DenStream uses the reachability defined by DBSCAN. D-Stream
+% reclusters by merging adjacent dense grids. 
+% CluStream uses weighted $k$-means.   
+% All three clustering algorithms 
+% already produce macro-clusters and can be directly used for analysis.
+% For sampling we choose here to use hierarchical reclustering with 
+% complete-link and cutting the dendrogram to form 3 clusters.
+% 
+% <<>>=  
+% sample_hc <- DSC_Hierarchical(k=3, method="complete")
+% recluster(sample_hc, sample)
+% @
+% 
+% We plot the final clusterings for visual inspection.
+% 
+% <<sample_hc, fig=TRUE, include=FALSE>>= 
+% reset_stream(dsd) 
+% plot(sample_hc, dsd, type="macro") 
+% @
+% 
+% <<denstream_dbscan, fig=TRUE, include=FALSE>>= 
+% reset_stream(dsd) 
+% plot(denstream, dsd, type="macro") 
+% @
+% 
+% <<clustream_kmeans, fig=TRUE, include=FALSE>>= 
+% reset_stream(dsd) 
+% plot(clustream, dsd, type="macro") 
+% @
+% 
+% <<dstream_grids, fig=TRUE, include=FALSE>>= 
+% reset_stream(dsd) 
+% plot(dstream, dsd, type="macro") 
+% @
+% 
+% \begin{figure} \begin{minipage}[b]{.48\linewidth} \centering
+% \includegraphics{stream-sample_hc} \\(a) Sampling with hierarchical clustering 
+% \end{minipage}
+% \begin{minipage}[b]{.48\linewidth} \centering
+% \includegraphics{stream-denstream_dbscan} \\(b) DenStream with reachability
+% \end{minipage}
+% 
+% \begin{minipage}[b]{.48\linewidth} \centering
+% \includegraphics{stream-clustream_kmeans} \\(c) CluStream with weighted $k$-means
+% \end{minipage}
+% \begin{minipage}[b]{.48\linewidth} \centering
+% \includegraphics{stream-dstream_grids} \\(d) D-Stream with merged dense grids
+% \end{minipage}
+% 
+% \caption{Reclustering results.} 
+% \label{figure:denstream+clustream+kmeans} 
+% \end{figure}
+% 
+% 
+% The final clusters are shown in Figure \ref{figure:denstream+clustream+kmeans}.
+% We see that the micro-clusters are for DenStream and CluStream are evenly 
+% distribution than the random sampling. 
+% DStream also forms dense grids 
+% in the most dense areas.
+% DenStream and DStream suppress noise well, while
+% CluStream also selects some noise points for micro-clusters.
+% These plots help with analyzing how micro-clusters
+% are placed and can help with ``debugging'' problems with micro-cluster
+% placement in new algorithms.
+% 
+% Finally, we can compare the clusterings using \code{evaluate}.
+% 
+% <<>>= 
+% sapply(list('Sample+HC'=sample_hc,
+%   DenStream=denstream, 
+%   CluStream=clustream, 
+%   DStream=dstream), 
+% FUN=function(x){
+%     reset_stream(dsd)
+%     evaluate(x, dsd, c("numMicroclusters", "numMacroclusters", 
+%       "purity", "crand", "SSQ"), type="macro", assign="micro")
+% })
+% @
+% 
+% From the evaluation results we see that sampling with hierarchical reclustering and CluStream perform best.  
+% However, this is only due to the fact that we specified for these algorithms 
+% the correct number of macro clusters and that the reclustering algorithms
+% prefer spherical clusters which matches the generating model for the data.
+% The density-based
+% algorithms (DenStream and D-Stream) are not ther able to separate the overlapping 
+% clusters or create small macro-clusters for poorly connected
+% micro-clusters. 
 
 The \pkg{stream} framework allows us to easily create 
 many experiments by using different data and by matching
 different clustering and reclustering algorithms. One example of 
 such a study can be found in~\cite{hahsler:Bolanos2012}.
 
-\section{Extending the stream Framework} \label{sec:design:extension}
+\section{Extending the stream Framework} \label{sec:extension}
 
 Since stream mining is a relatively young field and many advances are
 expected in the near future,
