@@ -51,8 +51,8 @@ get_points.DSD_ScaleStream <- function(x, n=1, assignment=FALSE, ...) {
   d
 }
 
-reset_stream.DSD_ScaleStream <- function(dsd) {
-  reset_stream(dsd$dsd)
+reset_stream.DSD_ScaleStream <- function(dsd, pos=1) {
+  reset_stream(dsd$dsd, pos=pos)
 }
 
 scale_stream <- function(dsd, n=1000, center=TRUE, scale=TRUE, reset=TRUE) {

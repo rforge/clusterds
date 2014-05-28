@@ -30,6 +30,16 @@ A vector containing the assignment of each point.
 }
 
 \seealso{
-	\code{\link{DSC}},
-	\code{\link{DSD}}
+	\code{\link{DSC}}
+}
+
+\examples{
+dsd <- DSD_Gaussians(k=3, d=2)
+
+dsc <- DSC_tNN(r=.05)
+cluster(dsc, dsd, n=100)
+
+# find nearest neighbor assignment for the next 10 points to 
+# micro-clusters in dsc
+get_assignment(dsc, get_points(dsd, n=10))
 }

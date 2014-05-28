@@ -68,9 +68,9 @@ Stream Clustering in R, Journal of Statistical Software, 35(5), 1-31, URL \url{h
 set.seed(0)
 dsd <- DSD_Gaussians(k=3, noise=0.05)
 
-# tNN with reachability (you can increase noise to reduce the micro-clusters
+# tNN with reachability (increase noise parameter to reduce the micro-clusters
 # at the fringes of the Gaussians)
-tnn <- DSC_tNN(r=.05, noise=0.1)
+tnn <- DSC_tNN(r=.1, noise=0.1)
 cluster(tnn, dsd, 500)
 tnn
 
@@ -84,8 +84,7 @@ plot(tnn, dsd, type="both")
 
 
 # tNN with shared density 
-# Note: for shared density we can use larger micro-clusters 
-tnn <- DSC_tNN(r=.1, noise=0.1, shared_density=TRUE, alpha=0.39)
+tnn <- DSC_tNN(r=.1, noise=0.1, shared_density=TRUE)
 cluster(tnn, dsd, 500)
 tnn
 plot(tnn, dsd, type="both")

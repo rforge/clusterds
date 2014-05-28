@@ -24,10 +24,16 @@ are typically overwritten by subclasses of \code{DSC}.
 }
 
 \seealso{
-	\code{\link[stream]{plot}},
-	\code{\link{nclusters}},
+	\code{\link{animate_cluster}},
+	\code{\link{cluster}},
+	\code{\link{evaluate}},
+	\code{\link{get_assignment}},
 	\code{\link{get_centers}},
 	\code{\link{get_weights}},
-	\code{\link{get_assignment}},
-	\code{\link{get_copy}}
+	\code{\link{get_copy}},
+	\code{\link{microToMacro}},
+	\code{\link{nclusters}},
+	\code{\link[stream]{plot}},
+	\code{\link{prune_clusters}},
+	\code{\link{recluster}}
 }

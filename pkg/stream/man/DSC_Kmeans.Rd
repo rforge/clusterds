@@ -40,19 +40,20 @@ on the algorithm.
 }
 
 \examples{
-# 3 clusters with 5% noise
 dsd <- DSD_Gaussians(k=3, noise=0)
 
-dsc <- DSC_BIRCH(radius=0.01)
+# create micro-clusters via sampling
+dsc <- DSC_Sample(k=10)
 cluster(dsc, dsd, 500)
-
+dsc
+  
 # recluster micro-clusters
 kmeans <- DSC_Kmeans(k=3)
 recluster(kmeans, dsc)
-plot(kmeans, dsd)
+plot(kmeans, dsd, type="both")
 
-# Kmeans can also directly cluster data (original data are considered 
-# micro-cluster centers)
+# For comparison we use k-means directly to cluster data
+# Note: k-means is not a data stream clustering algorithm
 kmeans <- DSC_Kmeans(k=3)
 cluster(kmeans, dsd, 500)
 plot(kmeans, dsd)

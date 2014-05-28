@@ -29,7 +29,8 @@ DSD_Benchmark <- function(i=1) {
         keyframe(time = 250, density=10, parameter=.01, center=c(.9,.9)),
         keyframe(time = 500, density=10, parameter=.01, center=c(.1,.1), reset=TRUE)
       )),
-      MGC_Noise(density=2, range=rbind(c(0,1),c(0,1)))
+      MGC_Noise(density=2, range=rbind(c(0,1),c(0,1))),
+      labels = c(1,2,NA)
       ))
   }  
   

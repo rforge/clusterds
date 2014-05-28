@@ -218,12 +218,17 @@ DStream$methods(list(
     }
   },
   
-  ### This is for plotting images. Could be toArray!
+  ### This is for plotting images.
   #  toMatrix = function(grid_type=c("transitional", "dense", "all")) {
-  toMatrix = function(grid_type=c("dense", "transitional", "all")) {
+  toMatrix = function(grid_type=c("dense", "transitional", "all"), dim=NULL) {
     grid_type <- match.arg(grid_type)
     
     coords <- get_micro(weight=TRUE, translate=FALSE, grid_type=grid_type)
+    
+    weights <- coords[["weight"]]
+    
+    if(!is.null(dim)) coords <- coords[, dim]
+    else coords <- coords[, 1:2]
     
     ns <- (maxs-mins)+1L
     mat <- matrix(0, nrow=ns[1], ncol=ns[2])
@@ -233,11 +238,13 @@ DStream$methods(list(
     coords[,2] <- coords[,2] - mins[2]+1L
     
     for(i in 1:nrow(coords)) {
-      mat[coords[i,1], coords[i,2]] <- coords[["weight"]][i]
+      mat[coords[i,1], coords[i,2]] <- weights[i]
     }
     
     rownames(mat) <- (mins[1]:maxs[1]) * gridsize[1]+gridsize[1]/2
     colnames(mat) <- (mins[2]:maxs[2]) * gridsize[2]+gridsize[2]/2
+    attr(mat, "varnames") <- colnames(coords)    
+    
     mat
   },
   
@@ -474,6 +481,7 @@ microToMacro.DSC_DStream <- function(x, micro=NULL, ...) {
 plot.DSC_DStream <- function(x, dsd=NULL, n=500, ...) {
   ### find type
   type <- list(...)$type
+  dim <- list(...)$dim
   
   if(is.null(type) || !pmatch(tolower(type), "grid", nomatch=0)) 
     return(plot.DSC(x, dsd=dsd, n=n, ...))
@@ -482,26 +490,30 @@ plot.DSC_DStream <- function(x, dsd=NULL, n=500, ...) {
     warning("No data clustered yet")
     return(invisible(NULL))
   }
-    
-  if(x$RObj$d!=2) stop("Image visualization only works for 2D data!") 
+  
+  if(x$RObj$d!=2 && (is.null(dim) || length(dim)!=2)) stop("Image visualization only works for 2D data! Set dim in plot.") 
   
   #  mat <- x$RObj$toMatrix("transitional")
-  mat <- x$RObj$toMatrix("dense")
+  mat <- x$RObj$toMatrix("dense", dim)
   mat[mat==0] <- NA
+  
+  varnames <- attr(mat, "varnames")
   
   image(x=as.numeric(rownames(mat)), 
     y=as.numeric(colnames(mat)), 
     z=mat, 
     col=rev(gray.colors(100)), axes=TRUE, 
-    xlab="", ylab="")
+    xlab=varnames[1], ylab=varnames[2])
 
   if(!is.null(dsd)) {
     ps <- get_points(dsd, n=n, assignment=TRUE)
     pch <- attr(ps, "assignment")
+
+    if(!is.null(dim)) ps <- ps[, dim]
     
     ### handle noise (samll circle)
-    pch[is.na(pch)] <- 20
-    points(ps, col=rgb(0,0,0,alpha=.3), cex=.5, pch=pch)
+    pch[is.na(pch)] <- noise_pch
+    points(ps, col=rgb(0,0,0,alpha=.3), pch=pch)
   }
     
 }

@@ -29,7 +29,7 @@
 	assignments are translated to macro-cluster assignments using 
 	information on what micro-clusters constitute each macro-cluster.}
 	\item{macro}{A DSC_macro object for reclustering.}
-	\item{horizon}{Evaluation is done using horizon many previouse points
+	\item{horizon}{Evaluation is done using horizon many previous points
     (see detail section).}
 	\item{verbose}{report progress?}
   \item{...}{Unused arguments are ignored.}
@@ -106,7 +106,7 @@ the clustering algorithm was able to adapt to the changing stream.
 \value{
     \code{evaluate} returns an object of class \code{stream_eval}
     which is a numeric vector of the values of the requested measures
-    and two attribures, \code{"type"} and
+    and two attributes, \code{"type"} and
     \code{"assign"}, to see at what level the evaluation was done. 
 }
 
@@ -153,27 +153,27 @@ Clustering of Data Streams at Multiple Resolutions, 3(3).
  
 
 \examples{
-# Create stream
 set.seed(0)
 dsd <- DSD_Gaussians(k=3, d=2)
 
-dstream <- DSC_DStream(gridsize=0.1)
+dstream <- DSC_DStream(gridsize=0.05)
 cluster(dstream, dsd, 500)
 plot(dstream, dsd)
 # Evaluate micro-clusters 
 # Note: we use here only n=500 points for evaluation to speed up execution
-evaluate(dstream, dsd, method=c("numMicro","numMacro","purity","crand"), n=500)
+evaluate(dstream, dsd, method=c("numMicro","numMacro","purity","crand", "SSQ"), 
+  n=100)
 
 # DStream also provides macro clusters. Evaluate macro clusters with type="macro"
 plot(dstream, dsd, type="macro")
 evaluate(dstream, dsd, type ="macro", 
-  method=c("numMicro","numMacro","purity","crand"), n=500)
+  method=c("numMicro","numMacro","purity","crand", "SSQ"), n=100)
 
 # Points are by default assigned to the closest micro clusters for evalution. 
 # However, points can also be assigned to the closest macro-cluster using
 # assign="macro".
 evaluate(dstream, dsd, type ="macro", assign="macro",
-  method=c("numMicro","numMacro","purity","crand"), n=500)
+  method=c("numMicro","numMacro","purity","crand", "SSQ"), n=100)
 
 # Evaluate an evolving data stream
 dsd <- DSD_Benchmark(1)
@@ -185,10 +185,10 @@ evaluate_cluster(dstream, dsd, type="macro", assign="micro",
 \dontrun{
 # animate the clustering process
 reset_stream(dsd)
-dstream <- DSC_DStream(gridsize=0.1, lambda=0.1)
+dstream <- DSC_DStream(gridsize=0.05, lambda=0.1)
 animate_cluster(dstream, dsd, 
-  n=1200, pointInterval=20, 
+  n=5000, horizon=100, 
   evaluationMethod=c("crand"), evaluationType="macro", evaluationAssign="micro",
-  type="both", xlim=c(-.2,1.2), ylim=c(-.2,1.2))
+  type="both", xlim=c(0,1), ylim=c(0,1))
 }
 }

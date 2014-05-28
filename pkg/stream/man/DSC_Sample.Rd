@@ -35,10 +35,9 @@ on Mathematical Software, 11(1), 37-57.
 }
 
 \examples{
-# 3 clusters with 5% noise
 dsd <- DSD_Gaussians(k=3, noise=0.05)
 
-dsc <- DSC_Sample(20)
+dsc <- DSC_Sample(k=20)
 cluster(dsc, dsd, 500)
 dsc
 
@@ -48,5 +47,5 @@ plot(dsc, dsd)
 # reclustering (Kmeans is sufficient because DSC_Sample does not return weights)
 kmeans <- DSC_Kmeans(3)
 recluster(kmeans,dsc)
-plot(kmeans,dsd)
+plot(kmeans, dsd, type="both")
 }

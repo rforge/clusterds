@@ -192,8 +192,9 @@ plot.DSC <- function(x, dsd = NULL, n = 500,
     
     ### handle noise
     noise <- is.na(mpch)
-    mpch[noise] <- 20
-    cex_clusters[noise] <- cex_clusters[noise]*.5
+    mpch[noise] <- noise_pch
+    col[noise] <- noise_col
+    #cex_clusters[noise] <- cex_clusters[noise]*.5
     
   }
   

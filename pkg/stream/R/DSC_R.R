@@ -26,10 +26,3 @@ get_copy.DSC_R <- function(x) {
 	temp
 }
 
-
-microToMacro <- function(x, micro=NULL) UseMethod("microToMacro")
-microToMacro.default <- function(x, micro=NULL) {
-    stop(gettextf("microToMacro not implemented for class '%s'.", 
-		    paste(class(x), collapse=", ")))
-}
-

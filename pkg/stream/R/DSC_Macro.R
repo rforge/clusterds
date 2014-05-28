@@ -17,6 +17,22 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 
+### Subclasses need to implement methods for:
+# Construction (DSC_...)
+# get_macroclusters(x)
+# get_macroweights(x)
+# microToMacro(x, micro=NULL)
+# a cluster method in the RObj
+
+####### 
+
+microToMacro <- function(x, micro=NULL) UseMethod("microToMacro")
+microToMacro.default <- function(x, micro=NULL) {
+        stop(gettextf("microToMacro not implemented for class '%s'.",
+		                          paste(class(x), collapse=", ")))
+}
+
+
 get_centers.DSC_Macro <- function(x, type=c("auto", "micro", "macro"), ...) {
     type <- match.arg(type)
     if(type=="auto") type <- "macro"

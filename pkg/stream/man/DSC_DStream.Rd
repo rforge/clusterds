@@ -25,7 +25,7 @@ get_attraction(x, dist=FALSE, relative=FALSE)
     authors use denote the decay factor as lambda, while here the decay factor
     will be computed from lambda using \eqn{2^-lambda}).}
 	\item{gaptime}{sporadic grids are removed every
-    gaptime points.}
+    gaptime number of points.}
 	\item{Cm}{threshold used to detect dense grids (as a proportion of the 
 	    average expected density).}
 	\item{Cl}{threshold to detect transitional and sporadic grids (0 > Cl > 1).}
@@ -48,17 +48,15 @@ get_attraction(x, dist=FALSE, relative=FALSE)
 \details{
 D-Stream creates an equally spaced grid and estimates the density in each 
   grid cell using the count of points falling in the cells. 
-  The density is faded after every new point by a factor of \eqn{2^-lambda}.
+  The density is faded after every new point by a factor of \eqn{2^{-lambda}}.
   Every gaptime number of points sporadic grid cells are removed.
   
-  For reclustering D-Stream (2007 version) creates grid groups of reachable 
-  dense grid cells.
-  This can be implemented using \code{DSC_hierarchical} with single-linkage
-  and h of just above gridsize (see Examples section below).
+  For reclustering D-Stream (2007 version) merges adjacent dense grids.
+  This behavior is implemented as \code{attraction=FALSE}. 
   
   The 2009 version of the algorithm adds the concept of attraction between 
-  grids cells. If \code{attraction=TRUE} is used then the algorithm also
-  produces macro-clusters and weights.
+  grids cells. If \code{attraction=TRUE} is used then the algorithm
+  produces macro-clusters based on attraction.
 }
 
 \value{
@@ -77,39 +75,42 @@ Li Tu and Yixin Chen. 2009. Stream data clustering based on grid density and att
 }
 
 \examples{
-set.seed(0)
-dsd <- DSD_Gaussians(k=3, noise=0.05)
+dsd <- DSD_BarsAndGaussians()
 
-dstream <- DSC_DStream(gridsize=.05)
-cluster(dstream, dsd, 500)
-dstream
+# we set Cm=.8 to pick up the lower density clusters
+dstream1 <- DSC_DStream(gridsize=.5, Cm=.8)
+cluster(dstream1, dsd, 1000)
+dstream1
 
 # see micro-clusters
-nclusters(dstream)
-head(get_centers(dstream))
+nclusters(dstream1)
+head(get_centers(dstream1))
 
 # plot (DStream provides additional type="grid")
-plot(dstream, dsd)
-plot(dstream, type="grid")
-plot(dstream, dsd, type="grid")
+plot(dstream1, dsd)
+plot(dstream1, type="grid")
+plot(dstream1, dsd, type="grid")
 
 # standard D-Stream uses reachability
-nclusters(dstream, type="macro")
-get_centers(dstream, type="macro")
-plot(dstream, type="both")
+nclusters(dstream1, type="macro")
+get_centers(dstream1, type="macro")
+plot(dstream1, dsd, type="both")
 
 # use image and add centers
-plot(dstream, type="grid")
-points(get_centers(dstream, type="macro"), col="blue", pch=3, lwd=2, 
-  cex=get_weights(dstream, type="macro", scale=c(1,5)))
+plot(dstream1, type="grid")
+points(get_centers(dstream1, type="macro"), col="blue", pch=3, lwd=2, 
+  cex=get_weights(dstream1, type="macro", scale=c(1,5)))
+
+evaluate(dstream1, dsd, method="crand", type="macro")
 
 # use attraction for reclustering
-set.seed(0)
-dsd <- DSD_Gaussians(k=3, noise=0.05)
 
-dstream <- DSC_DStream(gridsize=.05, attraction=TRUE, epsilon=.15)
-cluster(dstream, dsd, 500)
-dstream
+dstream2 <- DSC_DStream(gridsize=.5, attraction=TRUE, Cm=.8)
+cluster(dstream2, dsd, 1000)
+dstream2
 
-plot(dstream, type="both", dsd)
+plot(dstream2, type="both", dsd)
+
+evaluate(dstream2, dsd, method="crand", type="macro")
 }
+

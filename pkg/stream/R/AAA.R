@@ -25,3 +25,7 @@
     if(n%%block) b<- c(b, n%%block)
     b
 }
+
+### dot
+noise_pch <- 20L 
+noise_col <-  which(palette()=="gray")

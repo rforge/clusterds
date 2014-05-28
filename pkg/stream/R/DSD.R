@@ -35,8 +35,8 @@ get_points.default <- function(x, n=1, ...) {
 }
 
 ### in case the stream can be reset (e.g., a stream from a file)
-reset_stream <- function(dsd) UseMethod("reset_stream")
-reset_stream.DSD <- function(dsd) {
+reset_stream <- function(dsd, pos=1) UseMethod("reset_stream")
+reset_stream.DSD <- function(dsd, pos=1) {
   stop(gettextf("reset_stream not implemented for class '%s'.",
     paste(class(dsd), collapse=", ")))
 }
@@ -59,14 +59,22 @@ plot.DSD <- function(x, n = 500, col= NULL, pch= NULL,
   ### make sure to plot noise
   assignment <- attr(d,"assignment")
   
+  ### stream has no assignments!
+  if(length(assignment)==0) assignment <- rep(1L, nrow(d))
+  
+  noise <- is.na(assignment)
   if(is.null(col)) {
     col <- as.integer(assignment)
-    col[assignment==0 | is.na(assignment)] <-  which(palette()=="gray")
-  } 
+  }else{
+    if(length(col)==1L) col <- rep(col, length(assignment))
+  }
+    
+  col[noise] <-  noise_col
   
   if(is.null(pch)) {
-    pch <- rep(1, n)
-    pch[assignment==0 | is.na(assignment)] <- 3L
+    #pch <- rep(1, n)
+    pch <- as.integer(assignment)
+    pch[noise] <- noise_pch
   }
   
   if(!is.null(dim)) d <- d[,dim]

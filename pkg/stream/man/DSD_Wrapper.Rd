@@ -3,7 +3,7 @@
 \title{A Data Stream Wrapper for Data Frames, Matrices and Streams)}
 \description{
 This class wraps either a data frame or matrix in memory and
-provides access to the data in a streamin fashion. 
+provides access to the data in a streaming fashion. 
 The data can either be looped or replayed manually to give
 the exact same data several times.
 The Wrapper can also be used to record and replay a part of a data stream.
@@ -38,10 +38,12 @@ Returns a \code{DSD_Wrapper} object
 
 \examples{
 dsd <- DSD_Gaussians(k=3, d=2)
+
+# get some points as a data.frame  
 d <- get_points(dsd, 500)
 head(d)
 
-# creating the DSD_Wrapper from d
+# creating the DSD_Wrapper from the data.frame d
 replayer <- DSD_Wrapper(d, k=3)
 replayer
 
