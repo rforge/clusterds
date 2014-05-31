@@ -29,6 +29,6 @@ DSC_Reachability <- function(epsilon, min_weight=NULL) {
   l <- list(description = paste("Reachability clustering"),
     RObj = hierarchical)
   
-  class(l) <- c("DSC_Reachability", "DSC_Hierarchical","DSC_Macro","DSC_R","DSC")
+  class(l) <- c("DSC_Reachability", "DSC_Hierarchical", "DSC_Macro", "DSC_R", "DSC")
   l
 }

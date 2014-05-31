@@ -358,6 +358,14 @@ DStream$methods(list(
     coords
   },
   
+  get_microclusters = function(x, ...) {  
+    get_micro(weight=FALSE, ...)
+  },
+  
+  get_microweights = function(x, ...){ 
+    get_micro(weight=TRUE, ...)[["weight"]]
+  },
+  
   microToMacro = function(micro=NULL, grid_type="dense") {
     
     mcs <- get_micro()
@@ -438,12 +446,6 @@ DStream$methods(list(
   }
 )
 )
-
-get_microclusters.DSC_DStream <- function(x, ...)  
-  x$RObj$get_micro(weight=FALSE, ...)
-
-get_microweights.DSC_DStream <- function(x, ...) 
-  x$RObj$get_micro(weight=TRUE, ...)[["weight"]]
 
 get_attraction <- function(x, dist=FALSE, relative=FALSE) 
   x$RObj$get_attraction(dist=dist, relative=relative)

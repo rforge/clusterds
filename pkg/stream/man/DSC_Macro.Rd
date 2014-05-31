@@ -3,8 +3,8 @@
 \title{Abstract Class for Macro Clusterers}
 \description{Abstract class for all DSC Macro Clusterers.}
 
-\details{
-}
+%\details{
+%}
 
 \seealso{
 	\code{\link{DSC}}

@@ -51,6 +51,8 @@ print.DSD <- function(x, ...) {
   cat(paste('With', x$k, 'clusters', 'in', x$d, 'dimensions', '\n'))
 }
 
+summary.DSD <- function(object, ...) print(object)
+
 plot.DSD <- function(x, n = 500, col= NULL, pch= NULL, 
   ..., method="pairs", dim=NULL) {
   ## method can be pairs, plot or pc (projection with PCA)

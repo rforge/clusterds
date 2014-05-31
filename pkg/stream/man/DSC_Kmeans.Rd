@@ -43,7 +43,7 @@ on the algorithm.
 dsd <- DSD_Gaussians(k=3, noise=0)
 
 # create micro-clusters via sampling
-dsc <- DSC_Sample(k=10)
+dsc <- DSC_Sample(k=20)
 cluster(dsc, dsd, 500)
 dsc
   

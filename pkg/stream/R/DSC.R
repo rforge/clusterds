@@ -80,26 +80,32 @@ get_macroweights.DSC <- function(x, ...) {
 ### derived functions, plot and print
 nclusters <- function(x, type=c("auto", "micro", "macro"), ...) 
   UseMethod("nclusters")
+
 nclusters.DSC <- function(x, type=c("auto", "micro", "macro"), ...) {
   nrow(get_centers(x, type=type, ...))
 }
 
 get_assignment <- function(dsc, points, type=c("auto", "micro", "macro"), 
-  method="Euclidean", ...) 
+  method="Euclidean", threshold=NULL, ...) 
   UseMethod("get_assignment")
+
 get_assignment.DSC <- function(dsc, points, type=c("auto", "micro", "macro"), 
-  method="Euclidean", ...) {
+  method="Euclidean", threshold=NULL, ...) {
   d <- points
   
   c <- get_centers(dsc, type=type, ...)
   
-  if(nrow(c)>0) {
+  if(nrow(c)>0L) {
     dist <- dist(d, c, method=method)
-    #Find the minimum distance and save the class
-    predict <- apply(dist, 1, which.min)
+    # Find the minimum distance and save the class
+    predict <- apply(dist, 1L, which.min)
+  
+    # dist>threshold means no assignment
+    if(!is.null(threshold)) predict[apply(dist, 1L, min) > threshold] <- NA_integer_
+    
   } else {
     warning("There are no clusters!")
-    predict <- rep(1L, nrow(d))
+    predict <- rep(NA_integer_, nrow(d))
   }
   predict	
 }
@@ -113,6 +119,7 @@ print.DSC <- function(x, ...) {
     cat(paste('Number of macro-clusters:', nc, '\n'))
 }
 
+summary.DSC <- function(object, ...) print(object)
 
 #plot.DSC will call super question.
 plot.DSC <- function(x, dsd = NULL, n = 500, 
@@ -130,7 +137,7 @@ plot.DSC <- function(x, dsd = NULL, n = 500,
   
   if(type !="both") { 
     if(type =="auto") type <- get_type(x)
-    ## method can be pairs, plot or pc (projection with PCA)
+    ## method can be pairs, scatter or pc (projection with PCA)
     centers <- get_centers(x, type=type)
     k <- nrow(centers)
     

@@ -43,20 +43,20 @@ Martin Ester, Hans-Peter Kriegel, Joerg Sander, Xiaowei Xu (1996). A density-bas
 
 \examples{
 # 3 clusters with 5% noise
-dsd <- DSD_Gaussians(k=3, noise=0.05)
+dsd <- DSD_Gaussians(k=3, d=2, noise=0.05)
 
 # Use DBSCAN to recluster micro clusters (a sample)
 dsc <- DSC_Sample(k=100)
 cluster(dsc, dsd, 500)
 
-DBSCAN <- DSC_DBSCAN(eps = .05)
-recluster(DBSCAN,dsc)
-plot(DBSCAN, dsd)
+dbscan <- DSC_DBSCAN(eps = .05)
+recluster(dbscan, dsc)
+plot(dbscan, dsd, type="both")
 
 # For comparison we can cluster some data with DBSCAN directly
 # Note: DBSCAN is not suitable for data streams since it passes over the data
 # several times.
-DBSCAN <- DSC_DBSCAN(eps = .05)
-cluster(DBSCAN, dsd, 500)
-plot(DBSCAN, dsd)
+dbscan <- DSC_DBSCAN(eps = .05)
+cluster(dbscan, dsd, 500)
+plot(dbscan, dsd)
 }

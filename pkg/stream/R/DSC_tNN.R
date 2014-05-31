@@ -446,8 +446,7 @@ tNN$methods(list(
   }
 ))
 
-get_microclusters.DSC_tNN <- function(x) x$RObj$get_microclusters()
-get_microweights.DSC_tNN <- function(x) x$RObj$get_microweights()
+
 
 get_macroclusters.DSC_tNN <- function(x) {
   if(x$macro$newdata) {
@@ -506,7 +505,7 @@ plot.DSC_tNN <- function(x, dsd = NULL, n = 1000,
   
   if(!x$RObj$shared_density) stop("No shared density available!")
   
-  if(ncol(x$RObj$centers)>2 && method!="plot") stop("Only available 
+  if(ncol(x$RObj$centers)>2 && method!="scatter") stop("Only available 
     to plot 2D data or the first 2 dimensions!")
   
   p <- get_centers(x, type="micro")
