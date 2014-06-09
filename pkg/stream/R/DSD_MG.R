@@ -16,6 +16,26 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
+### creator    
+DSD_MG<- function(dimension = 2, ..., labels=NULL, description=NULL) {
+  
+  if(is.null(description)) description <- "Moving Data Generator"
+  
+  x <- structure(list(description = description,
+    RObj = dsd_MG_refClass$new(d = dimension)),
+    class = c("DSD_MG","DSD_R","DSD"))
+  
+  l <- list(...)
+  if(length(l) > 0) {
+    for(i in 1:length(l)) {
+      add_cluster(x, l[[i]], labels[i])
+    }
+  } 
+  
+  x
+}
+
+
 add_cluster <- function(x, c, label=NULL) UseMethod("add_cluster")
 get_clusters <- function(x) UseMethod("get_clusters")
 remove_cluster <- function(x, i) UseMethod("remove_cluster")
@@ -104,24 +124,7 @@ dsd_MG_refClass$methods(
   }
 )
 
-### creator    
-DSD_MG<- function(dimension = 2, ..., labels=NULL) {
-  
-  desc <- "Moving Data Generator"
-  
-  x <- structure(list(description = desc,
-                 RObj = dsd_MG_refClass$new(d = dimension)),
-            class = c("DSD_MG","DSD_R","DSD"))
-  
-  l <- list(...)
-  if(length(l) > 0) {
-    for(i in 1:length(l)) {
-      add_cluster(x, l[[i]], labels[i])
-    }
-  } 
-   
-  x
-}
+
 
 get_points.DSD_MG <- function(x, n=1, assignment = FALSE,...) {
   x$RObj$get_points(n,assignment)
@@ -138,9 +141,9 @@ reset_stream.DSD_MG <- function(dsd, pos=1) {
 }
 
 print.DSD_MG <- function(x, ...) {
-  cat(paste(x$description, " (", paste(class(x), collapse=", "), ")", 
-    '\n', sep=""))
-  cat(paste('With', length(x$RObj$clusters), 'clusters', 'in', 
+  cat(.line_break(paste(x$description)))
+  #cat("Class:", paste(class(x), collapse=", "), "\n")
+  cat(paste('With', length(na.omit(unique(x$RObj$labels))), 'clusters', 'in', 
     x$RObj$dimension, 'dimensions. Time is', round(x$RObj$t, 3), '\n'))
 }
 

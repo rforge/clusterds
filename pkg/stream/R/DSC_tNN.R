@@ -16,6 +16,27 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
+
+DSC_tNN <- function(r, lambda = 1e-3,  gap_time=1000L, noise = 0.01, 
+  measure = "Euclidean", 
+  shared_density = FALSE, alpha = 0.1, k = 0, minweight = 0) {
+  
+  tNN <- tNN$new(r, lambda, as.integer(gap_time), 
+    noise, measure, shared_density, alpha, k, minweight)
+  
+  l <- list(
+    description = "Threshold nearest-neighbor (tNN)", 
+    RObj = tNN,
+    macro = new.env()
+  )
+  
+  l$macro$newdata <- FALSE
+  class(l) <- c("DSC_tNN", "DSC_Micro", "DSC_R", "DSC")
+  l
+}
+
+
+
 ### fast euclidean (currently not used!)
 .inside <- function(x, centers, r) {
   which(rowSums(sapply(1:2, FUN=function(i) (centers[[i]]- x[[i]])^2)) < r^2)
@@ -68,7 +89,7 @@ tNN <- setRefClass("tNN",
       k		= 0,
       minweight	= 0
     ) {
-
+      
       if(alpha <0 || alpha>1) stop("alpha needs to be in [0,1]")
       if(noise <0 || noise>1) stop("noise needs to be in [0,1]")
       if(lambda <0 || lambda>1) stop("lambda needs to be in [0,1]")
@@ -104,24 +125,6 @@ tNN <- setRefClass("tNN",
   ),
 )
 
-
-DSC_tNN <- function(r, lambda = 1e-3,  gap_time=1000L, noise = 0.01, 
-  measure = "Euclidean", 
-  shared_density = FALSE, alpha = 0.1, k = 0, minweight = 0) {
-  
-  tNN <- tNN$new(r, lambda, as.integer(gap_time), 
-    noise, measure, shared_density, alpha, k, minweight)
-  
-  l <- list(
-    description = "tNN", 
-    RObj = tNN,
-    macro = new.env()
-    )
-  
-  l$macro$newdata <- FALSE
-  class(l) <- c("DSC_tNN", "DSC_Micro", "DSC_R", "DSC")
-  l
-}
 
 tNN$methods(list(
   
@@ -227,7 +230,7 @@ tNN$methods(list(
             rownames(centers)[nrow(centers)], "\n")
           
         }else{ ### update existing cluster
-
+          
           ### for moving
           partialweight <- (1-dist(point, centers, method=distFun)[inside]/r)^2
           partialweight <- partialweight/sum(partialweight)
@@ -238,8 +241,8 @@ tNN$methods(list(
           
           newCenters <- data.frame(
             (as.matrix(centers[inside,]) * ws + 
-              matrix(as.numeric(point), ncol=ncol(point), nrow=length(inside), 
-                byrow=TRUE) * partialweight) / (ws + partialweight),
+                matrix(as.numeric(point), ncol=ncol(point), nrow=length(inside), 
+                  byrow=TRUE) * partialweight) / (ws + partialweight),
             row.names=rownames(centers[inside,]))
           
           ### weight the clusters get
@@ -248,7 +251,7 @@ tNN$methods(list(
           ### update weights
           weights[inside] <<- ws + partialweight
           last_update[inside] <<- t
-
+          
           ### check overlap
           distance <- dist(newCenters,method=distFun)
           
@@ -265,16 +268,16 @@ tNN$methods(list(
             if(length(relationUpdate) > 0){
               if(debug) cat("  + Updating/Create Relations",
                 paste(relationUpdate, collapse=", "), "\n")
-
+              
               partialweight <- 1/length(inside) 
               
               for(j in relationUpdate) {
                 ### relation is c(last_update, count)
                 rel <- relations[[j]]
-#                if(is.null(rel)) rel <- c(t, 1)
+                #                if(is.null(rel)) rel <- c(t, 1)
                 if(is.null(rel)) rel <- c(t, partialweight)
                 else rel <- c(t, 
-#                  rel[2] * decay_factor^(t-rel[1]) + 1)
+                  #                  rel[2] * decay_factor^(t-rel[1]) + 1)
                   rel[2] * decay_factor^(t-rel[1]) + partialweight)
                 relations[[j]] <<- rel
               }
@@ -293,7 +296,7 @@ tNN$methods(list(
   strong_mcs = function(weak=FALSE) {
     
     ws <- get_current_weights()
-
+    
     # without noise all are strong!
     if(noise==0) {
       if(weak) return(integer(0))
@@ -335,7 +338,7 @@ tNN$methods(list(
       ### use average weight
       avg_weight <- apply(rel, MARGIN=1, FUN= function(x) mean(mc_weights[x]))
       ss <- vals/avg_weight
-
+      
       ### use max weight
       #max_weight <- apply(rel, MARGIN=1, FUN= function(x) max(mc_weights[x]))
       #ss <- vals/max_weight
@@ -347,7 +350,7 @@ tNN$methods(list(
     
     strong <- strong_mcs()
     s <- s[strong, strong]
-
+    
     ### filter alpha    
     if(alpha>0) s[s < alpha] <- 0
     
@@ -358,7 +361,7 @@ tNN$methods(list(
     s
   },
   
- 
+  
   get_microclusters = function() {
     ### we have to rename the micro-clusters
     mc <- centers
@@ -414,7 +417,7 @@ tNN$methods(list(
         assignment <- cutree(hclust(d, method="single"), h=.5)
       }
       
-   
+      
     }else{ ### use adjacent clusters overlap by alpha (packing factor)
       ### create a distance between 0 and 1 (<1 means reachable)
       d_pos <- dist(mcs, method=distFun)/r -1
@@ -430,7 +433,7 @@ tNN$methods(list(
         assignment <- cutree(hclust(d_pos, method="single"), k=k)
       }
     }
-   
+    
     ### use minweight filtering of macro-clusters
     if(minweight>0) {
       w_macro <- aggregate(w, by=list(assignment), FUN=sum)$x
@@ -453,10 +456,10 @@ get_macroclusters.DSC_tNN <- function(x) {
     x$macro$macro <- x$RObj$get_macro_clustering()
     x$macro$newdata <- FALSE
   }
-
+  
   x$macro$macro$centers
 }
-  
+
 get_macroweights.DSC_tNN <- function(x) {
   if(x$macro$newdata) {
     x$macro$macro <- x$RObj$get_macro_clustering()
@@ -538,4 +541,35 @@ plot.DSC_tNN <- function(x, dsd = NULL, n = 1000,
       }
     }   
   }
+}
+
+
+get_assignment.DSC_tNN <- function(dsc, points, type=c("auto", "micro", "macro"), 
+  method=c("auto", "method", "nn"), ...) {
+  
+  type <- match.arg(type)
+  method<- match.arg(method)
+  
+  if(method=="auto") method <- "model"
+  if(method!="model") return(NextMethod())
+  
+  c <- get_centers(dsc, type="micro", ...)
+  
+  if(nrow(c)>0L) {
+    dist <- dist(points, c, method=dsc$RObj$measure)
+    # Find the minimum distance and save the class
+    assignment <- apply(dist, 1L, which.min)
+    
+    # dist>threshold means no assignment
+    assignment[apply(dist, 1L, min) > dsc$RObj$r] <- NA_integer_
+    
+  } else {
+    warning("There are no clusters!")
+    assignment <- rep(NA_integer_, nrow(points))
+  }
+  
+  if(type=="macro") assignment <- microToMacro(dsc, assignment)
+  
+  attr(assignment, "method") <- "model"
+  assignment
 }

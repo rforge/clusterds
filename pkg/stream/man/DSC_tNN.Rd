@@ -99,8 +99,8 @@ microToMacro(tnn)
 
 # evaluate first using macro and then using micro-clusters
 \dontrun{
-evaluate(tnn, dsd, method="purity")
-evaluate(tnn, dsd, method="cRand", type="macro")
-evaluate(tnn, dsd, method="cRand", type="macro", assign="macro")
+evaluate(tnn, dsd, measure="purity")
+evaluate(tnn, dsd, measure="cRand", type="macro")
+evaluate(tnn, dsd, measure="cRand", type="macro", assign="macro")
 }
 }

@@ -12,7 +12,7 @@ Generates an animation of a data stream or a data steam clustering.
 \usage{
 animate_data(dsd, n=1000, wait=.1, horizon=100, ...)
 animate_cluster(dsc, dsd, macro=NULL, n=1000, wait=.1, horizon=100, 
-    evaluationMethod=NULL, evaluationType="micro", evaluationAssign="micro", 
+    evaluationMeasure=NULL, evaluationType="micro", evaluationAssign="micro", 
     ...)
 }
 
@@ -23,7 +23,7 @@ animate_cluster(dsc, dsd, macro=NULL, n=1000, wait=.1, horizon=100,
   \item{n}{the number of points to be plotted}
   \item{wait}{the time interval between each frame}
   \item{horizon}{the number of points displayed at once/used for evaluation. }
-  \item{evaluationMethod}{the evaluation method that should be graphed below the animation}
+  \item{evaluationMeasure}{the evaluation measure that should be graphed below the animation}
   \item{evaluationType}{evaluate "micro" or "macro"-clusters?}
   \item{evaluationAssign}{assign new points to the closest "micro" or "macro"-cluster
     to calculate the evaluation measure.}
@@ -61,7 +61,7 @@ dsc <- DSC_tNN(r=.1, lambda=.01, shared_density=TRUE,
   alpha=.2, noise=.1)  
 
 animate_cluster(dsc, dsd, n=5000, horizon=100, 
-  evaluationMethod="crand", evaluationType="macro", evaluationAssign="micro",
+  evaluationMeasure="crand", evaluationType="macro", evaluationAssign="micro",
   xlim=c(0,1),ylim=c(0,1), type="shared")
 }
 }

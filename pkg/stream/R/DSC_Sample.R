@@ -18,7 +18,8 @@
 
 
 DSC_Sample <- function(k = 100, biased = FALSE) 
-  structure(list(description = "Sample",
+  structure(list(description = 
+      if(biased) "Reservoir sampling (biased)" else "Reservoir sampling",
     RObj = Sample$new(k = k, biased = biased)),
     class = c("DSC_Sample","DSC_Micro","DSC_R","DSC"))
 

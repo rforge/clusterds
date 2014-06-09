@@ -16,6 +16,15 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
+
+### Implement a new clusterer
+### Create an S3 class with elements description and RObj
+### RObj needs to be a reference class with methods
+###  * cluster(newdata, ...)
+###  * get_microclusters(...), get_microweights(...)
+###  * get_macroclusters(...), get_macroweights(...), microToMacro(micro, ...)
+
+
 ### cluster worker
 ### geting a block of data improves performance the R implementation
 ### needs to make sure that points are processed sequencially

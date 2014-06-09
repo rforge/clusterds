@@ -85,34 +85,10 @@ nclusters.DSC <- function(x, type=c("auto", "micro", "macro"), ...) {
   nrow(get_centers(x, type=type, ...))
 }
 
-get_assignment <- function(dsc, points, type=c("auto", "micro", "macro"), 
-  method="Euclidean", threshold=NULL, ...) 
-  UseMethod("get_assignment")
-
-get_assignment.DSC <- function(dsc, points, type=c("auto", "micro", "macro"), 
-  method="Euclidean", threshold=NULL, ...) {
-  d <- points
-  
-  c <- get_centers(dsc, type=type, ...)
-  
-  if(nrow(c)>0L) {
-    dist <- dist(d, c, method=method)
-    # Find the minimum distance and save the class
-    predict <- apply(dist, 1L, which.min)
-  
-    # dist>threshold means no assignment
-    if(!is.null(threshold)) predict[apply(dist, 1L, min) > threshold] <- NA_integer_
-    
-  } else {
-    warning("There are no clusters!")
-    predict <- rep(NA_integer_, nrow(d))
-  }
-  predict	
-}
 
 print.DSC <- function(x, ...) {
-  cat(paste(x$description, " (", paste(class(x), collapse=", "), ")", 
-    '\n', sep=""))
+  cat(.line_break(paste(x$description)))
+  #cat("Class:", paste(class(x), collapse=", "), "\n") 
   if(!is(nc <- try(nclusters(x, type="micro"), silent=TRUE), "try-error")) 
     cat(paste('Number of micro-clusters:', nc, '\n'))
   if(!is(nc <- try(nclusters(x, type="macro"), silent=TRUE), "try-error")) 

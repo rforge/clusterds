@@ -46,8 +46,8 @@ reset_stream.DSD <- function(dsd, pos=1) {
 #############################################################
 ### helper
 print.DSD <- function(x, ...) {
-  cat(paste(x$description, " (", paste(class(x), collapse=", "), ")", 
-    '\n', sep=""))
+  cat(.line_break(x$description))
+  #cat("Class:", paste(class(x), collapse=", "), "\n") 
   cat(paste('With', x$k, 'clusters', 'in', x$d, 'dimensions', '\n'))
 }
 

@@ -19,19 +19,19 @@
 
 DSD_mlbenchData <- function(data=NULL, loop=FALSE, random=FALSE, scale = FALSE) {
   
-  datas <- c("BostonHousing", "BostonHousing2", "BreastCancer", 
+  datasets <- c("BostonHousing", "BostonHousing2", "BreastCancer", 
     "DNA", "Glass", "Ionosphere", "LetterRecognition", 
     "Ozone", "PimaIndiansDiabetes", "Satellite", "Servo", 
     "Shuttle", "Sonar", "Soybean", "Vehicle", "Vowel", 
     "Zoo", "HouseVotes84")
   
-  #finds index of partial match in array of datas
-  m <- pmatch(tolower(data), tolower(datas))
+  #finds index of partial match in array of datasets
+  m <- pmatch(tolower(data), tolower(datasets))
   
   if(is.null(data)) {
     cat("Available data sets:\n")
-    print(datas)
-    return(invisible(datas))
+    print(datasets)
+    return(invisible(datasets))
   }
   
   if(is.na(m))
@@ -39,8 +39,8 @@ DSD_mlbenchData <- function(data=NULL, loop=FALSE, random=FALSE, scale = FALSE) 
   
   state <- new.env()
   assign("counter", 1L, envir = state)
-  data(list=datas[m], package="mlbench", envir=environment())
-  x <- get(datas[m], envir=environment())
+  data(list=datasets[m], package="mlbench", envir=environment())
+  x <- get(datasets[m], envir=environment())
   
   if(m == 1) {
     d <- x

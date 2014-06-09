@@ -42,7 +42,7 @@ Window <- setRefClass("Window",
 )
 
 DSC_Window <- function(horizon = 100, lambda=0) 
-  structure(list(description = "Window - sliding window keeps the most recent data points",
+  structure(list(description = if(lambda>0) "Damped sliding window" else "Sliding window",
     RObj = Window$new(horizon = as.integer(horizon), lambda=lambda)),
     class = c("DSC_Window","DSC_Micro","DSC_R","DSC"))
   

@@ -12,7 +12,7 @@
 }
 
 \usage{
-DSD_MG(dimension = 2, ..., labels=NULL)
+DSD_MG(dimension = 2, ..., labels=NULL, description=NULL)
 
 add_cluster(x, c, label=NULL)
 get_clusters(x) 
@@ -27,6 +27,8 @@ remove_cluster(x, i)
   \item{i}{The index of the cluster that should be removed from the \code{DSD_MG} object.}
   \item{label, labels}{integer representing the cluster label. \code{NA} represents noise.
     If labels are not specified, then each new cluster gets a new label.}
+  \item{description}{ An optional string used by \code{print} to describe the 
+    data generator. }
 }
 
 \details{
@@ -47,10 +49,12 @@ dsd
 ### add two clusters
 c1 <- MGC_Random(density=50, center=c(50,50), parameter=1)
 add_cluster(dsd, c1)
-
+dsd
+  
 c2 <- MGC_Noise(density=1, range=rbind(c(-20,120), c(-20,120)))
 add_cluster(dsd, c2)
-    
+dsd
+  
 get_clusters(dsd)
 plot(dsd, xlim=c(-20,120), ylim=c(-20,120))
     

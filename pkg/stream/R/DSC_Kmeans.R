@@ -23,8 +23,8 @@ DSC_Kmeans <- function(k, weighted = TRUE, iter.max = 10, nstart = 1,
   min_weight = NULL) {
   
   algorithm <- match.arg(algorithm)
-  if(weighted) desc <- "weighted k-Means"
-  else desc <-"k-Means"
+  if(weighted) desc <- "k-Means clustering (weighted)"
+  else desc <-"k-Means clustering"
   
   structure(list(description = desc,
     RObj = kmeans_refClass$new(

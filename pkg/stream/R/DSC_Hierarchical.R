@@ -23,7 +23,7 @@ DSC_Hierarchical <- function(k=NULL, h=NULL, method = "complete",
   hierarchical <- hierarchical$new( 
     k=k, h=h, method=method, min_weight=min_weight)
   
-  l <- list(description = paste("Hierarchical -", method),
+  l <- list(description = paste("Hierarchical clustering (", method, ")", sep=''),
     RObj = hierarchical)
   
   class(l) <- c("DSC_Hierarchical","DSC_Macro","DSC_R","DSC")

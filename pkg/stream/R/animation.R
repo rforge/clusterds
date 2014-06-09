@@ -20,11 +20,11 @@
 
 animate_cluster <- function(dsc, dsd, macro=NULL, n=1000,
   wait=.1, horizon=100,
-  evaluationMethod=NULL, evaluationType="micro", evaluationAssign="micro", 
+  evaluationMeasure=NULL, evaluationType="micro", evaluationAssign="micro", 
   ...) {
   
   cluster.ani(dsc, dsd, macro, n, wait, horizon, 
-    evaluationMethod, evaluationType, evaluationAssign, 
+    evaluationMeasure, evaluationType, evaluationAssign, 
     ...)
 }
 
@@ -37,7 +37,7 @@ animate_data <- function(dsd, n=1000,
 
 cluster.ani <- function(dsc=NULL, dsd, macro=NULL, n=1000,
   wait=.1, horizon=100, 
-  evaluationMethod=NULL, evaluationType="micro", evaluationAssign="micro", ...) {
+  evaluationMeasure=NULL, evaluationType="micro", evaluationAssign="micro", ...) {
   
   op <- par(no.readonly = TRUE)
   on.exit(par(op))
@@ -46,7 +46,7 @@ cluster.ani <- function(dsc=NULL, dsd, macro=NULL, n=1000,
   
   rounds <- n %/% horizon 
   
-  if(!is.null(evaluationMethod)) {
+  if(!is.null(evaluationMeasure)) {
     layout(matrix(c(1,2), 2, 1, byrow = TRUE), heights=c(3,1.5))
     evaluation <- data.frame(points=seq(from=1, by=horizon, length.out=rounds), 
       measure=NA_real_)
@@ -62,10 +62,10 @@ cluster.ani <- function(dsc=NULL, dsd, macro=NULL, n=1000,
       
       if(!is.null(macro)) cl <- recluster(macro, dsc)
       
-      if(!is.null(evaluationMethod)) {
+      if(!is.null(evaluationMeasure)) {
         reset_stream(d)
         evaluation[i,2] <- evaluate(cl, d,
-          method=evaluationMethod, type=evaluationType, 
+          measure=evaluationMeasure, type=evaluationType, 
           assign=evaluationAssign, n=horizon)
       }
       
@@ -73,12 +73,12 @@ cluster.ani <- function(dsc=NULL, dsd, macro=NULL, n=1000,
       par(mar=c(4.1,4.1,2.1,2.1))
       plot(cl, d, n=horizon, ...)        
       
-      if(!is.null(evaluationMethod)){
+      if(!is.null(evaluationMeasure)){
         par(mar=c(2.1,4.1,1.1,2.1))
         plot(evaluation, type="l", col="blue",
           #ylim=c(0,1), 
           ann=FALSE) 
-        title(ylab=evaluationMethod)        
+        title(ylab=evaluationMeasure)        
       }
           
     }else{
@@ -91,8 +91,8 @@ cluster.ani <- function(dsc=NULL, dsd, macro=NULL, n=1000,
     
   }
   
-  if(!is.null(evaluationMethod)) {
-    colnames(evaluation) <- c("points", evaluationMethod)
+  if(!is.null(evaluationMeasure)) {
+    colnames(evaluation) <- c("points", evaluationMeasure)
     evaluation
   }else invisible(NULL)
 }

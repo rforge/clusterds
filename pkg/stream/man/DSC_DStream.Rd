@@ -35,7 +35,8 @@ get_attraction(x, dist=FALSE, relative=FALSE)
   \item{epsilon}{overlap parameter for attraction as a proportion of 
     \code{gridsize}.}
   \item{Cm2}{threshold on attraction to join two dense grid cells (as a 
-    proportion on the average expected attraction).}
+    proportion on the average expected attraction). In the original algorithm 
+    \code{Cm2} is equal to \code{Cm}.}
   \item{k}{alternative to Cm2 (not in the original algorithm). 
     Create k clusters based on attraction. In case 
     of more than k unconnected components, closer groups of MCs are joined.}
@@ -47,16 +48,30 @@ get_attraction(x, dist=FALSE, relative=FALSE)
 
 \details{
 D-Stream creates an equally spaced grid and estimates the density in each 
-  grid cell using the count of points falling in the cells. 
+  grid cell using the count of points falling in the cells. Grid cells are 
+  classified based on density into dense, transitional and sporadic cells.
   The density is faded after every new point by a factor of \eqn{2^{-lambda}}.
   Every gaptime number of points sporadic grid cells are removed.
   
-  For reclustering D-Stream (2007 version) merges adjacent dense grids.
-  This behavior is implemented as \code{attraction=FALSE}. 
+  For reclustering D-Stream (2007 version) merges adjacent dense grids to
+  form macro-clusters and then assigns adjacent transitional grids to 
+  macro-clusters. This behavior is implemented as \code{attraction=FALSE}. 
   
   The 2009 version of the algorithm adds the concept of attraction between 
   grids cells. If \code{attraction=TRUE} is used then the algorithm
-  produces macro-clusters based on attraction.
+  produces macro-clusters based on attraction between dense adjacent grids 
+  (uses \code{Cm2} which in the original algorithm is equal to \code{Cm}).
+
+  For many functions (e.g., \code{get_centers()}, \code{plot()}), 
+  D-Stream adds a parameter \code{grid_type} with possible 
+  values of \code{"dense"}, \code{"transitional"}, \code{"sparse"}, 
+  \code{"all"} and \code{"used"}. This only returns the selected type
+  of grid cells. \code{"used"} includes dense and adjacent transitional cells 
+  which are used in D-Stream for reclustering.
+
+  For plot D-Stream also provides the special \code{"type"} values
+  \code{"grid"} a \code{"grid_both"} which represents the grid cells directly
+  (density represented by gray values). 
 }
 
 \value{
@@ -75,42 +90,44 @@ Li Tu and Yixin Chen. 2009. Stream data clustering based on grid density and att
 }
 
 \examples{
-dsd <- DSD_BarsAndGaussians()
+dsd <- DSD_BarsAndGaussians(noise=.05)
+plot(dsd)
 
 # we set Cm=.8 to pick up the lower density clusters
-dstream1 <- DSC_DStream(gridsize=.5, Cm=.8)
+dstream1 <- DSC_DStream(gridsize=1, Cm=3)
 cluster(dstream1, dsd, 1000)
 dstream1
 
-# see micro-clusters
+# micro-clusters (these are "used" grid cells)
 nclusters(dstream1)
 head(get_centers(dstream1))
 
 # plot (DStream provides additional type="grid")
 plot(dstream1, dsd)
-plot(dstream1, type="grid")
 plot(dstream1, dsd, type="grid")
 
+# look only at dense grids
+nclusters(dstream1, grid_type="dense")
+plot(dstream1, dsd, type="grid", grid_type="dense")
+
+# look at transitional and sparse cells
+plot(dstream1, dsd, type="grid", grid_type="transitional")
+plot(dstream1, dsd, type="grid", grid_type="sparse")
+
+### Macro-clusters
 # standard D-Stream uses reachability
 nclusters(dstream1, type="macro")
 get_centers(dstream1, type="macro")
-plot(dstream1, dsd, type="both")
+plot(dstream1, type="grid_both")
+evaluate(dstream1, dsd, measure="crand", type="macro")
 
-# use image and add centers
-plot(dstream1, type="grid")
-points(get_centers(dstream1, type="macro"), col="blue", pch=3, lwd=2, 
-  cex=get_weights(dstream1, type="macro", scale=c(1,5)))
-
-evaluate(dstream1, dsd, method="crand", type="macro")
 
 # use attraction for reclustering
-
-dstream2 <- DSC_DStream(gridsize=.5, attraction=TRUE, Cm=.8)
+dstream2 <- DSC_DStream(gridsize=1, attraction=TRUE, Cm=3)
 cluster(dstream2, dsd, 1000)
 dstream2
 
-plot(dstream2, type="both", dsd)
-
-evaluate(dstream2, dsd, method="crand", type="macro")
+plot(dstream2, type="grid_both", dsd)
+evaluate(dstream2, dsd, measure="crand", type="macro")
 }
 
