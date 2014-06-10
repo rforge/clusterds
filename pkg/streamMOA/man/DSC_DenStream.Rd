@@ -50,9 +50,8 @@ Classification and Clustering. In Journal of Machine Learning Research
 	\code{\link{DSC_MOA}}
 }
 \examples{
-set.seed(0)
 # 3 clusters with 5% noise
-dsd <- DSD_Gaussians(k=3, noise=0.05)
+dsd <- DSD_Gaussians(k=3, d=2, noise=0.05)
 
 dsc <- DSC_DenStream(epsilon=.05)
 cluster(dsc, dsd, 500)
