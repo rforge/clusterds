@@ -232,8 +232,14 @@ tNN$methods(list(
         }else{ ### update existing cluster
           
           ### for moving
-          partialweight <- (1-dist(point, centers, method=distFun)[inside]/r)^2
-          partialweight <- partialweight/sum(partialweight)
+          #partialweight <- weights[inside] %in% min(weights[inside]) * 10
+          
+          partialweight <- 1 
+          
+          #partialweight <- 1/length(inside) 
+          
+          #partialweight <- (1-dist(point, centers, method=distFun)[inside]/r)^2
+          #partialweight <- partialweight/sum(partialweight)
           
           ### decay weights first
           ws <- weights[inside] * 
@@ -362,10 +368,11 @@ tNN$methods(list(
   },
   
   
-  get_microclusters = function() {
-    ### we have to rename the micro-clusters
+  get_microclusters = function(cluster_type=c("strong", "all"), ...) {
+    cluster_type <- match.arg(cluster_type)
+    
     mc <- centers
-    mc <- mc[strong_mcs(),]
+    if(cluster_type=="strong") mc <- mc[strong_mcs(),]
     rownames(mc) <- NULL
     
     if(nrow(mc)<1) return(data.frame())
@@ -373,8 +380,12 @@ tNN$methods(list(
     mc
   },
   
-  get_microweights = function() {
-    get_current_weights()[strong_mcs()]
+  get_microweights = function(cluster_type=c("strong", "all"), ...) {
+    cluster_type <- match.arg(cluster_type)
+
+    w <- get_current_weights()
+    if(cluster_type=="strong") w <- w[strong_mcs()]
+    w
   },
   
   get_macro_clustering = function() {
@@ -484,65 +495,70 @@ get_shared_density <- function(x, matrix=FALSE) x$RObj$get_shared_density(matrix
 
 ### special plotting for DSC_tNN
 ### FIXME: only show edges that really are used
-plot.DSC_tNN <- function(x, dsd = NULL, n = 1000,
+plot.DSC_tNN <- function(x, dsd = NULL, n = 500,
   col_points="gray",
-  col_clusters=c("red", "blue"),
-  weights=TRUE,
-  scale=c(1,5),
-  cex =1,
-  pch=NULL,
-  ...,
+#  col_clusters=c("red", "blue"),
+#  weights=TRUE,
+#  scale=c(1,5),
+#  cex =1,
+#  pch=NULL,
+#  ...,
   method="pairs",
-  type=c("auto", "micro", "macro", "both", "shared_density")) {
+  type=c("auto", "micro", "macro", "both", "none"),
+  shared_density=FALSE, assignment=FALSE, ...) {
   
-  type=match.arg(type)
-  if(type == "shared_density") { 
-    sd <- TRUE
-    type <- "macro"
-  } else sd <- FALSE
+  type <- match.arg(type)
   
+  if(type=="none") r <- plot(dsd, col=col_points, ...)
+  #r <- NextMethod()
+  else r <- plot.DSC(x=x, dsd=dsd, n=n, col_points=col_points, 
+    method=method, type=type, ...)
   
-  r <- NextMethod()
-  
-  if(!sd) return(invisible(r))
-  
-  if(!x$RObj$shared_density) stop("No shared density available!")
-  
-  if(ncol(x$RObj$centers)>2 && method!="scatter") stop("Only available 
-    to plot 2D data or the first 2 dimensions!")
+  if(!shared_density && !assignment) return(invisible(r))
   
   p <- get_centers(x, type="micro")
   
-  if(nrow(p)>0) {
-    points(p, col="black")
-    
+  if(assignment) {
     ### add threshold circles
-    for(i in 1:nrow(p)){
-      lines(ellipsePoints(x$RObj$r, x$RObj$r, 
-        loc=as.numeric(p[i,]), n=60),
-        col = "black", lty=3)
-    }
-    
-    ### add edges connecting macro-clusters
-    s <- get_shared_density(x, matrix=TRUE)
-    s[lower.tri(s)] <- NA
-    
-    edges <- which(s>x$RObj$alpha, arr.ind=TRUE)
-    
-    if(length(edges)>0) { # length instead of nrow (s can be empty!)
-      edges <- cbind(edges, 
-        w=apply(edges, MARGIN=1, FUN=function(ij) s[ij[1], ij[2]]))
-      
-      edges <- cbind(edges, map(edges[,3], range=c(.5,3)))
-      
-      for(i in 1:nrow(edges)){
-        lines(rbind(p[edges[i,1],],p[edges[i,2],]),
-          col="black",lwd=edges[i,4])
+    if(!is.numeric(assignment)) assignment <- 3L
+    if(nrow(p)>0) {
+      points(p, col="black", pch=3L)
+      for(i in 1:nrow(p)){
+        lines(ellipsePoints(x$RObj$r, x$RObj$r, 
+          loc=as.numeric(p[i,]), n=60),
+          col = "black", lty=assignment)
       }
-    }   
+    }
+  }
+  
+  if(shared_density) {  
+    if(!x$RObj$shared_density) stop("No shared density available!")
+    
+    if(ncol(x$RObj$centers)>2 && method!="scatter") stop("Only available 
+    to plot 2D data or the first 2 dimensions!")
+    
+    if(nrow(p)>0) {
+      #points(p, col="black")
+      ### add edges connecting macro-clusters
+      s <- get_shared_density(x, matrix=TRUE)
+      s[lower.tri(s)] <- NA
+      
+      edges <- which(s>x$RObj$alpha, arr.ind=TRUE)
+      
+      if(length(edges)>0) { # length instead of nrow (s can be empty!)
+        edges <- cbind(edges, 
+          w=apply(edges, MARGIN=1, FUN=function(ij) s[ij[1], ij[2]]))
+        
+        edges <- cbind(edges, map(edges[,3], range=c(.5,3)))
+        
+        for(i in 1:nrow(edges)){
+          lines(rbind(p[edges[i,1],],p[edges[i,2],]),
+            col="black",lwd=edges[i,4])
+        }
+      }   
+    }
   }
 }
-
 
 get_assignment.DSC_tNN <- function(dsc, points, type=c("auto", "micro", "macro"), 
   method=c("auto", "method", "nn"), ...) {

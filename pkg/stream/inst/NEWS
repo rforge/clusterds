@@ -5,6 +5,7 @@ Changes in version 1.0-1 (xx/xx/14)
     * get_assignemnt gained a threshold argument
     * DSC_Window added
     * DSC_Sample gained a biased argument for biased sampling
+    * DSC_Wrapper can not wrap matrix-like objects (e.g., ffdf from package ff)
 
 Changes in version 1.0-0 (5/24/14)
     * added D-Stream (with attraction)

@@ -12,13 +12,15 @@
 }
 
 \usage{
-	DSC_Reachability(epsilon, min_weight=NULL)
+	DSC_Reachability(epsilon, min_weight=NULL, description=NULL)
 }
 
 \arguments{
 	\item{epsilon}{radius of the epsilon-neighborhood.}
   \item{min_weight}{micro-clusters with a weight less than this will be 
     ignored for reclustering.}
+  \item{description}{optional character string to describe the clustering method.}
+
 }
 
 %\details{

@@ -18,13 +18,15 @@
 
 ### creator    
 DSC_Hierarchical <- function(k=NULL, h=NULL, method = "complete", 
-  min_weight=NULL) {
+  min_weight=NULL, description=NULL) {
   
   hierarchical <- hierarchical$new( 
     k=k, h=h, method=method, min_weight=min_weight)
   
-  l <- list(description = paste("Hierarchical clustering (", method, ")", sep=''),
-    RObj = hierarchical)
+  if(is.null(description)) description <- paste("Hierarchical clustering (", method, ")", 
+    sep='')
+  
+  l <- list(description = description, RObj = hierarchical)
   
   class(l) <- c("DSC_Hierarchical","DSC_Macro","DSC_R","DSC")
   l

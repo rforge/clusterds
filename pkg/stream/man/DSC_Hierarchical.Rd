@@ -6,7 +6,8 @@
     }
 
 \usage{
-	DSC_Hierarchical(k=NULL, h=NULL, method = "complete", min_weight=NULL)
+	DSC_Hierarchical(k=NULL, h=NULL, method = "complete", min_weight=NULL, 
+  description=NULL)
 }
 
 \arguments{
@@ -17,6 +18,8 @@
     or "centroid".}
   \item{min_weight}{micro-clusters with a weight less than this will be 
     ignored for reclustering.}
+  \item{description}{optional character string to describe the clustering method.}
+
 }
 
 \details{

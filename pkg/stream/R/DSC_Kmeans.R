@@ -20,10 +20,11 @@
 DSC_Kmeans <- function(k, weighted = TRUE, iter.max = 10, nstart = 1,
   algorithm = c("Hartigan-Wong", "Lloyd", "Forgy",
     "MacQueen"), 
-  min_weight = NULL) {
+  min_weight = NULL, description=NULL) {
   
   algorithm <- match.arg(algorithm)
-  if(weighted) desc <- "k-Means clustering (weighted)"
+  if(!is.null(description)) desc <- description
+  else if(weighted) desc <- "k-Means clustering (weighted)"
   else desc <-"k-Means clustering"
   
   structure(list(description = desc,

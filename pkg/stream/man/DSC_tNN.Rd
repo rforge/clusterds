@@ -45,6 +45,9 @@ the new data point.
 Note: Although DSC_tNN is a micro clustering algorithm, macro clusters
 and weights are available.
 
+\code{plot()} for DSC_tNN has two extra logical parameters called \code{assignment}
+  and \code{shared_density} which show the assignment area and
+  the shared density graph, rexpectively.
 }
 
 \value{
@@ -82,6 +85,9 @@ plot(tnn, dsd)
 # plot macro-clusters
 plot(tnn, dsd, type="both")
 
+# plot micro-clusters with assignment area
+plot(tnn, dsd, type="micro", assignment=TRUE)
+
 
 # tNN with shared density 
 tnn <- DSC_tNN(r=.1, noise=0.1, shared_density=TRUE)
@@ -90,7 +96,9 @@ tnn
 plot(tnn, dsd, type="both")
 
 # plot the shared density graph
-plot(tnn, dsd, type="shared_density")
+plot(tnn, dsd, type="micro", shared_density=TRUE)
+plot(tnn, dsd, type="micro", shared_density=TRUE, assignment=TRUE)
+plot(tnn, dsd, type="none", shared_density=TRUE, assignment=TRUE)
 
 # see how micro and macro-clusters relate
 # each microcluster has an entry with the macro-cluster id
@@ -101,6 +109,5 @@ microToMacro(tnn)
 \dontrun{
 evaluate(tnn, dsd, measure="purity")
 evaluate(tnn, dsd, measure="cRand", type="macro")
-evaluate(tnn, dsd, measure="cRand", type="macro", assign="macro")
 }
 }

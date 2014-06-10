@@ -499,16 +499,17 @@ microToMacro.DSC_DStream <- function(x, micro=NULL, ...) {
 }
 
 ### add plot as a grid
-plot.DSC_DStream <- function(x, dsd=NULL, n=500, ...) {
+plot.DSC_DStream <- function(x, dsd=NULL, n=500, 
+  type=c("micro", "macro", "both"), grid=FALSE, grid_type="used",
+  ...) {
   ### find type
-  type <- list(...)$type
   dim <- list(...)$dim
-  grid_type <- list(...)$grid_type
-  if(is.null(grid_type)) grid_type <- "used"
+  
+  type <- match.arg(type)
   
   ### implements grid and grid_both
-  if(is.null(type) || !pmatch(tolower(type), "grid_both", nomatch=0)) 
-    return(plot.DSC(x, dsd=dsd, n=n, ...))
+  if(!grid) return(plot.DSC(x, dsd=dsd, n=n, type=type, ...))
+  
   
   if(is.na(x$RObj$d)) {
     warning("No data clustered yet")
@@ -542,7 +543,7 @@ plot.DSC_DStream <- function(x, dsd=NULL, n=500, ...) {
   }
   
   ### add macro-clusters?
-  if(tolower(type)=="grid_both") {
+  if(type=="both" || type=="macro") {
     points(get_centers(x, type="macro"), col="blue", lwd=2, pch=3, 
       cex=get_weights(x, type="macro", scale=c(1,5)))
   }

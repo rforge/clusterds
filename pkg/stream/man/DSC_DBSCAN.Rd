@@ -7,13 +7,14 @@
 }
 
 \usage{
-	DSC_DBSCAN(eps, MinPts = 5, weighted = TRUE)
+	DSC_DBSCAN(eps, MinPts = 5, weighted = TRUE, description=NULL)
 }
 
 \arguments{
 	\item{eps}{radius of the eps-neighborhood.}
 	\item{MinPts}{minimum number of points required in the eps-neighborhood.}
   \item{weighted}{logical indicating if a weighted version of DBSCAN should be used. }
+  \item{description}{optional character string to describe the clustering method.}
 }
 
 \details{

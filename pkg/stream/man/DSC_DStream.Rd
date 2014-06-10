@@ -69,8 +69,8 @@ D-Stream creates an equally spaced grid and estimates the density in each
   of grid cells. \code{"used"} includes dense and adjacent transitional cells 
   which are used in D-Stream for reclustering.
 
-  For plot D-Stream also provides the special \code{"type"} values
-  \code{"grid"} a \code{"grid_both"} which represents the grid cells directly
+  For plot D-Stream also provides extra parameters \code{"grid"} and 
+  \code{"grid_type"} to show micro-clusters as grid cells
   (density represented by gray values). 
 }
 
@@ -102,23 +102,23 @@ dstream1
 nclusters(dstream1)
 head(get_centers(dstream1))
 
-# plot (DStream provides additional type="grid")
+# plot (DStream provides additional grid visualization)
 plot(dstream1, dsd)
-plot(dstream1, dsd, type="grid")
+plot(dstream1, dsd, grid=TRUE)
 
 # look only at dense grids
 nclusters(dstream1, grid_type="dense")
-plot(dstream1, dsd, type="grid", grid_type="dense")
+plot(dstream1, dsd, grid=TRUE, grid_type="dense")
 
 # look at transitional and sparse cells
-plot(dstream1, dsd, type="grid", grid_type="transitional")
-plot(dstream1, dsd, type="grid", grid_type="sparse")
+plot(dstream1, dsd, grid=TRUE, grid_type="transitional")
+plot(dstream1, dsd, grid=TRUE, grid_type="sparse")
 
 ### Macro-clusters
 # standard D-Stream uses reachability
 nclusters(dstream1, type="macro")
 get_centers(dstream1, type="macro")
-plot(dstream1, type="grid_both")
+plot(dstream1, dsd, type="both", grid=TRUE)
 evaluate(dstream1, dsd, measure="crand", type="macro")
 
 
@@ -127,7 +127,7 @@ dstream2 <- DSC_DStream(gridsize=1, attraction=TRUE, Cm=3)
 cluster(dstream2, dsd, 1000)
 dstream2
 
-plot(dstream2, type="grid_both", dsd)
+plot(dstream2, dsd, type="both", grid=TRUE)
 evaluate(dstream2, dsd, measure="crand", type="macro")
 }
 

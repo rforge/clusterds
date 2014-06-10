@@ -2,7 +2,7 @@
 \alias{DSD_mlbenchGenerator}
 \title{mlbench Data Stream Generator}
 \description{
-A data stream generator class that wraps data generators found in mlbench. 
+A data stream generator class that interfaces data generators found in mlbench. 
 }
 
 \usage{DSD_mlbenchGenerator(method, ...)}

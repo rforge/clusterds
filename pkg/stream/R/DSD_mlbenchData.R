@@ -25,20 +25,16 @@ DSD_mlbenchData <- function(data=NULL, loop=FALSE, random=FALSE, scale = FALSE) 
     "Shuttle", "Sonar", "Soybean", "Vehicle", "Vowel", 
     "Zoo", "HouseVotes84")
   
-  #finds index of partial match in array of datasets
-  m <- pmatch(tolower(data), tolower(datasets))
-  
   if(is.null(data)) {
     cat("Available data sets:\n")
     print(datasets)
     return(invisible(datasets))
   }
   
-  if(is.na(m))
-    stop("Invalid data name: ", data)
+  #finds index of partial match in array of datasets
+  m <- pmatch(tolower(data), tolower(datasets))
+  if(is.na(m)) stop("Invalid data name: ", data)
   
-  state <- new.env()
-  assign("counter", 1L, envir = state)
   data(list=datasets[m], package="mlbench", envir=environment())
   x <- get(datasets[m], envir=environment())
   
@@ -124,10 +120,8 @@ DSD_mlbenchData <- function(data=NULL, loop=FALSE, random=FALSE, scale = FALSE) 
   }
   
   complete <- complete.cases(d)
-  
   a <- a[complete]
   d <- d[complete,]
-  
   
   if(random) {
     rand <- sample(1:length(a),length(a),replace=F)
@@ -135,20 +129,14 @@ DSD_mlbenchData <- function(data=NULL, loop=FALSE, random=FALSE, scale = FALSE) 
     d <- d[rand,]
   }
   
-  d <- apply(d,2,as.numeric)
-  a <- as.numeric(a)
+  d <- apply(d, 2L, as.numeric)
+  if(scale) d <- scale(d)
+
+  a <- as.integer(a)
   
-  if(scale)
-    d <- scale(d)
+  k <- length(unique(a))
   
-  # creating the DSD object
-  l <- list(description = paste("mlbench",data),
-    strm = data.frame(d),
-    state = state,
-    d = ncol(d),
-    k = length(unique(a)),
-    loop = loop,
-    assignment = a)
-  class(l) <- c("DSD_mlbenchData","DSD_Wrapper","DSD_R","DSD")
+  l <- DSD_Wrapper(d, k=k, assignment=a, description=paste("mlbench", data))
+  class(l) <- c("DSD_mlbenchData", class(l))
   l
 }

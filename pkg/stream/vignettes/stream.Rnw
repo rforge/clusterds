@@ -958,66 +958,115 @@ Evaluation of data stream clustering is performed in \pkg{stream} via
 
 \begin{center}
 \code{evaluate(dsc, dsd, measure, n = 1000, type=c("auto", "micro", "macro"),}\\
-\code{assign="micro"), ...)},
+\code{assign="micro"), assignmentMethod=c("auto", "model", "nn"), ...)},
 \end{center}
 
 where \code{n} data points are taken from \code{dsd} and assigned to their closest cluster in the clustering in \code{dsc} using \code{get_assignment()}. 
 By default the points are assigned to micro-clusters,
 but it is also possible to assign them to macro-cluster centers instead 
-(\code{assign="macro"}).
+(\code{assign="macro"}). New points can be assigned to clusters using the
+rule used in the clustering algorithm (\code{assignmentMethod="model"}) or
+using nearest-neightbor assignment (\code{"nn"}). If the assignment method is set to 
+\code{"auto"} then model assignment is used when avaialble and otherwise 
+nearest-neighbor assignemnt is used.
 The initial assignments are aggregated to the level specified in \code{type}.
 For example, for a macro-clustering, the initial assignments
 will be made by default to micro-clusters and then these assignments
 will be translated into 
 macro-cluster assignments using the micro- to macro-cluster relationships stored
-in the clustering. Finally, the evaluation measure specified in \code{method} is calculated.
-This separation between assignment and evaluation type is especially important
+in the clustering. This separation between assignment and evaluation type is especially important
 for data with non-spherical clusters where micro-clusters are linked together
 in chains produced by a macro-clustering algorithm based on hierarchical
 clustering with single-link or reachability.
+Finally, the evaluation measure specified in \code{measure} 
+is calculated. Several measures can be specified as a vector of character strings.
 
-A simple measure to evaluate the compactness of (spherical) clusters is 
+Clustering evaluation measures can be categorized into internal and external
+cluster validity measures. Internal measures evaluate properties of the
+clusters. A simple measure to evaluate the compactness of (spherical) clusters is 
 the sum of squared distances between each data point and 
-the center of its cluster (method \code{"SSQ"}). This is a well known measure of
-internal cluster validity which does not require any information about
-the ground truth (i.e., true partitioning of the data into groups).
-
-Many evaluation measures perform external evaluation and 
-require the ground truth (analog to the class label in classification) 
-for the data (\code{dsd}).
-Based on the cluster assignment of new data points and their known true cluster 
-membership, different measures can be calculated.
-We will not describe each measure here since most of them are standard measures 
+the center of its cluster (method \code{"SSQ"}). 
+External measures use the ground truth (i.e., true partition of the data into groups)
+to evaluate the agreement of the 
+partition created by the clustering algorithm with the known true partition.  
+In the following we will enumerate the evaluation measures (passed on as \code{measure}) availabe in
+\pkg{stream}. We will not describe each measure here since most of them are standard measures 
 which can be found in many text books \citep[e.g.,][]{clust:Jain:1988,Kaufman:1990}
-or in the description of measures of agreement between partitions in
-package \pkg{clue} by \cite{stream:Hornik:2013}.
+or in the documentation supplied with the packages \pkg{cluster}, \pkg{clue} and \pkg{fpc}.
 Measures currently available for \code{evaluate()} 
-(method name are under quotation marks) are:
+(method name are under quotation marks) include:
+
 \begin{itemize}
-	    \item   \code{"precision"}, \code{"recall"}, F1 measure (\code{"F1"}), 
-	    \item   average purity of clusters (\code{"purity"}), 
-            false positive rate (\code{"fpr"})
-	    \item   Rand index (\code{"Rand"}), adjusted Rand index (\code{"cRand"}),
-	    \item   Jaccard index (\code{"Jaccard"}), 
-	    \item   Euclidean dissimilarity of the memberships (\code{"Euclidean"})
-%		(See Dimitriadou, Weingessel and Hornik
-%			(2002)), 
-	    \item   Manhattan dissimilarity of the memberships (\code{"Manhattan"}), 
-	    \item   Normalized Mutual Information (\code{"NMI"}) 
-%	    
-%%	    (see Strehl and Ghosh
-%		    (2002)),
-	    \item   Katz-Powell index (\code{"KP"}) 
-%	    (see Katz and
-%		    Powell (1953)),
-	    \item   Fowlkes and Mallows's index (\code{"FM"}) 
-%	    (see Fowlkes and Mallows (1983)),
-	    \item   Maximal cosine of the angle between the agreements (\code{"angle"}),
-	    \item   Maximal co-classification rate (\code{"diag"}),
-	    \item   Prediction Strength (\code{"PS"}).
-%	    (see Tibshirani and Walter (2005)).
-	    \item   Sum of squares (\code{"SSQ"}).
+\item Information items  
+  \begin{itemize}
+		\item	\code{"numMicroClusters"} number of micro-clusters, 
+    \item \code{"numMacroClusters"} number of macro-clusters, 
+		\item	\code{"numClasses"} number of classes (i.e., groups in the ground truth).
+	\end{itemize}
+  
+\item Internal evaluation measures
+	\begin{itemize}
+		\item	\code{"SSQ"} sum of squares (actual noise points are excluded), 
+		\item	\code{"silhouette"} average silhouette width (points that are actual noise and 
+      predicted to be noise are excluded) (\pkg{cluster}), 
+	  \item \code{"average.between"} average distance between clusters (\pkg{fpc}),        
+	  \item \code{"average.within"} average distance within clusters (\pkg{fpc}),          
+	  \item \code{"max.diameter"} maximum cluster diameter (\pkg{fpc}),        
+	  \item \code{ "min.separation"} minimum cluster separation (\pkg{fpc}),
+	  \item \code{"ave.within.cluster.ss"} a generalisation of the within clusters sum of squares (half the sum of the within cluster squared dissimilarities divided by the cluster size) (\pkg{fpc}),
+	  \item \code{"g2"} Goodman and Kruskal's Gamma coefficien (\pkg{fpc}), 
+    \item \code{"pearsongamma"} correlation between distances and a 0-1-vector where 0 means same cluster, 1 means different clusters (\pkg{fpc}),
+	  \item \code{"dunn"} Dunn index (minimum separation / maximum diameter) (\pkg{fpc}), 
+    \item \code{"dunn2"} minimum average dissimilarity between two cluster / maximum average within cluster dissimilarity (\pkg{fpc}), 
+	  \item \code{"entropy"} entropy of the distribution of cluster memberships (\pkg{fpc}), 
+    \item \code{"wb.ratio"} average.within/average.between (\pkg{fpc})
+	\end{itemize}  
+
+\item  External evaluation measures
+  \begin{itemize}
+		\item	\code{"precision"}, 
+		\item	\code{"recall"},
+		\item	\code{"F1"} F1 measure, 
+		\item	\code{"purity"} (average purity of found clusters), 
+%		\item	\code{"classPurity"} (of real clusters; see Wan et al (2009)), 
+		\item	\code{"fpr"} false positive rate,
+		\item	\code{"Euclidean"} Euclidean dissimilarity of
+		          the memberships 
+              %(See Dimitriadou, Weingessel and Hornik (2002)) 
+              (\pkg{clue}), 
+		\item	\code{"Manhattan"} Manhattan dissimilarity of
+		          the memberships (\pkg{clue}), 
+		\item	\code{"Rand"} Rand index 
+    %(see Rand (1971)) 
+    (\pkg{clue}),
+		\item	\code{"cRand"} Adjusted Rand index 
+    %(see Hubert and Arabie (1985)) 
+    (\pkg{clue}),
+		\item	\code{"NMI"} Normalized Mutual Information 
+    %(see Strehl and Ghosh (2002)) 
+    (\pkg{clue}),
+		\item	\code{"KP"} Katz-Powell index 
+    %(see Katz and Powell (1953)) 
+    (\pkg{clue}),
+		\item	\code{"angle"} maximal cosine of the angle between the agreements (\pkg{clue}),
+		\item	\code{"diag"} maximal co-classification rate (\pkg{clue}),
+		\item	\code{"FM"} Fowlkes and Mallows's index 
+    %(see Fowlkes and Mallows (1983)) 
+    (\pkg{clue}),
+		\item	\code{"Jaccard"} Jaccard index (\pkg{clue}), 
+		\item	\code{"PS"} Prediction Strength 
+    %(see Tibshirani and Walter (2005)) 
+    (\pkg{clue}).
+	  \item  \code{"corrected.rand"} corrected Rand index (\pkg{fpc}),
+	  \item  \code{"vi"} 	variation of information (VI) index (\pkg{fpc})
 \end{itemize}
+\end{itemize}
+
+Noise data points need special attention. For external validity measures, noise
+data points just form a special group in the partition. However, for internal 
+measures using noise points is problematic since the noise data points will
+not form a compact cluster and thus negatively effect measures like the sum
+of squares. Therefore, for internal measures, noise points are excluded.
 
 \code{evaluate()} is appropriate if the data stream does not evolve 
 significantly from the data that is used to learn the clustering to
@@ -1471,7 +1520,7 @@ For the grid-based D-Stream algorithm there is also a second visualization avail
 which shows the used dense grid cell as squares.
 
 <<cluster-grid, fig=TRUE, include=FALSE>>= 
-plot(dstream, dsd, type="grid")
+plot(dstream, dsd, grid=TRUE)
 @
 
 

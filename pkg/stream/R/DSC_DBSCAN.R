@@ -17,14 +17,13 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 ### creator    
-DSC_DBSCAN <- function(eps, MinPts = 5, weighted = TRUE) {
+DSC_DBSCAN <- function(eps, MinPts = 5, weighted = TRUE, description=NULL) {
   
   DBSCAN <- DBSCAN$new(eps=eps, MinPts = MinPts, weighted = weighted)
+  if(!is.null(description)) desc <- description
+  else if(weighted) desc <- "DBSCAN (weighted)" else desc <- "DBSCAN (unweighted)"
   
-  if(weighted) desc <- "DBSCAN (weighted)" else desc <- "DBSCAN (unweighted)"
-  l <- list(description = desc,
-    RObj = DBSCAN)
-  
+  l <- list(description = desc, RObj = DBSCAN)
   class(l) <- c("DSC_DBSCAN","DSC_Macro","DSC_R","DSC")
   l
 }
