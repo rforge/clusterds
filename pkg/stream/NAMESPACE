@@ -18,7 +18,12 @@ importFrom(mlbench, "mlbench.2dnormals","mlbench.cassini","mlbench.circle",
 
 export(
 	# DSC
-#  DSC_BIRCH,
+  DSC,
+  DSC_R,
+  DSC_Micro,
+  DSC_Macro,
+  
+  #  DSC_BIRCH,
   DSC_DStream,
   DSC_Sample,
 	DSC_tNN, 
@@ -32,7 +37,10 @@ export(
   DSC_Reachability,
 	
 	# DSD
-	DSD_Wrapper,
+	DSD,
+  DSD_R,
+  
+  DSD_Wrapper,
   DSD_ScaleStream,
   DSD_ReadStream,
   

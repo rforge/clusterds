@@ -50,8 +50,6 @@ cluster.ani <- function(dsc=NULL, dsd, macro=NULL, n=1000,
     layout(matrix(c(1,2), 2, 1, byrow = TRUE), heights=c(3,1.5))
     evaluation <- data.frame(points=seq(from=1, by=horizon, length.out=rounds), 
       measure=NA_real_)
-  } else {
-    layout(matrix(c(1,1), 2, 1, byrow = TRUE))
   }
   
   for(i in 1:rounds) {
@@ -70,7 +68,7 @@ cluster.ani <- function(dsc=NULL, dsd, macro=NULL, n=1000,
       }
       
       reset_stream(d)
-      par(mar=c(4.1,4.1,2.1,2.1))
+      if(!is.null(evaluationMeasure)) par(mar=c(4.1,4.1,2.1,2.1))
       plot(cl, d, n=horizon, ...)        
       
       if(!is.null(evaluationMeasure)){

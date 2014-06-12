@@ -275,7 +275,7 @@ ssq <- function(points, actual, centers) {
 
 silhouette <- function(points, actual, predict) {
   ### silhouette does not use noise points
-  noise <- actual==0 && predict==0
+  noise <- actual==0 & predict==0
   mean(cluster::silhouette(predict[!noise], dist(points[!noise,]))[,"sil_width"])
 }
 clue_agreement <- function(predict, actual, measure) {

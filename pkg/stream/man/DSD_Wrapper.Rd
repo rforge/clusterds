@@ -29,7 +29,8 @@ The Wrapper can also be used to record and replay a part of a data stream.
 \details{
 In addition to regular data.frames other matrix-like objects can be used.
 This includes also \code{ffdf} (large data.frames 
-stored on disk) from package \pkg{ff}.
+stored on disk) from package \pkg{ff} 
+and \code{big.matrix} from \pkg{bigmemory}.
 }
 
 \value{

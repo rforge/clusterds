@@ -24,6 +24,8 @@
 ###  * get_microclusters(...), get_microweights(...)
 ###  * get_macroclusters(...), get_macroweights(...), microToMacro(micro, ...)
 
+DSC_R <- function(...) stop("DSC_R is an abstract class and cannot be instantiated!")
+
 
 ### cluster worker
 ### geting a block of data improves performance the R implementation

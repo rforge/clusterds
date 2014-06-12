@@ -9,7 +9,7 @@
 
 \usage{
 DSC_tNN(r, lambda = 0.001, gap_time = 1000L, 
-  noise = 0.01, measure = "Euclidean", 
+  noise = 0.1, measure = "Euclidean", 
 	shared_density = FALSE, alpha=0.1, k=0, minweight = 0)
 get_shared_density(x, matrix=FALSE)  
 }

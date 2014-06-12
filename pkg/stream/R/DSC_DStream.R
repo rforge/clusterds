@@ -552,7 +552,7 @@ plot.DSC_DStream <- function(x, dsd=NULL, n=500,
 }
 
 get_assignment.DSC_DStream <- function(dsc, points, type=c("auto", "micro", "macro"), 
-  method=c("auto", "method", "nn"), ...) {
+  method=c("auto", "model", "nn"), ...) {
   
   type <- match.arg(type)
   method<- match.arg(method)

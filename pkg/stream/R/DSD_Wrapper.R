@@ -65,14 +65,14 @@ get_points.DSD_Wrapper <- function(x, n=1, assignment = FALSE,...) {
   
   if(n_left >= n) {
     ### regular case
-    d <- x$strm[x$state$counter:(x$state$counter + n -1L),]
+    d <- x$strm[x$state$counter:(x$state$counter + n -1L),,drop=FALSE]
     x$state$counter <- x$state$counter + n
   }else{
     ### we need to loop!
     
     
     # take what is left and reset counter
-    d <- x$strm[x$state$counter:nrow(x$strm),] 
+    d <- x$strm[x$state$counter:nrow(x$strm),,drop=FALSE] 
     togo <- n-n_left
     x$state$counter <- 1L
     
@@ -95,7 +95,7 @@ get_points.DSD_Wrapper <- function(x, n=1, assignment = FALSE,...) {
   if(!is.null(x$assignment)) {
     a <- d[, x$assignment]
     d <- d[,-x$assignment]
-  }else a <- rep.int(1L, nrow(d))
+  }else a <- rep.int(1L, times=nrow(d))
   
   d <- data.frame(d)
   

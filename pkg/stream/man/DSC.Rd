@@ -1,16 +1,18 @@
 \name{DSC}
 \alias{DSC}
+\alias{DSC_R}
 \alias{get_microclusters}
 \alias{get_microweights}
 \alias{get_macroclusters}
 \alias{get_macroweights}
-\title{Data Stream Clusterer Base Class}
-\description{Abstract base class for all DSC (Data Stream
-Clusterer) classes.}
+\title{Data Stream Clusterer Base Classes}
+\description{Abstract base classes for all DSC (Data Stream
+Clusterer) and DSC\_R classes.}
 
 \details{
-The \code{DSC} class cannot be instantiated, 
-but it serves as a base class from which all DSC classes 
+The \code{DSC} and \code{DSC_R} classes cannot be instantiated 
+(calling \code{DSC()} or \code{DSC_R()} produces errors), 
+but they serve as a base class from which other DSC classes 
 inherit. 
 
 Class \code{DSC} provides several generic functions that can 
@@ -20,7 +22,8 @@ get the current number of clusters,
 \code{get_centers()} to get the cluster centers,
 and \code{get_weights()} to get the cluster weights 
 (if implemented). \code{get_centers()} and \code{get_weights()}
-are typically overwritten by subclasses of \code{DSC}.
+are typically overwritten by subclasses of \code{DSC}. \code{DSC_R} 
+provides these functions for R-based DSC implementations.
 }
 
 \seealso{

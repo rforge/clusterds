@@ -23,8 +23,10 @@
 # get_macroweights(x)
 # microToMacro(x, micro=NULL)
 # a cluster method in the RObj
-
 ####### 
+
+DSC_Macro <- function(...) stop("DSC_Macro is an abstract class and cannot be instantiated!")
+
 
 microToMacro <- function(x, micro=NULL) UseMethod("microToMacro")
 microToMacro.default <- function(x, micro=NULL) {

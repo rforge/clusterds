@@ -17,7 +17,7 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 
-DSC_tNN <- function(r, lambda = 1e-3,  gap_time=1000L, noise = 0.01, 
+DSC_tNN <- function(r, lambda = 1e-3,  gap_time=1000L, noise = 0.1, 
   measure = "Euclidean", 
   shared_density = FALSE, alpha = 0.1, k = 0, minweight = 0) {
   
@@ -82,7 +82,7 @@ tNN <- setRefClass("tNN",
       r		= 0.1,
       lambda		= 1e-3,
       gap_time  = 1000L,
-      noise		= 0.01,
+      noise		= 0.1,
       measure		= "Euclidean",
       shared_density		= FALSE,
       alpha 		= 0.1,
@@ -252,7 +252,9 @@ tNN$methods(list(
             row.names=rownames(centers[inside,]))
           
           ### weight the clusters get
-          partialweight <- 1/length(inside) 
+          #partialweight <- 1/length(inside) 
+          partialweight <- rep.int(0, length(inside))
+          partialweight[which.min(dist(point, centers[inside,], method=distFun))] <- 1
           
           ### update weights
           weights[inside] <<- ws + partialweight
@@ -430,11 +432,11 @@ tNN$methods(list(
       
       
     }else{ ### use adjacent clusters overlap by alpha (packing factor)
-      ### create a distance between 0 and 1 (<1 means reachable)
+      ### create a distance between 0 and inf 
+      ### (<1 means reachable, i.e., assignment areas overlap)
       d_pos <- dist(mcs, method=distFun)/r -1
-      d_pos[d_pos>1] <- 1 ### 1 is max distance
       
-      ### alpha = 0 -> 1(-e)    reachability at r
+      ### alpha = 0 -> 1    reachability at r
       ### alpha = 1 -> 0     highest packing
       h <- 1-alpha
       assignment <- cutree(hclust(d_pos, method="single"), h=h)
@@ -561,7 +563,7 @@ plot.DSC_tNN <- function(x, dsd = NULL, n = 500,
 }
 
 get_assignment.DSC_tNN <- function(dsc, points, type=c("auto", "micro", "macro"), 
-  method=c("auto", "method", "nn"), ...) {
+  method=c("auto", "model", "nn"), ...) {
   
   type <- match.arg(type)
   method<- match.arg(method)

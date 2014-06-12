@@ -22,9 +22,10 @@
 # method cluster for RObj
 # get_microclusters(x)
 # get_microweights(x)
-
-
 ########
+
+DSC_Micro <- function(...) stop("DSC_Micro is an abstract class and cannot be instantiated!")
+
 
 get_centers.DSC_Micro <- function(x, type=c("auto", "micro", "macro"), ...) {
     type <- match.arg(type)
