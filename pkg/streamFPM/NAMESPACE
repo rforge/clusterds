@@ -1,0 +1,8 @@
+useDynLib(streamFPM)
+exportPattern("^[[:alpha:]]+")
+import("stream")
+import("hash")
+import(methods)
+#importFrom(Rcpp, sourceCpp)
+#importFrom(Rcpp, loadModule)
+#importFrom(Rcpp, evalCpp)
