@@ -36,7 +36,6 @@ Bifet A, Holmes G, Pfahringer B, Kranen P, Kremer H, Jansen T,
 Seidl T (2010). MOA: Massive Online Analysis, a Framework for
 Stream Classification and Clustering. In Journal of Machine
  Learning Research (JMLR).
-
 }
 \seealso{
 	\code{\link{DSC}},
@@ -54,8 +53,13 @@ dsc
 # plot micro-clusters
 plot(dsc, dsd)
 
-# reclustering
+# recluster with k-means
 kmeans <- DSC_Kmeans(k=3)
 recluster(kmeans,dsc)
 plot(kmeans, dsd, type="both")
+
+# create a two stage clusering using ClusTree and reachability reclustering 
+d2 <- DSC_TwoStage(micro=dsc, macro=DSC_Kmeans(k=3))
+d2
+plot(d2, dsd, type="both")
 }

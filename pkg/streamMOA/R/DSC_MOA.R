@@ -17,6 +17,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
+DSC_MOA <- function(...) stop("DSC_MOA is an abstract class and cannot be instantiated!")
 
 ## MOA specific stuff
 convert_params <- function(paramList=list()) {
@@ -49,7 +50,7 @@ convert_params <- function(paramList=list()) {
     d <- get_points(dsd, 1)
     ## TODO: Check incoming data
     
-    
+ ?    
     x <- .jcast(
       .jnew("weka/core/DenseInstance", 1.0, .jarray(as.double(d))),
       "weka/core/Instance"
@@ -192,11 +193,14 @@ get_copy.DSC_MOA <- function(x) {
     m[i] <- .jcall(mCluster, "D", "getRadius") 
   }
   
-  m  
+  ### FIXME: increase radius for Clustream!!!
+  ### the radius is the standard deviation. +- 2 standard deviations cover
+  ### 95% of the data under the assumption of a Gaussian distribution
+  m * 2
 }
 
 get_assignment.DSC_MOA <- function(dsc, points, type=c("auto", "micro", "macro"),
- method=c("auto", "method", "nn"), ...) {
+ method=c("auto", "model", "nn"), ...) {
       
       type <- match.arg(type)
   method<- match.arg(method)
@@ -223,3 +227,27 @@ get_assignment.DSC_MOA <- function(dsc, points, type=c("auto", "micro", "macro")
   assignment
 }
 
+plot.DSC_MOA <- function(x, dsd = NULL, n = 500,
+  assignment=FALSE, ...) {
+
+  NextMethod()
+
+  if(assignment) {
+    r <- .get_radius_MOA(x)
+    p <- get_centers(x)
+    
+    ### add threshold circles
+    if(!is.numeric(assignment)) assignment <- 3L
+    if(nrow(p)>0) {
+      points(p, col="black", pch=3L)
+      for(i in 1:nrow(p)){
+        lines(ellipsePoints(r[i], r[i],
+          loc=as.numeric(p[i,]), n=60),
+          col = "black", lty=assignment)
+      }
+    }
+  }
+  
+  
+  
+}
