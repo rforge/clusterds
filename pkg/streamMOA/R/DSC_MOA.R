@@ -49,8 +49,7 @@ convert_params <- function(paramList=list()) {
     
     d <- get_points(dsd, 1)
     ## TODO: Check incoming data
-    
- ?    
+        
     x <- .jcast(
       .jnew("weka/core/DenseInstance", 1.0, .jarray(as.double(d))),
       "weka/core/Instance"
