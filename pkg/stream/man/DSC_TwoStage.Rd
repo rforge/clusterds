@@ -13,7 +13,10 @@ DSC_TwoStage(micro, macro)
 	\item{macro}{Clustering algorithm for offline stage (\code{DSC_macro})} 
 }
 
-%\details{}
+\details{
+\code{cluster()} runs the micro-clustering stage and if centers/weights are 
+requested the reclustering is automatically performed.
+}
 
 \value{
 An object of class \code{DSC_TwoStage} (subclass of  \code{DSC}, \code{DSC_Macro}). 
