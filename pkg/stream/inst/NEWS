@@ -1,4 +1,4 @@
-Changesin version 1.0-3
+Changes in version 1.0-3 (07/14/14)
     * Fixed precision and recall calculation
     * Added DSC_TwoStage
 
