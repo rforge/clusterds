@@ -8,7 +8,7 @@
 ## 1. a constructor function. myDSD <- function(PARAMETERS) which
 ## returns an object with the class  c("DSD_myDSD","DSD_R","DSD")
 ## 2. get_points.myDSD <- function(x, n=1, ...)
-##
+
 
 
 DSD_Transactions <- function(type=c("integer"), setSize=50, maxTransactionSize=10, distribution="") {

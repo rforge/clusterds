@@ -3,36 +3,40 @@
 #input: datastream D
 #output: A complete set of recent freq itemsets Lk
 
-#datastream <- #continous data stream
-d <- 0.2 #given decay rate
-#rt <- new(RTrie) #monitoring lattice
+estDec<- function(datastream, iterations) {
+  #datastream <- #continous data stream
+  datastream <- DSD_Transactions(c(integer))
+  d <- 0.2 #given decay rate
+  rt <- new(RTrie) #monitoring lattice
+  minsup <- 0.3 #FIXME change this
+  Dk <- 0.0
+  
+  for(i in 0:iterations){
 
-#Tk = new transaction (generated on the kth turn)
-#TID = transaction ID number
-#|D|k total transactions to date - decay
-#Ck(e) is the current count of an itemset e which is the number of trans
-#that contain the itemset among the k transactions
-#Sk(e) = current support of itemset e = Ck(e) / |D|k
-#k = kth transaction
-
-#decay-base  b
-#decay-base-life  h
-#decay = b^-(1/h) (b>1, h>=1, b^-1 <= d < 1)
-
-#       previous |D|k
-#|D|k = |D|k-1 * d + 1
+    Tk <- get_points.DSD_Transactions(datastream)
+    TID <-0  # = k
+    
+    #Ck(e) is the current count of an itemset e which is the number of trans
+    #that contain the itemset among the k transactions
+    #Sk(e) = current support of itemset e = Ck(e) / |D|k
+    #decay-base  b
+    #decay-base-life  h
+    #decay = b^-(1/h) (b>1, h>=1, b^-1 <= d < 1)
+    estDecUpdate(rt, Tk, d, Dk, minsup, TID)
+    
+    #parameter updating phase
+    Dk <- Dk * d + 1.0  #FIXME
+  }
+}
 
 #function for a single transaction
-estDec<- function(trie, trans, decayRate) {
-  
-  #parameter updating phase
-  Dk <- Dk * decayRate + 1
+estDecUpdate<- function(rt, trans, decayRate, Dk, minsup, k) {
   
   #counting update
-#  rt$updateAllSets(trans, k, d, minsup, Dk)
+  rt$updateAllSets(trans, k, decayRate, minsup, Dk)
 
   #Delayed-insertion phase
-#TKf <- ItemFiltering(Tk);
+  #TKf <- ItemFiltering(Tk);
 
 #for (each itemset e in  Tkf and not in ML) {
 #    if(length(e) == 1){

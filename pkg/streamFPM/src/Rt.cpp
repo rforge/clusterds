@@ -12,7 +12,7 @@ public:
     bool search(Rcpp::IntegerVector itemset);
     bool deleteSet(Rcpp::IntegerVector itemset);
     bool addAllSets(Rcpp::IntegerVector itemset);
-    bool updateAllSets(Rcpp::IntegerVector itemset, int transNum, int decayRate, int minsup, int dk);
+    bool updateAllSets(Rcpp::IntegerVector itemset, int transNum, double decayRate, double minsup, double dk);
     bool updateSet(Rcpp::IntegerVector itemset, int tid);
     int  size(Rcpp::IntegerVector itemset);
  };
@@ -56,7 +56,7 @@ bool RTrie::updateSet(Rcpp::IntegerVector itemset, int tid)
   return false;
 }
 
-bool RTrie::updateAllSets(Rcpp::IntegerVector itemset, int transNum, int decayRate, int minsup, int dk)
+bool RTrie::updateAllSets(Rcpp::IntegerVector itemset, int transNum, double decayRate, double minsup, double dk)
 {
   
   std::vector<int> e = Rcpp::as<std::vector<int> >(itemset);
