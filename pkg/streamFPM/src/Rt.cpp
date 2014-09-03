@@ -15,6 +15,7 @@ public:
     bool updateAllSets(Rcpp::IntegerVector itemset, int transNum, double decayRate, double minsup, double dk);
     bool updateSet(Rcpp::IntegerVector itemset, int tid);
     int  size(Rcpp::IntegerVector itemset);
+    void printAll();
  };
  
  RTrie::RTrie()
@@ -77,6 +78,11 @@ int  RTrie::size(Rcpp::IntegerVector itemset)
   return e.size();
 }
 
+void RTrie::printAll()
+{
+ this->printTree(NULL);
+}
+
 
 RCPP_MODULE(rtrie)
 {
@@ -90,5 +96,6 @@ RCPP_MODULE(rtrie)
   .method("search", &RTrie::search)
   .method("deleteSet", &RTrie::deleteSet)
   .method("size", &RTrie::size)
+  .method("printAll", &RTrie::printAll)
   ;
 }

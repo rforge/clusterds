@@ -16,7 +16,7 @@ DSD_Transactions <- function(type=c("integer"), setSize=50, maxTransactionSize=1
   if(setSize < maxTransactionSize){ stop("maxTransactionSize cannot be larger than setSize")}
   
   # creating the DSD object
-  l <- list(description = "Transaction Data Stream",
+  l <- list(description = "Random Transaction Data Stream",
             type=type,
             setSize=setSize,
             maxTransactionSize=maxTransactionSize,
@@ -25,6 +25,9 @@ DSD_Transactions <- function(type=c("integer"), setSize=50, maxTransactionSize=1
   l
 }
 
+
+#n = number of transactions
+#x = DSD object
 get_points.DSD_Transactions <- function(x, n=1, assignment = FALSE,...) {
   ### gaussians at (3,2.5) and (3,-2.5)
   ### bars at (-3,2.8) and (-3,-2.8)

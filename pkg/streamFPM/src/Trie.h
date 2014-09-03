@@ -12,6 +12,8 @@ public:
     bool deleteNodeAndChildren(Node* current);
     bool updateWord(std::vector<int> & itemset, int k, double d, double minsup, double dk, int len, int first, Node* current = NULL);
     bool delayedInsertion(std::vector<int> & itemset, int k, double d, double minsup, double dk, int len, int first, Node* current);
+    void printTree(Node * current);
+    
     
 private:
     int deleteWordRecursion(std::vector<int> itemset, int i, Node * current);

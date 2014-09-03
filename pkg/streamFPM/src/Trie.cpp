@@ -307,3 +307,15 @@ double Trie::cUpper(std::vector<int> & itemset, double minsup, double dk, double
   double cntForSubsets = minsup * dk - (itemset.size() - 1) *  pow(d,(itemset.size() -1 ));
   return maxCntBeforeSubsets + cntForSubsets;
 }
+
+//default is root
+void Trie::printTree(Node * current)
+{
+  if(current == NULL)
+    current = root;
+  vector<Node*> c = current->children();
+  for (int i = 0; i < c.size(); i++) {
+    printTree(c[i]);
+  }
+  cout << current->content() << endl;
+}
