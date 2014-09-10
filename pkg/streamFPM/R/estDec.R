@@ -2,7 +2,7 @@
 
 #input: datastream D
 #output: A complete set of recent freq itemsets Lk
-datastream <- DSD_Transactions(c(integer))
+datastream <- DSD_Transactions_Random(c(integer))
 
 estDec<- function(datastream, iterations) {
   #datastream <- #continous data stream
@@ -12,9 +12,12 @@ estDec<- function(datastream, iterations) {
   Dk <- 0.0
   TID <-0  # = k
   
-  for(i in 0:iterations){
-
-    Tk <- get_points.DSD_Transactions(datastream)
+  for(i in 0:iterations - 1){
+    
+    print(paste0("iteration: ", i))
+    
+    Tk <- get_points.DSD_Transactions_Random(datastream)
+    print(Tk)
     TID <- TID + 1
     
     #Ck(e) is the current count of an itemset e which is the number of trans
@@ -28,6 +31,7 @@ estDec<- function(datastream, iterations) {
     #parameter updating phase
     Dk <- Dk * d + 1.0  #FIXME
   }
+  
   rt$printAll()
 }
 

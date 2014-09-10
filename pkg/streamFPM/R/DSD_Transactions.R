@@ -1,43 +1,15 @@
-#data stream generator
 
-#want stream data
-#each point will be integers or strings
-#start with integers
+DSD_Transactions <- function(...) stop("DSD_Transactions is an abstract class and cannot be instantiated!")
 
-# A new DSD class (e.g., myDSD) needs the following:
-## 1. a constructor function. myDSD <- function(PARAMETERS) which
-## returns an object with the class  c("DSD_myDSD","DSD_R","DSD")
-## 2. get_points.myDSD <- function(x, n=1, ...)
-
-
-
-DSD_Transactions <- function(type=c("integer"), setSize=50, maxTransactionSize=10, distribution="") {
-  
-  if(setSize < maxTransactionSize){ stop("maxTransactionSize cannot be larger than setSize")}
-  
-  # creating the DSD object
-  l <- list(description = "Random Transaction Data Stream",
-            type=type,
-            setSize=setSize,
-            maxTransactionSize=maxTransactionSize,
-            distribution=distribution)
-  class(l) <- c("DSD_Transactions","DSD_R","DSD")
-  l
+get_points <- function(x, n=1, ...) UseMethod("get_points")
+get_points.default <- function(x, n=1, ...) {
+  stop(gettextf("get_points not implemented for class '%s'.",
+                paste(class(x), collapse=", ")))
 }
 
-
-#n = number of transactions
-#x = DSD object
-get_points.DSD_Transactions <- function(x, n=1, assignment = FALSE,...) {
-  ### gaussians at (3,2.5) and (3,-2.5)
-  ### bars at (-3,2.8) and (-3,-2.8)
-  
-  a <- vector("list", n)
-  for (i in 1:n) {
-    length <- sample(1:x$maxTransactionSize)
-    a[[i]] <- sample(1:x$setSize, length, replace=FALSE, prob=rexp(x$setSize))
-  }
-  
-  return(a)
-  
+### in case the stream can be reset (e.g., a stream from a file)
+reset_stream <- function(dsd, pos=1) UseMethod("reset_stream")
+reset_stream.DSD_Transactions <- function(dsd, pos=1) {
+  stop(gettextf("reset_stream not implemented for class '%s'.",
+                paste(class(dsd), collapse=", ")))
 }

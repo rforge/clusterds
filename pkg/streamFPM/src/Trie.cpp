@@ -154,11 +154,13 @@ bool Trie::deleteNodeAndChildren(Node* current)
 
 bool Trie::updateWord(std::vector<int> & itemset, int k, double d, double minsup, double dk, int len, int first, Node* current)
 {
+    std::cout << "here1" << std::endl;
+
     //When called from updateAllSets the first time, current = NULL
     if(current == NULL)
         current = root;
     else {
-      
+        std::cout << "here2 update set" << std::endl;
         current->setCount( (current->getCount() * pow(d, k - current->getId())) + 1);
         current->setErr(current->getErr() * pow(d, k - current->getId()));
         
@@ -167,16 +169,19 @@ bool Trie::updateWord(std::vector<int> & itemset, int k, double d, double minsup
 
     for ( int i = first; i < itemset.size(); i++ )
     {
+        std::cout << "set: " << itemset[i] <<endl;
         Node* tmp = current->findChild(itemset[i]);
         if ( tmp == NULL )
         {
           //FIXME: might change this to the delayed add ?
-            std::cout << "itemset not in tree. must add to tree before updating" <<std::endl;
+            //std::cout << "itemset not in tree. must add to tree before updating" <<std::endl;
+            std::cout << "here3 add new set" << std::endl;
             delayedInsertion(itemset, k, d, minsup,  dk, len, i, current);
             //return false;
         }
         //FIXME minsup should be pruning support
         //FIXME  bad stuff with doubles
+        //should be tmp?
         else if(current->getCount()/dk < minsup * 0.8  && len > 1) {
             deleteNodeAndChildren(current);
         }
@@ -317,5 +322,5 @@ void Trie::printTree(Node * current)
   for (int i = 0; i < c.size(); i++) {
     printTree(c[i]);
   }
-  cout << current->content() << endl;
+  cout << current->content() << " : count :" << current->getCount() << endl;
 }
