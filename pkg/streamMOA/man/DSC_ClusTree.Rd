@@ -47,7 +47,7 @@ Stream Classification and Clustering. In Journal of Machine
 dsd <- DSD_Gaussians(k=3, d=2, noise=0.05)
 
 dsc <- DSC_ClusTree(maxHeight=3)
-cluster(dsc, dsd, 500)
+update(dsc, dsd, 500)
 dsc
 
 # plot micro-clusters

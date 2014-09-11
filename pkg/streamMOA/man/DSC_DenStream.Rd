@@ -55,7 +55,7 @@ Classification and Clustering. In Journal of Machine Learning Research
 dsd <- DSD_Gaussians(k=3, d=2, noise=0.05)
 
 dsc <- DSC_DenStream(epsilon=.05)
-cluster(dsc, dsd, 500)
+update(dsc, dsd, 500)
 dsc
 
 # plot micro-clusters

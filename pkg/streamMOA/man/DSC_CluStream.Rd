@@ -57,7 +57,7 @@ dsd <- DSD_Gaussians(k=3, d=2, noise=.05)
 
 # cluster with CluStream  
 dsc <- DSC_CluStream(m=50)
-cluster(dsc, dsd, 500)
+update(dsc, dsd, 500)
 dsc
 
 # plot micro-clusters
@@ -73,7 +73,7 @@ plot(kmeans, dsd, type="both")
   
 # use k-means automatically
 dsc <- DSC_CluStream(m=50, k=3)
-cluster(dsc, dsd, 500)
+update(dsc, dsd, 500)
 dsc
 
 plot(dsc, dsd, type="both")

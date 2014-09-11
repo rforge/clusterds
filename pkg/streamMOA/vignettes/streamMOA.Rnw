@@ -78,7 +78,7 @@ algorithms <- list(Sample=sample, Window=window, 'D-Stream'=dstream, tNN=tNN,
   DenStream=denstream, CluStream=clustream)
 for(a in algorithms) {
   reset_stream(dsd) 
-  cluster(a, dsd, 1000)
+  update(a, dsd, 1000)
 }
 @
 
