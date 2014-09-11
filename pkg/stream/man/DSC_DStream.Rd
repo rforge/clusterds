@@ -95,7 +95,7 @@ plot(dsd)
 
 # we set Cm=.8 to pick up the lower density clusters
 dstream1 <- DSC_DStream(gridsize=1, Cm=3)
-cluster(dstream1, dsd, 1000)
+update(dstream1, dsd, 1000)
 dstream1
 
 # micro-clusters (these are "used" grid cells)
@@ -124,7 +124,7 @@ evaluate(dstream1, dsd, measure="crand", type="macro")
 
 # use attraction for reclustering
 dstream2 <- DSC_DStream(gridsize=1, attraction=TRUE, Cm=3)
-cluster(dstream2, dsd, 1000)
+update(dstream2, dsd, 1000)
 dstream2
 
 plot(dstream2, dsd, type="both", grid=TRUE)

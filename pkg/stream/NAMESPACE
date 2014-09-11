@@ -113,6 +113,9 @@ export(
   .cluster
       )
 
+### update
+S3method(update, DSC)
+
 ### DSD Methods
 S3method(print, DSD)
 S3method(summary, DSD)

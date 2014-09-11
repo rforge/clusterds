@@ -31,7 +31,7 @@ A data.frame with the micro- or macro-cluster centers as rows.
 \examples{
 dsd <- DSD_Gaussians(k=3, d=2)
 dsc <- DSC_DStream(gridsize=.1)
-cluster(dsc, dsd, 500)
+update(dsc, dsd, 500)
 dsc
   
 # getting the micro-cluster centers

@@ -34,7 +34,7 @@ Internally the call is delegated to the appropriate
 \examples{
 dsd <- DSD_Gaussians(k=3, d=2)
 dsc <- DSC_DStream(gridsize=.1)
-cluster(dsc, dsd, 500)
+update(dsc, dsd, 500)
 dsc
   
 # getting the micro-cluster weights

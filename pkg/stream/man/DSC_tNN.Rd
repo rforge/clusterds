@@ -74,7 +74,7 @@ dsd <- DSD_Gaussians(k=3, noise=0.05)
 # tNN with reachability (increase noise parameter to reduce the micro-clusters
 # at the fringes of the Gaussians)
 tnn <- DSC_tNN(r=.1, noise=0.1)
-cluster(tnn, dsd, 500)
+update(tnn, dsd, 500)
 tnn
 
 # check micro-clusters
@@ -91,7 +91,7 @@ plot(tnn, dsd, type="micro", assignment=TRUE)
 
 # tNN with shared density 
 tnn <- DSC_tNN(r=.1, noise=0.1, shared_density=TRUE)
-cluster(tnn, dsd, 500)
+update(tnn, dsd, 500)
 tnn
 plot(tnn, dsd, type="both")
 

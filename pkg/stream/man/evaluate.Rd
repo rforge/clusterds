@@ -201,7 +201,7 @@ Clustering of Data Streams at Multiple Resolutions, 3(3).
 dsd <- DSD_Gaussians(k=3, d=2)
 
 dstream <- DSC_DStream(gridsize=0.05)
-cluster(dstream, dsd, 500)
+update(dstream, dsd, 500)
 plot(dstream, dsd)
 # Evaluate micro-clusters 
 # Note: we use here only n=500 points for evaluation to speed up execution

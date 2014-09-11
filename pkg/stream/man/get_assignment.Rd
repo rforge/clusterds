@@ -40,7 +40,7 @@ A vector containing the assignment of each point. \code{NA} means that a
 dsd <- DSD_Gaussians(k=3, d=2, noise=.05)
 
 dsc <- DSC_tNN(r=.1, noise=.05)
-cluster(dsc, dsd, n=100)
+update(dsc, dsd, n=100)
 
 # find the assignment for the next 100 points to 
 # micro-clusters in dsc. This uses the model's assignemnt function

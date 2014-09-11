@@ -793,7 +793,7 @@ The following function can be used for objects of subclasses of DSC:
 by definition start with the prefix \code{DSC_}.
 
 \item
-\code{cluster(dsc, dsd, n=1)} which accepts a DSC object and a DSD object. It takes $n$
+\code{update(dsc, dsd, n=1)} which accepts a DSC object and a DSD object. It takes $n$
 data points out of \code{dsd} and adds them to the clustering in \code{dsc}.
 
 \item
@@ -872,15 +872,15 @@ and the number of clusters that have been calculated.
 \label{figure:interaction} 
 \end{figure}
 
-Figure~\ref{figure:interaction} shows the typical use of \code{cluster()}
+Figure~\ref{figure:interaction} shows the typical use of \code{update()}
 and other functions.
-Clustering on a data stream~(DSD) is performed with \code{cluster()}
+Clustering on a data stream~(DSD) is performed with \code{update()}
 on a DSC object.
 This is typically done with a \code{DSC_micro} object which will perform its
 online clustering process and the resulting micro-clusters are available 
 from the object after clustering (via \code{get_centers()}, etc.).
 Note, that DSC classes implement mutable objects
-and thus the result of \code{cluster()} does not need to be reassigned to its name.
+and thus the result of \code{update()} does not need to be reassigned to its name.
 %For evaluation, the clusters to which data points would be assigned can be 
 %obtained using \code{get_assignment()}.
 
@@ -1554,12 +1554,12 @@ dstream
 @
 
 Now we are ready to cluster data from the stream using
-the \code{cluster()} function. Note, that \code{cluster()}
+the \code{update()} function. Note, that \code{update()}
 will implicitly alter the mutable DSC object so no
 reassignment is necessary.
 
 <<>>= 
-cluster(dstream, dsd, 500) 
+update(dstream, dsd, 500) 
 dstream
 @
 
@@ -1739,7 +1739,7 @@ set.seed(1000)
 dsd <- DSD_Gaussians(k=3, d=2, noise=0.05)
 dstream <- DSC_DStream(gridsize=.05)
 
-cluster(dstream, dsd, 1000)
+update(dstream, dsd, 1000)
 dstream
 @
 
@@ -1861,16 +1861,16 @@ the data points are now directly assigned to minimize this type of error.
 % @
 % 
 % <<>>=
-% cluster(sample, dsd, 1000) 
+% update(sample, dsd, 1000) 
 % sample
 % reset_stream(dsd) 
-% cluster(dstream, dsd, 1000)
+% update(dstream, dsd, 1000)
 % dstream
 % reset_stream(dsd) 
-% cluster(denstream, dsd, 1000) 
+% update(denstream, dsd, 1000) 
 % denstream
 % reset_stream(dsd) 
-% cluster(clustream, dsd, 1000)
+% update(clustream, dsd, 1000)
 % clustream
 % @
 % 
@@ -2149,7 +2149,7 @@ Note that these are methods for reference classes and do not contain the
 called object in the parameter list. Neither of these methods are called directly
 by the user.
 Figure~\ref{figure:interaction} (on page~\pageref{figure:interaction})
-shows that the function \code{cluster()} 
+shows that the function \code{update()} 
 is used to cluster data points, and \code{get_centers()} and \code{get_weights()}
 are used to obtain the clustering. These user facing functions call internally
 the methods in RObj via the \proglang{R} interface in class \code{DSC_R}. 

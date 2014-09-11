@@ -36,7 +36,7 @@ Returns an object of class
 dsd <- DSD_Gaussians(k=3, noise=0.1)
 
 dsc <- DSC_tNN(r=0.1)
-cluster(dsc, dsd, 500)
+update(dsc, dsd, 500)
 dsc
 plot(dsc, dsd)
 

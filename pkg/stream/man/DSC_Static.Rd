@@ -38,7 +38,7 @@ The list also contains either
 dsd <- DSD_Gaussians(k=3, noise=0.05)
 
 dstream <- DSC_DStream(gridsize=0.05)
-cluster(dstream, dsd, 500)
+update(dstream, dsd, 500)
 dstream
 plot(dstream, dsd)
   

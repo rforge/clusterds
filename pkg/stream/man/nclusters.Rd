@@ -29,7 +29,7 @@ An integer; the number of micro- or macro-clusters in the clustering.
 # setting up the objects
 dsd <- DSD_Gaussians(k=3)
 dsc <- DSC_DStream(gridsize=0.1)
-cluster(dsc, dsd, 500)
+update(dsc, dsd, 500)
 
 # retrieving the results
 get_centers(dsc)

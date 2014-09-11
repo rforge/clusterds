@@ -14,7 +14,7 @@ DSC_TwoStage(micro, macro)
 }
 
 \details{
-\code{cluster()} runs the micro-clustering stage and if centers/weights are 
+\code{update()} runs the micro-clustering stage and if centers/weights are 
 requested the reclustering is automatically performed.
 }
 
@@ -40,7 +40,7 @@ dsc <- DSC_TwoStage(
   ) 
 dsc
   
-cluster(dsc, dsd, 200) 
+update(dsc, dsd, 200) 
 dsc
 plot(dsc, dsd, type="both")  
 evaluate(dsc, dsd, assign="macro")

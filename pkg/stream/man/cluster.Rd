@@ -1,13 +1,15 @@
-\name{cluster}
+\name{update}
+\alias{update}
 \alias{cluster}
-\title{Cluster a Data Stream}
+\title{Update a Data Stream Clustering Model}
 
 \description{
-Clusters a number of input points from a data stream into a clustering object.
+Update a clustering model by clustering a number of input points from a data stream into a clustering object.
 }
 
 \usage{
-cluster(dsc, dsd, n = 1, verbose=FALSE, ...)
+\method{update}{DSC}(dsc, dsd, n = 1, verbose = FALSE, ...)
+cluster(dsc, dsd, n = 1, verbose = FALSE, ...)
 }
 
 \arguments{
@@ -19,12 +21,14 @@ cluster(dsc, dsd, n = 1, verbose=FALSE, ...)
 }
 
 \details{
-\code{cluster} takes n times a single 
+\code{update} takes n times a single 
 data points out of the DSD and adds it to the 
 clustering in the DSC object. Note that cluster directly 
 modifies the DSC object (which is a reference class) and 
 thus the result does not need to be reassigned to the
 DSC.
+
+\code{update} just classes \code{cluster}. 
 }
 
 \value{
@@ -43,6 +47,6 @@ clustering result, call \code{get_centers()} on the DSC object.
 dsd <- DSD_Gaussians(k=3)
 dsc <- DSC_DStream(gridsize=.05)  
 
-cluster(dsc, dsd, 500)
+update(dsc, dsd, 500)
 plot(dsc, dsd)
 }

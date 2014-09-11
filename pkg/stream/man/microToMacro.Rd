@@ -30,7 +30,7 @@ dsd <- DSD_Gaussians(k=3, d=2, noise=0.05, p=c(.2,.4,.6))
 
 # recluster a micro-clusters
 micro <- DSC_DStream(gridsize=0.05)
-cluster(micro, dsd, 500)
+update(micro, dsd, 500)
 
 macro <- DSC_Kmeans(k=3)
 recluster(macro, micro)

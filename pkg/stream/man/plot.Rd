@@ -62,7 +62,7 @@ plot(dsd, method="scatter", dim=c(1,3), n=500)
 
 ## create and plot micro-clusters
 dstream <- DSC_DStream(gridsize=0.1)
-cluster(dstream, dsd, 500)
+update(dstream, dsd, 500)
 plot(dstream)
 
 ## plot with data, projected on the first two principal components 

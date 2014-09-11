@@ -35,7 +35,7 @@ set.seed(0)
 dsd <- DSD_Gaussians(k=3, d=3)
 
 micro <- DSC_Sample(k=50)
-cluster(micro, dsd, 500)
+update(micro, dsd, 500)
 micro
   
 ### recluster using k-means

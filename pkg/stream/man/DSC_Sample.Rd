@@ -58,7 +58,7 @@ Aggarwal C. (2006) On Biased Reservoir Sampling in the Presence of Stream Evolut
 dsd <- DSD_Gaussians(k=3, noise=0.05)
 
 dsc <- DSC_Sample(k=20)
-cluster(dsc, dsd, 500)
+update(dsc, dsd, 500)
 dsc
 
 # plot micro-clusters
@@ -72,7 +72,7 @@ plot(kmeans, dsd, type="both")
 # sample from an evolving stream
 dsd <- DSD_Benchmark(1)
 dsc <- DSC_Sample(k=100)
-cluster(dsc, dsd, 2000)
+update(dsc, dsd, 2000)
 plot(dsc, dsd)
 # Note: the clusters move from left to right and the sample keeps many 
 # outdated points
@@ -80,6 +80,6 @@ plot(dsc, dsd)
 # use a biased sample to keep more recent data points 
 dsd <- DSD_Benchmark(1)
 dsc <- DSC_Sample(k=100, biased=TRUE)
-cluster(dsc, dsd, 2000)
+update(dsc, dsd, 2000)
 plot(dsc, dsd)
 }

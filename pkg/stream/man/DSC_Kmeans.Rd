@@ -48,7 +48,7 @@ dsd <- DSD_Gaussians(k=3, noise=0)
 
 # create micro-clusters via sampling
 dsc <- DSC_Sample(k=20)
-cluster(dsc, dsd, 500)
+update(dsc, dsd, 500)
 dsc
   
 # recluster micro-clusters
@@ -59,6 +59,6 @@ plot(kmeans, dsd, type="both")
 # For comparison we use k-means directly to cluster data
 # Note: k-means is not a data stream clustering algorithm
 kmeans <- DSC_Kmeans(k=3)
-cluster(kmeans, dsd, 500)
+update(kmeans, dsd, 500)
 plot(kmeans, dsd)
 }

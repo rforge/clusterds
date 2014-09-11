@@ -48,7 +48,7 @@ dsd <- DSD_mlbenchGenerator("cassini")
 
 # Use hierarchical clustering to recluster micro-clusters
 dsc <- DSC_tNN(r=.1)
-cluster(dsc, dsd, 500)
+update(dsc, dsd, 500)
 
 # reclustering using single-link and specifying k
 hierarchical <- DSC_Hierarchical(k=3, method="single")
@@ -65,6 +65,6 @@ plot(hierarchical, dsd, type="both")
 # For comparison we use hierarchical clustering directly on the data 
 # Note: hierarchical clustering is not a data stream clustering algorithm!
 hierarchical <- DSC_Hierarchical(k=3, method="single")
-cluster(hierarchical, dsd, 500)
+update(hierarchical, dsd, 500)
 plot(hierarchical, dsd)
 }

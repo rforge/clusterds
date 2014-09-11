@@ -44,7 +44,7 @@ dsd <- DSD_Gaussians(k=3, d=2, noise=0.05)
 dsc <- DSC_Window(horizon=100)
 dsc
 
-cluster(dsc, dsd, 200)
+update(dsc, dsd, 200)
 dsc
 
 # plot micro-clusters

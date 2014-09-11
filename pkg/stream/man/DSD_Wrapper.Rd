@@ -56,9 +56,9 @@ dsc2 <- DSC_DStream(gridsize=0.1)
   
 # clustering the same data in 2 DSC objects
 reset_stream(replayer) # resetting the replayer to the first position
-cluster(dsc1, replayer, 500)
+update(dsc1, replayer, 500)
 reset_stream(replayer)
-cluster(dsc2, replayer, 500)
+update(dsc2, replayer, 500)
   
 # plot the resulting clusterings
 reset_stream(replayer) 
