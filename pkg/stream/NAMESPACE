@@ -56,6 +56,10 @@ export(
   DSD_BarsAndGaussians,
   DSD_Benchmark,
 
+  # DSO
+  DSO_Window,
+  DSO_Sample,
+  
   # MGCs
   DSD_MG,
   MGC_Linear,
@@ -135,6 +139,15 @@ S3method(reset_stream, DSD)
 S3method(reset_stream, DSD_Wrapper)
 S3method(reset_stream, DSD_ReadStream)
 S3method(reset_stream, DSD_ScaleStream)
+
+### DSO Methods
+S3method(print, DSO)
+S3method(update, DSO_Window)
+S3method(get_points, DSO_Window)
+S3method(get_weights, DSO_Window)
+S3method(update, DSO_Sample)
+S3method(get_points, DSO_Sample)
+S3method(get_weights, DSO_Sample)
 
 ### DSC Methods
 S3method(print, DSC)

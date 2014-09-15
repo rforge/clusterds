@@ -30,7 +30,7 @@ DSD_Target <- function(center_sd =.05, center_weight=.5,
 	    ring_sd = ring_sd,
 	    noise = noise
 	    )
-    class(l) <- c("DSD_Target","DSD_R","DSD")
+    class(l) <- c("DSD_Target", "DSD_R", "DSD_data.frame", "DSD")
     l
 }
 

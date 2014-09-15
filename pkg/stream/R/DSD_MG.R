@@ -23,7 +23,7 @@ DSD_MG<- function(dimension = 2, ..., labels=NULL, description=NULL) {
   
   x <- structure(list(description = description,
     RObj = dsd_MG_refClass$new(d = dimension)),
-    class = c("DSD_MG","DSD_R","DSD"))
+    class = c("DSD_MG", "DSD_R", "DSD_data.frame", "DSD"))
   
   l <- list(...)
   if(length(l) > 0) {

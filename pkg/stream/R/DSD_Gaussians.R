@@ -89,7 +89,7 @@ DSD_Gaussians <- function(k=2, d=2, mu, sigma, p, separation=0.2,
     p = p,
     noise = noise,
     noise_range = noise_range)
-  class(l) <- c("DSD_Gaussians","DSD_R","DSD")
+  class(l) <- c("DSD_Gaussians","DSD_R", "DSD_data.frame", "DSD")
   l
 }
 

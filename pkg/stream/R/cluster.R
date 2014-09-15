@@ -20,6 +20,8 @@
 ## wrapper for cluster functions
 
 cluster <- function(dsc, dsd, n=1, verbose=FALSE, ...) { 
+  if(!is(dsd, "DSD_data.frame")) stop("Cannot cluster stream (need a DSD_data.frame.)")
+  
   if (n > 0) {
     
     # set new data flag

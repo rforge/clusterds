@@ -41,7 +41,7 @@ DSD_mlbenchGenerator <- function(method, ...) {
     method = methods[m],
     variables = list(...)
   )
-  class(l) <- c("DSD_mlbenchGenerator","DSD_R","DSD")
+  class(l) <- c("DSD_mlbenchGenerator", "DSD_R", "DSD_data.frame", "DSD")
   l
 }
 

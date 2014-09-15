@@ -68,7 +68,7 @@ DSD_Cubes <- function(k=2, d=2, center, size, p, noise = 0, noise_range) {
             p = p,
             noise = noise,
             noise_range = noise_range)
-  class(l) <- c("DSD_Cubes","DSD_R","DSD")
+  class(l) <- c("DSD_Cubes", "DSD_R", "DSD_data.frame", "DSD")
   l
 }
 

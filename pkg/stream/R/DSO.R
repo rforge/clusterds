@@ -16,16 +16,11 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-
-DSD_UniformNoise <- function(d=2, range=NULL) {
-  if(is.null(range)) range <- matrix(c(0,1), ncol=2, nrow=d, byrow=TRUE)
-  structure(list(description = "Uniform Noise", d = d, range=range),
-	      class=c("DSD_UniformNoise", "DSD_R", "DSD_data.frame", "DSD"))
-  }
-  
-get_points.DSD_UniformNoise <- function(x, n=1, assignment = FALSE, ...) {
-    data <- as.data.frame(t(replicate(n, 
-      runif(x$d, min=x$range[,1], max=x$range[,2]))))
-    if(assignment) attr(data, "assignment") <- rep(NA_integer_, n)
-    data
+print.DSO <- function(x, ...) {
+  cat(.line_break(paste(x$description)))
+  cat("Class:", paste(class(x), collapse=", "), "\n") 
+  #if(!is(nc <- try(nclusters(x, type="micro"), silent=TRUE), "try-error")) 
+  #  cat(paste('Number of micro-clusters:', nc, '\n'))
+  #if(!is(nc <- try(nclusters(x, type="macro"), silent=TRUE), "try-error")) 
+  #  cat(paste('Number of macro-clusters:', nc, '\n'))
 }

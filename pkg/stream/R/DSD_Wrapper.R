@@ -48,7 +48,7 @@ DSD_Wrapper <- function(x, n, k=NA, loop=FALSE, assignment = NULL,
     k = k,
     loop = loop,
     assignment = assignment
-    ), class = c("DSD_Wrapper","DSD_R","DSD"))
+    ), class = c("DSD_Wrapper", "DSD_R", "DSD_data.frame", "DSD"))
 }
 
 get_points.DSD_Wrapper <- function(x, n=1, assignment = FALSE,...) {

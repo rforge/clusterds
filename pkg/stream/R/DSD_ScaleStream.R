@@ -29,7 +29,7 @@ DSD_ScaleStream <- function(dsd,
             k = dsd$k,
             center = FALSE,
             scale = FALSE)
-  class(l) <- c("DSD_ScaleStream","DSD_R","DSD")
+  class(l) <- c("DSD_ScaleStream", "DSD_R", "DSD_data.frame", "DSD")
   
   l <- scale_stream(l, n=n, center=center, scale=scale, reset=reset)
   

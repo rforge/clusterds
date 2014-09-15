@@ -52,7 +52,7 @@ DSD_ReadStream <- function(file, sep=",", k=NA, d=NA,
     take = take,
     assignment = assignment,
     loop = loop)
-  class(l) <- c("DSD_ReadStream","DSD_R","DSD")
+  class(l) <- c("DSD_ReadStream", "DSD_R", "DSD_data.frame", "DSD")
   
   l
 }

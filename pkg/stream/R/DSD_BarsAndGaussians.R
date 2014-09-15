@@ -31,7 +31,7 @@ DSD_BarsAndGaussians <- function(angle = NULL, noise = 0) {
     angle = angle,
     rotation = rotation,
     noise = noise)
-  class(l) <- c("DSD_BarsAndGaussians","DSD_R","DSD")
+  class(l) <- c("DSD_BarsAndGaussians", "DSD_R", "DSD_data.frame", "DSD")
   l
 }
 
