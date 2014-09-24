@@ -12,7 +12,7 @@ estDec<- function(datastream, iterations) {
   Dk <- 0.0
   TID <-0  # = k
   
-  for(i in 0:iterations - 1){
+  for(i in 1:iterations){
     
     print(paste0("iteration: ", i))
     

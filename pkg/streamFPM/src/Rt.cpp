@@ -65,7 +65,15 @@ bool RTrie::updateAllSets(Rcpp::IntegerVector itemset, int transNum, double deca
 
   for (int first = 0; first < e.size(); first++) {
     
-    updateWord(e, transNum, decayRate, minsup,  dk, 0, first, NULL);
+    std::cout << "first: " << first << std::endl;
+    
+    updateWord(e, transNum, decayRate, minsup,  dk, 0, first);
+              
+  }
+  
+    for (int first = 0; first < e.size(); first++) {
+    
+    insertionPhase(e, transNum, decayRate, minsup,  dk, 0, first);
               
   }
 

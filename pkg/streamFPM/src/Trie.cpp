@@ -152,51 +152,81 @@ bool Trie::deleteNodeAndChildren(Node* current)
   return false;
 }
 
-bool Trie::updateWord(std::vector<int> & itemset, int k, double d, double minsup, double dk, int len, int first, Node* current)
+bool Trie::updateWord(std::vector<int> & itemset, int k, double d, double minsup, double dk, int len, int first)
 {
-    std::cout << "here1" << std::endl;
+  //calls with current = root
+  updateWordRecursion(itemset, k, d, minsup, dk, len, first, root);
+}
 
-    //When called from updateAllSets the first time, current = NULL
-    if(current == NULL)
-        current = root;
-    else {
-        std::cout << "here2 update set" << std::endl;
-        current->setCount( (current->getCount() * pow(d, k - current->getId())) + 1);
-        current->setErr(current->getErr() * pow(d, k - current->getId()));
-        
-        current->setId(k);
+bool Trie::updateWordRecursion(std::vector<int> & itemset, int k, double d, double minsup, double dk, int len, int first, Node* current)
+{
+  
+    if (current != root)
+    {
+      std::cout << "here2 update set" << std::endl;
+      current->setCount( (current->getCount() * pow(d, k - current->getId())) + 1);
+      current->setErr(current->getErr() * pow(d, k - current->getId()));
+      current->setId(k);
     }
-
+    
     for ( int i = first; i < itemset.size(); i++ )
     {
-        std::cout << "set: " << itemset[i] <<endl;
+        std::cout << "set: " << i << " starting with item:" << itemset[i] <<endl;
         Node* tmp = current->findChild(itemset[i]);
+        //FIXME: FIX LEN
+        
         if ( tmp == NULL )
         {
-          //FIXME: might change this to the delayed add ?
-            //std::cout << "itemset not in tree. must add to tree before updating" <<std::endl;
-            std::cout << "here3 add new set" << std::endl;
-            delayedInsertion(itemset, k, d, minsup,  dk, len, i, current);
-            //return false;
+            //do nothing
         }
         //FIXME minsup should be pruning support
         //FIXME  bad stuff with doubles
         //should be tmp?
         else if(current->getCount()/dk < minsup * 0.8  && len > 1) {
+            std::cout << "remove node" << std::endl;
             deleteNodeAndChildren(current);
         }
         else {
-            updateWord(itemset, k, d, minsup,  dk, len + 1, i+1, tmp);
+            std::cout << "calling recursion" << std::endl;
+            updateWordRecursion(itemset, k, d, minsup,  dk, len + 1, i+1, tmp);
         }
+        
     }
 
     return true;
 }
 
+bool Trie::insertionPhase(std::vector<int> & itemset, int k, double d, double minsup, double dk, int len, int first)
+{
+    insertionPhase(itemset, k, d, minsup, dk, len, first, root);
+}
+
+bool Trie::insertionPhase(std::vector<int> & itemset, int k, double d, double minsup, double dk, int len, int first, Node* current)
+{
+    for ( int i = first; i < itemset.size(); i++ )
+    {
+        Node* tmp = current->findChild(itemset[i]);
+        if ( tmp == NULL )
+        {
+            std::cout << "here7" << std::endl;
+            delayedInsertion(itemset, k, d, minsup,  dk, len, i, current);
+            Node* tmp1 = current->findChild(itemset[i]);
+            insertionPhase(itemset, k, d, minsup,  dk, len + 1, i+1, tmp1);
+        }
+        else {
+          std::cout << "calling recursion" << std::endl;
+           insertionPhase(itemset, k, d, minsup,  dk, len + 1, i+1, tmp);
+        }
+
+    }
+}
+
 bool Trie::delayedInsertion(std::vector<int> & itemset, int k, double d, double minsup, double dk, int len, int first, Node* current)
 { 
-
-    if(len == 0){
+    //FIXME: SHOULD BE == 0, but cmax or cmin doesnt work/ is causing crash i think
+    if (len >= 0)
+    {
+       std::cout << "added item: "<< itemset[first] << " to " << current->content()  << std::endl;
        Node* tmp = new Node();
        tmp->setContent(itemset[first]);
        tmp->setCount(1);
@@ -204,13 +234,16 @@ bool Trie::delayedInsertion(std::vector<int> & itemset, int k, double d, double 
        tmp->setId(k);
        current->appendChild(tmp);
     }
-    else {
+    else 
+    {
+      std::cout << "here5 add new set" << std::endl;
       int cmax = cMax(itemset, root, 0, 0);
       int cmin = cMin(itemset);
       if(cmax > cUpper(itemset, minsup, dk, d))
         cmax = cUpper(itemset, minsup, dk, d);
       //FIXME bad double stuff
-      if(cmax/dk  >= minsup * 0.8){
+      if(cmax/dk  >= minsup * 0.8)
+      {
         Node* tmp = new Node();
         tmp->setContent(itemset[first]);
         tmp->setCount(cmax);
@@ -323,4 +356,9 @@ void Trie::printTree(Node * current)
     printTree(c[i]);
   }
   cout << current->content() << " : count :" << current->getCount() << endl;
+}
+
+void Trie::getMostFrequentItemset()
+{
+  
 }
