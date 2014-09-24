@@ -1,6 +1,6 @@
 #######################################################################
 # arules - Mining Association Rules and Frequent Itemsets
-# Copyright (C) 2011, 2012 Michael Hahsler, Christian Buchta, 
+# Copyright (C) 2011, 2012 Michael Hahsler, Christian Buchta,
 #			Bettina Gruen and Kurt Hornik
 #
 # This program is free software; you can redistribute it and/or modify
@@ -22,9 +22,8 @@
 ##*******************************************************
 ## Function random.transactions
 ##
-## Generate a random transaction data set. 
+## Generate a random transaction data set.
 
-library(arules)
 
 
 
@@ -32,12 +31,12 @@ DSD_Transactions_Agrawal <- function(type=c("integer"), setSize=50, maxTransacti
     ...,
     verbose = FALSE) {
     nItems <- setSize
-    
-    patterns <- 
-      random.patterns(nItems = nItems, 
-        method = "agrawal", ..., verbose = verbose) 
 
-   # return(.random.transactions_agrawal(nItems = nItems, 
+    patterns <-
+      random.patterns(nItems = nItems,
+        method = "agrawal", ..., verbose = verbose)
+
+   # return(.random.transactions_agrawal(nItems = nItems,
   #         nTrans = nTrans, ..., verbose = verbose))
 
   l <- list(description = "Agrawal Transaction Data Stream",
@@ -54,8 +53,8 @@ DSD_Transactions_Agrawal <- function(type=c("integer"), setSize=50, maxTransacti
 ##******************************************************************
 ## R Implementation of the IBM Quest transaction data generator
 ##
-## described in R. Agrawal, R. Srikant, "Fast Algorithms for Mining 
-##	Association Rules," Procs. 20th int'l Conf. Very Large DB, 1994 
+## described in R. Agrawal, R. Srikant, "Fast Algorithms for Mining
+##	Association Rules," Procs. 20th int'l Conf. Very Large DB, 1994
 ##
 
 ##
@@ -67,7 +66,7 @@ DSD_Transactions_Agrawal <- function(type=c("integer"), setSize=50, maxTransacti
 ## nPats  ... number of patterns (potential maximal frequent itemsets)
 ## lPats  ... avg. length of patterns
 ##
-## corr   ... correlation between consecutive patterns 
+## corr   ... correlation between consecutive patterns
 ## cmean  ... mean of the corruption level (norm distr.)
 ## cvar   ... variance of the corruption level
 ##
@@ -78,7 +77,7 @@ DSD_Transactions_Agrawal <- function(type=c("integer"), setSize=50, maxTransacti
 ## the weights of the patterns are chosen from a exponential distribution with
 ##	a mean of 1
 ##
-## corr (chance of an item in a pattern to be also in the next pattern) 
+## corr (chance of an item in a pattern to be also in the next pattern)
 ##	is set by default to 0.5
 ##
 
@@ -86,13 +85,13 @@ DSD_Transactions_Agrawal <- function(type=c("integer"), setSize=50, maxTransacti
 ## create patterns
 
 random.patterns <- function(
-    nItems, 
-    nPats = 2000, 
+    nItems,
+    nPats = 2000,
     method = NULL, # method is unused for now
     lPats = 4,
     corr = 0.5,
     cmean = 0.5,
-    cvar = 0.1, 
+    cvar = 0.1,
     iWeight = NULL,
     verbose = FALSE) {
 
@@ -113,7 +112,7 @@ random.patterns <- function(
     pWeights <- pWeights / sum(pWeights)
 
     ## corruption levels (cannot be neg.)
-    pCorrupts <-  rnorm(nPats, mean = cmean, sd = sqrt(cvar)) 
+    pCorrupts <-  rnorm(nPats, mean = cmean, sd = sqrt(cvar))
     pCorrupts[pCorrupts < 0] <- 0
     pCorrupts[pCorrupts > 1] <- 1
 
@@ -127,9 +126,9 @@ random.patterns <- function(
         if(i > 1) {
             ## correlation: take some items from the previous pattern
             ## in the paper they say the mean of the exp dist. is corr but
-            ## in the implementation they used 1 in the following way: 
+            ## in the implementation they used 1 in the following way:
             nTake <- min(c(trunc(pLengths[i] * corr * rexp(1, rate=1) + 0.5),
-                    pLengths[i-1], pLengths[i])) 
+                    pLengths[i-1], pLengths[i]))
 
             if(nTake > 0) {
                 take <- sample(1:pLengths[i-1], nTake)
@@ -137,10 +136,10 @@ random.patterns <- function(
             }
         }
 
-        ## fill rest random items using iWeight 
-        if(is.null(pattern)) take <- sample(c(1:nItems), 
+        ## fill rest random items using iWeight
+        if(is.null(pattern)) take <- sample(c(1:nItems),
             pLengths[i], prob = iWeight)
-        else take <- sample(c(1:nItems)[-pattern], 
+        else take <- sample(c(1:nItems)[-pattern],
             pLengths[i]-length(pattern), prob = iWeight[-pattern])
 
         pattern <- sort(c(pattern, take))
@@ -148,9 +147,9 @@ random.patterns <- function(
     }
 
     ## create itemMatrix w/o recoding
-    new("itemsets", 
-        items   = encode(patterns, 
-            paste("item",as.character(1:nItems), sep="")), 
+    new("itemsets",
+        items   = encode(patterns,
+            paste("item",as.character(1:nItems), sep="")),
         quality = data.frame(pWeights = pWeights, pCorrupts = pCorrupts))
 }
 
@@ -177,7 +176,7 @@ get_points.DSD_Transactions_Agrawal <- function(x, n=1, assignment = FALSE,...)
     tLengths <- rpois(nTrans, lTrans -1) + 1;
 
     ## transactions
-    #transactions <- list(); 
+    #transactions <- list();
 
     trans <- c()
 
@@ -188,11 +187,11 @@ get_points.DSD_Transactions_Agrawal <- function(x, n=1, assignment = FALSE,...)
         patternToAdd <- patterns[[j]]
 
         ## corrupting pattern
-        ## corruption level is norm distr. 
+        ## corruption level is norm distr.
         if(pCorrupts[j] == 1) next
 
         patLen <- length(patternToAdd)
-        
+
         ##while (runif(1) < pCorrupts[j] && patLen > 0) patLen <- patLen -1
         ## do it the fast way -- results in a geometric distribution
         if(pCorrupts[j] >0) {
@@ -202,13 +201,13 @@ get_points.DSD_Transactions_Agrawal <- function(x, n=1, assignment = FALSE,...)
 
         ## get out 50% of the cases if transaction would be overfull
         ## we depart from AS by not allowing to generate empty transactions
-        if (length(trans) > 0 
-            &&(length(trans) + patLen) > tLengths 
-            && runif(1) > 0.5) break 
+        if (length(trans) > 0
+            &&(length(trans) + patLen) > tLengths
+            && runif(1) > 0.5) break
 
         ## pick the items and add them to the transactions
         patternToAdd <- patternToAdd[sample(1:length(patternToAdd), patLen)]
-        trans <- unique(sort(c(trans, patternToAdd)))  
+        trans <- unique(sort(c(trans, patternToAdd)))
     }
 
     return(trans)
