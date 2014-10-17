@@ -14,10 +14,11 @@ public:
     bool delayedInsertion(std::vector<int> & itemset, int k, double d, double minsup, double dk, int len, int first, Node* current);
     bool insertionPhase(std::vector<int> & itemset, int k, double d, double minsup, double dk, int len, int first);
     void printTree(Node * current);
-    void getMostFrequentItemset();
+    std::vector<std::vector<int> > getMostFrequentItemset();
     
     
 private:
+    void getMostFrequentItemset(Node * current, std::vector<std::vector<int> > &freqItems, std::vector<int> &counts, std::vector<int> &currentSet, int depth);
     bool insertionPhase(std::vector<int> & itemset, int k, double d, double minsup, double dk, int len, int first, Node* current);
     bool updateWordRecursion(std::vector<int> & itemset, int k, double d, double minsup, double dk, int len, int first, Node* current = NULL);
     int deleteWordRecursion(std::vector<int> itemset, int i, Node * current);

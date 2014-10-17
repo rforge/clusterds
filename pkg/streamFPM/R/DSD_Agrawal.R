@@ -45,7 +45,7 @@ DSD_Transactions_Agrawal <- function(type=c("integer"), setSize=50, maxTransacti
             maxTransactionSize=maxTransactionSize,
             distribution=distribution,
             patterns=patterns)
-  class(l) <- c("DSD_Agrawal","DSD_Transactions", "DSD_R","DSD")
+  class(l) <- c("DSD_Agrawal","DSD_Transactions", "DSD_List", "DSD_R","DSD")
   l
 }
 
@@ -155,7 +155,7 @@ random.patterns <- function(
 
 
 ## create transactions
-get_points.DSD_Transactions_Agrawal <- function(x, n=1, assignment = FALSE,...)
+get_points.DSD_Agrawal <- function(x, n=1, assignment = FALSE,...)
 {
     patterns <- x$patterns
     nItems <- x$setSize

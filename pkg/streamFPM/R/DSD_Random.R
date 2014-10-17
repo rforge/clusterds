@@ -12,8 +12,13 @@
 ## 2. get_points.myDSD <- function(x, n=1, ...)
 
 
-
-DSD_Transactions_Random <- function(type=c("integer"), setSize=50, maxTransactionSize=10, distribution="") {
+#setSize is the number of items to pull from,
+#maxTransactionSize is the largest transaction you can have
+#prob = probability for each item, other options include rexp(setSize)
+#size = size for each individual transaction
+DSD_Transactions_Random <- function(type=c("integer"), setSize=50, maxTransactionSize=10, 
+                                    prob = function() rep(1/setSize, times=setSize),
+                                    size = function() sample(1:maxTransactionSize, 1) ) {
   
   if(setSize < maxTransactionSize){ stop("maxTransactionSize cannot be larger than setSize")}
   
@@ -22,9 +27,13 @@ DSD_Transactions_Random <- function(type=c("integer"), setSize=50, maxTransactio
             type=type,
             setSize=setSize,
             maxTransactionSize=maxTransactionSize,
-            distribution=distribution)
-  class(l) <- c("DSD_Transactions_Random", "DSD_Transactions", "DSD_R","DSD")
+            prob=prob(),
+            size=size)
+  
+  class(l) <- c("DSD_Transactions_Random", "DSD_Transactions", "DSD_List", "DSD_R","DSD")
+  
   l
+  
 }
 
 
@@ -36,8 +45,8 @@ get_points.DSD_Transactions_Random <- function(x, n=1, assignment = FALSE,...) {
   
   a <- vector("list", n)
   for (i in 1:n) {
-    length <- sample(1:x$maxTransactionSize)
-    a[[i]] <- sample(1:x$setSize, length, replace=FALSE, prob=rexp(x$setSize))
+    length <- x$size()
+    a[[i]] <- sample(1:x$setSize, length, replace=FALSE, prob = x$prob)
   }
   
   return(a)

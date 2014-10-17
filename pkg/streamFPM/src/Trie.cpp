@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <list>
 #include <math.h>
 #include <algorithm>
 #include "Trie.h"
@@ -50,7 +51,7 @@ void Trie::addWord(std::vector<int> itemset)
         //if ( i == itemset.size() - 1 )
         //    current->setWordMarker();
 
-        std::cout << current->content() <<std::endl;
+        //std::cout << current->content() <<std::endl;
     }
 }
 
@@ -87,14 +88,14 @@ bool Trie::deleteWord(std::vector<int> itemset)
     int i = 0;
     
     if (itemset.size() == 0) {
-      std::cout << "Itemset is empty. Cannot remove" << std::endl;
+      //std::cout << "Itemset is empty. Cannot remove" << std::endl;
       return false;
     }
     
     Node* tmp = current->findChild(itemset[i]);
 
     if (tmp == NULL){
-      std::cout << "Itemset does not exist" << std::endl;
+      //std::cout << "Itemset does not exist" << std::endl;
       return false;
     }
       
@@ -163,7 +164,7 @@ bool Trie::updateWordRecursion(std::vector<int> & itemset, int k, double d, doub
   
     if (current != root)
     {
-      std::cout << "here2 update set" << std::endl;
+      //std::cout << "here2 update set" << std::endl;
       current->setCount( (current->getCount() * pow(d, k - current->getId())) + 1);
       current->setErr(current->getErr() * pow(d, k - current->getId()));
       current->setId(k);
@@ -171,7 +172,7 @@ bool Trie::updateWordRecursion(std::vector<int> & itemset, int k, double d, doub
     
     for ( int i = first; i < itemset.size(); i++ )
     {
-        std::cout << "set: " << i << " starting with item:" << itemset[i] <<endl;
+        //std::cout << "set: " << i << " starting with item:" << itemset[i] <<endl;
         Node* tmp = current->findChild(itemset[i]);
         //FIXME: FIX LEN
         
@@ -187,7 +188,7 @@ bool Trie::updateWordRecursion(std::vector<int> & itemset, int k, double d, doub
             deleteNodeAndChildren(current);
         }
         else {
-            std::cout << "calling recursion" << std::endl;
+            //std::cout << "calling recursion" << std::endl;
             updateWordRecursion(itemset, k, d, minsup,  dk, len + 1, i+1, tmp);
         }
         
@@ -208,13 +209,13 @@ bool Trie::insertionPhase(std::vector<int> & itemset, int k, double d, double mi
         Node* tmp = current->findChild(itemset[i]);
         if ( tmp == NULL )
         {
-            std::cout << "here7" << std::endl;
+            //std::cout << "here7" << std::endl;
             delayedInsertion(itemset, k, d, minsup,  dk, len, i, current);
             Node* tmp1 = current->findChild(itemset[i]);
             insertionPhase(itemset, k, d, minsup,  dk, len + 1, i+1, tmp1);
         }
         else {
-          std::cout << "calling recursion" << std::endl;
+          //std::cout << "calling recursion" << std::endl;
            insertionPhase(itemset, k, d, minsup,  dk, len + 1, i+1, tmp);
         }
 
@@ -226,7 +227,7 @@ bool Trie::delayedInsertion(std::vector<int> & itemset, int k, double d, double 
     //FIXME: SHOULD BE == 0, but cmax or cmin doesnt work/ is causing crash i think
     if (len >= 0)
     {
-       std::cout << "added item: "<< itemset[first] << " to " << current->content()  << std::endl;
+       //std::cout << "added item: "<< itemset[first] << " to " << current->content()  << std::endl;
        Node* tmp = new Node();
        tmp->setContent(itemset[first]);
        tmp->setCount(1);
@@ -236,12 +237,12 @@ bool Trie::delayedInsertion(std::vector<int> & itemset, int k, double d, double 
     }
     else 
     {
-      std::cout << "here5 add new set" << std::endl;
+      //std::cout << "here5 add new set" << std::endl;
       int cmax = cMax(itemset, root, 0, 0);
       int cmin = cMin(itemset);
       if(cmax > cUpper(itemset, minsup, dk, d))
         cmax = cUpper(itemset, minsup, dk, d);
-      //FIXME bad double stuff
+    
       if(cmax/dk  >= minsup * 0.8)
       {
         Node* tmp = new Node();
@@ -355,10 +356,43 @@ void Trie::printTree(Node * current)
   for (int i = 0; i < c.size(); i++) {
     printTree(c[i]);
   }
-  cout << current->content() << " : count :" << current->getCount() << endl;
+  //cout << current->content() << " : count :" << current->getCount() << ", err: " << current->getErr() << endl;
 }
 
-void Trie::getMostFrequentItemset()
+vector<vector<int> > Trie::getMostFrequentItemset()
 {
+  vector<int> counts;
+  vector<vector<int> > freqItems;
+  vector<int> currentSet;
+  getMostFrequentItemset(root, freqItems, counts, currentSet, 0);
+  //cout << freqItems[0][0] << endl;
+  freqItems.push_back(counts);
+  return freqItems;
+}
+
+void Trie::getMostFrequentItemset(Node * current, vector<vector<int> > &freqItems,
+  vector<int> &counts, vector<int> &currentSet, int depth)
+{
+  if(current == root)
+  {
+    vector<Node*> c = current->children();
+    for (int i = 0; i < c.size(); i++) {
+      getMostFrequentItemset(c[i], freqItems, counts, currentSet, depth + 1);
+    }
+  }
+  else
+  {
+    currentSet.push_back(current->content());
+    freqItems.push_back(currentSet);
+    counts.push_back(current->getCount());
+    vector<Node*> c = current->children();
+    for (int i = 0; i < c.size(); i++) {
+      getMostFrequentItemset(c[i], freqItems, counts, currentSet, depth + 1);
+    }
+  }
+  
+  currentSet.pop_back();
+  
   
 }
+

@@ -2,6 +2,7 @@
 #include <vector>
 #include <math.h>
 #include "Rcpp.h"
+//#include "RcppResultSet.h"
 #include "Trie.h"
 
 class RTrie: private Trie {
@@ -16,6 +17,7 @@ public:
     bool updateSet(Rcpp::IntegerVector itemset, int tid);
     int  size(Rcpp::IntegerVector itemset);
     void printAll();
+    SEXP getFrequentItemsets();
  };
  
  RTrie::RTrie()
@@ -65,7 +67,7 @@ bool RTrie::updateAllSets(Rcpp::IntegerVector itemset, int transNum, double deca
 
   for (int first = 0; first < e.size(); first++) {
     
-    std::cout << "first: " << first << std::endl;
+    //std::cout << "first: " << first << std::endl;
     
     updateWord(e, transNum, decayRate, minsup,  dk, 0, first);
               
@@ -86,9 +88,16 @@ int  RTrie::size(Rcpp::IntegerVector itemset)
   return e.size();
 }
 
+SEXP RTrie::getFrequentItemsets()
+{
+ std::vector<std::vector<int> > freqItems = this->getMostFrequentItemset();
+ return Rcpp::wrap(freqItems);
+ 
+}
+
 void RTrie::printAll()
 {
- this->printTree(NULL);
+  this->printTree(NULL);
 }
 
 
@@ -105,5 +114,6 @@ RCPP_MODULE(rtrie)
   .method("deleteSet", &RTrie::deleteSet)
   .method("size", &RTrie::size)
   .method("printAll", &RTrie::printAll)
+  .method("getFrequentItemsets", &RTrie::getFrequentItemsets)
   ;
 }
