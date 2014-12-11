@@ -22,7 +22,7 @@ evaluation on a data stream with concept drift (clusters evolve over time).
 
 First, we set up a static data set. 
 We extract 1500 data points from the Bars and Gaussians data stream generator 
-with 5\% noise and put them in a \code{DSD_Wrapper}. The wrapper is used
+with 5\% noise and put them in a \code{DSD_Memory}. The wrapper is used
 to replay the same part of the data stream for each algorithm.
 We will use the first
 1000 points to learn the clustering and the remaining 500 points for
@@ -34,9 +34,9 @@ set.seed(1000)
 
 <<data_bng, fig=TRUE, include=FALSE>>= 
 library("stream") 
-dsd <- DSD_Wrapper(DSD_BarsAndGaussians(noise=0.05), n=1500)
-dsd
-plot(dsd)
+stream <- DSD_Memory(DSD_BarsAndGaussians(noise=0.05), n=1500)
+stream
+plot(stream)
 @
 
 \begin{figure} 
@@ -77,8 +77,8 @@ each time before we cluster.
 algorithms <- list(Sample=sample, Window=window, 'D-Stream'=dstream, tNN=tNN, 
   DenStream=denstream, CluStream=clustream)
 for(a in algorithms) {
-  reset_stream(dsd) 
-  update(a, dsd, 1000)
+  reset_stream(stream) 
+  update(a, stream, 1000)
 }
 @
 
@@ -98,8 +98,8 @@ original data.
 op <- par(no.readonly = TRUE)
 layout(mat=matrix(1:6, ncol=2))
 for(a in algorithms) {
-  reset_stream(dsd) 
-  plot(a, dsd, main=a$description, type="micro")
+  reset_stream(stream) 
+  plot(a, stream, main=a$description, type="micro")
 }
 par(op)
 @
@@ -139,8 +139,8 @@ We also disable showing micro-cluster weights to make the plot clearer.
 op <- par(no.readonly = TRUE)
 layout(mat=matrix(1:6, ncol=2))
 for(a in algorithms) {
-  reset_stream(dsd) 
-  plot(a, dsd, main=a$description, assignment=TRUE, weight=FALSE, type="micro")
+  reset_stream(stream) 
+  plot(a, stream, main=a$description, assignment=TRUE, weight=FALSE, type="micro")
 }
 par(op)
 @
@@ -168,8 +168,8 @@ we want to use data points not seen by the algorithms for evaluation.
 
 <<>>=
 sapply(algorithms, FUN=function(a) {
-  reset_stream(dsd, 1001) 
-  evaluate(a, dsd, 
+  reset_stream(stream, 1001) 
+  evaluate(a, stream, 
     measure=c("numMicroClusters", "purity", "SSQ", "silhouette"), 
     n=500, assignmentMethod="auto", type="micro")
 })
@@ -200,8 +200,8 @@ $k$-means reclustering with $k=4$, the true number of clusters.
 op <- par(no.readonly = TRUE)
 layout(mat=matrix(1:6, ncol=2))
 for(a in algorithms) {
-  reset_stream(dsd) 
-  plot(a, dsd, main=a$description, type="both")
+  reset_stream(stream) 
+  plot(a, stream, main=a$description, type="both")
 }
 par(op)
 @
@@ -222,8 +222,8 @@ correctly, but split the lower density clusters into multiple pieces.
 
 <<>>=
 sapply(algorithms, FUN=function(a) {
-  reset_stream(dsd, 1001) 
-  evaluate(a, dsd, measure=c("numMacroClusters","purity", "SSQ", "cRand"), 
+  reset_stream(stream, 1001) 
+  evaluate(a, stream, measure=c("numMacroClusters","purity", "SSQ", "cRand"), 
     n=500, assign="micro", type="macro")
 })
 @
@@ -245,16 +245,16 @@ the center of the data space.
 
 <<>>=
 set.seed(0)
-dsd <- DSD_Wrapper(DSD_Benchmark(1), 5000)
+stream <- DSD_Memory(DSD_Benchmark(1), 5000)
 @
 
 
 
 <<moa1, fig=TRUE, include=FALSE, echo=FALSE>>=
-plot(dsd, 250, xlim=c(0,1), ylim=c(0,1))
+plot(stream, 250, xlim=c(0,1), ylim=c(0,1))
 arrows(.15,.85,.85,.15, col=rgb(.8,.8,.8,.6), lwd=10)
 arrows(.15,.15,.85,.85, col=rgb(.8,.8,.8,.6), lwd=10)
-reset_stream(dsd)
+reset_stream(stream)
 @
 
 \begin{figure}
@@ -294,13 +294,13 @@ with the true number of clusters $k=2$.
 <<>>=  
 n <- 5000
 horizon <- 250
-reset_stream(dsd)
+reset_stream(stream)
 
 evaluation <- lapply(algorithms, FUN=function(a) {
-  reset_stream(dsd)
-  evaluate_cluster(a, dsd, 
+  reset_stream(stream)
+  evaluate_cluster(a, stream, 
     type="macro", assign="micro",
-    measure=c("numMicro","numMacro","SSQ", "crand"), 
+    measure=c("numMicro","numMacro","SSQ", "cRand"), 
     n=n, horizon=horizon)
 })
 @

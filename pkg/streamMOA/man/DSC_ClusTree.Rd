@@ -44,22 +44,26 @@ Stream Classification and Clustering. In Journal of Machine
 }
 \examples{
 # 3 clusters with 5% noise
-dsd <- DSD_Gaussians(k=3, d=2, noise=0.05)
+stream <- DSD_Gaussians(k=3, d=2, noise=0.05)
 
-dsc <- DSC_ClusTree(maxHeight=3)
-update(dsc, dsd, 500)
-dsc
+clustree <- DSC_ClusTree(maxHeight=3)
+update(clustree, stream, 500)
+clustree
 
 # plot micro-clusters
-plot(dsc, dsd)
+plot(clustree, stream)
 
 # recluster with k-means
 kmeans <- DSC_Kmeans(k=3)
-recluster(kmeans,dsc)
-plot(kmeans, dsd, type="both")
+recluster(kmeans, clustree)
+plot(kmeans, stream, type="both")
 
 # create a two stage clusering using ClusTree and reachability reclustering 
-d2 <- DSC_TwoStage(micro=dsc, macro=DSC_Kmeans(k=3))
-d2
-plot(d2, dsd, type="both")
+CTxReach <- DSC_TwoStage(
+  micro=DSC_ClusTree(maxHeight=3), 
+  macro=DSC_Reachability(epsilon = .15)
+)
+CTxReach
+update(CTxReach, stream, 500)
+plot(CTxReach, stream, type="both")
 }

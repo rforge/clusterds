@@ -1,5 +1,5 @@
 Package: streamMOA
-Version: 0.1-2
+Version: 0.2-0
 Date: 2014-xx-xx
 Title: stream - Interface to MOA Algorithms
 Authors@R: c(person("Michael", "Hahsler", role = c("aut", "cre", "cph"),

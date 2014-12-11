@@ -62,9 +62,9 @@ Research (JMLR).
 	\code{\link{DSD}}
 }
 \examples{
-dsd <- DSD_RandomRBFGeneratorEvents()
+stream <- DSD_RandomRBFGeneratorEvents()
 
 \dontrun{
-animate_data(dsd, n=5000, pointInterval=100, xlim=c(0,1), ylim=c(0,1))
+animate_data(stream, n=5000, pointInterval=100, xlim=c(0,1), ylim=c(0,1))
 }
 }
