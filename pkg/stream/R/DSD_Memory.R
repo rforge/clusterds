@@ -17,7 +17,7 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 
-DSD_Wrapper <- function(x, n, k=NA, loop=FALSE, assignment = NULL, 
+DSD_Memory <- function(x, n, k=NA, loop=FALSE, assignment = NULL, 
   description=NULL) {
   
   if(is(x, "DSD")) {
@@ -37,7 +37,7 @@ DSD_Wrapper <- function(x, n, k=NA, loop=FALSE, assignment = NULL,
   state <- new.env()
   assign("counter", 1L, envir = state)
   
-  if(is.null(description)) description <- "Matrix Stream Wrapper"
+  if(is.null(description)) description <- "Memory Stream Interface"
   
   # creating the DSD object
   structure(list(
@@ -48,10 +48,10 @@ DSD_Wrapper <- function(x, n, k=NA, loop=FALSE, assignment = NULL,
     k = k,
     loop = loop,
     assignment = assignment
-    ), class = c("DSD_Wrapper", "DSD_R", "DSD_data.frame", "DSD"))
+    ), class = c("DSD_Memory", "DSD_R", "DSD_data.frame", "DSD"))
 }
 
-get_points.DSD_Wrapper <- function(x, n=1, assignment = FALSE,...) {
+get_points.DSD_Memory <- function(x, n=1, assignment = FALSE,...) {
   n <- as.integer(n)
   
   if(x$state$counter > nrow(x$strm)) {
@@ -104,7 +104,7 @@ get_points.DSD_Wrapper <- function(x, n=1, assignment = FALSE,...) {
   d
 }
 
-print.DSD_Wrapper <- function(x, ...) {
+print.DSD_Memory <- function(x, ...) {
   NextMethod() # calling the super classes print()
   pos <- x$state$counter
   if (pos>nrow(x$strm)) 
@@ -114,6 +114,6 @@ print.DSD_Wrapper <- function(x, ...) {
     '- loop is', x$loop, '\n'))
 }
 
-reset_stream.DSD_Wrapper <- function(dsd, pos=1) {
+reset_stream.DSD_Memory <- function(dsd, pos=1) {
   dsd$state$counter <- pos
 }

@@ -18,9 +18,8 @@
 
 
 # accepts an open connection
-DSD_ReadStream <- function(file, sep=",", k=NA, d=NA,
-  take=NULL, assignment=NULL, 
-  loop=FALSE) {
+DSD_ReadCSV <- function(file, sep=",", k=NA, d=NA,
+  take=NULL, assignment=NULL, loop=FALSE) {
   
   # if the user passes a string, create a new connection and open it
   if (is(file,"character")) {
@@ -52,13 +51,13 @@ DSD_ReadStream <- function(file, sep=",", k=NA, d=NA,
     take = take,
     assignment = assignment,
     loop = loop)
-  class(l) <- c("DSD_ReadStream", "DSD_R", "DSD_data.frame", "DSD")
+  class(l) <- c("DSD_ReadCSV", "DSD_R", "DSD_data.frame", "DSD")
   
   l
 }
 
 ## it is important that the connection is OPEN
-get_points.DSD_ReadStream <- function(x, n=1, assignment=FALSE, ...) {
+get_points.DSD_ReadCSV <- function(x, n=1, assignment=FALSE, ...) {
   
   togo <- n
   
@@ -113,12 +112,12 @@ get_points.DSD_ReadStream <- function(x, n=1, assignment=FALSE, ...) {
   d
 }
 
-reset_stream.DSD_ReadStream <- function(dsd, pos=1) {
+reset_stream.DSD_ReadCSV <- function(dsd, pos=1) {
   invisible(seek(dsd$file, where=pos-1))
 }
 
 close_stream <- function(dsd) {
-  if(!is(dsd, "DSD_ReadStream")) 
-    stop("'dsd' is not of class 'DSD_ReadStream'")
+  if(!is(dsd, "DSD_ReadCSV")) 
+    stop("'dsd' is not of class 'DSD_ReadCSV'")
   close(dsd$file)
 }

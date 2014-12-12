@@ -102,7 +102,7 @@ summary.DSC <- function(object, ...) print(object)
 
 #plot.DSC will call super question.
 plot.DSC <- function(x, dsd = NULL, n = 500, 
-  col_points="gray",  
+  col_points=NULL,  
   col_clusters=c("red", "blue"), 
   weights=TRUE,
   scale=c(1,5),
@@ -114,6 +114,8 @@ plot.DSC <- function(x, dsd = NULL, n = 500,
   ...) {
   
   type <- match.arg(type)
+  
+  if(is.null(col_points)) col_points <- .points_col
   
   if(type !="both") { 
     if(type =="auto") type <- get_type(x)
@@ -179,8 +181,8 @@ plot.DSC <- function(x, dsd = NULL, n = 500,
     
     ### handle noise
     noise <- is.na(mpch)
-    mpch[noise] <- noise_pch
-    col[noise] <- noise_col
+    mpch[noise] <- .noise_pch
+    col[noise] <- .noise_col
     #cex_clusters[noise] <- cex_clusters[noise]*.5
     
   }

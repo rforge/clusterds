@@ -57,7 +57,7 @@ print.DSD <- function(x, ...) {
 summary.DSD <- function(object, ...) print(object)
 
 plot.DSD <- function(x, n = 500, col= NULL, pch= NULL, 
-  ..., method="pairs", dim=NULL) {
+  ..., method="pairs", dim=NULL, alpha=.6) {
   ## method can be pairs, plot or pc (projection with PCA)
   d <- get_points(x, n, assignment = TRUE)
   
@@ -68,18 +68,23 @@ plot.DSD <- function(x, n = 500, col= NULL, pch= NULL,
   if(length(assignment)==0) assignment <- rep(1L, nrow(d))
   
   noise <- is.na(assignment)
+  
+  ### assignment is not numeric
+  if(!is.numeric(assignment)) assignment <- as.integer(as.factor(assignment))
+  
+  ### add alpha shading to color
   if(is.null(col)) {
-    col <- as.integer(assignment)
+    col <- rgb(cbind(t(col2rgb(assignment)/255)), alpha=alpha)
   }else{
     if(length(col)==1L) col <- rep(col, length(assignment))
   }
     
-  col[noise] <-  noise_col
+  col[noise] <-  .noise_col
   
   if(is.null(pch)) {
     #pch <- rep(1, n)
     pch <- as.integer(assignment)
-    pch[noise] <- noise_pch
+    pch[noise] <- .noise_pch
   }
   
   if(!is.null(dim)) d <- d[,dim]

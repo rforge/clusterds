@@ -51,13 +51,13 @@ Aggarwal C. (2006) On Biased Reservoir Sampling in the Presence of Stream Evolut
 }
 
 \examples{
-dsd <- DSD_Gaussians(k=3, noise=0.05)
+stream <- DSD_Gaussians(k=3, noise=0.05)
 
-dso <- DSO_Sample(k=20)
+sample <- DSO_Sample(k=20)
 
-update(dso, dsd, 500)
-dso
+update(sample, stream, 500)
+sample
 
-# plot micro-clusters
-plot(get_points(dso))
+# plot points in sample
+plot(get_points(sample))
 }

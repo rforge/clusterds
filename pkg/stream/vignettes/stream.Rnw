@@ -672,21 +672,21 @@ For reading data from a file (in csv format)
 or to connection to a real stream using a \proglang{R} connection \pkg{stream}
 provides:
 \begin{itemize}
-\item\code{DSD_ReadStream}, which reads data from files or open connections
+\item\code{DSD_ReadCSV}, which reads data from files or open connections
 and makes it available in a streaming fashion.
 \end{itemize}
 
 A non-streaming data set stored in a matrix-like object (e.g., data.frame) 
 can also be wrapped in a stream class to be replayed as a stream.
 \begin{itemize}
-\item \code{DSD_Wrapper} wraps static matrix-like data (e.g., a data.frame, a matrix)
+\item \code{DSD_Memory} wraps static matrix-like data (e.g., a data.frame, a matrix)
 which represent a fixed portion of a data stream and provides a streaming interface.
 Matrix-like objects also includes large, out-of-memory objects like \code{ffdf} from
 package~\pkg{ff}~\citep{stream:Adler:2014} or \code{big.matrix} from 
 package~\pkg{bigmemory}~\citep{stream:Kane:2013}. 
 Using these, stream mining algorithms 
 (e.g., clustering) can be performed on data that does not fit into main memory.  
-In addition, \code{DSD_Wrapper} can directly create a static copy of a portion 
+In addition, \code{DSD_Memory} can directly create a static copy of a portion 
 of another DSD object to be replayed several times.
 \end{itemize}
 
@@ -733,7 +733,7 @@ like \code{print()}, \code{plot()} and \code{write_stream()}
 to save a part of a data stream to disk are provided by \pkg{stream}
 for class \code{DSD} and are available for all data stream sources. 
 Different data stream implementations might have additional functions
-implemented. For example, \code{DSD_Wrapper} and \code{DSD_ReadStream}
+implemented. For example, \code{DSD_Memory} and \code{DSD_ReadCSV}
 have \code{reset_stream()} implemented to reset the stream to its beginning.
 
 Following this  simple interface, 
@@ -1406,7 +1406,7 @@ then written to the connection. This way the only restriction for the
 size of the written stream are limitations  
 at the receiving end (e.g., the available storage).
 
-The \code{DSD_ReadStream} object is used to read a stream from
+The \code{DSD_ReadCSV} object is used to read a stream from
 a connection or a file.
 It reads a single data point at a time using the \code{read.table()} function.
 Since, after the read data is processed, e.g., by a data stream clustering
@@ -1418,7 +1418,7 @@ directory.
 
 <<>>= 
 file <- system.file("examples", "kddcup10000.data.gz", package="stream")
-dsd_file <- DSD_ReadStream(gzfile(file),take=c(1, 5, 6, 8:11, 13:20, 23:41), 
+dsd_file <- DSD_ReadCSV(gzfile(file),take=c(1, 5, 6, 8:11, 13:20, 23:41), 
 assignment=42, k=7)
 dsd_file
 @
@@ -1430,7 +1430,7 @@ need to be specified if they are not available or no evaluation with
 external measures is planned. Note that at this point no data has been read in.
 Reading only occurs when \code{get_points} is called.
 
-%\code{DSD_ReadStream} objects are just like any other DSD object in that you
+%\code{DSD_ReadCSV} objects are just like any other DSD object in that you
 %can call \code{get_points()} to retrieve data points from the data stream.
 
 <<>>=
@@ -1447,7 +1447,7 @@ get_points(dsd_scaled, n=5)
 @
 
 Looping over the data several times and 
-resetting the position in the \code{DSD_ReadStream} to the file's beginning
+resetting the position in the \code{DSD_ReadCSV} to the file's beginning
 is possible with \code{reset_stream()} 
 and will described in the next example.
 
@@ -1463,12 +1463,12 @@ exactly the same data.
 
 There are several ways to replay streams. As described in the previous section, 
 we can write a portion of a stream to
-disk with \code{write_stream()} and then use \code{DSD_ReadStream} to read the
+disk with \code{write_stream()} and then use \code{DSD_ReadCSV} to read the
 stream portion back every time it is needed.
 However, often the interesting portion of the stream is small enough to
 fit into main memory and might be already available as a 
 matrix or a data.frame in
-\proglang{R}. In this case we can use the DSD class \code{DSD_Wrapper} which
+\proglang{R}. In this case we can use the DSD class \code{DSD_Memory} which
 provides a stream interface for a matrix-like objects.
 
 For illustration purposes, we use data for four major European stock market indices.
@@ -1481,12 +1481,12 @@ data(EuStockMarkets)
 head(EuStockMarkets)
 @
 
-Next, we create a \code{DSD_Wrapper} object.
+Next, we create a \code{DSD_Memory} object.
 The number of true clusters $k$ is
 unknown.
 
 <<>>= 
-replayer <- DSD_Wrapper(EuStockMarkets, k=NA) 
+replayer <- DSD_Memory(EuStockMarkets, k=NA) 
 replayer 
 @
 
@@ -1511,7 +1511,7 @@ err <- try(get_points(replayer, n = 2000))
 cat(err)
 @
 
-\code{DSD_Wrapper} and \code{DSD_ReadStream} can be created to loop 
+\code{DSD_Memory} and \code{DSD_ReadCSV} can be created to loop 
 indefinitely, i.e., start over once the last data point is reached.
 This is achieved by passing \code{loop=TRUE} to the creator function.
 The current position in the stream for those 
@@ -1523,7 +1523,7 @@ reset_stream(replayer, pos=100)
 replayer
 @
 
-\code{DSD_Wrapper} also accepts other matrix-like objects. This 
+\code{DSD_Memory} also accepts other matrix-like objects. This 
 includes data that is too large to fit into main memory represented by 
 memory-mapped files using
 \code{ffdf} objects from package~\pkg{ff}~\citep{stream:Adler:2014} 
@@ -1541,7 +1541,7 @@ library("stream")
 set.seed(1000) 
 @
 <<>>= 
-dsd <- DSD_Gaussians(k=3, d=2, noise=0.05)
+stream <- DSD_Gaussians(k=3, d=2, noise=0.05)
 @
 
 Next, we prepare the clustering algorithm. We use here \code{DSC_DStream}
@@ -1559,7 +1559,7 @@ will implicitly alter the mutable DSC object so no
 reassignment is necessary.
 
 <<>>= 
-update(dstream, dsd, 500) 
+update(dstream, stream, 500) 
 dstream
 @
 
@@ -1577,7 +1577,7 @@ It is often helpful to visualize the results of the clustering
 operation during the comparison of algorithms.
 
 <<cluster, fig=TRUE, include=FALSE>>= 
-plot(dstream, dsd)
+plot(dstream, stream)
 @
 
 For the grid-based D-Stream algorithm there is also a second 
@@ -1585,7 +1585,7 @@ type of visualization available
 which shows the used dense grid cell as squares.
 
 <<cluster-grid, fig=TRUE, include=FALSE>>= 
-plot(dstream, dsd, grid=TRUE)
+plot(dstream, stream, grid=TRUE)
 @
 
 
@@ -1620,7 +1620,7 @@ and the D-Stream clustering objects
 created in the previous section.
 
 <<>>= 
-evaluate(dstream, dsd, n = 100)
+evaluate(dstream, stream, n = 100)
 @
 
 The number of points taken from \code{dsd} and used for the evaluation are passed 
@@ -1631,7 +1631,7 @@ this uses a new set of 500 evaluation data points from the stream and this the r
 vary slightly from above.
 
 <<>>=
-evaluate(dstream, dsd, measure = c("purity", "crand"), n = 500)
+evaluate(dstream, stream, measure = c("purity", "crand"), n = 500)
 @
 
 Purity of the micro-clusters is high since each micro-cluster only covers points 
@@ -1830,7 +1830,7 @@ the data points are now directly assigned to minimize this type of error.
 % 
 % First, we set up the data. 
 % We extract 1000 data points and
-% put them in a \code{DSD_Wrapper} to make sure that
+% put them in a \code{DSD_Memory} to make sure that
 % we provide both algorithms with exactly the same data.
 % 
 % <<echo=FALSE>>=
@@ -1838,7 +1838,7 @@ the data points are now directly assigned to minimize this type of error.
 % @
 % <<>>= 
 % library("stream") 
-% dsd <- DSD_Wrapper(DSD_Gaussians(k=3, d=2, noise=0.01), n=1000)
+% dsd <- DSD_Memory(DSD_Gaussians(k=3, d=2, noise=0.01), n=1000)
 % dsd
 % @
 % 

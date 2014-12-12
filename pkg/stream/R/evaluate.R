@@ -138,8 +138,8 @@ evaluate_cluster <- function(dsc, dsd, macro=NULL, measure,
   
   evaluations <- data.frame()
   for(i in 1:(n/horizon)) {
-    wrapper <- DSD_Wrapper(dsd, n=horizon, loop=FALSE)
-    cluster(dsc, wrapper, horizon)
+    wrapper <- DSD_Memory(dsd, n=horizon, loop=FALSE)
+    update(dsc, wrapper, horizon)
     
     reset_stream(wrapper)
     if(is.null(macro)) {

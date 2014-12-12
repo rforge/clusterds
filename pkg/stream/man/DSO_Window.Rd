@@ -40,14 +40,14 @@ of Data Streams in Real Time, Intl. Conference of Very Large Data Bases (VLDB'02
 }
 
 \examples{
-dsd <- DSD_Gaussians(k=3, d=2, noise=0.05)
+stream <- DSD_Gaussians(k=3, d=2, noise=0.05)
 
-dso <- DSO_Window(horizon=100)
-dso
+window <- DSO_Window(horizon=100)
+window
 
-update(dso, dsd, 200)
-dso
+update(window, stream, 200)
+window
 
-# plot sample
-plot(get_points(dso))
+# plot points in window
+plot(get_points(window))
 }
