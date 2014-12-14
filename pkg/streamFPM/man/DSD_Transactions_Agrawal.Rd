@@ -5,41 +5,35 @@
 DSD Agrawal
 }
 \description{
-%%  ~~ A concise (1-5 lines) description of what the function does. ~~
+A datastream generator that produces semi-random transactions within a specified range. Some items will be more frequent by design. Algorithm originally developed for IBM by Agrawal.
 }
 \usage{
-DSD_Transactions_Agrawal(type = c("integer"), setSize = 50, maxTransactionSize = 10, distribution = "", ..., verbose = FALSE)
+DSD_Transactions_Agrawal(type = c("integer"), setSize = 50, maxTransactionSize = 10, ..., verbose = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{type}{
-%%     ~~Describe \code{type} here~~
+  The type of transaction data to produce. Currently integer is the only option
 }
   \item{setSize}{
-%%     ~~Describe \code{setSize} here~~
+  The size of the set to create transactions from
 }
   \item{maxTransactionSize}{
-%%     ~~Describe \code{maxTransactionSize} here~~
-}
-  \item{distribution}{
-%%     ~~Describe \code{distribution} here~~
-}
-  \item{\dots}{
-%%     ~~Describe \code{\dots} here~~
+  The maximum size for any one transaction
 }
   \item{verbose}{
-%%     ~~Describe \code{verbose} here~~
+  How much information the algorithm prints to the console.
 }
 }
 \details{
 %%  ~~ If necessary, more details than the description above ~~
 }
 \value{
-%%  ~Describe the value returned
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
+Returns a \code{DSD_Transactions_Agrawal} 
+object (subclass of 
+\code{DSD_Transactions}, \code{DSD}) which is a list of the defined
+params. The params are either passed in from the function or
+created internally
 }
 \references{
 %% ~put references to the literature/web site here ~
@@ -57,25 +51,19 @@ DSD_Transactions_Agrawal(type = c("integer"), setSize = 50, maxTransactionSize =
 %% ~~objects to See Also as \code{\link{help}}, ~~~
 }
 \examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
+#create agrawal transaction datastream
+dsd <- DSD_Transactions_Agrawal()
 
-## The function is currently defined as
-function (type = c("integer"), setSize = 50, maxTransactionSize = 10, 
-    distribution = "", ..., verbose = FALSE) 
-{
-    nItems <- setSize
-    patterns <- random.patterns(nItems = nItems, method = "agrawal", 
-        ..., verbose = verbose)
-    l <- list(description = "Agrawal Transaction Data Stream", 
-        type = type, setSize = setSize, maxTransactionSize = maxTransactionSize, 
-        distribution = distribution, patterns = patterns)
-    class(l) <- c("DSD_Agrawal", "DSD_Transactions", "DSD_List", 
-        "DSD_R", "DSD")
-    l
-  }
-}
+#create with a set size of 50 and a max transaction size of 10
+dsd <- DSD_Transactions_Agrawal(setSize=50, maxTransactionSize=10)
+
+#create with custom size function
+dsd <- DSD_Transactions_Agrawal(setSize= 50, maxTransactionSize= 10 , size=function(max) rexp(max))
+
+#get a transaction from the datastream
+transaction <- get_points(dsd)
+
+transaction
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
 \keyword{ ~kwd1 }

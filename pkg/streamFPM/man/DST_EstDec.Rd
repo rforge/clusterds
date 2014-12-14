@@ -30,7 +30,7 @@ estDec finds frequent patterns over a transaction or list datastream. It only ke
 \references{
 }
 \author{
-%%  ~~who you are~~
+  
 }
 \note{
 %%  ~~further notes~~
@@ -46,11 +46,28 @@ estDec finds frequent patterns over a transaction or list datastream. It only ke
 ##-- ==>  Define data, use random,
 ##--	or do  help(data=index)  for the standard data sets.
 
-dsd <- DSD_Transactions_Random(c(integer), setSize=10, maxTransactionSize=4)
+#create datastream
+dsd <- DSD_Transactions_Random(setSize=10, maxTransactionSize=4)
 
+#create estDec
 dst <- DST_EstDec()
 
-update(dst, dsd, 50)
+#update estDec with new values from data stream
+update(dst, dsd, 5)
 
+#get most frequent itemsets
+patterns <- get_patterns.DST_EstDec(dst)
+
+#displays frequent itemsets along with their counts
+counts <- attr(patterns, 'counts')
+counts
+
+#create a histogram of frequent itemsets
+hist(counts)
+
+#creates a plot of frequent itemsets and their counts
+
+
+}
 \keyword{ ~kwd1 }
 \keyword{ ~kwd2 }% __ONLY ONE__ keyword per line

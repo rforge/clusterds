@@ -27,7 +27,7 @@
 
 
 
-DSD_Transactions_Agrawal <- function(type=c("integer"), setSize=50, maxTransactionSize=10, distribution = "",
+DSD_Transactions_Agrawal <- function(type=c("integer"), setSize=50, maxTransactionSize=10,
     ...,
     verbose = FALSE) {
     nItems <- setSize

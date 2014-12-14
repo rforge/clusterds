@@ -2,7 +2,6 @@
 #include <vector>
 #include <math.h>
 #include "Rcpp.h"
-//#include "RcppResultSet.h"
 #include "Trie.h"
 
 class RTrie: private Trie {

@@ -16,21 +16,26 @@
 #maxTransactionSize is the largest transaction you can have
 #prob = probability for each item, other options include rexp(setSize)
 #size = size for each individual transaction
-DSD_Transactions_Random <- function(type=c("integer"), setSize=50, maxTransactionSize=10, 
-                                    prob = function(set) rep(1/set, times=set),
-                                    size = function(maxSize) sample(1:maxSize, 1) ) {
+DSD_Transactions_Twitter <- function(type=c("character"), consumer_key, consumer_secret) {
   
-  if(setSize < maxTransactionSize){ stop("maxTransactionSize cannot be larger than setSize")}
+  cred <- OAuthFactory$new(consumerKey=consumer_key,
+                           consumerSecret=consumer_secret,
+                           requestURL='https://api.twitter.com/oauth/request_token',
+                           accessURL='https://api.twitter.com/oauth/access_token',
+                           authURL='https://api.twitter.com/oauth/authorize')
+  
+  #FIXME for windows need .pem file
+  
+  #example for manual creation of transaction object
   
   # creating the DSD object
-  l <- list(description = "Random Transaction Data Stream",
+  l <- list(description = "Twitter Transaction Data Stream",
+            cred=cred,
             type=type,
             setSize=setSize,
-            maxTransactionSize=maxTransactionSize,
-            prob=prob(setSize),
-            size=size)
+            maxTransactionSize=maxTransactionSize)
   
-  class(l) <- c("DSD_Transactions_Random", "DSD_Transactions", "DSD_List", "DSD_R","DSD")
+  class(l) <- c("DSD_Transactions_Twitter", "DSD_Transactions", "DSD_List", "DSD_R","DSD")
   
   l
   
@@ -39,7 +44,7 @@ DSD_Transactions_Random <- function(type=c("integer"), setSize=50, maxTransactio
 
 #n = number of transactions
 #x = DSD object
-get_points.DSD_Transactions_Random <- function(x, n=1, assignment = FALSE,...) {
+get_points.DSD_Transactions_Twitter <- function(x, n=1, assignment = FALSE,...) {
   ### gaussians at (3,2.5) and (3,-2.5)
   ### bars at (-3,2.8) and (-3,-2.8)
   

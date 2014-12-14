@@ -4,7 +4,7 @@
 #datastream <- DSD_Transactions_Random(c(integer))
 #output: A complete set of recent freq itemsets Lk
 
-DST_EstDec <- function(decayRate = 0.2, Dk = 0.0 , minsup = 0.3) {
+DST_EstDec <- function(decayRate = 0.2, Dk = 0.0 , minsup = 0.3, datatype="integer") {
   
   decayRate <- decayRate #given decay rate
   #rt <- new(RTrie) #monitoring lattice
@@ -12,10 +12,12 @@ DST_EstDec <- function(decayRate = 0.2, Dk = 0.0 , minsup = 0.3) {
   Dk <- 0.0 #something
   TID <-0L  # = k
   desc <- "estDec"
+  dataType <- datatype
+  hash <- hash()
   
-  estDec<- estDec$new(decayRate, minsup, Dk, TID)
+  estDec<- estDec$new(decayRate, minsup, Dk, TID, dataType)
   structure(list(description = desc,
-       RObj = estDec),
+       RObj = estDec, wordHash = hash),
     class = c("DST_EstDec", "DST"))
 }
 
@@ -27,31 +29,55 @@ estDec <- setRefClass("estDec",
     decayRate  		= "numeric",
     minsup			= "numeric",
     Dk = "numeric",
-    TID = "integer"
+    TID = "integer",
+    dataType = "character",
+    wordCount = "integer"
    
   ),
   
   methods = list(
-   initialize = function(decayRate, minsup, Dk, TID) {
+   initialize = function(decayRate, minsup, Dk, TID, dataType) {
      rt 		<<-  new(RTrie)
-     decayRate			<<-  decayRate
+     decayRate	<<-  decayRate
      minsup	<<- minsup
      Dk     <<- Dk
      TID    <<- TID
-
+     dataType <<- dataType
+     wordCount <<- 1L
+     
      .self
    }
    
   ),
 )
 
-update.DST_EstDec = function(dst, dsd, iterations=1) {
+update.DST_EstDec <- function(dst, dsd, iterations=1) {
 
     for(i in 1:iterations){
       
       #print(paste0("iteration: ", i))
       
       Tk <- get_points(dsd)
+      
+      if (dst$RObj$dataType == "character") {
+        if (class(Tk) == "character") {
+          if(has.key(Tk, dst$wordHash)) {
+            Tk <- dst$wordHash[[Tk]]
+          }
+          else {
+            dst$wordHash[[Tk]] <- dst$RObj$wordCount
+            
+            Tk <- dst$RObj$wordCount
+            
+            dst$RObj$wordCount = dst$RObj$wordCount + 1L
+            
+          }
+        }
+        else {
+          print("DSD generated point datatype does not match datatype set for estDec")
+        }
+      }
+      
       #print(Tk)
       dst$RObj$TID <- dst$RObj$TID + 1L;
       
@@ -103,16 +129,51 @@ update.DST_EstDec = function(dst, dsd, iterations=1) {
 
 
 #returns frequent sets
-get_patterns.DST_EstDec = function(dst, ...) {
+get_patterns.DST_EstDec <- function(dst, ...) {
+  
+    #FIXME: implement stuff for "character" datatype
+  
+  if (dst$RObj$dataType == "character") {
+    
+    wordValues <- sort(values(dst$RObj$wordCount))
     patterns <- dst$RObj$rt$getFrequentItemsets()
     counts <- patterns[[length(patterns)]]
     patterns <- patterns[-length(patterns)]
     
     for (i in 1:length(patterns)) {
-      attr(patterns[[i]],'count') <- counts[i]
+      indices <- findInterval(patterns[[i]], wordValues)
+      patterns[[i]] <- attr(wordValues[indices], "names")
     }
     
+    names(counts) <- lapply(patterns, paste, collapse= ",")
+    attr(patterns, 'counts') <- counts
+    
+    class(patterns) <- "DST_Patterns"
     patterns
+  }
+  
+  patterns <- dst$RObj$rt$getFrequentItemsets()
+  counts <- patterns[[length(patterns)]]
+  patterns <- patterns[-length(patterns)]
+  names(counts) <- lapply(patterns, paste, collapse= ",")
+  
+  attr(patterns, 'counts') <- counts
+  
+  class(patterns) <- "DST_Patterns"
+  patterns
 }
 
+
+print.DST_EstDec <- function(x, ...) {
+  cat(paste(x$description), "\n")
+  cat("Class:", paste(class(x), collapse=", "), "\n") 
+  
+}
+
+
+
+#  if(!is(nc <- try(nclusters(x, type="micro"), silent=TRUE), "try-error")) 
+#    cat(paste('Number of micro-clusters:', nc, '\n'))
+#  if(!is(nc <- try(nclusters(x, type="macro"), silent=TRUE), "try-error")) 
+#    cat(paste('Number of macro-clusters:', nc, '\n'))
 

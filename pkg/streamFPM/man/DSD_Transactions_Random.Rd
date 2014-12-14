@@ -8,7 +8,9 @@ Random Transaction Data Stream Generator
 A datastream generator that produces random transactions within a specified range.
 }
 \usage{
-DSD_Transactions_Random(type = c("integer"), setSize = 50, maxTransactionSize = 10, distribution = "")
+DSD_Transactions_Random <- function(type=c("integer"), setSize=50, maxTransactionSize=10, 
+                                    prob = function(set) rep(1/set, times=set),
+                                    size = function(maxSize) sample(1:maxSize, 1) )
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -21,13 +23,17 @@ DSD_Transactions_Random(type = c("integer"), setSize = 50, maxTransactionSize = 
   \item{maxTransactionSize}{
   The maximum size for any one transaction
 }
-  \item{distribution}{
-  not implemented
-}
+  \item{prob}{
+    function describing the probability for each item in the itemset
+  }
+  \item{size}{
+    function describing the probably size of any individual transaction
+  }
 }
 \details{
-DSD_Transactions_Random generates random transactions with a specified set size and max transaction size 
+DSD_Transactions_Random generates random transactions with a specified set size and max transaction size. It allows for the use of custom functions for the probability of each number in that range, and the probable length of each transaction.
 }
+\value{
 Returns a \code{DSD_Transactions_Random} 
 object (subclass of 
 \code{DSD_Transactions}, \code{DSD}) which is a list of the defined
@@ -51,10 +57,13 @@ created internally
 }
 \examples{
 #create random transaction datastream
-dsd <- DSD_Transactions_Random(c(integer))
+dsd <- DSD_Transactions_Random()
 
 #create with a set size of 50 and a max transaction size of 10
-dsd <- DSD_Transactions_Random(c(integer), setSize=50, maxTransactionSize=10)
+dsd <- DSD_Transactions_Random(setSize=50, maxTransactionSize=10)
+
+#create with custom size function
+dsd <- DSD_Transactions_Random(setSize= 50, maxTransactionSize= 10 , size=function(max) rexp(max))
 
 #get a transaction from the datastream
 transaction <- get_points(dsd)
