@@ -96,7 +96,10 @@ plot.DSD <- function(x, n = 500, col= NULL, pch= NULL,
   } else if(ncol(d)>2 && method=="pc") {
     ## we assume Euclidean here
     p <- prcomp(d)
+ 
     plot(p$x, col=col, pch=pch, ...)
+    title(sub = paste("PC1 & PC2 explain:",
+      round(sum(p$sdev[1:2]) / sum(p$sdev)* 100, 2), "%"))
   } else {
     if(ncol(d)>2) d <- d[,1:2]
     plot(d, col=col, pch=pch, ...)
