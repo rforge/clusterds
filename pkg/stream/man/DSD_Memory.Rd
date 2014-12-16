@@ -70,4 +70,12 @@ head(df)
 stream <- DSD_Memory(df, assignment=3)  
 stream
 plot(stream, n=100)  
+
+### request more points than the 100 available points
+reset_stream(stream)
+points <- get_points(stream, n=500, outofpoints = "warn")
+nrow(points) ### returned all 100 points
+
+points <- get_points(stream, n=500, outofpoints = "warn")
+points ### no more points available
 }

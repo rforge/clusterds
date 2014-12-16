@@ -504,7 +504,7 @@ plot.DSC_DStream <- function(x, dsd=NULL, n=500,
   
   ### grid uses a darker color for the points
   col_points <- list(...)$col_points
-  if(is.null(col_points)) col_points <- grey(.1, alpha=.3)
+  if(is.null(col_points)) col_points <- gray(.1, alpha=.3)
   
   type <- match.arg(type)
 

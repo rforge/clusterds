@@ -38,8 +38,8 @@ recluster(macro, micro)
 # translate all micro-cluster ids
 microToMacro(macro)
 
-# plot some data points in grey
-plot(stream, col="grey", cex=.5, xlim=c(0,1), ylim=c(0,1))
+# plot some data points in gray
+plot(stream, col="gray", cex=.5, xlim=c(0,1), ylim=c(0,1))
 # add micro-clusters and use the macro-cluster ids as color and weights as size
 points(get_centers(macro, type="micro"), 
   col=microToMacro(macro), 

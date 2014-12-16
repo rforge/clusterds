@@ -35,7 +35,8 @@ DSD_BarsAndGaussians <- function(angle = NULL, noise = 0) {
   l
 }
 
-get_points.DSD_BarsAndGaussians <- function(x, n=1, assignment = FALSE,...) {
+get_points.DSD_BarsAndGaussians <- function(x, n=1, 
+    outofpoints=c("stop", "warn", "ignore"), assignment = FALSE,...) {
   ### gaussians at (3,2.5) and (3,-2.5)
   ### bars at (-3,2.8) and (-3,-2.8)
   

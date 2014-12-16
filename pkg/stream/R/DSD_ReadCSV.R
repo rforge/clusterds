@@ -36,20 +36,39 @@ DSD_ReadCSV <- function(file, sep=",", k=NA, d=NA,
   else if (!isOpen(file)) {
     open(file)
   }
-  
-  # figure out d
-  if(is.na(d) && !is.null(take)) d <- length(take)
 
+ 
+  
+  # seekable? get bytes_per_point + d
+  bytes_per_point <- NA
+  if(isSeekable(file)) {
+    tryCatch({
+      dat <- suppressWarnings(read.table(file=file, 
+        sep=sep, nrows=1, comment.char=""))
+    }, error = function(ex) {})
+    if(nrow(dat) >0) {
+      bytes_per_point <- seek(file)
+      seek(file, where = 0)
+      d <- ncol(dat)
+    }
+  }else if(loop) stop("Loop only allowed for seekable connections!")
+  
+  # figure out d from take
+  if(!is.null(take)) d <- length(take)
+  
+  # filename
   filename <- basename(summary(file)$description)
   
   # creating the DSD object
-  l <- list(description = paste('File Data Stream (', filename, ')', sep=''),
+  l <- list(
+    description = paste('File Data Stream (', filename, ')', sep=''),
     d = d,
     k = k,
     file = file,
     sep = sep,
     take = take,
     assignment = assignment,
+    bytes_per_point = bytes_per_point,
     loop = loop)
   class(l) <- c("DSD_ReadCSV", "DSD_R", "DSD_data.frame", "DSD")
   
@@ -57,63 +76,56 @@ DSD_ReadCSV <- function(file, sep=",", k=NA, d=NA,
 }
 
 ## it is important that the connection is OPEN
-get_points.DSD_ReadCSV <- function(x, n=1, assignment=FALSE, ...) {
+get_points.DSD_ReadCSV <- function(x, n=1, 
+  outofpoints=c("stop", "warn", "ignore"), assignment=FALSE, ...) {
   
-  togo <- n
+  outofpoints <- match.arg(outofpoints)
+  n <- as.integer(n)  
   
-  # comment.char="" is for performance reasons
+  d <- data.frame()
+  if(!isSeekable(x$file)) pos <- NA else pos <- seek(x$file)
   tryCatch({
     d <- suppressWarnings(read.table(file=x$file, 
       sep=x$sep, nrows=n, comment.char="", ...))
-    togo <- n - nrow(d)
-  }, error = function(ex) {
-  })
+  }, error = function(ex) {})
   
-  # this means no lines were read, we need to do a prep-read before looping
-  if (x$loop && togo == n) {
-    seek(x$file, where=0) # resetting the connection
-    d <- suppressWarnings(read.table(file=x$file, 
-      sep=x$sep, nrows=n, comment.char="", ...))
-    togo <- n - nrow(d)
+  if(nrow(d) < n) {
+    if(!x$loop || !isSeekable(x$file)){
+      if(outofpoints == "stop") {
+        if(!is.na(pos)) seek(x$file, pos)
+        stop("Not enough points in the stream!")
+      }
+      if(outofpoints == "warn") 
+        warning("The stream is at its end! Returning available points!")
+    } else { ### looping
+      while(nrow(d) < n) {
+        seek(x$file, where=0) # resetting the connection
+        d2 <- suppressWarnings(read.table(file=x$file, 
+          sep=x$sep, nrows=n-nrow(d), comment.char="", ...))
+        if(nrow(d2) < 1) stop("Empty stream!")
+        
+        d <- rbind(d, d2)
+      }
+    }      
   }
   
-  # we need to loop
-  while (x$loop && togo > 0) {
-    seek(x$file, where=0) # resetting the connection
-    
-    prev <- nrow(d)	
-    d <- suppressWarnings(rbind(d, read.table(file=x$file, 
-      sep=x$sep, nrows=togo, comment.char="", ...)))
-    togo <- togo - (nrow(d)-prev)
-  }
-  
-  # looping disabled, warn the user
-  if (!x$loop && togo == n) {
-    stop("looping disabled and the stream is empty")
-  }
-  
-  else if (!x$loop && togo > 0) {
-    warning("reached the end of the stream, returned as much as possible")
-  }
-  
-  if(assignment) {
+  cl <- NULL
+  if(assignment && nrow(d)>0) {
     if(is.null(x$assignment)) {
       warning("No assignment avaialble!")
-      cl<-NULL
-    }else cl <- d[,x$assignment[1]]
+    } else cl <- d[,x$assignment[1]]
   }
   
-  if(!is.null(x$take)) d <- d[,x$take, drop=FALSE]
+  if(!is.null(x$take) && nrow(d)>0) d <- d[,x$take, drop=FALSE]
   
-  
-  
-  if(assignment) attr(d, "assignment") <-cl
+  if(assignment) attr(d, "assignment") <- cl
   
   d
 }
 
 reset_stream.DSD_ReadCSV <- function(dsd, pos=1) {
-  invisible(seek(dsd$file, where=pos-1))
+  if(is.na(dsd$bytes_per_point)) stop("Underlying conneciton does not support seek!")
+  invisible(seek(dsd$file, where=(pos-1) * dsd$bytes_per_point))
 }
 
 close_stream <- function(dsd) {

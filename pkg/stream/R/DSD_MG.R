@@ -126,7 +126,8 @@ dsd_MG_refClass$methods(
 
 
 
-get_points.DSD_MG <- function(x, n=1, assignment = FALSE,...) {
+get_points.DSD_MG <- function(x, n=1, 
+    outofpoints=c("stop", "warn", "ignore"), assignment = FALSE,...) {
   x$RObj$get_points(n,assignment)
 }
 

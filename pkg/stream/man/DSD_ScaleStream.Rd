@@ -7,7 +7,7 @@
 }
 
 \usage{
-  DSD_ScaleStream(dsd, center=TRUE, scale=TRUE, n=1000, reset=TRUE)
+  DSD_ScaleStream(dsd, center=TRUE, scale=TRUE, n=1000, reset=FALSE)
 }
 
 \arguments{

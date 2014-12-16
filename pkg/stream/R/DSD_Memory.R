@@ -51,18 +51,29 @@ DSD_Memory <- function(x, n, k=NA, loop=FALSE, assignment = NULL,
     ), class = c("DSD_Memory", "DSD_R", "DSD_data.frame", "DSD"))
 }
 
-get_points.DSD_Memory <- function(x, n=1, assignment = FALSE,...) {
-  n <- as.integer(n)
+get_points.DSD_Memory <- function(x, n=1, 
+    outofpoints=c("stop", "warn", "ignore"), assignment = FALSE, ...) {
   
+  n <- as.integer(n)
+  outofpoints <- match.arg(outofpoints)  
+
   if(x$state$counter > nrow(x$strm)) {
     if(x$loop) x$state$counter <- 1L
-    else stop("The stream is at its end!")
+    else {
+    if(outofpoints == "stop") stop("The stream is at its end!")
+    if(outofpoints == "warn") warning("The stream is at its end! No more points available!")
+      return(x$strm[0,])
+    }
   }
   
   n_left <- nrow(x$strm) - x$state$counter + 1L
   
-  if(n_left < n && !x$loop) stop("Not enought data points left in stream!")
-  
+  if(n_left < n && !x$loop) {
+    if(outofpoints == "stop") stop("Not enought data points left in stream!")
+    if(outofpoints == "warn") warning("Not enought data points left in stream! Remaining points returned!")
+    n <- n_left
+  }
+
   if(n_left >= n) {
     ### regular case
     d <- x$strm[x$state$counter:(x$state$counter + n -1L),,drop=FALSE]

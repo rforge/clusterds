@@ -45,7 +45,8 @@ DSD_mlbenchGenerator <- function(method, ...) {
   l
 }
 
-get_points.DSD_mlbenchGenerator <- function(x, n=1, assignment = FALSE,...) {
+get_points.DSD_mlbenchGenerator <- function(x, n=1, 
+    outofpoints=c("stop", "warn", "ignore"), assignment = FALSE,...) {
   
   if(is.null(unlist(x$variables)))
     d <- do.call(paste("mlbench.", x$method,sep=""), list(n))

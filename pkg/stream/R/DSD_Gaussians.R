@@ -93,7 +93,8 @@ DSD_Gaussians <- function(k=2, d=2, mu, sigma, p, separation=0.2,
   l
 }
 
-get_points.DSD_Gaussians <- function(x, n=1, assignment = FALSE, ...) {
+get_points.DSD_Gaussians <- function(x, n=1, 
+    outofpoints=c("stop", "warn", "ignore"), assignment = FALSE, ...) {
   
   clusterOrder <- sample(x=c(1:x$k), 
     size=n, 

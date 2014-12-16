@@ -31,8 +31,10 @@
 DSD <- function(...) stop("DSD is an abstract class and cannot be instantiated!")
 DSD_R <- function(...) stop("DSD_R is an abstract class and cannot be instantiated!")
 
-get_points <- function(x, n=1, ...) UseMethod("get_points")
-get_points.default <- function(x, n=1, ...) {
+get_points <- function(x, n=1, outofpoints=c("stop", "warn", "ignore"), ...) 
+  UseMethod("get_points")
+get_points.default <- function(x, n=1, 
+  outofpoints=c("stop", "warn", "ignore"), ...) {
   stop(gettextf("get_points not implemented for class '%s'.",
     paste(class(x), collapse=", ")))
 }

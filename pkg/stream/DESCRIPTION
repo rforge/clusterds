@@ -9,5 +9,5 @@ Authors@R: c(person("Michael", "Hahsler", role = c("aut", "cre", "cph"),
 Description: A framework for data stream modeling and associated data mining tasks such as clustering and classification. The development of this package was supported in part by NSF IIS-0948893 and NIH R21HG005912.
 Depends: R (>= 2.13.0), methods, hash, proxy (>= 0.4-7)
 Imports: animation, clue, cluster, clusterGeneration, fpc, MASS, mlbench
-Suggests: DBI, RSQLite
+Suggests: DBI, RSQLite, testthat
 License: GPL-3
