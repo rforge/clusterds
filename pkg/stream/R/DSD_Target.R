@@ -36,7 +36,7 @@ DSD_Target <- function(center_sd =.05, center_weight=.5,
 
 get_points.DSD_Target <- function(x, n=1, 
     outofpoints=c("stop", "warn", "ignore"), 
-    assignment = FALSE,...) {
+    cluster = FALSE, class=FALSE, ...) {
     
     ### choose point type
     type <- sample(c(NA, 1:2), n, replace=TRUE, 
@@ -61,9 +61,8 @@ get_points.DSD_Target <- function(x, n=1,
 	p<- as.data.frame(t(p))
 	colnames(p) <- c("x", "y")
 	
-	if(assignment) {
-		attr(p,"assignment") <- type
-	}
+	if(cluster) attr(p,"cluster") <- type
+	if(class) p <- cbind(p, class = type)
 	
 	p
     }

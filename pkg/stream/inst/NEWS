@@ -4,6 +4,7 @@ Changes in version 1.1-0 (xx/xx/14)
     * DSD_ReadCSV replaces DSD_ReadStream. Improved handling of blocking and
       end of stream.
     * added DSD_ReadDB (DBI interface)
+    * get_points can now produce cluster and class information
 
 Changes in version 1.0-3 (07/14/14)
     * Fixed precision and recall calculation

@@ -168,7 +168,7 @@ plot.DSC <- function(x, dsd = NULL, n = 500,
   
   ### prepend data if given
   if(!is.null(dsd)) {
-    d <- get_points(dsd, n, assignment = TRUE)
+    d <- get_points(dsd, n, cluster = TRUE)
     #	names(d) <- names(centers)
     # fix center names
     names(centers) <- names(d)
@@ -176,7 +176,7 @@ plot.DSC <- function(x, dsd = NULL, n = 500,
     
     col <- c(rep(col_points,n)[1:n], col)
     cex_clusters <- c(rep(cex, n), cex_clusters)
-    mpch <- c(attr(d, "assignment"), mpch)
+    mpch <- c(attr(d, "cluster"), mpch)
     lwd <- c(rep(1,n), lwd)
     
     ### handle noise

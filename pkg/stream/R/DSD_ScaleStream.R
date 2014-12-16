@@ -39,16 +39,16 @@ DSD_ScaleStream <- function(dsd,
 ## it is important that the connection is OPEN
 get_points.DSD_ScaleStream <- function(x, n=1, 
   outofpoints=c("stop", "warn", "ignore"),
-  assignment=FALSE, ...) {
+  cluster=FALSE, class=FALSE, ...) {
   
-  d <- get_points(x$dsd, n, assignment=assignment)
+  d <- get_points(x$dsd, n, cluster=cluster, class=class)
   
-  if(assignment) cl <- attr(d,"assignment")
+  if(cluster) cl <- attr(d,"cluster")
   
   # scale
   d <- as.data.frame(scale(d, center= x$center, scale=x$scale))
   
-  if(assignment) attr(d, "assignment") <-cl
+  if(cluster) attr(d, "cluster") <-cl
   
   d
 }

@@ -19,7 +19,7 @@
 
 # accepts an open connection
 DSD_ReadCSV <- function(file, sep=",", k=NA, d=NA,
-  take=NULL, assignment=NULL, loop=FALSE) {
+  take=NULL, class=NULL, loop=FALSE) {
   
   # if the user passes a string, create a new connection and open it
   if (is(file,"character")) {
@@ -36,8 +36,8 @@ DSD_ReadCSV <- function(file, sep=",", k=NA, d=NA,
   else if (!isOpen(file)) {
     open(file)
   }
-
- 
+  
+  
   
   # seekable? get bytes_per_point + d
   bytes_per_point <- NA
@@ -67,7 +67,7 @@ DSD_ReadCSV <- function(file, sep=",", k=NA, d=NA,
     file = file,
     sep = sep,
     take = take,
-    assignment = assignment,
+    class = class,
     bytes_per_point = bytes_per_point,
     loop = loop)
   class(l) <- c("DSD_ReadCSV", "DSD_R", "DSD_data.frame", "DSD")
@@ -77,7 +77,8 @@ DSD_ReadCSV <- function(file, sep=",", k=NA, d=NA,
 
 ## it is important that the connection is OPEN
 get_points.DSD_ReadCSV <- function(x, n=1, 
-  outofpoints=c("stop", "warn", "ignore"), assignment=FALSE, ...) {
+  outofpoints=c("stop", "warn", "ignore"), 
+  cluster = FALSE, class = FALSE, ...) {
   
   outofpoints <- match.arg(outofpoints)
   n <- as.integer(n)  
@@ -110,15 +111,16 @@ get_points.DSD_ReadCSV <- function(x, n=1,
   }
   
   cl <- NULL
-  if(assignment && nrow(d)>0) {
-    if(is.null(x$assignment)) {
-      warning("No assignment avaialble!")
-    } else cl <- d[,x$assignment[1]]
+  if((class || cluster)&& nrow(d)>0) {
+    if(is.null(x$class)) {
+      warning("No class labels avaialble!")
+    } else cl <- d[,x$class[1]]
   }
   
   if(!is.null(x$take) && nrow(d)>0) d <- d[,x$take, drop=FALSE]
   
-  if(assignment) attr(d, "assignment") <- cl
+  if(cluster) attr(d, "cluster") <- cl
+  if(class) d <- cbind(d, class = cl)
   
   d
 }

@@ -61,10 +61,10 @@ summary.DSD <- function(object, ...) print(object)
 plot.DSD <- function(x, n = 500, col= NULL, pch= NULL, 
   ..., method="pairs", dim=NULL, alpha=.6) {
   ## method can be pairs, plot or pc (projection with PCA)
-  d <- get_points(x, n, assignment = TRUE)
+  d <- get_points(x, n, cluster = TRUE)
   
   ### make sure to plot noise
-  assignment <- attr(d,"assignment")
+  assignment <- attr(d, "cluster")
   
   ### stream has no assignments!
   if(length(assignment)==0) assignment <- rep(1L, nrow(d))

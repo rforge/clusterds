@@ -79,8 +79,8 @@ evaluate <- function (dsc, dsd, measure, n = 100,
     return(structure(e, type=type, assign=assign, class="stream_eval"))
   }
   
-  points <- get_points(dsd, n, assignment = TRUE)
-  actual <- attr(points, "assignment")
+  points <- get_points(dsd, n, cluster = TRUE)
+  actual <- attr(points, "cluster")
   predict <- get_assignment(dsc, points, type=assign, method=assignmentMethod, ...)
   
   ### translate micro to macro cluster ids if necessary

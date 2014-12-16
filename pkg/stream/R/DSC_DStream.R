@@ -536,8 +536,8 @@ plot.DSC_DStream <- function(x, dsd=NULL, n=500,
     xlab=varnames[1], ylab=varnames[2], main=main)
   
   if(!is.null(dsd)) {
-    ps <- get_points(dsd, n=n, assignment=TRUE)
-    pch <- attr(ps, "assignment")
+    ps <- get_points(dsd, n=n, cluster=TRUE)
+    pch <- attr(ps, "cluster")
     
     if(!is.null(dim)) ps <- ps[, dim]
     

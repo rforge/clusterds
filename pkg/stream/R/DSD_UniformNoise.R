@@ -23,9 +23,14 @@ DSD_UniformNoise <- function(d=2, range=NULL) {
 	      class=c("DSD_UniformNoise", "DSD_R", "DSD_data.frame", "DSD"))
   }
   
-get_points.DSD_UniformNoise <- function(x, n=1, assignment = FALSE, ...) {
+get_points.DSD_UniformNoise <- function(x, n=1, 
+    cluster=FALSE, class=FALSE, ...) {
+    
     data <- as.data.frame(t(replicate(n, 
       runif(x$d, min=x$range[,1], max=x$range[,2]))))
-    if(assignment) attr(data, "assignment") <- rep(NA_integer_, n)
+    
+    if(cluster) attr(data, "cluster") <- rep(NA_integer_, n)
+    if(class) data <- cbind(data, class = rep(NA_integer_, n))
+    
     data
 }

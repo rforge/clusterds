@@ -9,8 +9,8 @@ A DSD class that reads a data stream from a file or any R connection.
 }
 
 \usage{
-DSD_ReadCSV(file, sep=",", k=NA, d=NA, take=NULL, assignment=NULL, 
-     loop=FALSE)
+DSD_ReadCSV(file, sep=",", k=NA, d=NA, take=NULL, 
+  class=NULL, loop=FALSE)
 close_stream(dsd)
 }
 
@@ -21,7 +21,7 @@ close_stream(dsd)
 	\item{k}{Number of true clusters, if known.}
 	\item{d}{Number of dimensions (only used for print).}
 	\item{take}{indices of columns to extract from the file.}
-	\item{assignment}{column index for the cluster assignment (class attribute).}
+	\item{class}{column index for the class attribute/cluster label.}
 	\item{loop}{If enabled, the object will loop through the stream when
 	the end has been reached. If disabled, the object will warn the user
 	upon reaching the end.}
@@ -65,7 +65,7 @@ file.remove("data.txt")
 # example with a part of the kddcup1999 data (take only cont. variables)
 file <- system.file("examples", "kddcup10000.data.gz", package="stream")
 stream <- DSD_ReadCSV(gzfile(file),
-        take=c(1, 5, 6, 8:11, 13:20, 23:41), assignment=42, k=7)
+        take=c(1, 5, 6, 8:11, 13:20, 23:41), class=42, k=7)
 stream
 
 get_points(stream,5)

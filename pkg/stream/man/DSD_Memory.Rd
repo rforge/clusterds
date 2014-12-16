@@ -7,7 +7,8 @@ matrix-like objects (including data frames).
 All or a portion of the stored data can be replayed several times.
 }
 
-\usage{DSD_Memory(x, n, k=NA, loop=FALSE, assignment = NULL, description=NULL)}
+\usage{DSD_Memory(x, n, k=NA, loop=FALSE, 
+  class = NULL, description=NULL)}
 
 \arguments{
 	\item{x}{A matrix-like object containing the data. 
@@ -17,8 +18,8 @@ All or a portion of the stored data can be replayed several times.
 	\code{x} is a matrix-like object then \code{n} is ignored.}
 	\item{k}{Optional: The known number of clusters in the data}
 	\item{loop}{Should the stream start over when it reaches the end?}
-	\item{assignment}{Index of the column containing the group assignment 
-	    (ground truth) or a vector with the assignment. }
+	\item{class}{Vector with the class/cluster label (only used if \code{x} is not
+	  a DSD object). }
 	\item{description}{character string with a description. }
 }
 
@@ -64,18 +65,10 @@ plot(dsc2, replayer, main="D-Stream")
   
 ### use a data.frame to create a stream (3rd col. contains the assignment)
 df <- data.frame(x=runif(100), y=runif(100), 
-  assignment=sample(1:3, 100, replace=TRUE))
+  class=sample(1:3, 100, replace=TRUE))
 head(df)  
 
-stream <- DSD_Memory(df, assignment=3)  
+stream <- DSD_Memory(df[,c("x", "y")], class=df[,"class"])  
 stream
 plot(stream, n=100)  
-
-### request more points than the 100 available points
-reset_stream(stream)
-points <- get_points(stream, n=500, outofpoints = "warn")
-nrow(points) ### returned all 100 points
-
-points <- get_points(stream, n=500, outofpoints = "warn")
-points ### no more points available
 }
