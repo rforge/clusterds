@@ -63,6 +63,7 @@ Research (JMLR).
 }
 \examples{
 stream <- DSD_RandomRBFGeneratorEvents()
+get_points(stream, 10, class=TRUE)
 
 \dontrun{
 animate_data(stream, n=5000, pointInterval=100, xlim=c(0,1), ylim=c(0,1))
