@@ -98,8 +98,9 @@ plot.DSD <- function(x, n = 500, col= NULL, pch= NULL,
     p <- prcomp(d)
  
     plot(p$x, col=col, pch=pch, ...)
-    title(sub = paste("PC1 & PC2 explain:",
-      round(sum(p$sdev[1:2]) / sum(p$sdev)* 100, 2), "%"))
+    title(sub = paste("Explains ",
+      round(sum(p$sdev[1:2]) / sum(p$sdev)* 100, 2), 
+      "% of the point variability", sep=""))
   } else {
     if(ncol(d)>2) d <- d[,1:2]
     plot(d, col=col, pch=pch, ...)

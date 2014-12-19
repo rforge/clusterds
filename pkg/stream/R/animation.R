@@ -65,7 +65,7 @@ cluster.ani <- function(dsc=NULL, dsd, macro=NULL, n=1000,
     d <- DSD_Memory(dsd, n=horizon, loop=FALSE)
     
     if(!is.null(dsc)) {
-      cl <- cluster(dsc, d, horizon)
+      cl <- update(dsc, d, horizon)
       
       if(!is.null(macro)) cl <- recluster(macro, dsc)
       
