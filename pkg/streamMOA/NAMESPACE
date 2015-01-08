@@ -8,11 +8,14 @@ export(
   DSC_CluStream,
   DSC_ClusTree,
 	
-  DSD_RandomRBFGeneratorEvents
+  DSD_RandomRBFGeneratorEvents,
+  
+  saveMOA
 )
 
 ### S3 Methods
 S3method(get_points, DSD_MOA)
+S3method(print, DSC_MOA)
 S3method(get_copy, DSC_MOA)
 S3method(plot, DSC_MOA)
 S3method(get_assignment, DSC_MOA)

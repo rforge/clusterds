@@ -49,3 +49,8 @@ get_points.DSD_MOA <- function(x, n=1,
 	
 	data
 }
+
+saveMOA <- function(object, file, ...) {
+  .jcache(object$javaObj)
+  saveRDS(object, file=file, ...)
+}

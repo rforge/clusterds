@@ -46,6 +46,27 @@ for Industrial and Applied Mathematics, 2010.
 }
 
 \examples{
+# 3 clusters with 5% noise
+stream <- DSD_Gaussians(k=3, d=2, noise=0.05)
+
+streamkm <- DSC_StreamKM(k=3, sizeCoreset=100, width=100)
+streamkm <- DSC_StreamKM(k=5, sizeCoreset=10000, width=100000)
+update(streamkm, stream, 500)
+streamkm
+
+# plot micro-clusters
+plot(streamkm, stream)
+  
+# plot the micro-cluster assignment area
+plot(denstream, stream, assignment=TRUE, weights=FALSE)
+
+# show macro-clusters (using density reachability with epsilon x offline)
+plot(denstream, stream, type="both")
+
+# reclustering. DenStream micro-clusters with k-means instead
+km <- DSC_Kmeans(k=3, weighted=TRUE)
+recluster(km, denstream)
+plot(km, stream, type="both")
 dsd <- DSD_Gaussian_Static(k=3, noise=.05)
 
 dsc <- DSC_StreamKM(sizeCore=10, k=3, width=100)
