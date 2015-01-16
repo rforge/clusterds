@@ -24,3 +24,8 @@
     x$macro$newdata <- FALSE
   }
 }
+
+saveMOA <- function(object, file, ...) {
+  .jcache(object$javaObj)
+  saveRDS(object, file=file, ...)
+}

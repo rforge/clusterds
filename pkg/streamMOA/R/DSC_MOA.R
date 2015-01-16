@@ -1,4 +1,3 @@
-
 #######################################################################
 # stream -  Infrastructure for Data Stream Mining
 # Copyright (C) 2013 Michael Hahsler, Matthew Bolanos, John Forrest 
@@ -50,7 +49,6 @@ update.DSC_MOA <- function(object, dsd, n, verbose=FALSE, ...) {
     
     if(!is(dsd, "DSD_data.frame"))
       stop("Cannot cluster stream (need a DSD_data.frame.)")
-    
     
     ## data has to be all doubles for MOA clusterers!
     for (i in 1:n) {
