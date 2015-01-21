@@ -64,6 +64,8 @@ bool RTrie::updateAllSets(Rcpp::IntegerVector itemset, int transNum, double deca
   std::vector<int> e = Rcpp::as<std::vector<int> >(itemset);
   std::sort (e.begin(), e.end());
 
+  //calls updateWord for all e
+  //if e = {a,b,c}. calls for {a,b,c}, {b,c}, {c}
   for (int first = 0; first < e.size(); first++) {
     
     //std::cout << "first: " << first << std::endl;
@@ -72,7 +74,7 @@ bool RTrie::updateAllSets(Rcpp::IntegerVector itemset, int transNum, double deca
               
   }
   
-    for (int first = 0; first < e.size(); first++) {
+  for (int first = 0; first < e.size(); first++) {
     
     insertionPhase(e, transNum, decayRate, minsup,  dk, 0, first);
               

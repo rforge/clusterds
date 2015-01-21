@@ -9,7 +9,7 @@ DST_EstDec <- function(decayRate = 0.2, Dk = 0.0 , minsup = 0.3, datatype="integ
   decayRate <- decayRate #given decay rate
   #rt <- new(RTrie) #monitoring lattice
   minsup <- minsup #FIXME change this
-  Dk <- 0.0 #something
+  Dk <- 0.0 #total number of transactions in the lattice. (computed using decay rate)
   TID <-0L  # = k
   desc <- "estDec"
   dataType <- datatype
@@ -57,6 +57,7 @@ update.DST_EstDec <- function(dst, dsd, iterations=1) {
       
       #print(paste0("iteration: ", i))
       
+      #gets the next transaction
       Tk <- get_points(dsd)
       
       if (dst$RObj$dataType == "character") {
@@ -78,43 +79,25 @@ update.DST_EstDec <- function(dst, dsd, iterations=1) {
         }
       }
       
-      #print(Tk)
+      #updates the TransactionID, which is also the total # of transactions ever seen
       dst$RObj$TID <- dst$RObj$TID + 1L;
       
       #Ck(e) is the current count of an itemset e which is the number of trans
       #that contain the itemset among the k transactions
-      #Sk(e) = current support of itemset e = Ck(e) / |D|k
+      #Sk(e) = current support of itemset e = count(e) / Dk
       #decay-base  b
       #decay-base-life  h
       #decay = b^-(1/h) (b>1, h>=1, b^-1 <= d < 1)
       
+      #parameter updating phase
+      dst$RObj$Dk <- (dst$RObj$Dk * dst$RObj$decayRate) + 1.0 #FIXME
+      
       #updates all sets
       dst$RObj$rt$updateAllSets(Tk[[1]], dst$RObj$TID, dst$RObj$decayRate, dst$RObj$minsup, dst$RObj$Dk)
       
-      #parameter updating phase
-      dst$RObj$Dk <- (dst$RObj$Dk * dst$RObj$decayRate) + 1.0 #FIXME
+
 
     }
-    
-    #print(trans)
-    #counting update
-    
-    
-    #Delayed-insertion phase
-    #TKf <- ItemFiltering(Tk);
-    
-    #for (each itemset e in  Tkf and not in ML) {
-    #    if(length(e) == 1){
-    #      rt$addSet(e, err = 0, tid = k)
-    #}
-    #    else {
-    #Estimate Cmax(e) and Cmin(e)
-    #      if(Cmax(e) > Cupper(e))
-    #        Cmax(e) <- Cupper(e)
-    #      if(Cmax(e)/dk  >= Sins)
-    #        rt$addSet(e, err=Cmax(e)-Cmin(e), tid=k)
-    #    }
-    #}
     
     #Frequent itemset selection phase
     #Lk <- NULL
