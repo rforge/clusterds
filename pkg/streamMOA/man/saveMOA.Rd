@@ -1,15 +1,15 @@
-\name{saveMOA}
+\name{saveRDS_MOA}
 \alias{save}
-\alias{saveMOA}
+\alias{saveRDS_MOA}
 \alias{load}
 \title{Save streamMOA Models to Disk}
 \description{
     streamMOA models are Java objects and cannot be saved using the default R 
-  mechanism, but have to be serialized first. saveMOA() takes care of this.
+  mechanism, but have to be serialized first. saveRDS_MOA() takes care of this.
     }
 
 \usage{
-saveMOA(object, file, ...)
+saveRDS_MOA(object, file, ...)
 }
 \arguments{
   \item{object}{an object of class DSC_MOA.}
@@ -22,9 +22,9 @@ saveMOA(object, file, ...)
   R objects and pointers to Java objects will be lost. \pkg{rJava} provides 
   \code{.jcache()} to serialize Java objects into a cache in R which is correctly
   saved and loaded. This can be manually done via \code{.jcache(x$javaObj)} where
-  \code{x} is the DSV_MOA object.
+  \code{x} is the DSC_MOA object.
   Note that the cache will increase memory usage and needs 
-  to be updated before saving the model. \code{saveMOA()} provides a convenient
+  to be updated before saving the model. \code{saveRDS_MOA()} provides a convenient
   function which creates/updates the cache automatically before saving the model
   using \code{saveRDS()}.
 }
@@ -46,7 +46,7 @@ denstream
 
 # Save model. This creates/updates an R cache of the model first. Just using
 # save() does not work!
-saveMOA(denstream, file="denstream.rds")  
+saveRDS_MOA(denstream, file="denstream.rds")  
 rm(denstream)
   
   
@@ -54,6 +54,9 @@ rm(denstream)
 denstream <- readRDS(file="denstream.rds")
 denstream
 
+# The restored object can be updated
+update(denstream, stream, 500)  
+  
 # Clean up
 unlink("denstream.rds")
 }

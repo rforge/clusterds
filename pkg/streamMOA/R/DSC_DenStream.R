@@ -27,7 +27,7 @@
 
 
 DSC_DenStream <- function(epsilon,  mu=1, beta=0.2, lambda=0.001,
-  initPoints=100, offline=2, processingSpeed=1) {
+  initPoints=100, offline=2, processingSpeed=1, recluster=TRUE) {
   #, minPoints=10) {
   
   ### note:DenStream does not use horizon anymore!
@@ -55,37 +55,20 @@ DSC_DenStream <- function(epsilon,  mu=1, beta=0.2, lambda=0.001,
   .jcall(options, "V", "setViaCLIString", cliParams)
   .jcall(clusterer, "V", "prepareForUse")
   
-  macro <- new.env()
-  macro$newdata <- FALSE
-  macro$macro <-DSC_Hierarchical(h=(offline+1e-9)*epsilon, method="single")
   
   # initializing the R object
-  structure(
+  clus <- structure(
     list(
       description = "DenStream",
       options = cliParams,
       javaObj = clusterer,
-      macro = macro,
       eps = epsilon
     ),
     class = c("DSC_DenStream","DSC_Micro","DSC_MOA","DSC")
   )
-}
 
-get_macroclusters.DSC_DenStream <- function(x, ...) {
-  .update_reclustering(x)
-  
-  get_centers(x$macro$macro, type="macro")
-}
+  if(recluster) clus <- DSC_TwoStage(clus, 
+    DSC_Hierarchical(h=(offline+1e-9)*epsilon, method="single"))
 
-get_macroweights.DSC_DenStream <- function(x, ...) {
-  .update_reclustering(x)
-  
-  get_weights(x$macro$macro, type="macro")
-}
-
-microToMacro.DSC_DenStream <- function(x, micro=NULL) {
-  .update_reclustering(x)
-
-  microToMacro(x$macro$macro, micro)  
+  clus
 }
