@@ -180,13 +180,23 @@ bool Trie::updateWord(std::vector<int> & itemset, int k, double d, double minsup
  */
 bool Trie::updateWordRecursion(std::vector<int> & itemset, int k, double d, double minsup, double dk, int len, int first, Node* current)
 {
-  
     if (current != root)
     {
-      //std::cout << "here2 update set" << std::endl;
-      current->setCount( (current->getCount() * pow(d, k - current->getId())) + 1);
-      current->setErr(current->getErr() * pow(d, k - current->getId()));
-      current->setId(k);
+      if(len == 1)
+      {
+        //std::cout << "updating 1 itemset: " << current->content() << std::endl;
+        current->setCount( current->getCount() + 1);
+        current->setErr(0);
+        current->setId(k);
+      }
+      else
+      {
+        //std::cout << "here2 update set: " << current->content() << std::endl;
+        current->setCount( (current->getCount() * pow(d, k - current->getId())) + 1);
+        current->setErr(current->getErr() * pow(d, k - current->getId()));
+        current->setId(k);
+      }
+
     }
     
     
@@ -265,7 +275,7 @@ bool Trie::delayedInsertion(std::vector<int> & itemset, int k, double d, double 
        tmp->setErr(0);
        tmp->setId(k);
        current->appendChild(tmp);
-       return true;
+       
     }
     else 
     {
@@ -348,7 +358,7 @@ int Trie::cMin(std::vector<int> & itemset, int startIndex, int endIndex, double 
 	for (int i = startIndex; i <= endIndex - 1; i++) {
 		for (int j = i+1; j <= endIndex; j++) {
 			if(i != j) {
-        std::cout << "i: " << i << " j: " << j << std::endl;
+        //std::cout << "i: " << i << " j: " << j << std::endl;
 				//if size = 2, i.e. if Ai intersect Aj = NULL
 				if(itemset.size() == 2) {
 
@@ -383,7 +393,7 @@ int Trie::getCountForSubset(std::vector<int>& itemset, int startIndex, int endIn
     
     Node* current = root;
 
-    std::cout << "getCountForSubset index1:" << excludedIndex1 << " index2:" << excludedIndex2 << std::endl;
+    //std::cout << "getCountForSubset index1:" << excludedIndex1 << " index2:" << excludedIndex2 << std::endl;
 
     for ( int i = startIndex; i <= endIndex; i++)
     {

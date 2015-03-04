@@ -31,7 +31,7 @@ DSD_Transactions_Random <- function(type=c("integer"), setSize=50, maxTransactio
   }
 }
 \details{
-DSD_Transactions_Random creates a DSD that generates random transactions with a specified set size and max transaction size. It allows for the use of custom functions for the probability of each number in that range, and the probable length of each transaction.
+DSD_Transactions_Random generates random transactions with a specified set size and max transaction size. It allows for the use of custom functions for the probability of each number in that range, and the probable length of each transaction.
 }
 \value{
 Returns a \code{DSD_Transactions_Random} 

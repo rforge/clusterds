@@ -16,12 +16,11 @@
 #maxTransactionSize is the largest transaction you can have
 #prob = probability for each item, other options include rexp(setSize)
 #size = size for each individual transaction
-DSD_Transactions_Twitter <- function(consumer_key, consumer_secret, RegisteredOAuthCredentials = NULL, search_term, desired_count,
-                                     parser = function(text) strsplit(gsub("[^[:alnum:][:space:]#]", "", text), " ")[[1]]) {
-  cred <- NULL
+DSD_Transactions_TwitterStream <- function(consumer_key, consumer_secret, RegisteredOAuthCredentials = NULL, search_term = "", timeout = 10, language = "en",
+                                           parser = function(text) unique(strsplit(gsub("[^[:alnum:][:space:]#]", "", text), " ")[[1]])  ) {
+  
   if (!is.null(RegisteredOAuthCredentials)) {
     cred <- RegisteredOAuthCredentials
-    registerTwitterOAuth(cred)
   }
   else {
     cred <- OAuthFactory$new(consumerKey=consumer_key,
@@ -31,7 +30,6 @@ DSD_Transactions_Twitter <- function(consumer_key, consumer_secret, RegisteredOA
                              authURL='https://api.twitter.com/oauth/authorize')
     
     cred$handshake()
-    registerTwitterOAuth(cred)
   }
   
   state <- new.env()
@@ -47,12 +45,13 @@ DSD_Transactions_Twitter <- function(consumer_key, consumer_secret, RegisteredOA
   l <- list(description = "Twitter Transaction Data Stream",
             cred=cred,
             searchTerm = search_term,
+            lang = language,
             tweets = NULL,
-            desiredCount = desired_count,
+            timeout = timeout,
             state = state,
             parser = parser)
   
-  class(l) <- c("DSD_Transactions_Twitter", "DSD_Transactions", "DSD_List", "DSD_R","DSD")
+  class(l) <- c("DSD_Transactions_TwitterStream", "DSD_Transactions", "DSD_List", "DSD_R","DSD")
   
   l
   
@@ -61,37 +60,71 @@ DSD_Transactions_Twitter <- function(consumer_key, consumer_secret, RegisteredOA
 
 #n = number of transactions
 #x = DSD object
-get_points.DSD_Transactions_Twitter <- function(x, n=1, assignment = FALSE,...) {
+get_points.DSD_Transactions_TwitterStream <- function(x, n=1, assignment = FALSE, blocking = TRUE, ...) {
   ### gaussians at (3,2.5) and (3,-2.5)
   ### bars at (-3,2.8) and (-3,-2.8)
   
+  
+  #FIXME: add in error checking
   if(x$state$position >= x$state$numberOfTweets) {
-    x$state$tweets <- searchTwitter(x$searchTerm, n=x$desiredCount)
+    if(x$searchTerm == "") {
+      tweetsSample <- sampleStream( file.name="", timeout=x$timeout, oauth=x$cred)
+      tweetsSample.df <- parseTweets(tweetsSample)
+      if(x$lang == "") {
+        x$state$tweets <-  tweetsSample.df[, c("text")]
+      }
+      else {
+        x$state$tweets <-  tweetsSample.df[tweetsSample.df$lang == x$lang, c("text")]
+      }
+      
+    }
+    else {
+      if(x$lang == "") {
+        tweetsSample <- filterStream( file.name="", timeout=x$timeout, oauth=x$cred, track = x$searchTerm)
+        tweetsSample.df <- parseTweets(tweetsSample)
+        x$state$tweets <-  tweetsSample.df[, c("text")]
+      }
+      else {
+        tweetsSample <- filterStream( file.name="", timeout=x$timeout, oauth=x$cred, track = x$searchTerm, language = x$lang)
+        tweetsSample.df <- parseTweets(tweetsSample)
+        x$state$tweets <-  tweetsSample.df[, c("text")]
+      }
+    }
     x$state$numberOfTweets <- length(x$state$tweets)
     x$state$position <- 1L
   }
   
-  
   a <- vector("list", n)
   for (i in 1:n) {
     if(x$state$position <= x$state$numberOfTweets) {
+      #FIXME: suddenly this stopped working? $text on the end specifically
+      #text_without_puncuation <- gsub("[^[:alnum:][:space:]#]", "", x$state$tweets[[x$state$position]]$text)  
       
-      #text_without_puncuation <- gsub("[^[:alnum:][:space:]#]", "", x$state$tweets[[x$state$position]]$text)
       
-      #a[[i]] <- strsplit(text_without_puncuation, " ")[[1]]
-      a[[i]] <- x$parser(x$state$tweets[[x$state$position]]$text)
+      #text_without_puncuation <- gsub("[^[:alnum:][:space:]#]", "", x$state$tweets[[x$state$position]])  
+      #a[[i]] <- unique(strsplit(text_without_puncuation, " ")[[1]])
+      
+      
+      a[[i]] <- x$parser(x$state$tweets[[x$state$position]])
       x$state$position <- x$state$position + 1
     }
     else {
       a[[i]] <- NULL
       warning("No more tweets avaliable in stream")
     }
-
+    
   }
   
   return(a)
   
 }
+
+writeStream.DST_Transactiosn_TwitterStream <- function(x, n=1, append = TRUE) {
+  tweets <- get_points.DSD_Transactions_TwitterStream(x, n)
+  save(tweets, file = "TwitterStream.RData")
+}
+
+
 
 
 #FIXME print function

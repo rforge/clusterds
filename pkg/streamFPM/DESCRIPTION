@@ -7,7 +7,7 @@ Author: Derek Phanekham, Michael Hahsler
 Maintainer: Michael Hahsler <mhahsler@lyle.smu.edu>
 Description: More about what it does (maybe more than one line)
 Imports: methods, hash, testthat, arules
-Suggests: twitteR, RCurl, tm
+Suggests: twitteR, RCurl, tm, ROAuth, streamR
 Depends: stream, Rcpp (>= 0.11.1)
 LinkingTo: Rcpp
 RcppModules: rtrie

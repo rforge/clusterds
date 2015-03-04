@@ -39,6 +39,7 @@ DSD_Transactions_Random <- function(type=c("integer"), setSize=50, maxTransactio
 
 #n = number of transactions
 #x = DSD object
+#returns a, list of transactions
 get_points.DSD_Transactions_Random <- function(x, n=1, assignment = FALSE,...) {
   ### gaussians at (3,2.5) and (3,-2.5)
   ### bars at (-3,2.8) and (-3,-2.8)
@@ -47,6 +48,7 @@ get_points.DSD_Transactions_Random <- function(x, n=1, assignment = FALSE,...) {
   for (i in 1:n) {
     length <- x$size(x$maxTransactionSize)
     a[[i]] <- sample(1:x$setSize, length, replace=FALSE, prob = x$prob)
+    a[[i]][length] <- 11L
   }
   
   return(a)
