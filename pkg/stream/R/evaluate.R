@@ -20,7 +20,7 @@
 
 ### FIXME: calculate dist only once
 
-.eval_measures_fpc  <- c(
+.eval_measures_fpc_int  <- c(
   ### internal
   "average.between",        
   "average.within",          
@@ -29,19 +29,25 @@
   "ave.within.cluster.ss",
   "g2", "pearsongamma",
   "dunn", "dunn2", 
-  "entropy", "wb.ratio", 
-  
+  "entropy", "wb.ratio" 
+)
+
+.eval_measures_fpc_ext  <- c(
   ### external
  # "corrected.rand",
   "vi"
 )
 
-.eval_measures  <- c(
+.eval_measures_int  <- c(
   # info
-  "numMicroClusters","numMacroClusters","numClasses",
+  "numMicroClusters", "numMacroClusters",
   # internal
   "SSQ",
-  "silhouette",
+  "silhouette"
+)
+  
+.eval_measures_ext  <- c(
+  "numClasses",
   # external
   "precision", "recall", "F1",
   "purity", 
@@ -64,37 +70,55 @@ evaluate <- function (dsc, dsd, measure, n = 100,
   assignmentMethod <- match.arg(assignmentMethod)
   type <- get_type(dsc, type)  
   
-  all_measures <- c(.eval_measures, .eval_measures_fpc)
-  if(missing(measure) || is.null(measure)) m <- all_measures
-  else m <- all_measures[pmatch(tolower(measure), tolower(all_measures))] 
+  points <- get_points(dsd, n, cluster = TRUE)
+  actual <- attr(points, "cluster")
+  
+  all_measures <- c(.eval_measures_int, .eval_measures_ext, 
+    .eval_measures_fpc_int, .eval_measures_fpc_ext)
+  if(missing(measure) || is.null(measure)) {
+    if(!is.null(actual)) m <- all_measures
+    else m <- c(.eval_measures_int, .eval_measures_fpc_int)
+  } else m <- all_measures[pmatch(tolower(measure), tolower(all_measures))] 
   
   if(any(is.na(m))) stop("Invalid measure: ", paste(measure[is.na(m)], collapse=', '))
+  
+  
+  if(is.null(actual) && ! measure %in% c(.eval_measures_int, 
+    .eval_measures_fpc_int)) 
+    stop("External evaluation measures not available for streams without cluster labels!")
   
   centers <- get_centers(dsc, type=type) 
   
   if(nrow(centers)<1) {
-    warning("No centers available!")
+    #warning("No centers available!")
     e <- rep.int(NA_real_, length(measure))
-    names(e) <- measure
+    e[m %in% c("numMicroClusters", "numMacroClusters")] <- 0
+    names(e) <- m
     return(structure(e, type=type, assign=assign, class="stream_eval"))
   }
   
-  points <- get_points(dsd, n, cluster = TRUE)
-  actual <- attr(points, "cluster")
+
+  
   predict <- get_assignment(dsc, points, type=assign, method=assignmentMethod, ...)
+  
   
   ### translate micro to macro cluster ids if necessary
   if(type=="macro" && assign=="micro") predict <- microToMacro(dsc, predict)
   else if (type!=assign) stop("type and assign are not compatible!")
   
-  fpc <- m %in% .eval_measures_fpc
+  fpc <- m %in% c(.eval_measures_fpc_int, .eval_measures_fpc_ext)
   if(any(fpc)) {
     # noise cluster has the highest index and need to renumbered
     actual_fpc <- actual
     predict_fpc <- predict
-    withnoise <- any(is.na(actual_fpc))
-    actual_fpc[is.na(actual_fpc)] <- max(actual_fpc, na.rm=TRUE) + 1L
-    actual_fpc <- match(actual_fpc, unique(sort(actual_fpc)))
+    withnoise <- FALSE
+    
+    if(!is.null(actual_fpc)) {
+      withnoise <- any(is.na(actual_fpc))
+      actual_fpc[is.na(actual_fpc)] <- max(actual_fpc, na.rm=TRUE) + 1L
+      actual_fpc <- match(actual_fpc, unique(sort(actual_fpc)))
+    }
+    
     predict_fpc[is.na(predict_fpc)] <- max(predict_fpc, na.rm=TRUE) + 1L 
     predict_fpc <- match(predict_fpc, unique(sort(predict_fpc)))
     
@@ -170,7 +194,11 @@ evaluate_cluster <- function(dsc, dsd, macro=NULL, measure,
   
   ### Noise it its own group with index 0: this works for external measures
   predict[is.na(predict)] <- 0L
-  actual[is.na(actual)] <- 0L
+  if(!is.null(actual)) actual[is.na(actual)] <- 0L
+  
+  if(is.null(actual) && ! measure %in% .eval_measures_int) 
+    stop("Evaluation measure not available for streams without cluster labels!")
+  
   
   res <- switch(measure,
     numMicroClusters	    = if(is(try(n <- nclusters(dsc, type="micro"), 
@@ -299,7 +327,9 @@ ssq <- function(points, actual, predict, centers) {
   ### ssq does not use actual and predicted noise points
   ### predicted noise points that are not actual noise points form their own 
   ### cluster
-  noise <- actual==0 & predict==0
+  if(!is.null(actual)) noise <- actual==0 & predict==0
+  else noise <- predict==0
+  
   points <- points[!noise,]
   predict <- predict[!noise]
   if(any(predict==0)) {
@@ -317,7 +347,9 @@ ssq <- function(points, actual, predict, centers) {
 
 silhouette <- function(points, actual, predict) {
   ### silhouette does not use noise points
-  noise <- actual==0 & predict==0
+  if(!is.null(actual)) noise <- actual==0 & predict==0
+  else noise <- predict==0
+  
   points <- points[!noise,]
   predict <- predict[!noise]
   

@@ -143,7 +143,8 @@ tNN$methods(list(
       
       ### decay and remove clusters
       if(decay_factor<1 && !t%%gap_time) {
-        ### remove clusters
+        ### remove clusters that reached 1 and then did not get at least one 
+        ### point since last gap time
         w_min <- decay_factor^gap_time
         remove <- which(get_current_weights() <= w_min)
         
@@ -151,6 +152,12 @@ tNN$methods(list(
           paste(remove, collapse=", "), "\n")
         
         if(length(remove)) {
+          
+          # remove microclusters
+          weights <<- weights[-remove]
+          last_update <<- last_update[-remove]
+          centers <<- centers[-remove,]
+          
           # remove relations
           if(shared_density) {  
             keys <- keys(relations)
@@ -180,28 +187,23 @@ tNN$methods(list(
           # remove weak relations
           if(length(relations) > 0) {
             keys <- keys(relations)
-            vals <- values(relations)
+            ws <- get_current_relation_weights() 
             
-            ### FIXME: does not work!
-            ws <- vals[2,] * decay_factor^(t-vals[1,])
-            #removekeys <- keys[ws <= w_min]
-            removekeys <- keys[ws <= w_min/2]
             
-            #removekeys <- keys[t-sapply(vals, "[", 1L)>gap_time]
+            ### remove relations which did not gey at least one point
+            removekeys <- keys[ws < w_min*alpha]
+            #removekeys <- keys[ws < w_min]
+            #removekeys <- keys[ws < 0]
             
             if(length(removekeys)>0) {
-              if(debug) cat("  - Removing", length(removekeys), "relations (relation):",
+              if(debug) cat("  - Removing", length(removekeys), 
+                "relations (relation):",
                 paste(removekeys, collapse=", "), 
                 "\n")
               
               del(removekeys, relations)
             }
           }
-          
-          # remove microclusters
-          weights <<- weights[-remove]
-          last_update <<- last_update[-remove]
-          centers <<- centers[-remove,]
         }
       }
       
@@ -234,67 +236,108 @@ tNN$methods(list(
           
         }else{ ### update existing cluster
           
-          ### for moving
+          #################################
+          ### for moving (neighborhood function)
+          
+          ### no movement
+          #partialweight <- 0
           
           ### all move the same
+          #partialweight <- 1/length(inside) 
           #partialweight <- 1 
           
-          #partialweight <- weights[inside] %in% min(weights[inside]) * 10
-          #partialweight <- 1/length(inside) 
+          ### only winner moves
+          #partialweight <- rep(-.1, length(inside))
+          #partialweight <- rep(0, length(inside))
+          #mv <- which.min(dd)
+          #partialweight[mv] <- 1
+          
+          ### Gaussian neighborhood function
+          ### Gaussian: h(j, i(x)) = exp(−||r_j − r_i(x)|| /2sigma^2 )
+          ### sigma = neighborhood radius : 2 sd deviaitons
+          # sigma = sqrt(1/3/2)
+          # [1] 0.4082483
+          partialweight <- exp(-dd/r * 3)
+          
+          #partialweight <- dnorm(dd/r*3)
           
           ### the closer you are the more you move
           #partialweight <- (1-dd/r)^2
+          #partialweight <- (1-dd/r)
+          
           #partialweight <- partialweight/sum(partialweight)
           
-          ### only winner moves
-          mv <- which.min(dd)
-          partialweight <- rep(0, length(inside))
-          partialweight[mv] <- 1
+          #partialweight[mv] <- (1-dd[mv]/r)^2
           
-          ### alpha for SOM
-          #a <- .5
+          ### alpha for SOM (vector quantization, others move away)
+          #a <- .1
           #partialweight <- rep(-a, length(inside))
+          #mv <- which.min(dd)
           #partialweight[mv] <- a
           
           #partialweight <- -a* 1/(dd/r)^2
           #partialweight[mv] <- a * 1 
           
+          ws <- get_current_weights()[inside] 
           
-          ### no movement
-          #partialweight <- rep(0, length(inside))
+          #newCenters <- data.frame(
+          #  (as.matrix(centers[inside,]) * ws + 
+          #      matrix(as.numeric(point), ncol=ncol(point), nrow=length(inside), 
+          #        byrow=TRUE) * partialweight) / (ws + partialweight),
+          #  row.names=rownames(centers[inside,]))
+        
+          ### SOM style update: Wv(s + 1) = Wv(s) + thea(u, v, s) alpha(s)(D(t) - Wv(s)),
+          ### where  alpha(s) is a monotonically decreasing learning coefficient 
+          ### and D(t) is the input vector; theta(u, v, s) is the neighborhood function
           
-          ### decay weights first
-          ws <- weights[inside] * 
-            decay_factor^(t-last_update[inside])
-          
+          ### partialweight is the neighborhood function
+          ### (learning weight is proportional to the 1/cluster weight)
+          newCenters <- as.matrix(centers[inside,])
           newCenters <- data.frame(
-            (as.matrix(centers[inside,]) * ws + 
-                matrix(as.numeric(point), ncol=ncol(point), nrow=length(inside), 
-                  byrow=TRUE) * partialweight) / (ws + partialweight),
+            newCenters + 
+              #1/ws * partialweight * (matrix(as.numeric(point), 
+              partialweight * (matrix(as.numeric(point), 
+                ncol=ncol(point), nrow=length(inside), byrow=TRUE) - 
+                  newCenters
+              ),
             row.names=rownames(centers[inside,]))
           
-          ### weight the clusters get
-          #partialweight <- 1/length(inside) 
+          ##########################################
+          ### check overlap
+          distance <- as.matrix(dist(newCenters, method=distFun))
+          diag(distance) <- NA
+          test <- apply(distance, 1, function(x) all(x >= .9 * r, na.rm = TRUE))
+          if(any(test)) { 
+            centers[inside[test],] <<- newCenters[test,]
+          }
           
+          ### don't check overlap
+          #centers[inside,] <<- newCenters
+          
+          ##########################################
+          ### weight the clusters get
+          #partialweight <- 1/length(inside)        
+          partialweight <- 1 
+          
+          ### the weight depends on Gaussian neighborhood
+          #partialweight <- exp(-dd/r * 3)
+          #partialweight <- partialweight/sum(partialweight)
+            
           ### winner gets all
-          partialweight <- rep.int(0, length(inside))
-          partialweight[which.min(dd)] <- 1
+          #partialweight <- rep.int(0, length(inside))
+          #partialweight[which.min(dd)] <- 1
           
           ### update weights
           weights[inside] <<- ws + partialweight
           last_update[inside] <<- t
           
-          ### check overlap
-          #distance <- dist(newCenters,method=distFun)
-          #test <- apply(distance, 1, function(x) all(x>r|x==0) )
-          #if(length(which(test)) > 0) { 
-          #  centers[inside[which(test)],] <<- newCenters[which(test),]
-          #}
-          
-          centers[inside,] <<- newCenters
-          
           ### shared density
           if(shared_density && length(inside) > 1) {
+            
+            #partialweight <- 1/length(inside) 
+            partialweight <- 1 
+            
+            ### Note: mcs are sorted so the keys are always sorted (low-high)
             relationUpdate <- outer(mcs[inside], mcs[inside], 
               function(x,y) paste(x,y,sep="-") )
             relationUpdate <- relationUpdate[upper.tri(relationUpdate)]
@@ -302,8 +345,6 @@ tNN$methods(list(
             if(length(relationUpdate) > 0){
               if(debug) cat("  + Updating/Create Relations",
                 paste(relationUpdate, collapse=", "), "\n")
-              
-              partialweight <- 1/length(inside) 
               
               for(j in relationUpdate) {
                 ### relation is c(last_update, count)
@@ -325,6 +366,11 @@ tNN$methods(list(
   get_current_weights = function() {
     weights * decay_factor^(t-last_update) 
   },
+
+  get_current_relation_weights = function() {
+    vals <- values(relations)
+    vals[2,] * decay_factor^(t-vals[1,])
+  },
   
   # find strong MCs
   strong_mcs = function(weak=FALSE) {
@@ -332,7 +378,7 @@ tNN$methods(list(
     ws <- get_current_weights()
     
     # without noise all are strong!
-    if(noise==0) {
+    if(noise<=0) {
       if(weak) return(integer(0))
       else return(seq(1, length(ws)))
     }  
@@ -340,33 +386,42 @@ tNN$methods(list(
     o <- order(ws, decreasing=FALSE)
     # first element represents weight of already deleted MCs!
     # sum will approach 1/(1-decay_factor) 
+    #if(decay_factor<1) w_total <- (1-decay_factor^(t-1))/(1-decay_factor)
+    #else w_total <- npoints
+    #cs <- cumsum(c(w_total-sum(ws), ws[o]))
+    
+    #if(weak)
+    #  o[(cs < w_total*noise)[-1]]
+    #else  
+    #  o[(cs >= w_total*noise)[-1]]
+      
+    # we do double (or multiple) counting!!!
+    #w_total <- sum(ws)
+    #cs <- cumsum(c(w_total-sum(ws), ws[o]))
+    
+    # we do double counting, but not likely for noise!
     if(decay_factor<1) w_total <- (1-decay_factor^(t-1))/(1-decay_factor)
     else w_total <- npoints
+    cs <- cumsum(ws[o])
     
-    cs <- cumsum(c(w_total-sum(ws), ws[o]))
-    
-    if(weak)
-      o[(cs < w_total*noise)[-1]]
-    else	
-      o[(cs >= w_total*noise)[-1]]
+    ### decay_factor takes care of previousely removed points
+    wk <- cs < w_total * noise * decay_factor^gap_time
+    if(weak) o[wk]
+    else o[!wk]
   },
   
-  get_shared_density = function(matrix=FALSE) {
+  get_shared_density = function(matrix=FALSE, use_alpha=TRUE) {
     
     if(!shared_density) stop("No shared density available (use shared_density=TRUE)!")
     
     mc_weights <- get_current_weights()
     mcs <- rownames(centers)
     
-    rel <- t(sapply(strsplit(keys(relations), "-"), as.integer))
-    rel <-  matrix(match(rel, mcs), ncol=2) ### translate from names to index
-    
-    s <- matrix(0, ncol=length(mcs), nrow=length(mcs))
-    
+    rel <- do.call(rbind, strsplit(keys(relations), "-"))
+    rel <- matrix(match(rel, mcs), ncol=2) ### translate from names to index
+        
     if(nrow(rel) > 0){
-      ### fix decay
-      vals <- values(relations)
-      vals <- vals[2,] * decay_factor^(t-vals[1,])
+      vals <- get_current_relation_weights() 
       
       ### get shared density relative to the density in the participating clusters
       ### use average weight
@@ -374,22 +429,34 @@ tNN$methods(list(
       ss <- vals/avg_weight
       
       ### use max weight
-      #max_weight <- apply(rel, MARGIN=1, FUN= function(x) max(mc_weights[x]))
+      #max_weight <- apply(rel, MARGIN=1, FUN=function(x) max(mc_weights[x]))
       #ss <- vals/max_weight
       
-      ### unconnected is 2 times the largest distance
+      ### use min weight
+      #min_weight <- apply(rel, MARGIN=1, FUN=function(x) min(mc_weights[x]))
+      #ss <- vals/min_weight
+      
+      ### use average weight in neighborhood
+      #max_weight <- apply(rel, MARGIN=1, FUN=function(x) max(mc_weights[x]))
+      #ss <- vals/max_weight
+      
+      
+      ### create similarity matrix
+      s <- matrix(0, ncol=length(mcs), nrow=length(mcs))
       for(i in 1:nrow(rel)) s[rel[i,2], rel[i,1]] <- s[rel[i,1], rel[i,2]] <- ss[i]
     }
-    
     
     strong <- strong_mcs()
     s <- s[strong, strong]
     
     ### filter alpha    
-    if(alpha>0) s[s < alpha] <- 0
-    
+    if(is.logical(use_alpha)) {
+      if(use_alpha) s[s < alpha] <- 0
+    }else s[s < use_alpha] <- 0
+        
     ### add lenght 2 paths
-    #s <- s%*%s + s
+    #s2 <- s%*%s
+    #s <- s2 + s
     
     if(!matrix) s <- as.simil(s)
     s
@@ -426,9 +493,9 @@ tNN$methods(list(
     if(nclusters == 1L) return(list(centers=mcs, microToMacro=1L, weight=w[1L]))
     
     if(shared_density) { ### use shared density
-      s <- get_shared_density()
       
-      if(k > 0L) { ### use k
+      if(k > 0L) { ### use k not alpha!
+        s <- get_shared_density(use_alpha = FALSE)
         d <- 1/(1+s)
         
         hc <- hclust(d, method="single")
@@ -445,12 +512,13 @@ tNN$methods(list(
         
         ### or join using distance
         ### FIXME: If k>number of connected components then components would
-        ###  be merged randomly! So we add for these the redular distance!
+        ###  be merged randomly! So we add for these the regular distance!
         #d2 <- dist(mcs, method=distFun) 
         #unconnected <- d==1
         #d[unconnected] <- d[unconnected] + d2[unconnected]
         
-      }else{ ### use alpha
+      }else{ ### use alpha and connected components
+        s <- get_shared_density()
         s[s>0] <- 1
         d <- 1-s
         assignment <- cutree(hclust(d, method="single"), h=.5)
@@ -519,7 +587,8 @@ microToMacro.DSC_tNN <- function(x, micro=NULL){
   assignment
 }
 
-get_shared_density <- function(x, matrix=FALSE) x$RObj$get_shared_density(matrix=matrix)
+get_shared_density <- function(x, matrix=FALSE, use_alpha=TRUE) 
+  x$RObj$get_shared_density(matrix=matrix, use_alpha=use_alpha)
 
 ### special plotting for DSC_tNN
 ### FIXME: only show edges that really are used
@@ -533,7 +602,7 @@ plot.DSC_tNN <- function(x, dsd = NULL, n = 500,
 #  ...,
   method="pairs",
   type=c("auto", "micro", "macro", "both", "none"),
-  shared_density=FALSE, assignment=FALSE, ...) {
+  shared_density=FALSE, use_alpha=TRUE, assignment=FALSE, ...) {
   
   type <- match.arg(type)
   
@@ -570,7 +639,7 @@ plot.DSC_tNN <- function(x, dsd = NULL, n = 500,
     if(nrow(p)>0) {
       #points(p, col="black")
       ### add edges connecting macro-clusters
-      s <- get_shared_density(x, matrix=TRUE)
+      s <- get_shared_density(x, matrix=TRUE, use_alpha=use_alpha)
       s[lower.tri(s)] <- NA
       
       edges <- which(s>x$RObj$alpha, arr.ind=TRUE)
@@ -579,7 +648,7 @@ plot.DSC_tNN <- function(x, dsd = NULL, n = 500,
         edges <- cbind(edges, 
           w=apply(edges, MARGIN=1, FUN=function(ij) s[ij[1], ij[2]]))
         
-        edges <- cbind(edges, map(edges[,3], range=c(.5,3)))
+        edges <- cbind(edges, map(edges[,3], range=c(1,4)))
         
         for(i in 1:nrow(edges)){
           lines(rbind(p[edges[i,1],],p[edges[i,2],]),

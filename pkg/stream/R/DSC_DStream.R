@@ -259,7 +259,7 @@ DStream$methods(list(
     mat
   },
   
-  get_attraction = function(relative=FALSE, grid_type="dense") {
+  get_attraction = function(relative=FALSE, grid_type="dense", dist=FALSE) {
     
     if(!attraction) stop("No attraction values stored. Create the DSC_DStream with attraction=TRUE.")
     mc_ids <- get_micro(translate=FALSE, grid_type=grid_type)
@@ -404,7 +404,7 @@ DStream$methods(list(
     
     ### single mc
     if(nrow(mcs) == 1)
-      return(centers=mcs, weights=w, microToMacro=structure(1L, names="1"))
+      return(list(centers=mcs, weights=w, microToMacro=structure(1L, names="1")))
     
     denseID <- c_type=="dense"
     dense <- mcs[denseID,]
@@ -414,40 +414,42 @@ DStream$methods(list(
     
     if(attraction) { ### use attraction
       a <- get_attraction(grid_type="dense")
-      d_attr <- as.dist(-a-t(a))
       
-      ### FIXME: transitional grids!
-      if(k > 0L)  { ### use k?
+      if(nrow(a)>1) {
+        d_attr <- as.dist(-a-t(a))
         
-        hc <- hclust(d_attr, method="single")
-        ### find unconnected components
-        assignment <- cutree(hc, h=0-1e-9)
-        
-        maxk <- min(k, nrow(mcs))
-        ### not enought components?
-        if(length(unique(assignment)) < maxk) assignment <- cutree(hc, k=maxk)
-        
-        ### FIXME: If k>number of connected components then components would
-        ###  be merged randomly! So we add for these the regular distance!      
-        
-        #d_dist <- dist(mcs) 
-        #unconnected <- d_attr==0 ### an attraction count of 0!
-        #d_attr[unconnected] <- d_attr[unconnected] + d_dist[unconnected]
-        #assignment <- cutree(hclust(d_attr, method="single"), k=k)
-        
-      }else{ ### use Cm2 
-        
-        P <- 2*sum(maxs-mins) ### number of possible attraction values
-        ### actually we should check each direction independently
-        assignment <- cutree(hclust(d_attr, method="single"), 
-          h=-2*Cm2/P/(1+decay_factor))
-      }
+        if(k > 0L)  { ### use k?
+          
+          hc <- hclust(d_attr, method="single")
+          ### find unconnected components
+          assignment <- cutree(hc, h=0-1e-9)
+          
+          maxk <- min(k, nrow(a))
+          ### not enought components?
+          if(length(unique(assignment)) < maxk) assignment <- cutree(hc, k=maxk)
+          
+          ### FIXME: If k>number of connected components then components would
+          ###  be merged randomly! So we add for these the regular distance!      
+          
+          #d_dist <- dist(mcs) 
+          #unconnected <- d_attr==0 ### an attraction count of 0!
+          #d_attr[unconnected] <- d_attr[unconnected] + d_dist[unconnected]
+          #assignment <- cutree(hclust(d_attr, method="single"), k=k)
+          
+        }else{ ### use Cm2 
+          
+          P <- 2*sum(maxs-mins) ### number of possible attraction values
+          ### actually we should check each direction independently
+          assignment <- cutree(hclust(d_attr, method="single"), 
+            h=-2*Cm2/P/(1+decay_factor))
+        }
+      }else assignment <- 1L
     }else{ ### use adjacency 
-      ### FIXME: use dense and then assign transitional
+      if(nrow(dense)>1) {
       d_pos <- dist(dense)
       assignment <- cutree(hclust(d_pos, method="single"), 
         h=1.1) ### anything less than 2^.5 is fine
-      
+      }else assignment <- 1L
     }
     
     ### assign transitional grids
@@ -476,8 +478,8 @@ DStream$methods(list(
 )
 )
 
-get_attraction <- function(x, dist=FALSE, relative=FALSE) 
-  x$RObj$get_attraction(dist=dist, relative=relative)
+get_attraction <- function(x, relative=FALSE, grid_type="dense", dist=FALSE) 
+  x$RObj$get_attraction(relative=relative, grid_type=grid_type, dist=dist)
 
 get_macroclusters.DSC_DStream <- function(x,...){
   if(x$macro$newdata) {
@@ -563,7 +565,7 @@ plot.DSC_DStream <- function(x, dsd=NULL, n=500,
   }
   
   ### add macro-clusters?
-  if(type=="both" || type=="macro") {
+  if((type=="both" || type=="macro") && nclusters(x, type="macro") > 0) {
     points(get_centers(x, type="macro"), col="blue", lwd=2, pch=3, 
       cex=get_weights(x, type="macro", scale=c(1,5)))
   }
