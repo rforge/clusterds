@@ -35,7 +35,8 @@ DSC_CluStream <- function(
   
   # initializing the clusterer
 #  clusterer <- .jnew("moa/clusterers/clustream/Clustream")
-  clusterer <- .jnew("moa/clusterers/clustream/WithKmeans")
+  clusterer <- .jcast(.jnew("moa/clusterers/clustream/WithKmeans"),
+    "moa/clusterers/AbstractClusterer")
   options <- .jcall(clusterer, "Lmoa/options/Options;", "getOptions")
   .jcall(options, "V", "setViaCLIString", cliParams)
   .jcall(clusterer, "V", "prepareForUse")

@@ -51,24 +51,31 @@ update.DSC_MOA <- function(object, dsd, n, verbose=FALSE, ...) {
       stop("Cannot cluster stream (need a DSD_data.frame.)")
     
     ## data has to be all doubles for MOA clusterers!
-    for (i in 1:n) {
-      
-      d <- get_points(dsd, 1)
-      ## TODO: Check incoming data
-      
-      x <- .jcast(
-        .jnew("weka/core/DenseInstance", 1.0, .jarray(as.double(d))),
-        "weka/core/Instance"
-      )
-      
-      .jcall(object$javaObj, "V", "trainOnInstanceImpl", x)
-      
-      if(verbose && !i%%1000) cat("Processed", i, "points -",
-        nclusters(object), "clusters\n")
-      
-    }	
+#     for (i in 1:n) {
+#       
+#       d <- get_points(dsd, 1)
+#       ## TODO: Check incoming data
+#       
+#       x <- .jcast(
+#         .jnew("weka/core/DenseInstance", 1.0, .jarray(as.double(d))),
+#         "weka/core/Instance"
+#       )
+#       
+#       .jcall(object$javaObj, "V", "trainOnInstanceImpl", x)
+#       
+#       if(verbose && !i%%1000) cat("Processed", i, "points -",
+#         nclusters(object), "clusters\n")
+#       
+#     }	
+
+    d <- get_points(dsd, n)
+    .jcall("StreamMOA", "V", "update", object$javaObj, 
+      .jarray(as.matrix(d), dispatch = TRUE))
     
-  }
+   }
+    
+   
+    
   # so cl <- cluster(cl, ...) also works
   invisible(object)
 }

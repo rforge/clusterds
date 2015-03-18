@@ -50,7 +50,8 @@ DSC_DenStream <- function(epsilon,  mu=1, beta=0.2, lambda=0.001,
   cliParams <- convert_params(paramList)
   
   # initializing the clusterer
-  clusterer <- .jnew("moa/clusterers/denstream/WithDBSCAN")
+  clusterer <- .jcast(.jnew("moa/clusterers/denstream/WithDBSCAN"),
+    "moa/clusterers/AbstractClusterer")
   options <- .jcall(clusterer, "Lmoa/options/Options;", "getOptions")
   .jcall(options, "V", "setViaCLIString", cliParams)
   .jcall(clusterer, "V", "prepareForUse")
