@@ -8,12 +8,11 @@ public:
     ~Node() {}
     int content() { return mContent; }
     void setContent(int c) { mContent = c; }
-    bool wordMarker() { return mMarker; }
-    void setWordMarker() { mMarker = true; }
-    void removeWordMarker() { mMarker = false; }
+
     void setCount(int cnt) { count = cnt; }
     int getCount() { return count; }
     int incrementCount(int add = 1){ count = count + add; }
+    
     Node* findChild(int c);
     void appendChild(Node* child) { mChildren.push_back(child); }
     std::vector<Node*> children() { return mChildren; }
@@ -22,13 +21,23 @@ public:
     void setId(int i) { id = i; }
     int getId() { return id; }
     
-    bool deleteChild(int c);
+    bool removeChild(int c);
+    
+    //not used
+    bool wordMarker() { return mMarker; }
+    void setWordMarker() { mMarker = true; }
+    void removeWordMarker() { mMarker = false; }
+    //
+    
+
 
 private:
+    //mContent is the item that the node is tracking
     int mContent;
     bool mMarker;
     int count;
     int err;
+    //id = TID last transaction that had this item
     int id;
     
     std::vector<Node*> mChildren;

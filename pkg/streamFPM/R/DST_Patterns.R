@@ -16,9 +16,9 @@
 
 #FIXME as itemsets
 #as itemMatrix
-as.itemSets = function(patterns, ...) {
+as.itemsets = function(patterns, ...) {
   #is <- new("itemsets", items=as(unclass(patterns), "itemMatrix"), quality=data.frame(support=attr(patterns, "counts")))
-  is <- new("itemsets", items=as(attr(patterns, "sets"), "itemMatrix"), quality=data.frame(support = unclass(patterns)))
+  new("itemsets", items=as(attr(patterns, "sets"), "itemMatrix"), quality=data.frame(support = unclass(patterns)))
 }
 
 

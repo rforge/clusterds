@@ -24,7 +24,9 @@ Node* Node::findChild(int c)
     return NULL;
 }
 
-bool Node::deleteChild(int c)
+
+//FIXME: does not deleteChildrenRecursively. mem leak
+bool Node::removeChild(int c)
 {
     if(mChildren.size() == 0){
         return false;

@@ -19,7 +19,7 @@ Trie::~Trie()
     // Free memory
 }
 
-void Trie::addWord(std::vector<int> itemset)
+void Trie::addItemsetDirectly(std::vector<int> itemset)
 {
     std::sort(itemset.begin(), itemset.end());
     Node* current = root;
@@ -48,15 +48,11 @@ void Trie::addWord(std::vector<int> itemset)
             current->appendChild(tmp);
             current = tmp;
         }
-        //if ( i == itemset.size() - 1 )
-        //    current->setWordMarker();
-
-        //std::cout << current->content() <<std::endl;
     }
 }
 
 
-bool Trie::searchWord(std::vector<int> itemset)
+bool Trie::searchItemset(std::vector<int> itemset)
 {
     std::sort (itemset.begin(), itemset.end());
     Node* current = root;
@@ -79,8 +75,8 @@ bool Trie::searchWord(std::vector<int> itemset)
 
 
 
-//FIXME ALL oF THIS
-bool Trie::deleteWord(std::vector<int> itemset)
+//FIXME ALL OF THIS
+bool Trie::deleteItemset(std::vector<int> itemset)
 {
     std::sort(itemset.begin(), itemset.end());
 
@@ -102,7 +98,7 @@ bool Trie::deleteWord(std::vector<int> itemset)
     int ret = deleteWordRecursion(itemset, i+1, tmp);
 
     if(ret == 1) {
-      current->deleteChild(itemset[i]);
+      current->removeChild(itemset[i]);
       return true;
     }
     
@@ -134,7 +130,7 @@ int Trie::deleteWordRecursion(std::vector<int> itemset, int i, Node * current)
     int temp = deleteWordRecursion(itemset, i+1, tmp);
     
     if(temp == 1) {
-      current->deleteChild(itemset[i]);
+      current->removeChild(itemset[i]);
       if(current->children().size() == 0 && current->wordMarker() == false)
         return 1;
     }
@@ -147,10 +143,42 @@ int Trie::deleteWordRecursion(std::vector<int> itemset, int i, Node * current)
   
 }
 
-//FIXME: implement
+//FIXME rename as deleteNodeAndDescendents
 bool Trie::deleteNodeAndChildren(Node* current)
 {
-  return false;
+  vector<Node*> children = current->children();
+  for(int i = 0; i < children.size(); i++)
+  {
+    deleteNodeAndChildren(children.at(i));
+  }
+  
+  delete current;
+  
+  //fixme, need to tell about node that i am deleted
+  return true;
+}
+
+void Trie::deleteDescendentNodes(Node* current)
+{
+  vector<Node*> children = current->children();
+  
+  if(children.size() == 0)
+    return;
+    
+  for(int i = children.size()-1; i >= 0; i--)
+  {
+    Node* tmp = children.at(i);
+    deleteDescendentNodes(children.at(i));
+    current->removeChild(tmp->content());
+  }
+  
+}
+
+bool Trie::deleteChildNodeAndDescendents(Node* parent, int content)
+{
+  Node* child = parent->findChild(content);
+  deleteDescendentNodes(child);
+  parent->removeChild(content);
 }
 
 
@@ -178,49 +206,53 @@ bool Trie::updateWord(std::vector<int> & itemset, int k, double d, double minsup
  * int first: 
  * Node* current:
  */
-bool Trie::updateWordRecursion(std::vector<int> & itemset, int k, double d, double minsup, double dk, int len, int first, Node* current)
+bool Trie::updateWordRecursion(std::vector<int> & itemset, int k, double decay, double minsup, double dk, int len, int first, Node* current)
 {
     if (current != root)
     {
+      
+      //updates the count and estimate of itemsets. 1-itemsets get error = 0. 
       if(len == 1)
       {
         //std::cout << "updating 1 itemset: " << current->content() << std::endl;
-        current->setCount( current->getCount() + 1);
+        //current->setCount( current->getCount() + 1);
+        current->setCount( (current->getCount() * pow(decay, k - current->getId())) + 1);
         current->setErr(0);
         current->setId(k);
       }
       else
       {
         //std::cout << "here2 update set: " << current->content() << std::endl;
-        current->setCount( (current->getCount() * pow(d, k - current->getId())) + 1);
-        current->setErr(current->getErr() * pow(d, k - current->getId()));
+        current->setCount( (current->getCount() * pow(decay, k - current->getId()) ) + 1);
+        current->setErr(current->getErr() * pow(decay, k - current->getId()));
         current->setId(k);
       }
 
     }
     
-    
+    //recursion for traversing tree
     for ( int i = first; i < itemset.size(); i++ )
     {
         //std::cout << "set: " << i << " starting with item:" << itemset[i] <<endl;
         Node* tmp = current->findChild(itemset[i]);
         //FIXME: FIX LEN
         
+        //if tmp == null, have reached left node. return
         if ( tmp == NULL )
         {
-            //do nothing
-        }
-        //FIXME minsup should be pruning support
-        //FIXME  bad stuff with doubles
-        //should be tmp?
-        else if(current->getCount()/dk < minsup * 0.8  && len > 1) {
-            std::cout << "remove node" << std::endl;
-            //FIXME: implement deleteNodeAndChild
-            deleteNodeAndChildren(current);
+          return true;
         }
         else {
             //std::cout << "calling recursion" << std::endl;
-            updateWordRecursion(itemset, k, d, minsup,  dk, len + 1, i+1, tmp);
+            updateWordRecursion(itemset, k, decay, minsup,  dk, len + 1, i+1, tmp);
+        }
+
+        //FIXME minsup should be pruning support
+        //FIXME  bad stuff with doubles
+        //std::cout << tmp->getCount()/dk << " :: " << minsup << std::endl;
+        if(tmp->getCount()/dk < minsup  && len+1 > 1) {
+            //std::cout << "remove node" << std::endl;
+            deleteChildNodeAndDescendents(current, itemset[i]);
         }
         
     }

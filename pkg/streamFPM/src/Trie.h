@@ -6,10 +6,12 @@ class Trie {
 public:
     Trie();
     ~Trie();
-    void addWord(std::vector<int> itemset);
-    bool searchWord(std::vector<int> itemset);
-    bool deleteWord(std::vector<int> itemset);
+    void addItemsetDirectly(std::vector<int> itemset);
+    bool searchItemset(std::vector<int> itemset);
+    bool deleteItemset(std::vector<int> itemset);
     bool deleteNodeAndChildren(Node* current);
+    void deleteDescendentNodes(Node* current);
+    bool deleteChildNodeAndDescendents(Node* parent, int content);
     bool updateWord(std::vector<int> & itemset, int k, double d, double minsup, double dk, int len, int first);
     bool delayedInsertion(std::vector<int> & itemset, int k, double d, double minsup, double dk, int startIndex, int endIndex, Node* current);
     bool insertionPhase(std::vector<int> & itemset, int k, double d, double minsup, double dk, int len, int first);

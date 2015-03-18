@@ -32,19 +32,19 @@ RTrie::~RTrie()
 void RTrie::addSet(Rcpp::IntegerVector itemset)
 {
   //Rcpp::IntegerVector xx(itemset);
-  this->addWord(Rcpp::as<std::vector<int> >(itemset));
+  this->addItemsetDirectly(Rcpp::as<std::vector<int> >(itemset));
 }
 
 bool RTrie::search(Rcpp::IntegerVector itemset)
 {
  // Rcpp::IntegerVector xx(itemset);
-	return( this->searchWord(Rcpp::as<std::vector<int> >(itemset))); 
+	return( this->searchItemset(Rcpp::as<std::vector<int> >(itemset))); 
 }
 
 bool RTrie::deleteSet(Rcpp::IntegerVector itemset)
 {
   
-	return( this->deleteWord(Rcpp::as<std::vector<int> >(itemset))); 
+	return( this->deleteItemset(Rcpp::as<std::vector<int> >(itemset))); 
 }
 
 bool RTrie::addAllSets(Rcpp::IntegerVector itemset)

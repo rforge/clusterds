@@ -4,7 +4,7 @@
 #datastream <- DSD_Transactions_Random(c(integer))
 #output: A complete set of recent freq itemsets Lk
 
-DST_EstDec <- function(decayRate = 0.2, Dk = 0.0 , minsup = 0.3, datatype="character") {
+DST_EstDec <- function(decayRate = 0.2, minsup = 0.8, datatype="character") {
   
   decayRate <- decayRate #given decay rate
   #rt <- new(RTrie) #monitoring lattice
@@ -61,7 +61,7 @@ update.DST_EstDec <- function(dst, dsd, iterations=1) {
       Tk <- get_points(dsd)[[1]]
       
       
-        print(Tk)
+        #print(Tk)
       
       
       if (dst$RObj$dataType == "character") {
