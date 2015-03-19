@@ -324,25 +324,31 @@ numClasses <- function(actual) {
 }
 
 ssq <- function(points, actual, predict, centers) {
-  ### ssq does not use actual and predicted noise points
-  ### predicted noise points that are not actual noise points form their own 
-  ### cluster
-  if(!is.null(actual)) noise <- actual==0 & predict==0
-  else noise <- predict==0
-  
-  points <- points[!noise,]
-  predict <- predict[!noise]
-  if(any(predict==0)) {
-    warning("SSQ: ", sum(predict==0), " non-noise points were predicted noise incorrectly and form their own cluster.")
-    centers <- rbind(centers, colMeans(points[predict==0,]))
-    predict[predict==0] <- nrow(centers)
-  }
-  
-  ### points that are predicted as noise but are not are its own group!
+#   ### ssq does not use actual and predicted noise points
+#   ### predicted noise points that are not actual noise points form their own 
+#   ### cluster
+#   if(!is.null(actual)) noise <- actual==0 & predict==0
+#   else noise <- predict==0
+#   
+#   points <- points[!noise,]
+#   predict <- predict[!noise]
+#   if(any(predict==0)) {
+#     warning("SSQ: ", sum(predict==0), " non-noise points were predicted noise incorrectly and form their own cluster.")
+#     centers <- rbind(centers, colMeans(points[predict==0,]))
+#     predict[predict==0] <- nrow(centers)
+#   }
+#   
+#   ### points that are predicted as noise but are not are its own group!
+# 
+#   #sum(apply(dist(points, centers), 1L , min)^2)
+#   d <- dist(points, centers)
+#   sum(sapply(1:length(predict), FUN=function(i) d[i,predict[i]])^2)
 
-  #sum(apply(dist(points, centers), 1L , min)^2)
-  d <- dist(points, centers)
-  sum(sapply(1:length(predict), FUN=function(i) d[i,predict[i]])^2)
+  ### do nn assignment of non noise points
+  if(!is.null(actual)) points <- points[actual != 0L,]
+  
+  assign_dist <- apply(dist(points, centers), 1, min)
+  ssq <- sum(assign_dist^2)
 }
 
 silhouette <- function(points, actual, predict) {
