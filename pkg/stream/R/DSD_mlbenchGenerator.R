@@ -48,7 +48,8 @@ DSD_mlbenchGenerator <- function(method, ...) {
 get_points.DSD_mlbenchGenerator <- function(x, n=1, 
   outofpoints=c("stop", "warn", "ignore"), 
   cluster = FALSE, class = FALSE, ...) {
-  
+  .nodots(...)
+
   d <- do.call(paste("mlbench.", x$method,sep=""), c(list(n), x$variables))
   
   ## the data order needs to be scrambled...

@@ -366,7 +366,7 @@ tNN$methods(list(
   get_current_weights = function() {
     weights * decay_factor^(t-last_update) 
   },
-
+  
   get_current_relation_weights = function() {
     vals <- values(relations)
     vals[2,] * decay_factor^(t-vals[1,])
@@ -394,7 +394,7 @@ tNN$methods(list(
     #  o[(cs < w_total*noise)[-1]]
     #else  
     #  o[(cs >= w_total*noise)[-1]]
-      
+    
     # we do double (or multiple) counting!!!
     #w_total <- sum(ws)
     #cs <- cumsum(c(w_total-sum(ws), ws[o]))
@@ -419,7 +419,7 @@ tNN$methods(list(
     
     rel <- do.call(rbind, strsplit(keys(relations), "-"))
     rel <- matrix(match(rel, mcs), ncol=2) ### translate from names to index
-        
+    
     if(nrow(rel) > 0){
       vals <- get_current_relation_weights() 
       
@@ -444,22 +444,23 @@ tNN$methods(list(
       ### create similarity matrix
       s <- matrix(0, ncol=length(mcs), nrow=length(mcs))
       for(i in 1:nrow(rel)) s[rel[i,2], rel[i,1]] <- s[rel[i,1], rel[i,2]] <- ss[i]
-    }
+      
+      strong <- strong_mcs()
+      s <- s[strong, strong]
+      
+      ### filter alpha    
+      if(is.logical(use_alpha)) {
+        if(use_alpha) s[s < alpha] <- 0
+      }else s[s < use_alpha] <- 0
+      
+      ### add lenght 2 paths
+      #s2 <- s%*%s
+      #s <- s2 + s
+      
+      if(!matrix) s <- as.simil(s)
+      s
+    } else matrix(0, nrow=0, ncol=0)
     
-    strong <- strong_mcs()
-    s <- s[strong, strong]
-    
-    ### filter alpha    
-    if(is.logical(use_alpha)) {
-      if(use_alpha) s[s < alpha] <- 0
-    }else s[s < use_alpha] <- 0
-        
-    ### add lenght 2 paths
-    #s2 <- s%*%s
-    #s <- s2 + s
-    
-    if(!matrix) s <- as.simil(s)
-    s
   },
   
   

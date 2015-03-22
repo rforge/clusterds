@@ -129,13 +129,14 @@ hierarchical$methods(
     }
   },
   
-  get_microclusters = function(...) { data },
-  get_microweights = function(...) { dataWeights }, 
+  get_microclusters = function(...) { .nodots(...); data },
+  get_microweights = function(...) { .nodots(...); dataWeights }, 
   
-  get_macroclusters = function(...) { centers },
-  get_macroweights = function(...) { weights },
+  get_macroclusters = function(...) { .nodots(...); centers },
+  get_macroweights = function(...) { .nodots(...); weights },
   
   microToMacro = function(micro=NULL, ...){ 
+    .nodots(...);   
     if(is.null(micro)) micro <- 1:nrow(data)
     structure(assignment[micro], names=micro)
   }  

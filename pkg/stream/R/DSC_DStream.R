@@ -18,10 +18,11 @@
 
 DSC_DStream <- function(gridsize, d=NA_integer_, lambda = 1e-3, 
   gaptime=1000L, Cm=3, Cl=.8, attraction=FALSE, epsilon=.3, 
-  Cm2=Cm, k=NULL) {
+  Cm2=Cm, k=NULL, N=NULL) {
   
-  dstream <- DStream$new(gridsize, as.integer(d), lambda, 
-    as.integer(gaptime), Cm, Cl, as.logical(attraction), epsilon, Cm2, k)
+  dstream <- DStream$new(gridsize, d, lambda, 
+    gaptime, Cm, Cl, attraction, epsilon, 
+    Cm2, k, N)
   
   l <- list(
     description = "D-Stream", 
@@ -60,6 +61,7 @@ DStream <- setRefClass("DStream",
     epsilon		      = "numeric",
     Cm2		          = "numeric",
     k               = "integer",
+    N_fixed         = "integer",
     
     ### store the grid
     grid	 		      = "hash",
@@ -80,20 +82,26 @@ DStream <- setRefClass("DStream",
       attraction = FALSE,
       epsilon = .3,
       Cm2 = 3,
-      k = NULL
+      k = NULL,
+      N_fixed = NULL
     ) {
       
-      d  <<- d
+      d  <<- as.integer(d)
       gridsize <<- gridsize
       lambda <<- lambda
       gaptime	<<- as.integer(gaptime)
       Cm <<- Cm
       Cl <<- Cl
-      attraction <<- attraction
+      attraction <<- as.logical(attraction)
       epsilon <<- epsilon
       Cm2 <<- Cm2
+      
       if(is.null(k)) k <<- 0L
       else k <<- as.integer(k)
+      
+      if(is.null(N_fixed)) N_fixed <<- 0L
+      else N_fixed <<- as.integer(N_fixed)
+      
       
       grid  <<- hash()
       #grid <<- new("hash", new.env(hash = TRUE, parent = emptyenv(), 
@@ -125,7 +133,7 @@ DStream$methods(list(
     }
     
     if(ncol(newdata) != d) stop("Dimensionality mismatch!")
-    
+  
     for(i in 1:nrow(newdata)) {
       point <- newdata[i, ]
       npoints <<- npoints + 1L
@@ -135,7 +143,8 @@ DStream$methods(list(
         if(length(grid)>0) {
           
           ### remove sporadic grids
-          N <- prod(maxs-mins+1L)
+          if(N_fixed < 1) N <- prod(maxs-mins+1L)
+          else N <- N_fixed
           
           ### add missing decay
           gv <- values(grid, simplify=FALSE)
@@ -500,6 +509,7 @@ get_macroweights.DSC_DStream <- function(x, ...) {
 }
 
 microToMacro.DSC_DStream <- function(x, micro=NULL, ...) {
+  .nodots(...)
   if(x$macro$newdata) {
     x$macro$macro <- x$RObj$get_macro_clustering()
     x$macro$newdata <- FALSE

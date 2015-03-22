@@ -36,6 +36,7 @@ get_weights <- function(x, type=c("auto", "micro", "macro"), scale=NULL, ...)
   UseMethod("get_weights")
 get_weights.default <- function(x, type=c("auto", "micro", "macro"), 
   scale=NULL, ...) {
+  .nodots(...)
   m <- rep(1, nclusters(x, type=type))
   if(!is.null(scale)) {
     if(length(unique(m)) ==1)  w <- rep(mean(scale), length(w))

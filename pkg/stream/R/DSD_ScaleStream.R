@@ -19,7 +19,7 @@
 
 # accepts an open connection
 DSD_ScaleStream <- function(dsd,  
-  center=TRUE, scale=TRUE,
+  center=TRUE, scale=TRUE, 
   n=1000, reset=FALSE) {
   
   # creating the DSD object
@@ -40,7 +40,8 @@ DSD_ScaleStream <- function(dsd,
 get_points.DSD_ScaleStream <- function(x, n=1, 
   outofpoints=c("stop", "warn", "ignore"),
   cluster=FALSE, class=FALSE, ...) {
-  
+  .nodots(...)
+
   d <- get_points(x$dsd, n, cluster=cluster, class=class)
   
   if(cluster) cl <- attr(d, "cluster")

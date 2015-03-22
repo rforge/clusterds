@@ -11,7 +11,7 @@
 DSC_tNN(r, lambda = 0.001, gap_time = 1000L, 
   noise = 0.1, measure = "Euclidean", 
 	shared_density = FALSE, alpha=0.1, k=0, minweight = 0)
-get_shared_density(x, matrix=FALSE)  
+get_shared_density(x, matrix=FALSE, use_alpha = TRUE)  
 }
 
 \arguments{
@@ -33,6 +33,7 @@ get_shared_density(x, matrix=FALSE)
     needs to have.}
   \item{x}{A DSC_tNN object to get the shared density information from.}
   \item{matrix}{get shared density as a matrix.}
+  \item{use_alpha}{only return shared density if it exceeds alpha.}
 }
 
 \details{
