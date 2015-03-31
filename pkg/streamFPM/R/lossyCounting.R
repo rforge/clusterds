@@ -1,72 +1,164 @@
-#numbers <- sample(1:20, 5000, replace=TRUE, prob=rexp(20))
-#lossyCounting(data=numbers)
+#LossyCounting
 
-library(hash)
+#input: datastream D
+#datastream <- DSD_Transactions_Random(c(integer))
+#output: A complete set of recent freq itemsets Lk
 
-lossyCounting<- function(data, error=0.1) {
+DST_LossyCounting <- function(error=0.1, datatype = "integer") {
+  
+  #FIXME add checks. error <1
+  
   DH <- hash()
+  N <- 0L         #number of items processed
+  width <- 1/error    #width of bucket
+  error <- error
+  b_current <- 1L      #current bucket
+  desc <- "Lossy Counting"
+  dataType <- datatype
   
-  N <- 0;           #number of items processed
-  
-  w <- 1/error
-  
-  b_current <- 1
-  
-  
-  for(x in data) {
-    
-    N <- N+1
-  
-   ### insert phase ###
-   
-    #if x is in D
-    if (has.key(toString(x), DH)){
-      #increase count of item in DH by 1    
-      DH[[toString(x)]][1] <- DH[[toString(x)]][1] + 1
-      
-      
-    }
-    else {
-      #insert(x, 1, b_current-1) into D
-      DH[[toString(x)]] <- c(freq = 1, err = b_current - 1)
-    }
-  
-   ### delete phase ###
-    
-   #if N mod w == 0
-   if( N%%w == 0) {
-     #bucket boundary reached. delete infreq items
-     
-     
-     #finds all elements in D where the f_i + delta <= b_current
-     #removes them
-     keys <- keys(DH)
-     
-     removed <- sapply(1:length(keys), function(x, b_current) {
-       if(DH[[keys[x]]][1] + DH[[keys[x]]][2] <= b_current) {
-         delete(keys[x], DH)
-         return(keys[x])
-       }
-     }, b_current = b_current)
-     
-  
-     b_current <- b_current + 1     #new bucket
-     
-   }
-  
-  }  #end while loop (end of stream)
-
-  
-  return(DH)
+  LossyCounting <- LossyCounting$new(error, b_current, width, N, dataType)
+  structure(list(description = desc,
+                 RObj = LossyCounting, DH = DH),
+            class = c("DST_LossyCounting", "DST"))
 }
 
 
-#output
-#keys <- keys(DH)
-#for (i in 1:length(keys)) {
-#  if(DH[[keys[i]]][1] >= (s-e) * N) {
-#    print(keys[i])
-#    print(DH[[keys[i]]][1])
-#  }
-#}
+LossyCounting <- setRefClass("LossyCounting",
+      fields = list(
+        ### parameters
+        error = "numeric",
+        b_current	= "integer",
+        width = "numeric",
+        N = "integer",
+        dataType = "character"
+        
+      ),
+                      
+    methods = list(
+      initialize = function(error, b_current, width, N, dataType) {
+        error	<<-  error
+        b_current	<<- b_current
+        width     <<- width
+        N    <<- N
+        dataType <<- dataType
+        
+        .self
+      }
+      
+    ),
+)
+
+update.DST_LossyCounting <- function(dst, dsd, n=1) {
+  
+  for(i in 1:n){
+    
+    #print(paste0("iteration: ", i))
+    
+    #gets the next transaction
+    Tk <- get_points(dsd)[[1]]
+    if(dst$RObj$dataType == "character") {
+      Tk <- Tk[Tk != ""]
+    }
+    
+    #print(Tk)
+    for(x in Tk) {
+      dst$RObj$N <- dst$RObj$N+1L
+      
+      ### insert phase ###
+      if(dst$RObj$dataType == "integer") {
+        #if x is in DH
+        if (has.key(toString(x), dst$DH)){
+          #increase count of item in DH by 1    
+          dst$DH[[toString(x)]][1] <- dst$DH[[toString(x)]][1] + 1
+          
+          
+        }
+        else {
+          #insert(x, 1, b_current-1) into DH
+          dst$DH[[toString(x)]] <- c(freq = 1, err = dst$RObj$b_current - 1)
+        }
+      }
+      else {  #if dataType is character
+        #if x is in DH
+        if (has.key(x, dst$DH)){
+          #increase count of item in DH by 1    
+          dst$DH[[x]][1] <- dst$DH[[x]][1] + 1
+          
+          
+        }
+        else {
+          #insert(x, 1, b_current-1) into DH
+          dst$DH[[x]] <- c(freq = 1, err = dst$RObj$b_current - 1)
+        }
+        
+      }
+      
+      ### delete phase ###
+      
+      #if N mod w == 0
+      if( dst$RObj$N %% dst$RObj$width == 0) {
+        #bucket boundary reached. delete infreq items
+        
+        
+        #finds all elements in D where the f_i + delta <= b_current
+        #removes them
+        keys <- keys(dst$DH)
+        
+        removed <- sapply(1:length(keys), 
+                    function(x, b_current) {
+                      if(dst$DH[[keys[x]]][1] + dst$DH[[keys[x]]][2] <= b_current) {
+                        delete(keys[x], dst$DH)
+                        return(keys[x])
+                      }
+                    }, b_current = dst$RObj$b_current)
+        
+        
+        dst$RObj$b_current <- dst$RObj$b_current + 1L     #new bucket
+        
+      }
+    }
+  }
+}
+
+
+#returns frequent sets
+get_patterns.DST_LossyCounting <- function(dst, minsup = 0.1, decode=FALSE) {
+  
+  #$c_i >= (s - e)N$.
+  
+  threshold <- (minsup - dst$RObj$error)*dst$RObj$N
+  
+  keys <- keys(dst$DH)
+  frequent <- sapply(1:length(keys), 
+                    function(x, thres) {
+                      if(dst$DH[[keys[x]]][1] >= thres) {
+                        return(keys[x])
+                      }
+                    }, thres = threshold)
+  frequent <- frequent[!sapply(frequent, is.null)]
+  
+  patterns <- vector(mode="integer", length=length(frequent))
+  error <- vector(mode="integer", length=length(frequent))
+  names <- vector(mode="character", length=length(frequent))
+  for(i in 1:length(frequent)) {
+    patterns[i] <- dst$DH[[ frequent[[i]][1] ]][1]
+    error[i] <- dst$DH[[ frequent[[i]][1] ]][2]
+    names[i] <- frequent[[i]][1] 
+  }
+  names(patterns) <- names
+  attr(patterns, "sets") <- as.list(names)
+  attr(patterns, "error") <- error
+  
+  class(patterns) <- "DST_Patterns"
+  
+}
+
+print.DST_LossyCounting <- function(x, ...) {
+  cat(paste(x$description), "\n")
+  cat("Class:", paste(class(x), collapse=", "), "\n")
+  #FIXME add how many patterns are there
+  
+}
+
+
 

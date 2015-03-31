@@ -8,8 +8,6 @@
 
 #function that returns vector of counts
 
-#function for top ten?
-
 #maybe just make patterns a vector?
 
 

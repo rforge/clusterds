@@ -12,6 +12,10 @@ using namespace std;
 Trie::Trie()
 {
     root = new Node();
+    minsup_ = 0.001;
+    insertSupport_ = 0.0008;
+    double pruningSupport_ = 0.0007;
+    double decayRate_ = 0.999;
 }
 
 Trie::~Trie()
@@ -210,7 +214,6 @@ bool Trie::updateWordRecursion(std::vector<int> & itemset, int k, double decay, 
 {
     if (current != root)
     {
-      
       //updates the count and estimate of itemsets. 1-itemsets get error = 0. 
       if(len == 1)
       {
@@ -250,7 +253,7 @@ bool Trie::updateWordRecursion(std::vector<int> & itemset, int k, double decay, 
         //FIXME minsup should be pruning support
         //FIXME  bad stuff with doubles
         //std::cout << tmp->getCount()/dk << " :: " << minsup << std::endl;
-        if(tmp->getCount()/dk < minsup  && len+1 > 1) {
+        if(tmp->getCount()/dk < pruningSupport_  && len+1 > 1) {
             //std::cout << "remove node" << std::endl;
             deleteChildNodeAndDescendents(current, itemset[i]);
         }
@@ -264,6 +267,8 @@ bool Trie::updateWordRecursion(std::vector<int> & itemset, int k, double decay, 
 //calls insertionPhase with current = root, since RT doesn't have access to root
 bool Trie::insertionPhase(std::vector<int> & itemset, int k, double d, double minsup, double dk, int len, int first)
 {
+    lastTID_ = k;
+    totalSetsWithDecay_ = dk;
     insertionPhase(itemset, k, d, minsup, dk, len, first, root);
 }
 
@@ -330,7 +335,7 @@ bool Trie::delayedInsertion(std::vector<int> & itemset, int k, double d, double 
       //std::cout << "here6 calculated values" << std::endl;
     
       
-      if(cmax_double/dk  >= minsup * 0.8)
+      if(cmax_double/dk  >= insertSupport_)
       {
         Node* tmp = new Node();
         tmp->setContent(itemset[endIndex]);
@@ -465,36 +470,46 @@ void Trie::printTree(Node * current)
   //cout << current->content() << " : count :" << current->getCount() << ", err: " << current->getErr() << endl;
 }
 
-vector<vector<int> > Trie::getMostFrequentItemset()
+vector<vector<int> > Trie::getMostFrequentItemset(double dk)
 {
   vector<int> counts;
   vector<vector<int> > freqItems;
   vector<int> currentSet;
-  getMostFrequentItemset(root, freqItems, counts, currentSet, 0);
+  getMostFrequentItemset(root, freqItems, counts, currentSet, 0, dk);
   //cout << freqItems[0][0] << endl;
   freqItems.push_back(counts);
   return freqItems;
 }
 
 void Trie::getMostFrequentItemset(Node * current, vector<vector<int> > &freqItems,
-  vector<int> &counts, vector<int> &currentSet, int depth)
+  vector<int> &counts, vector<int> &currentSet, int depth, double dk)
 {
   if(current == root)
   {
     vector<Node*> c = current->children();
     for (int i = 0; i < c.size(); i++) {
-      getMostFrequentItemset(c[i], freqItems, counts, currentSet, depth + 1);
+      getMostFrequentItemset(c[i], freqItems, counts, currentSet, depth + 1, dk);
     }
   }
   else
   {
-    currentSet.push_back(current->content());
-    freqItems.push_back(currentSet);
-    counts.push_back(current->getCount());
-    vector<Node*> c = current->children();
-    for (int i = 0; i < c.size(); i++) {
-      getMostFrequentItemset(c[i], freqItems, counts, currentSet, depth + 1);
+    //updates the count & error of all sets based on lastest TID
+    current->setCount( (current->getCount() * pow(decayRate_, lastTID_ - current->getId()) ) + 1);
+    current->setErr(current->getErr() * pow(decayRate_, lastTID_ - current->getId()));
+    current->setId(lastTID_);
+    
+    //if the current set meets the minsup, add it to frequent itemsets and check children
+    if(current->getCount()/dk >= minsup_) {
+      currentSet.push_back(current->content());
+      freqItems.push_back(currentSet);
+      counts.push_back(current->getCount());
+      vector<Node*> c = current->children();
+      
+      for (int i = 0; i < c.size(); i++) {
+        getMostFrequentItemset(c[i], freqItems, counts, currentSet, depth + 1, dk);
+      }
     }
+
   }
   
   currentSet.pop_back();
@@ -502,3 +517,22 @@ void Trie::getMostFrequentItemset(Node * current, vector<vector<int> > &freqItem
   
 }
 
+bool Trie::updateParams(double decayRate, double minsup, double insertSupport, double pruningSupport) 
+{
+  if(decayRate > 0)
+    decayRate_ = decayRate;
+  if(minsup > 0)
+    minsup_ = minsup;
+  if(insertSupport > 0)
+    insertSupport_ = insertSupport;
+  if(pruningSupport > 0)
+    pruningSupport_ = pruningSupport;
+}
+
+void Trie::printSupports()
+{
+  std::cout << "minsup: " << minsup_  << std::endl;
+  std::cout << "insSup: " << insertSupport_ << std::endl;
+  std::cout << "pruningSup: " << pruningSupport_ << std::endl;
+  std::cout << "decayRate: " << decayRate_ << std::endl;
+}

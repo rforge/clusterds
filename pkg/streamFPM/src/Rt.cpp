@@ -14,9 +14,10 @@ public:
     bool addAllSets(Rcpp::IntegerVector itemset);
     bool updateAllSets(Rcpp::IntegerVector itemset, int transNum, double decayRate, double minsup, double dk);
     bool updateSet(Rcpp::IntegerVector itemset, int tid);
+    bool updateParameters(double decayRate, double minsup, double insertSupport, double pruningSupport);
     int  size(Rcpp::IntegerVector itemset);
     void printAll();
-    SEXP getFrequentItemsets();
+    SEXP getFrequentItemsets(double dk);
  };
  
  RTrie::RTrie()
@@ -58,6 +59,12 @@ bool RTrie::updateSet(Rcpp::IntegerVector itemset, int tid)
   return false;
 }
 
+bool RTrie::updateParameters(double decayRate, double minsup, double insertSupport, double pruningSupport)
+{
+  updateParams(decayRate, minsup, insertSupport, pruningSupport);
+  printSupports();
+}
+
 bool RTrie::updateAllSets(Rcpp::IntegerVector itemset, int transNum, double decayRate, double minsup, double dk)
 {
   
@@ -71,6 +78,7 @@ bool RTrie::updateAllSets(Rcpp::IntegerVector itemset, int transNum, double deca
     //std::cout << "first: " << first << std::endl;
     
     updateWord(e, transNum, decayRate, minsup,  dk, 0, first);
+
               
   }
   
@@ -89,9 +97,9 @@ int  RTrie::size(Rcpp::IntegerVector itemset)
   return e.size();
 }
 
-SEXP RTrie::getFrequentItemsets()
+SEXP RTrie::getFrequentItemsets(double dk)
 {
- std::vector<std::vector<int> > freqItems = this->getMostFrequentItemset();
+ std::vector<std::vector<int> > freqItems = this->getMostFrequentItemset(dk);
  return Rcpp::wrap(freqItems);
  
 }
@@ -116,5 +124,6 @@ RCPP_MODULE(rtrie)
   .method("size", &RTrie::size)
   .method("printAll", &RTrie::printAll)
   .method("getFrequentItemsets", &RTrie::getFrequentItemsets)
+  .method("updateParameters", &RTrie::updateParameters)
   ;
 }

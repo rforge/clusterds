@@ -1,5 +1,6 @@
 useDynLib(streamFPM)
 exportPattern("^[[:alpha:]]+")
+#exportPattern("^[^\\.]")
 import("stream")
 import("hash")
 import("testthat")

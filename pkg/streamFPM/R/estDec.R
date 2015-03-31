@@ -4,7 +4,8 @@
 #datastream <- DSD_Transactions_Random(c(integer))
 #output: A complete set of recent freq itemsets Lk
 
-DST_EstDec <- function(decayRate = 0.2, minsup = 0.8, datatype="character") {
+DST_EstDec <- function(decayRate = 0.2, minsup = 0.8, insertSupport = NULL, 
+                       pruningSupport = NULL, datatype="character") {
   
   decayRate <- decayRate #given decay rate
   #rt <- new(RTrie) #monitoring lattice
@@ -14,11 +15,26 @@ DST_EstDec <- function(decayRate = 0.2, minsup = 0.8, datatype="character") {
   desc <- "estDec"
   dataType <- datatype
   hash <- hash()
+  insertSupport <- insertSupport
+  pruningSupport <- pruningSupport
   
-  estDec<- estDec$new(decayRate, minsup, Dk, TID, dataType)
-  structure(list(description = desc,
+  if (is.null(insertSupport)) {
+    insertSupport <- minsup*0.8
+  }
+  if (is.null(pruningSupport)) {
+    pruningSupport <- minsup*0.7
+  }
+  
+  estDec<- estDec$new(decayRate, minsup, Dk, TID, insertSupport, pruningSupport, dataType)
+  
+  e <- structure(list(description = desc,
        RObj = estDec, wordHash = hash),
     class = c("DST_EstDec", "DST"))
+  
+  #sets the support and decay rate for the data structure
+  e$RObj$rt$updateParameters(decayRate, minsup, insertSupport, pruningSupport)
+  
+  e
 }
 
 
@@ -30,18 +46,22 @@ estDec <- setRefClass("estDec",
     minsup			= "numeric",
     Dk = "numeric",
     TID = "integer",
+    insertSupport = "numeric",
+    pruningSupport = "numeric",
     dataType = "character",
     wordCount = "integer"
    
   ),
   
   methods = list(
-   initialize = function(decayRate, minsup, Dk, TID, dataType) {
+   initialize = function(decayRate, minsup, Dk, TID, insertSupport, pruningSupport, dataType) {
      rt 		<<-  new(RTrie)
      decayRate	<<-  decayRate
      minsup	<<- minsup
      Dk     <<- Dk
      TID    <<- TID
+     insertSupport <<- insertSupport
+     pruningSupport <<- pruningSupport
      dataType <<- dataType
      wordCount <<- 1L
      
@@ -51,10 +71,12 @@ estDec <- setRefClass("estDec",
   ),
 )
 
-update.DST_EstDec <- function(dst, dsd, iterations=1) {
+update.DST_EstDec <- function(dst, dsd, n=1) {
 
-    for(i in 1:iterations){
-      
+    for(i in 1:n){
+      if(n%%50 == 0){
+        print(i)
+      }
       #print(paste0("iteration: ", i))
       
       #gets the next transaction
@@ -104,18 +126,7 @@ update.DST_EstDec <- function(dst, dsd, iterations=1) {
       #updates all sets
       dst$RObj$rt$updateAllSets(Tk, dst$RObj$TID, dst$RObj$decayRate, dst$RObj$minsup, dst$RObj$Dk)
       
-
-
     }
-    
-    #Frequent itemset selection phase
-    #Lk <- NULL
-    
-    #  for(each itemset e in ML) {
-    #    cnt <- cnt*d^(k-MRtid); err = err * d^(k-MRtid); MRtid = k;
-    #    if (cnt/|D|k >= Smin)
-    #      Lk = Lk U e
-    #  }
     
 }
 

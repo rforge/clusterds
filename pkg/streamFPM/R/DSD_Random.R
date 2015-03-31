@@ -48,7 +48,6 @@ get_points.DSD_Transactions_Random <- function(x, n=1, assignment = FALSE,...) {
   for (i in 1:n) {
     length <- x$size(x$maxTransactionSize)
     a[[i]] <- sample(1:x$setSize, length, replace=FALSE, prob = x$prob)
-    a[[i]][length] <- 11L
   }
   
   return(a)
