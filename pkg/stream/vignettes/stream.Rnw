@@ -1459,7 +1459,7 @@ For evolving data streams it is more appropriate to bias the sample
 toward more recent data points. For biased sampling, 
 Algorithm~2.1 by \cite{stream:Aggarwal:2006} is also implemented.
 
-\item\code{DSC_tNN} implements the simple data stream clustering algorithm called 
+\item\code{DSC_DBSTREAM} implements the simple data stream clustering algorithm called 
 \emph{tNN threshold nearest-neighbors (tNN)} which was developed
 for package~\pkg{rEMM}
 by \cite{stream:Hahsler+Dunham:2014,stream:Hahsler+Dunham:2010b}.
@@ -2312,13 +2312,13 @@ algorithms <- list(
   'Window' = DSC_TwoStage(micro = DSC_Window(horizon = 100), 
     macro = DSC_Kmeans(k = 4)), 
   'D-Stream' = DSC_DStream(gridsize = .7, Cm = 1.5),
-  'tNN' = DSC_tNN(r = .45)
+  'DBSTREAM' = DSC_DBSTREAM(r = .45)
 )
 @
 
 The algorithms are reservoir sampling reclustered with weighted $k$-means, 
 sliding window reclustered with weighted $k$-means, D-Stream and 
-tNN (threshold nearest-neighbors) with their built-in reclustering strategies.
+DBSTREAM with their built-in reclustering strategies.
 We store the algorithms in a list for easier handling and then cluster the same 
 1000 data points with each algorithm. Note that we have to reset the stream
 each time before we cluster.
@@ -2362,9 +2362,9 @@ the different algorithms. Micro-clusters are shown as red circles and
 the size is proportional to each cluster's weight.
 Reservoir sampling and the sliding window select some data points as micro-clusters
 and also include a few noise points. 
-D-Stream and tNN
+D-Stream and DBSTREAM
 suppress noise well and concentrate the micro-clusters on the real clusters. D-Stream
-is grid-based and thus the micro-clusters are regularly spaced. tNN 
+is grid-based and thus the micro-clusters are regularly spaced. DBSTREAM 
 produces a similar, almost regular pattern.
 
 It is also interesting to compare the assignment areas for micro-clusters 
@@ -2400,7 +2400,7 @@ Figure~\ref{figure:microclusters_assignment} shows the assignment areas.
 For regular micro-cluster-based algorithms the assignment areas are shown
 as dotted
 circles around micro-cluster centers. 
-For example for tNN the assignment area for all micro-clusters has exactly 
+For example for DBSTREAM the assignment area for all micro-clusters has exactly 
 the same radius. D-Stream uses a grid for assignment and thus shows the grid.
 Reservoir sampling and sliding window does
 not have assignment areas and data points are always assigned to
@@ -2428,10 +2428,10 @@ of micro-clusters is close.
 All algorithms produce very good values 
 for purity for this data set with reasonably well separated clusters.
 
-Next, we compare macro-cluster placement. D-Stream and tNN
+Next, we compare macro-cluster placement. D-Stream and DBSTREAM
 have built-in reclustering strategies. 
 D-Stream joins adjacent dense grid cells to form macro-clusters and
-tNN joins micro-clusters reachable by overlapping assignment areas.
+DBSTREAM joins micro-clusters reachable by overlapping assignment areas.
 For sampling and sliding window we already have created a two-stage process 
 together with weighted $k$-means ($k=4$).
 
@@ -2457,7 +2457,7 @@ Figure~\ref{figure:macroclusters} shows the macro-cluster placement. Sampling an
 the sliding window use $k$-means reclustering and therefore produce exactly four clusters.
 However, the placement is off, splitting a true cluster and missing one of the less
 dense clusters. 
-D-Stream and tNN identify the two denser clusters
+D-Stream and DBSTREAM identify the two denser clusters
 correctly, but split the lower density clusters into multiple pieces.
 
 <<>>=
@@ -2472,7 +2472,7 @@ sapply(algorithms, FUN = function(a) {
 
 The evaluation measures at the macro-cluster level reflect the findings from the 
 visual analysis of the clustering with D-Stream producing the best results. 
-Note that D-Stream and tNN do not assign some points which are not noise points
+Note that D-Stream and DBSTREAM do not assign some points which are not noise points
 which has a negative effect on the average silhouette width.
 %This is shown with a warning and these points form their own cluster
 %for calculating the within sum of squares and the average silhouette width.
@@ -2498,7 +2498,7 @@ Next we initialize again a list of clustering algorithms. Note that this time we
 a $k$ of two for reclustering sampling and the sliding window. We also use a sample 
 biased to newer data points~\citep{stream:Aggarwal:2006} since otherwise outdated data points would
 result in creating outdated clusters. For the sliding window, D-Stream and
-tNN we use faster decay (\code{lambda=.01}) 
+DBSTREAM we use faster decay (\code{lambda=.01}) 
 since the clusters in the data stream move very quickly.
 
 <<>>= 
@@ -2508,7 +2508,7 @@ algorithms <- list(
   'Window' = DSC_TwoStage(micro = DSC_Window(horizon = 100, lambda = .01), 
     macro = DSC_Kmeans(k = 2)), 
   'D-Stream' = DSC_DStream(gridsize = .05, lambda = .01),
-  'tNN' = DSC_tNN(r = .02, lambda = .01)
+  'DBSTREAM' = DSC_DBSTREAM(r = .02, lambda = .01)
 )
 @
 
@@ -2568,7 +2568,7 @@ Figure~\ref{figure:data_bng2} shows the corrected Rand index for the four
 data stream clustering algorithms over the evolving data stream.
 All algorithms show that separating the two clusters is 
 impossible around position 3000 when the two clusters overlap. 
-D-Stream and tNN perform equally well while biased sampling and the 
+D-Stream and DBSTREAM perform equally well while biased sampling and the 
 sliding window achieve only a lower corrected Rand index. This is easily
 explained by the fact that these two algorithms cannot detect noise and thus
 have to assign noise points to one of the clusters resulting in

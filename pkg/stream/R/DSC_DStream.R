@@ -61,7 +61,7 @@ DStream <- setRefClass("DStream",
     epsilon		      = "numeric",
     Cm2		          = "numeric",
     k               = "integer",
-    N_fixed         = "integer",
+    N_fixed         = "numeric",
     
     ### store the grid
     grid	 		      = "hash",
@@ -100,7 +100,7 @@ DStream <- setRefClass("DStream",
       else k <<- as.integer(k)
       
       if(is.null(N_fixed)) N_fixed <<- 0L
-      else N_fixed <<- as.integer(N_fixed)
+      else N_fixed <<- N_fixed
       
       
       grid  <<- hash()
