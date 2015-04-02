@@ -11,7 +11,7 @@ public:
 
     void setCount(int cnt) { count = cnt; }
     int getCount() { return count; }
-    int incrementCount(int add = 1){ count = count + add; }
+    void incrementCount(int add = 1){ count = count + add; }
     
     Node* findChild(int c);
     void appendChild(Node* child) { mChildren.push_back(child); }

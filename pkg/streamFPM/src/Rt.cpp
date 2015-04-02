@@ -16,7 +16,7 @@ public:
     bool updateSet(Rcpp::IntegerVector itemset, int tid);
     bool updateParameters(double decayRate, double minsup, double insertSupport, double pruningSupport);
     int  size(Rcpp::IntegerVector itemset);
-    void printAll();
+    void printAll(int max_depth);
     SEXP getFrequentItemsets(double dk);
  };
  
@@ -63,6 +63,7 @@ bool RTrie::updateParameters(double decayRate, double minsup, double insertSuppo
 {
   updateParams(decayRate, minsup, insertSupport, pruningSupport);
   printSupports();
+  return true;
 }
 
 bool RTrie::updateAllSets(Rcpp::IntegerVector itemset, int transNum, double decayRate, double minsup, double dk)
@@ -73,6 +74,7 @@ bool RTrie::updateAllSets(Rcpp::IntegerVector itemset, int transNum, double deca
 
   //calls updateWord for all e
   //if e = {a,b,c}. calls for {a,b,c}, {b,c}, {c}
+  //for (std::size_t i = 0, max = vec.size(); i != max; ++i)
   for (int first = 0; first < e.size(); first++) {
     
     //std::cout << "first: " << first << std::endl;
@@ -104,9 +106,9 @@ SEXP RTrie::getFrequentItemsets(double dk)
  
 }
 
-void RTrie::printAll()
+void RTrie::printAll(int max_depth)
 {
-  this->printTree(NULL);
+  this->printTree(NULL, max_depth, 0);
 }
 
 

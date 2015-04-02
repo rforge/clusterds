@@ -19,7 +19,7 @@ DST_EstDec <- function(decayRate = 0.2, minsup = 0.8, insertSupport = NULL,
   pruningSupport <- pruningSupport
   
   if (is.null(insertSupport)) {
-    insertSupport <- minsup*0.8
+    insertSupport <- minsup*0.7
   }
   if (is.null(pruningSupport)) {
     pruningSupport <- minsup*0.7
@@ -91,22 +91,26 @@ update.DST_EstDec <- function(dst, dsd, n=1) {
           #make sure empty strings are removed from list
           Tk <- Tk[Tk != ""]
           Tk_ints <- rep(0L, length(Tk))
-          
-          for(i in 1:length(Tk)) {
-              #print(Tk[i])
-              if( has.key(key = Tk[i], hash = dst$wordHash) ) {
-                Tk_ints[i] <- dst$wordHash[[ Tk[i] ]]
-              }
-              else {
-                dst$wordHash[[ Tk[i] ]] <- dst$RObj$wordCount
-                
-                Tk_ints[i] <- dst$RObj$wordCount
-                
-                dst$RObj$wordCount <- dst$RObj$wordCount + 1L
-                
-              }
-          } #end forloop
-         
+          print(Tk)
+          if(length(Tk) > 0) {
+            for(i in 1:length(Tk)) {
+                #print(Tk[i])
+                if(!is.na(Tk[i])){ 
+                  if( has.key(key = Tk[i], hash = dst$wordHash) ) {
+                    Tk_ints[i] <- dst$wordHash[[ Tk[i] ]]
+                  }
+                  else {
+                    dst$wordHash[[ Tk[i] ]] <- dst$RObj$wordCount
+                    
+                    Tk_ints[i] <- dst$RObj$wordCount
+                    
+                    dst$RObj$wordCount <- dst$RObj$wordCount + 1L
+                    
+                  }
+                }
+            } #end forloop
+          }
+          Tk_ints <- Tk_ints[Tk_ints != 0L]
           Tk <- Tk_ints
       }
       
@@ -140,7 +144,7 @@ get_patterns.DST_EstDec <- function(dst, decode=FALSE) {
     wordValues <- sort(values(dst$wordHash))
     
     #gets frequent patterns, with counts as last row
-    patterns <- dst$RObj$rt$getFrequentItemsets()
+    patterns <- dst$RObj$rt$getFrequentItemsets(dst$RObj$Dk)
     
     #separates counts into dif variable and removes last row
     counts <- patterns[[length(patterns)]]

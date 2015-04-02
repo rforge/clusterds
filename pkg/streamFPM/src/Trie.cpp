@@ -459,15 +459,20 @@ double Trie::cUpper(std::vector<int> & itemset, double minsup, double dk, double
 
 
 //default is root
-void Trie::printTree(Node * current)
+void Trie::printTree(Node * current, int max_depth, int depth)
 {
-  if(current == NULL)
-    current = root;
-  vector<Node*> c = current->children();
-  for (int i = 0; i < c.size(); i++) {
-    printTree(c[i]);
+  if(depth <= max_depth  || max_depth < 0) {
+      if(current == NULL)
+        current = root;
+      else{
+        std::cout << current->content() << " : count :" << current->getCount() << ", err: " << current->getErr() << std::endl;
+      }
+      vector<Node*> c = current->children();
+      for (int i = 0; i < c.size(); i++) {
+        printTree(c[i], max_depth, depth + 1);
+      }
   }
-  //cout << current->content() << " : count :" << current->getCount() << ", err: " << current->getErr() << endl;
+
 }
 
 vector<vector<int> > Trie::getMostFrequentItemset(double dk)
@@ -486,6 +491,7 @@ void Trie::getMostFrequentItemset(Node * current, vector<vector<int> > &freqItem
 {
   if(current == root)
   {
+    //std::cout << "root " << std::endl;
     vector<Node*> c = current->children();
     for (int i = 0; i < c.size(); i++) {
       getMostFrequentItemset(c[i], freqItems, counts, currentSet, depth + 1, dk);
@@ -493,26 +499,39 @@ void Trie::getMostFrequentItemset(Node * current, vector<vector<int> > &freqItem
   }
   else
   {
-    //updates the count & error of all sets based on lastest TID
-    current->setCount( (current->getCount() * pow(decayRate_, lastTID_ - current->getId()) ) + 1);
-    current->setErr(current->getErr() * pow(decayRate_, lastTID_ - current->getId()));
-    current->setId(lastTID_);
-    
+    //std::cout << "current node: " << current->content() << " depth: " << depth << " sup: " << current->getCount()/dk << std::endl;
+    if(current->getId() < lastTID_) {
+      current->setCount( (current->getCount() * pow(decayRate_, lastTID_ - current->getId()) ));
+      current->setErr(current->getErr() * pow(decayRate_, lastTID_ - current->getId()));
+      current->setId(lastTID_);
+      //std::cout << "updated values count: " << current->getCount()<< std::endl;
+    }
     //if the current set meets the minsup, add it to frequent itemsets and check children
+    
     if(current->getCount()/dk >= minsup_) {
+      //std::cout << "adding " << current->content() << " to itemsets" << std::endl;
+      //for (int i = 0; i < currentSet.size(); i++) {
+      //  cout << currentSet[i] << ", ";
+      //}
+      //cout << endl;
       currentSet.push_back(current->content());
+      //std::cout << "here1" << std::endl;
       freqItems.push_back(currentSet);
+      //std::cout << "here2" << std::endl;
       counts.push_back(current->getCount());
+      //std::cout << "here3" << std::endl;
       vector<Node*> c = current->children();
-      
+      //std::cout << "calling for " << c.size() << "children" << std::endl;
       for (int i = 0; i < c.size(); i++) {
+        //std::cout << "here 5" << std::endl;
         getMostFrequentItemset(c[i], freqItems, counts, currentSet, depth + 1, dk);
       }
+      currentSet.pop_back();
     }
-
+    
   }
   
-  currentSet.pop_back();
+  
   
   
 }

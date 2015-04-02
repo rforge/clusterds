@@ -31,7 +31,7 @@ public:
     bool updateParams(double decayRate = 0, double minsup = 0, double insertSupport = 0,
       double pruningSupport = 0);
     
-    void printTree(Node * current);
+    void printTree(Node * current, int max_depth  = -1, int depth = 0);
     
     std::vector<std::vector<int> > getMostFrequentItemset(double dk);
     

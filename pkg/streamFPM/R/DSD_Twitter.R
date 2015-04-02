@@ -18,7 +18,7 @@
 #size = size for each individual transaction
 DSD_Transactions_Twitter <- function(consumer_key, consumer_secret, RegisteredOAuthCredentials = NULL, search_term,
                                      desired_count, since = NULL, until = NULL, sinceID = NULL,
-                                     parser = function(text) strsplit(gsub("[^[:alnum:][:space:]#]", "", text), " ")[[1]]) {
+                                     parser = function(text) unique(strsplit(gsub("[^[:alnum:][:space:]#]", "", text), " ")[[1]])  ) {
   cred <- NULL
   if (!is.null(RegisteredOAuthCredentials)) {
     cred <- RegisteredOAuthCredentials
@@ -74,7 +74,7 @@ get_points.DSD_Transactions_Twitter <- function(x, n=1, assignment = FALSE,...) 
   ### gaussians at (3,2.5) and (3,-2.5)
   ### bars at (-3,2.8) and (-3,-2.8)
   
-  if(x$state$position >= x$state$numberOfTweets) {
+  if(x$state$position < 1L) {
     
     if(!is.null(x$state$since)) {
       x$state$tweets <- searchTwitter(x$searchTerm, n=x$desiredCount, since = x$state$since, until = x$state$until)
