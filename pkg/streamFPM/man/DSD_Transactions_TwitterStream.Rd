@@ -23,7 +23,7 @@ DSD_Transactions_TwitterStream <- function(consumer_key, consumer_secret,
   The consumer secret key, also provided by the twitter api
 }
   \item{RegisteredOAuthCredentials}{
-  Optional. The user can pass already registered twitter credentials using the 'ROauth' package. If the user does not pass this argument, it will attempt to register the twitter credentials using the consumer key and secret.
+  Optional. The user can pass already registered twitter credentials using the \pkg{ROAuth} package. If the user does not pass this argument, it will attempt to register the twitter credentials using the consumer key and secret.
 }
   \item{search_term}{
     If the user specifies a search term, it will return only tweets that contain that term.
