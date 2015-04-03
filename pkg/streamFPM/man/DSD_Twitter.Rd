@@ -8,9 +8,11 @@ Twitter Data Stream Generator
 A data stream generator that gathers and returns tweets using the Twitter REST API through the \pkg{twitteR} package. This API has access to an archive of tweets from the last several days.
 }
 \usage{
-DSD_Transactions_Twitter <- function(consumer_key, consumer_secret, RegisteredOAuthCredentials = NULL, search_term,
-                                     desired_count, since = NULL, until = NULL, sinceID = NULL, lang = NULL,
-                                     parser = function(text) strsplit(gsub("[^[:alnum:][:space:]#]", "", text), " ")[[1]])
+DSD_Transactions_Twitter <- function(consumer_key,
+      consumer_secret, RegisteredOAuthCredentials = NULL, search_term,
+      desired_count, since = NULL, until = NULL, sinceID = NULL, lang = NULL,
+      parser = function(text) 
+          strsplit(gsub("[^[:alnum:][:space:]#]", "", text), " ")[[1]])
 
 }
 %- maybe also 'usage' for other objects documented here.
@@ -114,5 +116,3 @@ transaction
 
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
-\keyword{ ~kwd1 }
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line

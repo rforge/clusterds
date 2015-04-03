@@ -11,7 +11,8 @@ A datastream generator that uses the streamR package to create transactions by s
 DSD_Transactions_TwitterStream <- function(consumer_key, consumer_secret,
                                   RegisteredOAuthCredentials = NULL, search_term = "", 
                                   timeout = 10, language = "en",
-                                  parser = function(text) strsplit(gsub("[^[:alnum:][:space:]#]", "", text), " ")[[1]])
+                                  parser = function(text) 
+                                  strsplit(gsub("[^[:alnum:][:space:]#]", "", text), " ")[[1]])
   
 }
 %- maybe also 'usage' for other objects documented here.
@@ -96,5 +97,4 @@ transaction
 
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
-\keyword{ ~kwd1 }
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line
+

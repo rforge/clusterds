@@ -3,28 +3,24 @@
 \alias{streamFPM}
 \docType{package}
 \title{
-What the package does (short line)
-~~ package title ~~
+Stream Frequent Pattern Mining
 }
 \description{
-More about what it does (maybe more than one line)
-~~ A concise (1-5 lines) description of the package ~~
+Algorithms and data generators for mining for frequent patterns on data streams
 }
 \details{
 \tabular{ll}{
 Package: \tab streamFPM\cr
 Type: \tab Package\cr
 Version: \tab 1.0\cr
-Date: \tab 2014-06-04\cr
-License: \tab What license is it under?\cr
+Date: \tab 2015-01-05\cr
+%License: \tab What license is it under?\cr
 }
 streamFPM expansions of the functionality of stream. It introduces several Frequent Pattern Mining Algorithms that can be used on streams of Transaction data.
 }
 \author{
 Derek Phanekham <ds.phanekham@smu.edu>
 
-Maintainer: Who to complain to <mhahsler@smu.edu>
-Michael Hahsler
 }
 \references{
 %add literature here FIXME

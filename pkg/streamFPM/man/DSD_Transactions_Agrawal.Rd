@@ -8,7 +8,8 @@ DSD Agrawal
 A datastream generator that produces semi-random transactions within a specified range. Some items will be more frequent by design. Algorithm originally developed for IBM by Agrawal.
 }
 \usage{
-DSD_Transactions_Agrawal(type = c("integer"), setSize = 50, maxTransactionSize = 10, ..., verbose = FALSE)
+DSD_Transactions_Agrawal(type = c("integer"), setSize = 50,
+  maxTransactionSize = 10, ..., verbose = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -66,5 +67,3 @@ transaction <- get_points(dsd)
 transaction
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
-\keyword{ ~kwd1 }
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line

@@ -58,14 +58,8 @@ update(dst, dsd, 5)
 #get most frequent itemsets
 patterns <- get_patterns.DST_EstDec(dst)
 
-#displays frequent itemsets along with their counts
-counts <- attr(patterns, 'counts')
-counts
-
-#create a histogram of frequent itemsets
-hist(counts)
-
-#creates a plot of frequent itemsets and their counts
+#get the top ten most frequent patterns
+topN.DST_Patterns(patterns, n=10)
 
 
 }
