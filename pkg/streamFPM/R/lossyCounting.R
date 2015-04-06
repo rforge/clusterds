@@ -149,7 +149,7 @@ get_patterns.DST_LossyCounting <- function(dst, minsup = 0.1, decode=FALSE) {
   attr(patterns, "sets") <- as.list(names)
   attr(patterns, "error") <- error
   
-  class(patterns) <- "DST_Patterns"
+  class(patterns) <- "Patterns"
   
 }
 

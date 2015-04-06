@@ -21,10 +21,13 @@ DSD_Transactions_Twitter <- function(consumer_key,
   The consumer key, provided by the twitter api
 }
   \item{consumer_secret}{
-  The consumer secret key, also provided by the twitter api
+  The consumer secret key, provided by the twitter api
 }
-  \item{RegisteredOAuthCredentials}{
-  Optional. The user can pass already registered twitter credentials using the \pkg{ROAuth} package. If the user does not pass this argument, it will attempt to register the twitter credentials using the consumer key and secret.
+  \item{access_token}{
+  The access token, provided by the twitter api
+}
+  \item{access_secret}{
+  The access secret key, provided by the twitter api
 }
   \item{search_term}{
     If the user specifies a search term, it will return only tweets that contain that term.
@@ -78,33 +81,22 @@ Derek Phanekham
 \dontrun{
 
 #create Twitter data stream generator using a key and secret from the Twitter API
-key <- "************************"
-secret <- "**********************"
+consumer_key <- "************************"
+consumer_secret <- "**********************"
+access_token <- "************************"
+access_secret <- "**********************"
 
-twitterDSD <- DSD_Transactions_Twitter(consumer_key, consumer_secret, cred,
- search_term = "SMU", desired_count = 500, lang = "en",
-  since = '2015-03-28', until = '2015-03-29')
+twitterDSD <- DSD_Transactions_Twitter(consumer_key, consumer_secret,
+  access_token, access_secret, search_term = "SMU", desired_count = 500,
+  lang = "en", since = '2015-03-28', until = '2015-03-29')
 
 #create with already registered credentials
+library(twitteR)
 
-library(ROAuth)
-
-cred <- OAuthFactory$new(consumerKey=key,
-                         consumerSecret=secret,
-                         requestURL='https://api.twitter.com/oauth/request_token',
-                         accessURL='https://api.twitter.com/oauth/access_token',
-                         authURL='https://api.twitter.com/oauth/authorize')
-cred$handshake()
-
-#save credentials for later use
-save(cred, "cred.RData")
-load("cred.RData")
+setup_twitter_oauth(consumer_key, consumer_secret, access_token, access_secret)
   
-  
-twitterDSD <- DSD_Transactions_Twitter(consumer_key, consumer_secret, 
-RegisteredOAuthCredentials = cred, search_term = "streamFPM", desired_count = 500,
+twitterDSD <- DSD_Transactions_Twitter(search_term = "streamFPM", desired_count = 500,
 lang = "en", since = '2015-03-28', until = '2015-03-29')
-
 
 #get a transaction from the datastream
 transaction <- get_points(twitterDSD)

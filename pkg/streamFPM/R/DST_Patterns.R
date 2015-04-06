@@ -16,23 +16,23 @@
 #as itemMatrix
 as.itemsets = function(patterns, ...) {
   #is <- new("itemsets", items=as(unclass(patterns), "itemMatrix"), quality=data.frame(support=attr(patterns, "counts")))
-  new("itemsets", items=as(attr(patterns, "sets"), "itemMatrix"), quality=data.frame(support = unclass(patterns)))
+  new("itemsets", items=as(attr(patterns, "sets"), "itemMatrix"),
+      quality=data.frame(support = unclass(patterns / attr(patterns, "total_transactions") )))
 }
 
 
-print.DST_Patterns = function(x, ...) {
+print.DST_Patterns <- function(x, ...) {
   cat("Class:", paste(class(x), collapse=", "), "\n") 
   cat("Set of", length(x), "Patterns", "\n")
   
 }
 
-topN.DST_Patterns = function(x, n = 10) {
+topN <- function(x, n = 10) {
   if(length(x) < n)
     sort(x, decreasing = TRUE)[1:length(x)]
   else
     sort(x, decreasing = TRUE)[1:n]
 }
-
 
 summary.DST_Patterns <- function(x) {
   cat("Set of", length(x), "patterns \n")
@@ -44,12 +44,14 @@ summary.DST_Patterns <- function(x) {
   
 }
 
-getSets.DST_Patterns <- function(x) {
+getSets <- function(x) {
   attr(x, "sets")
 }
 
 as.vector.DST_Patterns <- function(x, ...) {
   unclass(x)
   attr(x, "sets") <- NULL
+  attr(x, "decode_table") <- NULL
+  attr(x, "total_transactions") <- NULL
   x
 }

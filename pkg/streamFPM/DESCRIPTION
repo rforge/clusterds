@@ -6,8 +6,8 @@ Date: 2014-06-04
 Author: Derek Phanekham, Michael Hahsler
 Maintainer: Michael Hahsler <mhahsler@lyle.smu.edu>
 Description: More about what it does (maybe more than one line)
-Imports: methods, hash, testthat, arules
-Suggests: twitteR, RCurl, tm, ROAuth, streamR
+Imports: methods, hash, testthat, arules, twitteR
+Suggests: RCurl, tm, ROAuth, streamR, httr, httpuv
 Depends: stream, Rcpp (>= 0.11.1)
 LinkingTo: Rcpp
 RcppModules: rtrie

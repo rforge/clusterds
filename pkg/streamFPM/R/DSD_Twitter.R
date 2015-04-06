@@ -1,51 +1,42 @@
-#data stream generator
-
-#want stream data
-#each point will be integers or strings
-#start with integers
-
 #class of type DSD_Transactions
 
-# A new DSD class (e.g., myDSD) needs the following:
-## 1. a constructor function. myDSD <- function(PARAMETERS) which
-## returns an object with the class  c("DSD_myDSD","DSD_R","DSD")
-## 2. get_points.myDSD <- function(x, n=1, ...)
-
+#setup_twitter_oauth(consumer_key = consumer_key, consumer_secret = consumer_secret)
 
 #setSize is the number of items to pull from,
 #maxTransactionSize is the largest transaction you can have
 #prob = probability for each item, other options include rexp(setSize)
 #size = size for each individual transaction
-DSD_Transactions_Twitter <- function(consumer_key, consumer_secret, RegisteredOAuthCredentials = NULL, search_term,
-                                     desired_count, since = NULL, until = NULL, sinceID = NULL,
+DSD_Transactions_Twitter <- function(consumer_key = NULL, consumer_secret = NULL, access_token = NULL, access_secret =NULL, search_term,
+                                     desired_count, since = NULL, until = NULL, sinceID = NULL, maxID = NULL,
+                                     language = NULL, geocode = NULL, resultType = NULL, strip_retweets = FALSE,
                                      parser = function(text) unique(strsplit(gsub("[^[:alnum:][:space:]#]", "", text), " ")[[1]])  ) {
-  cred <- NULL
-  if (!is.null(RegisteredOAuthCredentials)) {
-    cred <- RegisteredOAuthCredentials
-    registerTwitterOAuth(cred)
+
+  if(!is.null(consumer_key) && !is.null(consumer_secret)){
+    setup_twitter_oauth(consumer_key = consumer_key, consumer_secret = consumer_secret,
+                        access_token = access_token, access_secret = access_secret)
   }
-  else {
-    cred <- OAuthFactory$new(consumerKey=consumer_key,
-                             consumerSecret=consumer_secret,
-                             requestURL='https://api.twitter.com/oauth/request_token',
-                             accessURL='https://api.twitter.com/oauth/access_token',
-                             authURL='https://api.twitter.com/oauth/authorize')
-    
-    cred$handshake()
-    registerTwitterOAuth(cred)
+  else{
+    warning("consumer_key or consumer_secret parameters not set: Assuming setup_twitter_oauth() has already been called")
   }
+
   
   if(is.null(since) && !is.null(until)){
     stop("Must have a specify a 'since' value also")
   }
   
   state <- new.env()
-  assign("position", 1L, envir = state)
+  assign("position", 0L, envir = state)
   assign("numberOfTweets", 0, envir = state)
   assign("tweets", list(), envir = state)
   assign("since", since, envir = state)
   assign("until", until, envir = state)
+  assign("lang", language, envir = state)
   assign("highestId", sinceID, envir = state)
+  assign("sinceID", sinceID, envir = state)
+  assign("maxID", maxID, envir = state)
+  assign("geocode", geocode, envir = state)
+  assign("resultType", resultType, envir = state)
+  assign("no_retweets", strip_retweets, envir = state)
   
   #FIXME for windows need .pem file
   
@@ -54,7 +45,6 @@ DSD_Transactions_Twitter <- function(consumer_key, consumer_secret, RegisteredOA
   
   # creating the DSD object
   l <- list(description = "Twitter Transaction Data Stream",
-            cred=cred,
             searchTerm = search_term,
             tweets = NULL,
             desiredCount = desired_count,
@@ -77,10 +67,16 @@ get_points.DSD_Transactions_Twitter <- function(x, n=1, assignment = FALSE,...) 
   if(x$state$position < 1L) {
     
     if(!is.null(x$state$since)) {
-      x$state$tweets <- searchTwitter(x$searchTerm, n=x$desiredCount, since = x$state$since, until = x$state$until)
+      x$state$tweets <- searchTwitter(x$searchTerm, n=x$desiredCount, since = x$state$since, until = x$state$until,
+                                      lang = x$state$lang, sinceID = x$state$sinceID, maxID = x$state$maxID,
+                                      geocode = x$state$geocode, resultType = x$state$resultType)
     }
     else {
-      x$state$tweets <- searchTwitter(x$searchTerm, n=x$desiredCount)
+      x$state$tweets <- searchTwitter(x$searchTerm, n=x$desiredCount, lang = x$state$lang)
+    }
+    
+    if (x$state$no_retweets) {
+      x$state$tweets <- strip_retweets(x$state$tweets, strip_manual = TRUE, strip_mt = TRUE)
     }
     
     x$state$numberOfTweets <- length(x$state$tweets)

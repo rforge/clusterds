@@ -4,7 +4,7 @@
 #datastream <- DSD_Transactions_Random(c(integer))
 #output: A complete set of recent freq itemsets Lk
 
-DST_EstDec <- function(decayRate = 0.2, minsup = 0.8, insertSupport = NULL, 
+DST_EstDec <- function(decayRate = 0.99, minsup = 0.1, insertSupport = NULL, 
                        pruningSupport = NULL, datatype="character") {
   
   decayRate <- decayRate #given decay rate
@@ -22,7 +22,7 @@ DST_EstDec <- function(decayRate = 0.2, minsup = 0.8, insertSupport = NULL,
     insertSupport <- minsup*0.7
   }
   if (is.null(pruningSupport)) {
-    pruningSupport <- minsup*0.7
+    pruningSupport <- minsup*0.6
   }
   
   estDec<- estDec$new(decayRate, minsup, Dk, TID, insertSupport, pruningSupport, dataType)
@@ -148,6 +148,7 @@ get_patterns.DST_EstDec <- function(dst, decode=FALSE) {
     
     #separates counts into dif variable and removes last row
     counts <- patterns[[length(patterns)]]
+    #counts <- counts/dst$RObj$Dk
     patterns <- patterns[-length(patterns)]
     patternsNumbers <- patterns
     
@@ -156,37 +157,41 @@ get_patterns.DST_EstDec <- function(dst, decode=FALSE) {
       indices <- findInterval(patterns[[i]], wordValues)
       patterns[[i]] <- attr(wordValues[indices], "names")
     }
-    
-    names(counts) <- lapply(patterns, paste, collapse= ",")
+
+    names(counts) <- lapply(patterns, function(x) { paste(c("{", paste(x, collapse=", "), "}"), collapse = "") })
     
     if(decode == FALSE) {
-      attr(counts, "decodeTable") <- as.list(dst$wordHash)
+      attr(counts, "decode_table") <- as.list(dst$wordHash)
+      attr(counts, "total_transactions") <- dst$RObj$Dk
       attr(counts, "sets") <- patternsNumbers
-      class(counts) <- "DST_Patterns"
+      class(counts) <- "Patterns"
       return(counts)
     }
 
     #attr(patterns, 'counts') <- counts
     #class(patterns) <- "DST_Patterns"
     #return(patterns)
-    
+    attr(counts, "total_transactions") <- dst$RObj$Dk
     attr(counts, "sets") <- patterns
-    class(counts) <- "DST_Patterns"
+    class(counts) <- "Patterns"
     return(counts)
   }
   
-  patterns <- dst$RObj$rt$getFrequentItemsets()
+  patterns <- dst$RObj$rt$getFrequentItemsets(dst$RObj$Dk)
   counts <- patterns[[length(patterns)]]
+  #counts <- counts/dst$RObj$Dk
   patterns <- patterns[-length(patterns)]
-  names(counts) <- lapply(patterns, paste, collapse= ",")
+  
+  names(counts) <- lapply(patterns, function(x) { paste(c("{", paste(x, collapse=", "), "}"), collapse = "") })
   
   #attr(patterns, 'counts') <- counts
   #class(patterns) <- "DST_Patterns"
   #return(patterns)
   
   attr(counts, "sets") <- patterns
+  attr(counts, "total_transactions") <- dst$RObj$Dk
   
-  class(counts) <- "DST_Patterns"
+  class(counts) <- "Patterns"
   return(counts)
   
 }
