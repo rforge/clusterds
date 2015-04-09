@@ -50,7 +50,7 @@ private:
     
     
     void getMostFrequentItemset(Node * current, std::vector<std::vector<int> > &freqItems,
-      std::vector<int> &counts, std::vector<int> &currentSet, int depth, double dk);
+      std::vector<int> &counts, std::vector<int> &error, std::vector<int> &currentSet, int depth, double dk);
       
     bool insertionPhase(std::vector<int> & itemset, int k, double d, double minsup, double dk,
       int len, int first, Node* current);

@@ -94,6 +94,7 @@ transaction <- get_points(dsd)
 transaction
 
 }
+}
 
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

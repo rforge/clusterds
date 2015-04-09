@@ -147,6 +147,9 @@ get_patterns.DST_EstDec <- function(dst, decode=FALSE) {
     patterns <- dst$RObj$rt$getFrequentItemsets(dst$RObj$Dk)
     
     #separates counts into dif variable and removes last row
+    error <- patterns[[length(patterns)]]
+    patterns <- patterns[-length(patterns)]
+    
     counts <- patterns[[length(patterns)]]
     #counts <- counts/dst$RObj$Dk
     patterns <- patterns[-length(patterns)]
@@ -164,6 +167,7 @@ get_patterns.DST_EstDec <- function(dst, decode=FALSE) {
       attr(counts, "decode_table") <- as.list(dst$wordHash)
       attr(counts, "total_transactions") <- dst$RObj$Dk
       attr(counts, "sets") <- patternsNumbers
+      attr(counts, "error") <- error
       class(counts) <- "Patterns"
       return(counts)
     }
@@ -173,11 +177,18 @@ get_patterns.DST_EstDec <- function(dst, decode=FALSE) {
     #return(patterns)
     attr(counts, "total_transactions") <- dst$RObj$Dk
     attr(counts, "sets") <- patterns
+    attr(counts, "error") <- error
     class(counts) <- "Patterns"
     return(counts)
   }
   
+  #if not character
+  
   patterns <- dst$RObj$rt$getFrequentItemsets(dst$RObj$Dk)
+  
+  error <- patterns[[length(patterns)]]
+  patterns <- patterns[-length(patterns)]
+  
   counts <- patterns[[length(patterns)]]
   #counts <- counts/dst$RObj$Dk
   patterns <- patterns[-length(patterns)]
@@ -190,6 +201,7 @@ get_patterns.DST_EstDec <- function(dst, decode=FALSE) {
   
   attr(counts, "sets") <- patterns
   attr(counts, "total_transactions") <- dst$RObj$Dk
+  attr(counts, "error") <- error
   
   class(counts) <- "Patterns"
   return(counts)

@@ -3,12 +3,16 @@ exportPattern("^[[:alpha:]]+")
 #exportPattern("^[^\\.]")
 import("stream")
 import("hash")
-import("testthat")
+import("Rcpp")
+#import("testthat")
 import("methods")
 import("arules")
-import("bitops")
+#import("bitops")
 import("twitteR")
 #importFrom(Rcpp, sourceCpp)
 #importFrom(Rcpp, loadModule)
 #importFrom(Rcpp, evalCpp)
 export(get_patterns, print)
+
+
+#look at namespace of stream for export

@@ -14,8 +14,8 @@ Trie::Trie()
     root = new Node();
     minsup_ = 0.001;
     insertSupport_ = 0.0008;
-    double pruningSupport_ = 0.0007;
-    double decayRate_ = 0.999;
+    pruningSupport_ = 0.0007;
+    decayRate_ = 0.999;
 }
 
 Trie::~Trie()
@@ -143,7 +143,7 @@ int Trie::deleteWordRecursion(std::vector<int> itemset, int i, Node * current)
     }
     
   }
-  
+  return 1;
   
 }
 
@@ -183,6 +183,7 @@ bool Trie::deleteChildNodeAndDescendents(Node* parent, int content)
   Node* child = parent->findChild(content);
   deleteDescendentNodes(child);
   parent->removeChild(content);
+  return true;
 }
 
 
@@ -194,6 +195,7 @@ bool Trie::updateWord(std::vector<int> & itemset, int k, double d, double minsup
 {
   //calls with current = root
   updateWordRecursion(itemset, k, d, minsup, dk, len, first, root);
+  return true;
 }
 
 
@@ -270,6 +272,7 @@ bool Trie::insertionPhase(std::vector<int> & itemset, int k, double d, double mi
     lastTID_ = k;
     totalSetsWithDecay_ = dk;
     insertionPhase(itemset, k, d, minsup, dk, len, first, root);
+    return true;
 }
 
 bool Trie::insertionPhase(std::vector<int> & itemset, int k, double d, double minsup, double dk, int len, int first, Node* current)
@@ -297,6 +300,7 @@ bool Trie::insertionPhase(std::vector<int> & itemset, int k, double d, double mi
         }
 
     }
+    return true;
 }
 
 
@@ -478,23 +482,25 @@ void Trie::printTree(Node * current, int max_depth, int depth)
 vector<vector<int> > Trie::getMostFrequentItemset(double dk)
 {
   vector<int> counts;
+  vector<int> error;
   vector<vector<int> > freqItems;
   vector<int> currentSet;
-  getMostFrequentItemset(root, freqItems, counts, currentSet, 0, dk);
+  getMostFrequentItemset(root, freqItems, counts, error, currentSet, 0, dk);
   //cout << freqItems[0][0] << endl;
   freqItems.push_back(counts);
+  freqItems.push_back(error);
   return freqItems;
 }
 
 void Trie::getMostFrequentItemset(Node * current, vector<vector<int> > &freqItems,
-  vector<int> &counts, vector<int> &currentSet, int depth, double dk)
+  vector<int> &counts, vector<int> &error, vector<int> &currentSet, int depth, double dk)
 {
   if(current == root)
   {
     //std::cout << "root " << std::endl;
     vector<Node*> c = current->children();
     for (int i = 0; i < c.size(); i++) {
-      getMostFrequentItemset(c[i], freqItems, counts, currentSet, depth + 1, dk);
+      getMostFrequentItemset(c[i], freqItems, counts, error, currentSet, depth + 1, dk);
     }
   }
   else
@@ -519,12 +525,13 @@ void Trie::getMostFrequentItemset(Node * current, vector<vector<int> > &freqItem
       freqItems.push_back(currentSet);
       //std::cout << "here2" << std::endl;
       counts.push_back(current->getCount());
+      error.push_back(current->getErr());
       //std::cout << "here3" << std::endl;
       vector<Node*> c = current->children();
       //std::cout << "calling for " << c.size() << "children" << std::endl;
       for (int i = 0; i < c.size(); i++) {
         //std::cout << "here 5" << std::endl;
-        getMostFrequentItemset(c[i], freqItems, counts, currentSet, depth + 1, dk);
+        getMostFrequentItemset(c[i], freqItems, counts,error, currentSet, depth + 1, dk);
       }
       currentSet.pop_back();
     }
@@ -546,6 +553,8 @@ bool Trie::updateParams(double decayRate, double minsup, double insertSupport, d
     insertSupport_ = insertSupport;
   if(pruningSupport > 0)
     pruningSupport_ = pruningSupport;
+    
+  return true;
 }
 
 void Trie::printSupports()

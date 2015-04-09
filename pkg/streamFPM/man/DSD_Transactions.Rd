@@ -43,7 +43,7 @@ DSD_Transactions(...)
 }
 \examples{
 
-stop("DSD_Transactions is an abstract class and cannot be instantiated!")
+warning("DSD_Transactions is an abstract class and cannot be instantiated!")
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

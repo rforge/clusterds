@@ -65,5 +65,6 @@ dsd <- DSD_Transactions_Agrawal(setSize= 50, maxTransactionSize= 10 , size=funct
 transaction <- get_points(dsd)
 
 transaction
+}
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

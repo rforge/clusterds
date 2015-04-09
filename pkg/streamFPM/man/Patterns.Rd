@@ -9,7 +9,7 @@
 
 \title{Class ``Patterns'' --- }
 \description{
-  The \code{Patterns} class represents frequent itemsets found by a frequent pattern mining \code{\linkS4class{DST}}s, such as \code{\linkS4class{estDec}}.
+  The \code{Patterns} class represents frequent itemsets found by a frequent pattern mining \code{\link{DST}}s, such as \code{\link{DST_EstDec}}.
 }
 \section{Slots}{
   \describe{
@@ -32,16 +32,16 @@
   %    extracts transactions and the second argument can be used to
   %    extract a subset of items (using item IDs)}
     \item{as.itemsets}{\code{signature(patterns, ...)};
-      produces a \class{itemsets} object from the \pkg{arules} package.
+      produces an \code{itemsets} object from the \pkg{arules} package.
     }
     \item{as.vector}{\code{signature(patterns, ...)};
       produces a vector of counts with itemsets as names.
     }
     \item{getSets}{\code{signature(patterns)};
-      produces a list of the itemsets countained in the \class{Patterns} class, with each itemset represented by a vector of item.
+      produces a list of the itemsets countained in the \code{Patterns} class, with each itemset represented by a vector of item.
     }
     \item{summary}{\code{signature(patterns)};
-    shows a summary of the \class{Patterns} class.
+    shows a summary of the \code{Patterns} class.
     }
     \item{topN}{\code{signature(patterns, n = 1)};
       returns a vector of the top \code{n} most frequent itemsets.
