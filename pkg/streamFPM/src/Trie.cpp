@@ -1,7 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <list>
-#include <math.h>
+#include <cmath>
 #include <algorithm>
 #include "Trie.h"
 
@@ -227,39 +227,62 @@ bool Trie::updateWordRecursion(std::vector<int> & itemset, int k, double decay, 
       }
       else
       {
-        //std::cout << "here2 update set: " << current->content() << std::endl;
+        //std::cout << "update set: " << current->content() << " old:" << current->getCount();
         current->setCount( (current->getCount() * pow(decay, k - current->getId()) ) + 1);
+        //std::cout << " new:" << current->getCount() << std::endl;
         current->setErr(current->getErr() * pow(decay, k - current->getId()));
         current->setId(k);
       }
 
-    }
+    
     
     //recursion for traversing tree
-    for ( int i = first; i < itemset.size(); i++ )
-    {
-        //std::cout << "set: " << i << " starting with item:" << itemset[i] <<endl;
-        Node* tmp = current->findChild(itemset[i]);
-        //FIXME: FIX LEN
-        
-        //if tmp == null, have reached left node. return
-        if ( tmp == NULL )
-        {
-          return true;
-        }
-        else {
-            //std::cout << "calling recursion" << std::endl;
-            updateWordRecursion(itemset, k, decay, minsup,  dk, len + 1, i+1, tmp);
-        }
-
-        //FIXME minsup should be pruning support
-        //FIXME  bad stuff with doubles
-        //std::cout << tmp->getCount()/dk << " :: " << minsup << std::endl;
-        if(tmp->getCount()/dk < pruningSupport_  && len+1 > 1) {
-            //std::cout << "remove node" << std::endl;
-            deleteChildNodeAndDescendents(current, itemset[i]);
-        }
-        
+      for ( int i = first; i < itemset.size(); i++ )
+      {
+          //std::cout << "set: " << i << " starting with item:" << itemset[i] <<endl;
+          Node* tmp = current->findChild(itemset[i]);
+          //FIXME: FIX LEN
+          
+          //if tmp == null, have reached left node. return
+          if ( tmp == NULL )
+          {
+            return true;
+          }
+          else {
+              //std::cout << "calling recursion" << std::endl;
+              updateWordRecursion(itemset, k, decay, minsup,  dk, len + 1, i+1, tmp);
+          }
+  
+          //std::cout << tmp->getCount()/dk << " :: " << minsup << std::endl;
+          if(tmp->getCount()/dk < pruningSupport_  && len+1 > 1) {
+              //std::cout << "remove node" << std::endl;
+              deleteChildNodeAndDescendents(current, itemset[i]);
+          }
+          
+      }
+    
+    }
+    else { //if current = root
+      //std::cout << "set: " << i << " starting with item:" << itemset[i] <<endl;
+      Node* tmp = current->findChild(itemset[first]);
+      //FIXME: FIX LEN
+      
+      //if tmp == null, have reached left node. return
+      if ( tmp == NULL )
+      {
+        return true;
+      }
+      else {
+          //std::cout << "calling recursion" << std::endl;
+          updateWordRecursion(itemset, k, decay, minsup,  dk, len + 1, first+1, tmp);
+      }
+  
+      //std::cout << tmp->getCount()/dk << " :: " << minsup << std::endl;
+      if(tmp->getCount()/dk < pruningSupport_  && len+1 > 1) {
+          //std::cout << "remove node" << std::endl;
+          deleteChildNodeAndDescendents(current, itemset[first]);
+      }
+          
     }
 
     return true;
@@ -325,10 +348,10 @@ bool Trie::delayedInsertion(std::vector<int> & itemset, int k, double d, double 
       //FIXME: these should not be called for the whole itemset, but for the subset we are inserting
       
       //FIXME: make all these return double
-      int cmax_int = cMax(itemset, startIndex, endIndex);
-      double cmax_double = (double) cmax_int;
+      double cmax_double = cMax(itemset, startIndex, endIndex);
+      //double cmax_double = (double) cmax_int;
       //std::cout << "cmax done" << std::endl;
-      int cmin = cMin(itemset, startIndex, endIndex, dk);
+      double cmin = cMin(itemset, startIndex, endIndex, dk);
       //std::cout << "cmin done" << std::endl;
       double cupper = cUpper(itemset, minsup, dk, d); //FIXME to match others
       //std::cout << "cupper done" << std::endl;
@@ -343,8 +366,8 @@ bool Trie::delayedInsertion(std::vector<int> & itemset, int k, double d, double 
       {
         Node* tmp = new Node();
         tmp->setContent(itemset[endIndex]);
-        tmp->setCount(cmax_int);
-        tmp->setErr(cmax_int - cmin);
+        tmp->setCount(cmax_double);
+        tmp->setErr(cmax_double - cmin);
         tmp->setId(k);
         current->appendChild(tmp);
         //addSet(e, err= cmax - cmin, tid=k)
@@ -368,13 +391,13 @@ bool Trie::delayedInsertion(std::vector<int> & itemset, int k, double d, double 
  * endIndex: last position of the itemset to consider
  * 
  */                                                
-int Trie::cMax(std::vector<int> & itemset, int startIndex, int endIndex)
+double Trie::cMax(std::vector<int> & itemset, int startIndex, int endIndex)
 {
   //FIXME: wont always be this. depends what set we are inserting. I think
-  int minimum = -1;
+  double minimum = -1;
   for (int i = startIndex; i <= endIndex; i++)
   {
-      if (minimum != -1)
+      if (minimum >= 0)
         minimum = min(minimum, getCountForSubset(itemset, startIndex, endIndex, i));
       else
         minimum = getCountForSubset(itemset, startIndex, endIndex, i);
@@ -391,10 +414,10 @@ int Trie::cMax(std::vector<int> & itemset, int startIndex, int endIndex)
  * endIndex: last position of the itemset to consider
  */
 
-int Trie::cMin(std::vector<int> & itemset, int startIndex, int endIndex, double Dk)
+double Trie::cMin(std::vector<int> & itemset, int startIndex, int endIndex, double Dk)
 {
-  int maximum = 0;
-  int integerDk = ceil(Dk);
+  double maximum = 0;
+  //int integerDk = ceil(Dk);
 
 	for (int i = startIndex; i <= endIndex - 1; i++) {
 		for (int j = i+1; j <= endIndex; j++) {
@@ -405,7 +428,7 @@ int Trie::cMin(std::vector<int> & itemset, int startIndex, int endIndex, double 
 
 					//FIXME double stuff with Dk
 					maximum = max(maximum, getCountForSubset(itemset, startIndex, endIndex, i) 
-            + getCountForSubset(itemset, startIndex, endIndex, j) - abs(integerDk));
+            + getCountForSubset(itemset, startIndex, endIndex, j) - abs(Dk));
 
 				}
 				else {
@@ -427,7 +450,7 @@ int Trie::cMin(std::vector<int> & itemset, int startIndex, int endIndex, double 
  * returns the count for a subset of vector itemset that excludes either 1 or two indicies.
  * 
  */
-int Trie::getCountForSubset(std::vector<int>& itemset, int startIndex, int endIndex, int excludedIndex1, int excludedIndex2)
+double Trie::getCountForSubset(std::vector<int>& itemset, int startIndex, int endIndex, int excludedIndex1, int excludedIndex2)
 {
     //FIXME: add in some error checking for the indices
     if (endIndex >= itemset.size() || startIndex > endIndex) return -1;
@@ -471,10 +494,13 @@ void Trie::printTree(Node * current, int max_depth, int depth)
       else{
         std::cout << current->content() << " : count :" << current->getCount() << ", err: " << current->getErr() << std::endl;
       }
-      vector<Node*> c = current->children();
-      for (int i = 0; i < c.size(); i++) {
-        printTree(c[i], max_depth, depth + 1);
+      if(depth < max_depth) {
+        vector<Node*> c = current->children();
+        for (int i = 0; i < c.size(); i++) {
+          printTree(c[i], max_depth, depth + 1);
+        }
       }
+
   }
 
 }
@@ -524,8 +550,8 @@ void Trie::getMostFrequentItemset(Node * current, vector<vector<int> > &freqItem
       //std::cout << "here1" << std::endl;
       freqItems.push_back(currentSet);
       //std::cout << "here2" << std::endl;
-      counts.push_back(current->getCount());
-      error.push_back(current->getErr());
+      counts.push_back((int) ceil(current->getCount()));
+      error.push_back((int) ceil(current->getErr()));
       //std::cout << "here3" << std::endl;
       vector<Node*> c = current->children();
       //std::cout << "calling for " << c.size() << "children" << std::endl;

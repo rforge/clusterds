@@ -74,16 +74,14 @@ estDec <- setRefClass("estDec",
 update.DST_EstDec <- function(dst, dsd, n=1) {
 
     for(i in 1:n){
-      if(n%%50 == 0){
-        print(i)
-      }
+      #if(i %% 50 == 0)
       #print(paste0("iteration: ", i))
       
       #gets the next transaction
       Tk <- get_points(dsd)[[1]]
       
       
-        #print(Tk)
+      #print(Tk)
       
       
       if (dst$RObj$dataType == "character") {
@@ -91,7 +89,7 @@ update.DST_EstDec <- function(dst, dsd, n=1) {
           #make sure empty strings are removed from list
           Tk <- Tk[Tk != ""]
           Tk_ints <- rep(0L, length(Tk))
-          print(Tk)
+          #print(Tk)
           if(length(Tk) > 0) {
             for(i in 1:length(Tk)) {
                 #print(Tk[i])

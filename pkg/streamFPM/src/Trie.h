@@ -60,13 +60,13 @@ private:
       
     int deleteWordRecursion(std::vector<int> itemset, int i, Node * current);
     
-    int cMax(std::vector<int> & itemset, int startIndex, int endIndex);
+    double cMax(std::vector<int> & itemset, int startIndex, int endIndex);
     
-    int cMin(std::vector<int> & itemset, int startIndex, int endIndex, double dk);
+    double cMin(std::vector<int> & itemset, int startIndex, int endIndex, double dk);
     
     double cUpper(std::vector<int> & itemset, double minsup, double dk, double d);
     
-    int getCountForSubset(std::vector<int>& itemset, int startIndex, int endIndex,
+    double getCountForSubset(std::vector<int>& itemset, int startIndex, int endIndex,
       int excludedIndex1 = -1, int excludedIndex2 = -1);
     
 };

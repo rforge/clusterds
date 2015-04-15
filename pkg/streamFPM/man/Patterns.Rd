@@ -55,7 +55,7 @@
 #create datastream
 dsd <- DSD_Transactions_Random(setSize=10, maxTransactionSize=4)
 #create estDec
-dst <- DST_EstDec()
+dst <- DST_EstDec(datatype = "integer")
 #update estDec with new values from data stream
 update(dst, dsd, 20)
 

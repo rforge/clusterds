@@ -21,7 +21,7 @@ as.itemsets = function(patterns, ...) {
 }
 
 
-print.DST_Patterns <- function(x, ...) {
+print.Patterns <- function(x, ...) {
   cat("Class:", paste(class(x), collapse=", "), "\n") 
   cat("Set of", length(x), "Patterns", "\n")
   
@@ -34,7 +34,7 @@ topN <- function(x, n = 10) {
     sort(x, decreasing = TRUE)[1:n]
 }
 
-summary.DST_Patterns <- function(x) {
+summary.Patterns <- function(x) {
   cat("Set of", length(x), "patterns \n")
   cat("Top 10 patterns", "\n")
   if(length(x) < 10)
@@ -48,10 +48,11 @@ getSets <- function(x) {
   attr(x, "sets")
 }
 
-as.vector.DST_Patterns <- function(x, ...) {
+as.vector.Patterns <- function(x, ...) {
   unclass(x)
   attr(x, "sets") <- NULL
   attr(x, "decode_table") <- NULL
   attr(x, "total_transactions") <- NULL
+  attr(x, "error") <- NULL
   x
 }

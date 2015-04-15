@@ -43,7 +43,6 @@ DSD_Transactions_Agrawal <- function(type=c("integer"), setSize=50, maxTransacti
             type=type,
             setSize=setSize,
             maxTransactionSize=maxTransactionSize,
-            distribution=distribution,
             patterns=patterns)
   class(l) <- c("DSD_Agrawal","DSD_Transactions", "DSD_List", "DSD_R","DSD")
   l

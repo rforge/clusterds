@@ -60,7 +60,7 @@ estDec finds frequent patterns over a transaction or list datastream. It only ke
 dsd <- DSD_Transactions_Random(setSize=10, maxTransactionSize=4)
 
 #create estDec
-dst <- DST_EstDec()
+dst <- DST_EstDec(datatype = "integer")
 
 #update estDec with new values from data stream
 update(dst, dsd, 5)
@@ -69,7 +69,7 @@ update(dst, dsd, 5)
 patterns <- get_patterns(dst)
 
 #get the top ten most frequent patterns
-topN.DST_Patterns(patterns, n=10)
+topN(patterns, n=10)
 
 
 }
