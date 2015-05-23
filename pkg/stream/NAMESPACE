@@ -25,7 +25,7 @@ export(
   DSC_Micro,
   DSC_Macro,
   
-  #  DSC_BIRCH,
+  #  DSC_BIRCH,  # removed from CRAN
   DSC_DStream,
   DSC_Sample,
 	DSC_DBSTREAM, 

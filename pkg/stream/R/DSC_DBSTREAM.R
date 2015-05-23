@@ -17,10 +17,10 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 
-DSC_DBSTREAM <- function(r, lambda = 1e-3,  gap_time=1000L, noise = 0.1, 
+DSC_DBSTREAM <- function(r, lambda = 1e-3,  gaptime=1000L, noise = 0.1, 
   shared_density = FALSE, alpha = 0.1, k = 0, minweight = 0) {
   
-  dbstream <- dbstream$new(r, lambda, as.integer(gap_time), 
+  dbstream <- dbstream$new(r, lambda, as.integer(gaptime), 
     noise, shared_density, alpha, k, minweight)
   
   macro <- new.env()
@@ -42,7 +42,7 @@ dbstream <- setRefClass("dbstream",
     ### parameters (micro-clustering)
     r			      = "numeric",
     lambda			= "numeric",
-    gap_time		= "integer",
+    gaptime		= "integer",
     ### noise: min. weight for micro-clusters given as a 
     ### percentile of the total weight of the clustering (i.e.,
     ### noise% of the data points is considered noise)
@@ -69,7 +69,7 @@ dbstream <- setRefClass("dbstream",
     initialize = function(
       r		      = 0.1,
       lambda		= 1e-3,
-      gap_time  = 1000L,
+      gaptime  = 1000L,
       noise		  = 0.1,
       shared_density		= FALSE,
       alpha 		= 0.1,
@@ -82,8 +82,8 @@ dbstream <- setRefClass("dbstream",
       if(lambda <0) stop("lambda needs to be >=0")
       if(minweight <0 ||minweight>1) stop("minweight needs to be in [0,1]")
       
-      gap_time <<- as.integer(gap_time)
-      if(gap_time<1) stop("gap_time needs to be 1, 2, 3,...")
+      gaptime <<- as.integer(gaptime)
+      if(gaptime<1) stop("gaptime needs to be 1, 2, 3,...")
       
       r			<<- r
       lambda		<<- lambda
@@ -96,7 +96,7 @@ dbstream <- setRefClass("dbstream",
       if(is.null(k)) k		<<- 0L
       else k		<<- as.integer(k)
       
-      micro <<- new(DBSTREAM, r, decay_factor, gap_time, 
+      micro <<- new(DBSTREAM, r, decay_factor, gaptime, 
         shared_density, alpha)
 
       .self
@@ -111,7 +111,7 @@ dbstream$methods(list(
   copy = function(...) {
     #callSuper(...)
     ### copy S4 object
-    n <- dbstream$new(r, lambda, gap_time, noise, shared_density, alpha,
+    n <- dbstream$new(r, lambda, gaptime, noise, shared_density, alpha,
       k, minweight)
     
     ### copy Rcpp object  
@@ -154,13 +154,19 @@ dbstream$methods(list(
     #cs <- cumsum(c(w_total-sum(ws), ws[o]))
     
     # we do double counting, but not likely for noise!
-    if(decay_factor<1) w_total <- (1-decay_factor^(micro$t-1))/(1-decay_factor)
+    if(decay_factor<1) w_total <- (1-decay_factor^(micro$t+1))/(1-decay_factor)
+    ### for t -> inf this becomes 1/(1-decay_factor)
     else w_total <- npoints
+    
+    
+    ## FIXME: correct weight using S
+    #sd <- rowSums(get_shared_density(use_alpha=FALSE))
+    
     cs <- cumsum(ws[o])
     
     ### decay_factor takes care of previousely removed points
-    ##wk <- cs < w_total * decay_factor^gap_time * noise
-    wk <- cs + w_total * noise * decay_factor^gap_time  < w_total * noise
+    ##wk <- cs < w_total * decay_factor^gaptime * noise
+    wk <- cs + w_total * noise * decay_factor^gaptime  < w_total * noise
     if(weak) o[wk]
     else o[!wk]
   },
@@ -172,6 +178,7 @@ dbstream$methods(list(
     ws <- micro$weights()
    
     avg_weights <- outer(ws, ws, FUN = function(x, y) (x+y)/2)
+    ###avg_weights <- outer(ws, ws, FUN = function(x, y) max(x,y))
     s <- vals/avg_weights
     
     strong <- strong_mcs()

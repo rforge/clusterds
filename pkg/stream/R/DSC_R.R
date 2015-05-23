@@ -32,7 +32,7 @@ DSC_R <- function(...) stop("DSC_R is an abstract class and cannot be instantiat
 ### needs to make sure that points are processed sequencially
 ### (make especially BIRCH faster by passing block data points at once)
 update.DSC_R <- function(object, dsd, n=1, verbose=FALSE, 
-  block=100000L, ...) {
+  block=10000L, ...) {
   ### object contains an RObj which is  a reference object with a cluster method
   
   ### for data frame/matrix we do it all at once
@@ -51,10 +51,14 @@ update.DSC_R <- function(object, dsd, n=1, verbose=FALSE,
     if(is.environment(object$macro)) object$macro$newdata <- TRUE
     
     ### TODO: Check data
+    total <- 0
     for(bl in .make_block(n, block)) {
       object$RObj$cluster(get_points(dsd, bl), ...)
-      if(verbose) cat("Processed", bl, "points -",
+      if(verbose) {
+        total <- total + bl
+        cat("Processed", total, "/", n, "points -",
         nclusters(object), "clusters\n")
+      }
     }
   }
   

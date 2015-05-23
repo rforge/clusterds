@@ -74,14 +74,22 @@ get_points.DSD_ReadCSV <- function(x, n=1,
   outofpoints=c("stop", "warn", "ignore"), 
   cluster = FALSE, class = FALSE, ...) {
   .nodots(...)
-
+  
   outofpoints <- match.arg(outofpoints)
   n <- as.integer(n)  
   
   d <- data.frame()
   if(!isSeekable(x$file)) pos <- NA else pos <- seek(x$file)
-  d <- do.call(read.table, c(list(text=readLines(con=x$file, n=n), sep=x$sep), 
-    x$read.table.args))
+  ### only text connections can do read.table
+  if(summary(x$file)$text == "text"){
+    d <- do.call(read.table, c(list(file=x$file, sep=x$sep, nrows=n), 
+      x$read.table.args))}
+  else{
+    ### need to get the data and wrap it into a textconnection (slow)
+    d <- do.call(read.table, c(list(text=readLines(con=x$file, n=n), sep=x$sep, 
+      nrows=n), 
+      x$read.table.args))
+  }
   
   if(nrow(d) < n) {
     if(!x$loop || !isSeekable(x$file)){
@@ -127,7 +135,7 @@ reset_stream.DSD_ReadCSV <- function(dsd, pos=1) {
   
   if(!isSeekable(dsd$file)) stop("Underlying conneciton does not support seek!")
   seek(dsd$file, where=0)
-      
+  
   if(dsd$skip>0) readLines(dsd$file, n=dsd$skip)
   if(!is.null(dsd$header)) readLines(dsd$file, n=1)
   if(pos>1) readLines(dsd$file, n=pos-1L) 

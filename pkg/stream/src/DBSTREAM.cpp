@@ -37,10 +37,6 @@ public:
 };
 
 
-
-
-// FIXME: add t to MC!
-
 class DBSTREAM {
 public:
   DBSTREAM(double r_, double decay_factor_, int gap_time_,
@@ -180,6 +176,7 @@ public:
       t++;
       
       // decay weights
+      // Is now done during update
       //for(it=mcs.begin(); it<mcs.end(); ++it) it->weight *= decay_factor;
       
       if(!(t%gap_time) && decay_factor<1) {
@@ -190,16 +187,19 @@ public:
         
         // remove clusters that reached 1 and then did not get at least one
         // point since last gap time
+        std::set<int> removedMCs;
         it=mcs.begin();
         while(it<mcs.end()) {
           if(it->weight * pow(decay_factor, t - it->t) <= w_min) {
             
-            if(debug)Rcpp::Rcout << "\terase center "
+            if(debug) Rcpp::Rcout << "\terase center "
                                  << *it << std::endl;
-            
+          
+            // for removing relations
+            removedMCs.insert(it -> id);
+        
             mcs.erase(it);  // erase deletes the object and moves the iterator
           } else it++;
-          // removing relations is not necessary
         }
         
         // remove weak relationships
@@ -209,10 +209,21 @@ public:
           
           it_rel = rel.begin();
           while(it_rel != rel.end()){
+            if(removedMCs.count(it_rel->first.first) 
+              || removedMCs.count(it_rel->first.second)) {
+            
+            if(debug) Rcpp::Rcout << "\terase relation because of MC ("
+                                 << it_rel->first.first << ", "
+                                 << it_rel->first.second
+                                 << ")" << std::endl;
+            rel.erase(it_rel++);  // it does not move to the next pos. (map)
+            
+            } else
+            
             if (it_rel->second.weight * pow(decay_factor, t - it_rel->second.t)
               < w_min * alpha) {
               
-              if(debug)Rcpp::Rcout << "\terase relation ("
+              if(debug) Rcpp::Rcout << "\terase weak relation ("
                                    << it_rel->first.first << ", "
                                    << it_rel->first.second
                                    << ")" << std::endl;
@@ -235,7 +246,17 @@ public:
       } else {
         
         Rcpp::NumericVector dist = eucl(p);
-        std::vector<int> inside;
+        
+        /* // only update the nearest neighbor
+        int winner = std::min_element(dist.begin(), dist.end()) - dist.begin();
+        
+        mcs[winner].weight *= pow(decay_factor, t - mcs[winner].t);
+        mcs[winner].weight++;
+        mcs[winner].t = t; 
+        */
+        
+        // update all neighbors
+        std::vector<int> inside; inside.reserve(dist.size());
         std::vector<Rcpp::NumericVector> new_centers;
         for (int j = 0; j < dist.length(); j++) {
           if (dist[j] > r) continue;
@@ -246,11 +267,12 @@ public:
           inside.push_back(j);
           // Move centers
           // Gaussian neighborhood function
-          // Gaussian: h(j, i(x)) = exp(−||r_j − r_i(x)|| /2sigma^2 )
+          // Gaussian: h(j, i(x)) = exp(−||r_j − r_i(x)||^2 /2sigma^2 )
           // sigma = neighborhood radius : 2 sd deviaitons
           // sigma = sqrt(1/3/2)
           // [1] 0.4082483
-          double partialweight = exp(-dist[j]/r * 3);
+          double partialweight = exp(-pow(dist[j]/r*3.0, 2.0) /2.0);
+          //double partialweight = exp(-dist[j]/r * 3);
           
           // SOM style update: Wv(s + 1) = Wv(s) + thea(u, v, s) alpha(s)(D(t) - Wv(s)),
           // where  alpha(s) is a monotonically decreasing learning coefficient
@@ -320,7 +342,8 @@ public:
   int topID;
   
 private:
-  
+
+  // calculate Euclidean distance of point p to all centers.
   inline Rcpp::NumericVector eucl(Rcpp::NumericVector& p) {
     int n = mcs.size();
     Rcpp::NumericVector dist(n);
@@ -331,6 +354,7 @@ private:
     return dist;
   }
   
+  // Conversions from MC ID to index
   std::map<int,int> getIDTrans() {
     int n = mcs.size();
     Rcpp::IntegerVector ids(n);

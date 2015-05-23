@@ -10,7 +10,7 @@
   to micro-clusters with a given radius and implements shared-density-based reclustering.}
 
 \usage{
-DSC_DBSTREAM(r, lambda = 0.001, gap_time = 1000L, 
+DSC_DBSTREAM(r, lambda = 0.001, gaptime = 1000L, 
   noise = 0.1, shared_density = FALSE, alpha=0.1, k=0, minweight = 0)
 get_shared_density(x, use_alpha = TRUE)  
 change_alpha(x, alpha)  
@@ -19,8 +19,8 @@ change_alpha(x, alpha)
 \arguments{
 	\item{r}{The radius of micro-clusters.}
 	\item{lambda}{The lambda used in the fading function.}
-	\item{gap_time}{weak micro-clusters (and weak shared density entries) 
-    are removed every \code{gap_time} points.}
+	\item{gaptime}{weak micro-clusters (and weak shared density entries) 
+    are removed every \code{gaptime} points.}
 	\item{noise}{The proportion of noise points in the data that will 
 	  be removed while clustering.}
   \item{shared_density}{Record shared density information. If set to \code{TRUE}
@@ -45,12 +45,16 @@ any existing micro-clusters, and if so, merges the point with the
 micro-cluster. Otherwise, a new micro-cluster is created to accommodate 
 the new data point.
 
-Note: Although DSC_DBSTREAM is a micro clustering algorithm, macro clusters
+Although DSC_DBSTREAM is a micro clustering algorithm, macro clusters
 and weights are available.
 
 \code{plot()} for DSC_DBSTREAM has two extra logical parameters called \code{assignment}
   and \code{shared_density} which show the assignment area and
   the shared density graph, rexpectively.
+
+  Note that \code{DSC_DBSTREAM} can at this point not be saved to disk using
+  save() or saveRDS(). This functionality will be added later!
+
 }
 
 \value{

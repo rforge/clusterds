@@ -6,21 +6,16 @@
 \alias{get_attraction}
 \title{D-Stream Data Stream Clustering Algorithm}
 \description{
-    Implements the D-Stream data stream clustering algorithm.}
-
+    Implements the D-Stream data stream clustering algorithm.
+}
 \usage{
-DSC_DStream(gridsize, d=NA_integer_, lambda = 1e-3, gaptime=1000L, 
-  Cm=3, Cl=.8, attraction=FALSE, epsilon=.3, Cm2=Cm, k=NULL, N = NULL)
+DSC_DStream(gridsize, lambda = 1e-3, gaptime=1000L, 
+  Cm=3, Cl=.8, attraction=FALSE, epsilon=.3, Cm2=Cm, k=NULL, N = 0)
 get_attraction(x, relative=FALSE, grid_type = "dense", dist=FALSE)
 }
 
 \arguments{
-	\item{gridsize}{Size of grid cells. Vector of length 
-	  \code{d} (dimensionality of the data). If only
-		one value is specified then the same size is used for 
-		all dimensions.}
-	\item{d}{dimensionality of the data. If unspecified then it is taken 
-    from the first clustered data point.}
+	\item{gridsize}{Size of grid cells.}
 	\item{lambda}{ Fading constant used function to calculate the 
     decay factor \eqn{2^-lambda}.    
     (Note: in the paper the authors use lamba to denote the decay 
@@ -49,7 +44,7 @@ get_attraction(x, relative=FALSE, grid_type = "dense", dist=FALSE)
     of more than k unconnected components, closer groups of MCs are joined.}
   \item{N}{ Fix the number of grid cells used for the calculation 
     of the density thresholds with Cl and Cm. If \code{N} is not 
-    given then the algorithm tries to determine N from the data. Note   
+    given (0) then the algorithm tries to determine N from the data. Note   
     that this means that N potentially increases over time and outliers
     might produce an extremely large value which will lead to a sudden
     creation of too many dense micro-clusters. The original paper
@@ -87,6 +82,9 @@ D-Stream creates an equally spaced grid and estimates the density in each
   For plot D-Stream also provides extra parameters \code{"grid"} and 
   \code{"grid_type"} to show micro-clusters as grid cells
   (density represented by gray values). 
+
+  Note that \code{DSC_DStream} can at this point not be saved to disk using
+  save() or saveRDS(). This functionality will be added later!
 }
 
 \value{
