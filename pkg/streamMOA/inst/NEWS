@@ -1,4 +1,4 @@
-Release version 1.0-1 (xx/xx/xx)
+Release version 1.1-0 (05/21/15)
     * updated to MOA Release 2014.11
     * DSC_MOA objects can now be saved using the convenience function saveRDS_MOA.
     * DSC_Clustream and DSC_Denstream use now DSC_TwoStage for reclustering.
