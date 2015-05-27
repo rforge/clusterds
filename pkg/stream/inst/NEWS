@@ -1,3 +1,6 @@
+Changes in version 1.1-5 (xx/xx/15)
+
+
 Changes in version 1.1-4 (05/24/15)
     * evaluate checks if DSD has cluster labels for external 
 	      evaluation measures.
