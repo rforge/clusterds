@@ -1,13 +1,14 @@
 Changes in version 1.1-5 (xx/xx/15)
-
+    * Fixed problem with noise=0 for DSC_DBSTREAM.
+    * Fixed iterator bug for DSC_DBSTREAM.
 
 Changes in version 1.1-4 (05/24/15)
     * evaluate checks if DSD has cluster labels for external 
 	      evaluation measures.
-    * DSD_mlbenchmarkGenerator now shuffles data points
-    * DSC_ReadCSV gaines arguments skip and header
+    * DSD_mlbenchmarkGenerator now shuffles data points.
+    * DSC_ReadCSV gaines arguments skip and header.
     * DSC_DStream: was reimplemented in C++ (Rcpp),
-        number of grids N can now be fixed by the user
+        number of grids N can now be fixed by the user.
     * DSC_tNN was renamed DSC_DBSTREAM. Uses now SOM-style micro-cluster update 
         and was reimplemented in C++ (Rcpp).
 

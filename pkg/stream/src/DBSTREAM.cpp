@@ -188,17 +188,17 @@ public:
         // remove clusters that reached 1 and then did not get at least one
         // point since last gap time
         std::set<int> removedMCs;
-        it=mcs.begin();
-        while(it!=mcs.end()) {
+        it = mcs.begin();
+        while(it != mcs.end()) {
           if(it->weight * pow(decay_factor, t - it->t) <= w_min) {
             
             if(debug) Rcpp::Rcout << "\terase center "
                                   << *it << std::endl;
             
             // for removing relations
-            removedMCs.insert(it -> id);
+            removedMCs.insert(it->id);
             
-            mcs.erase(it++);  // erase deletes the object and moves the iterator
+            it = mcs.erase(it);  // erase deletes the object and moves the iterator
           } else ++it;
         }
         

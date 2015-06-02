@@ -134,7 +134,7 @@ dbstream$methods(list(
     # without noise all are strong!
     if(noise<=0) {
       if(weak) return(integer(0))
-      else return(seq(1, length(ws)))
+      else return(rep(TRUE, length.out = length(ws)))
     }  
     
     o <- order(ws, decreasing=FALSE)
@@ -228,9 +228,11 @@ dbstream$methods(list(
       
       if(k > 0L) { ### use k not alpha!
         s <- get_shared_density(use_alpha = FALSE)
-        d <- 1/(1+s)
+        d <- as.dist(1/(1+s))
         
         hc <- hclust(d, method="single")
+        #assignment <- cutree(hc, k=k)
+        
         ### find connected components
         assignment <- cutree(hc, h=1-1e-9)
         
