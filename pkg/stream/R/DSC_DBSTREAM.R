@@ -128,7 +128,6 @@ dbstream$methods(list(
   
   # find strong MCs
   strong_mcs = function(weak=FALSE) {
-    
     ws <- micro$weights()
     
     # without noise all are strong!
@@ -138,37 +137,31 @@ dbstream$methods(list(
     }  
     
     o <- order(ws, decreasing=FALSE)
-    # first element represents weight of already deleted MCs!
-    # sum will approach 1/(1-decay_factor) 
-    #if(decay_factor<1) w_total <- (1-decay_factor^(t-1))/(1-decay_factor)
-    #else w_total <- npoints
-    #cs <- cumsum(c(w_total-sum(ws), ws[o]))
-    
-    #if(weak)
-    #  o[(cs < w_total*noise)[-1]]
-    #else  
-    #  o[(cs >= w_total*noise)[-1]]
-    
-    # we do double (or multiple) counting!!!
-    #w_total <- sum(ws)
-    #cs <- cumsum(c(w_total-sum(ws), ws[o]))
-    
-    # we do double counting, but not likely for noise!
-    if(decay_factor<1) w_total <- (1-decay_factor^(micro$t+1))/(1-decay_factor)
-    ### for t -> inf this becomes 1/(1-decay_factor)
-    else w_total <- npoints
-    
-    
-    ## FIXME: correct weight using S
-    #sd <- rowSums(get_shared_density(use_alpha=FALSE))
-    
     cs <- cumsum(ws[o])
+     
+    ### find theoretic total weight (w/o double counting) 
+    ### Note: for t -> inf this becomes 1/(1-decay_factor)
+    if(decay_factor<1) theoretic_total_weight <- 
+      (1-decay_factor^(micro$t+1))/(1-decay_factor)
+    else theoretic_total_weight <- micro$t
     
-    ### decay_factor takes care of previousely removed points
-    ##wk <- cs < w_total * decay_factor^gaptime * noise
-    wk <- cs + w_total * noise * decay_factor^gaptime  < w_total * noise
-    if(weak) o[wk]
-    else o[!wk]
+    
+    ### we assume that noise does not have neighbors and therefore there is no
+    ### double counting!
+    w_removed <- micro$w_removed * decay_factor^(micro$t %% gaptime)
+    real_total <- sum(ws) +   w_removed
+    #w_to_remove <- theoretic_total_weight * noise - w_removed
+    w_to_remove <- real_total * noise - w_removed
+   
+    #cat("theoretic total w: ", theoretic_total_weight, "\n")
+    #cat("real total w: ", sum(micro$weights()) + w_removed, "\n")
+    #cat("double counting factor: ", (sum(micro$weights()) + w_removed)/ theoretic_total_weight, "\n")
+    #cat("removed:", sum(cs < w_to_remove))
+    #cat(" of", length(cs), "\n")     
+    
+    ### keep the top 1-noise part of the clusters
+    if(weak) o[cs < w_to_remove]
+    else o[cs >= w_to_remove]
   },
   
   get_shared_density = function(use_alpha=TRUE) {

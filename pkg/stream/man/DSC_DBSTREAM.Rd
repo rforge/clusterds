@@ -76,9 +76,9 @@ An object of class \code{DSC_DBSTREAM}
 set.seed(0)
 stream <- DSD_Gaussians(k = 3, noise = 0.05)
 
-# create clusterer with r = .1
-dbstream <- DSC_DBSTREAM(r = .1, noise = 0.05)
-update(dbstream, stream, 500)
+# create clusterer with r = 0.05
+dbstream <- DSC_DBSTREAM(r = .05, noise = 0.05)
+update(dbstream, stream, 1000)
 dbstream 
 
 # check micro-clusters
@@ -94,8 +94,8 @@ plot(dbstream, stream, type = "both", assignment = TRUE)
 
 
 # DBSTREAM with shared density 
-dbstream <- DSC_DBSTREAM(r = .1, noise = 0.05, shared_density = TRUE)
-update(dbstream, stream, 500)
+dbstream <- DSC_DBSTREAM(r = .05, noise = 0.05, shared_density = TRUE)
+update(dbstream, stream, 1000)
 dbstream
 plot(dbstream, stream, type = "both")
 # plot the shared density graph

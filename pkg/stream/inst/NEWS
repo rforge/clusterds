@@ -1,6 +1,7 @@
 Changes in version 1.1-5 (xx/xx/15)
     * Fixed problem with noise=0 for DSC_DBSTREAM.
     * Fixed iterator bug for DSC_DBSTREAM.
+    * evaluate gaines argument noise to control if noise is ignored
 
 Changes in version 1.1-4 (05/24/15)
     * evaluate checks if DSD has cluster labels for external 
