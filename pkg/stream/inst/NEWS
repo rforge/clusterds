@@ -1,5 +1,6 @@
-Changes in version 1.1-5 (xx/xx/15)
-    * Fixed problem with noise=0 for DSC_DBSTREAM.
+Changes in version 1.1-5 (07/02/15)
+    * NAMESPACE now imports non-standard packages correctly.
+    * DSC_DBSTREAM uses now Cm instead of noise.
     * Fixed iterator bug for DSC_DBSTREAM.
     * evaluate gaines argument noise to control if noise is ignored
 
