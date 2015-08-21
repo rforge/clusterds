@@ -175,7 +175,8 @@ print.stream_eval <-  function(x, ...) {
   print(x)
 }
 
-### evaluate during clustering 
+## evaluate during clustering 
+## uses single-fold prequential error estimate (eval and then learn the data)
 evaluate_cluster <- function(dsc, dsd, macro=NULL, measure, 
   n=1000, type=c("auto", "micro", "macro"), assign="micro",
   assignmentMethod =  c("auto", "model", "nn"),
@@ -184,7 +185,9 @@ evaluate_cluster <- function(dsc, dsd, macro=NULL, measure,
   evaluations <- data.frame()
   for(i in 1:(n/horizon)) {
     wrapper <- DSD_Memory(dsd, n=horizon, loop=FALSE)
-    update(dsc, wrapper, horizon)
+    
+    #reset_stream(wrapper)
+    #update(dsc, wrapper, horizon)
     
     reset_stream(wrapper)
     if(is.null(macro)) {
@@ -198,6 +201,9 @@ evaluate_cluster <- function(dsc, dsd, macro=NULL, measure,
     
     if(i==1) evaluations <- e
     else evaluations <- rbind(evaluations,e)
+    
+    reset_stream(wrapper)
+    update(dsc, wrapper, horizon)
     
     if(verbose) {
       print(c(points=i*horizon,e))
