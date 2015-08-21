@@ -61,6 +61,7 @@ dstream <- setRefClass("dstream",
     
     ### store the grid
     micro 		      = "ANY",
+    serial          = "ANY",
     decay_factor		= "numeric"
   ),
   
@@ -106,6 +107,29 @@ dstream <- setRefClass("dstream",
 )
 
 dstream$methods(list(
+  # overload copy
+  copy = function(...) {
+    #callSuper(...)
+    ### copy S4 object
+    n <- dstream$new(gridsize, decay_factor, gaptime,
+      Cl, N, attraction, epsilon)
+    
+    ### copy Rcpp object  
+    n$micro <- new(DStream, micro$serializeR())
+    
+    n  
+  },
+  
+  cache = function(){ 
+    serial <<- micro$serializeR()
+  },
+  
+  uncache = function() {
+    micro <<- new(DStream, serial)
+    serial <<- NULL
+  },
+  
+  
   cluster = function(newdata, debug = FALSE) {
     'Cluster new data.' ### online help
     

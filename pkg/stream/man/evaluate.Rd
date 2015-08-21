@@ -45,10 +45,11 @@ evaluate_cluster(dsc, dsd, macro=NULL, measure, n = 1000,
   the majority class several 
 	evaluation measures can be computed.
   
-  For \code{evaluate_cluster} the most commonly used measure introduced 
-  by Aggarwal et al (2003)
-  is applied. The data points used for evaluation are taken from the previously 
-  clustered horizon. Many evaluation measures are calculated with code from the
+  For \code{evaluate_cluster} the most commonly used method
+  of prequential error estimation (see Gama, Sebastiao and Rodrigues; 2013). 
+  The data points in the horizon are first used to calculate the 
+  evaluation measire and then they are used for updating the cluster model.
+  Many evaluation measures are calculated with code from the
   packages \pkg{cluster}, \pkg{clue} and \pkg{fpc}. Detailed documentation can 
   be found in these packages (see Section See Also.)
   
@@ -154,9 +155,7 @@ the clustering algorithm was able to adapt to the changing stream.
 }
 
 \references{
-C. C. Aggarwal, J. Han, J. Wang, P. S. Yu (2003). A Framework for 
-Clustering Evolving Data Streams. Proceedings of the 29th International 
-Conference on Very Large Data Bases - Volume 29. 
+Joao Gama, Raquel Sebastiao, Pedro Pereira Rodrigues (2013). On evaluating stream learning algorithms. Machine Learning, March 2013, Volume 90, Issue 3, pp 317-346.
 
 F. Cao, M. Ester, W. Qian, A. Zhou (2006). Density-Based Clustering over an Evolving Data Stream with Noise. Proceeding of the 2006 SIAM Conference on Data Mining, 326-337.  
   

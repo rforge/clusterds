@@ -1,7 +1,16 @@
+Changes in version 1.1-6 (xx/xx/15)
+    * DSC objects can now be saved and loaded using saveDSC and readDSC.  
+    * we use now DBSCAN from package dbscan.
+    * DSC_DBSTREAM gained parameter metric and now also supports 
+        Manhattan and Maximum norm. 
+    * DSC_DBSTREAM: update gained parameter assignments and function 
+        get_clusteR_assignments() to retrieve the MC assignment of the
+        clustered data points.
+
 Changes in version 1.1-5 (07/02/15)
     * NAMESPACE now imports non-standard packages correctly.
     * DSC_DBSTREAM uses now Cm instead of noise.
-    * Fixed iterator bug for DSC_DBSTREAM.
+    * fixed iterator bug for DSC_DBSTREAM.
     * evaluate gaines argument noise to control if noise is ignored
 
 Changes in version 1.1-4 (05/24/15)
