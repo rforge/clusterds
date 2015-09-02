@@ -25,6 +25,9 @@ DSD_Transactions_Agrawal(type = c("integer"), setSize = 50,
   \item{verbose}{
   How much information the algorithm prints to the console.
 }
+\item{...}{
+  Additional parameters
+}
 }
 \details{
 %%  ~~ If necessary, more details than the description above ~~
@@ -40,7 +43,7 @@ created internally
 %% ~put references to the literature/web site here ~
 }
 \author{
-%%  ~~who you are~~
+Derek Phanekham
 }
 \note{
 %%  ~~further notes~~
@@ -49,7 +52,7 @@ created internally
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
+  \code{\link{DSD_Transactions}}
 }
 \examples{
 \dontrun{

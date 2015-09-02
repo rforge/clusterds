@@ -18,7 +18,7 @@
 #size = size for each individual transaction
 DSD_Transactions_Random <- function(type=c("integer"), setSize=50, maxTransactionSize=10, 
                                     prob = function(set) rep(1/set, times=set),
-                                    size = function(maxSize) sample(1:maxSize, 1) ) {
+                                    size = function(maxSize) sample(1:maxSize, 1), ...) {
   
   if(setSize < maxTransactionSize){ stop("maxTransactionSize cannot be larger than setSize")}
   
@@ -40,7 +40,10 @@ DSD_Transactions_Random <- function(type=c("integer"), setSize=50, maxTransactio
 #n = number of transactions
 #x = DSD object
 #returns a, list of transactions
-get_points.DSD_Transactions_Random <- function(x, n=1, assignment = FALSE,...) {
+#FIXME: implement outofpoints
+get_points.DSD_Transactions_Random <- function(x, n=1, outofpoints = FALSE,
+                                               assignment = FALSE,
+                                               ...) {
   ### gaussians at (3,2.5) and (3,-2.5)
   ### bars at (-3,2.8) and (-3,-2.8)
   

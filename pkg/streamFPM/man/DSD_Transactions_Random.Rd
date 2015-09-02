@@ -8,7 +8,7 @@ Random Transaction Data Stream Generator
 A datastream generator that produces random transactions within a specified range.
 }
 \usage{
-DSD_Transactions_Random <- function(type=c("integer"), setSize=50, maxTransactionSize=10, 
+DSD_Transactions_Random(type=c("integer"), setSize=50, maxTransactionSize=10, 
                                     prob = function(set) rep(1/set, times=set),
                                     size = function(maxSize) sample(1:maxSize, 1) )
 }

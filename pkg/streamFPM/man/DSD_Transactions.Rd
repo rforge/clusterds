@@ -5,7 +5,7 @@
 DSD Transactions
 }
 \description{
-Abstract class. Parent class to DSDs that generate transactional data.
+Abstract class. Parent class to DSDs that generate transactional data in the \pkg{streamFPM} package.
 }
 \usage{
 DSD_Transactions(...)
@@ -30,7 +30,7 @@ DSD_Transactions(...)
 %% ~put references to the literature/web site here ~
 }
 \author{
-%%  ~~who you are~~
+Derek Phanekham
 }
 \note{
 %%  ~~further notes~~
@@ -39,7 +39,7 @@ DSD_Transactions(...)
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
+  \code{\link{DSD}}
 }
 \examples{
 

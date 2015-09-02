@@ -8,11 +8,14 @@ Twitter Stream transaction generator
 A datastream generator that uses the streamR package to create transactions by sampling the twitter stream
 }
 \usage{
-DSD_Transactions_TwitterStream <- function(consumer_key, consumer_secret,
-                                  RegisteredOAuthCredentials = NULL, search_term = "", 
-                                  timeout = 10, language = "en",
-                                  parser = function(text) 
-                                  strsplit(gsub("[^[:alnum:][:space:]#]", "", text), " ")[[1]])
+DSD_Transactions_TwitterStream(consumer_key, consumer_secret, 
+                                RegisteredOAuthCredentials = NULL, 
+                                search_term = "", timeout = 10, language = "en",
+                                parser = function(text) unique(
+                                strsplit(
+                                gsub(
+                                "[^[:alnum:][:space:]#]", "", text), " ")[[1]]))
+  
   
 }
 %- maybe also 'usage' for other objects documented here.
@@ -77,7 +80,7 @@ dsd <- DSD_Transactions_TwitterStream(consumer_key = key, consumer_secret = secr
 
 library(ROAuth)
 
-cred <- OAuthFactory$new(consumerKey=key,
+cred <- ROAuth::OAuthFactory$new(consumerKey=key,
                          consumerSecret=secret,
                          requestURL='https://api.twitter.com/oauth/request_token',
                          accessURL='https://api.twitter.com/oauth/access_token',

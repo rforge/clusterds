@@ -9,7 +9,7 @@
 DSD_Transactions_Twitter <- function(consumer_key = NULL, consumer_secret = NULL, access_token = NULL, access_secret =NULL, search_term,
                                      desired_count, since = NULL, until = NULL, sinceID = NULL, maxID = NULL,
                                      language = NULL, geocode = NULL, resultType = NULL, strip_retweets = FALSE,
-                                     parser = function(text) unique(tolower(strsplit(gsub("[^[:alnum:][:space:]#]", "", text), " ")[[1]]))  ) {
+                                     parser = function(text) unique(tolower(strsplit(gsub("[^[:alnum:][:space:]#]", "", text), " ")[[1]])), ...  ) {
 
   if(!is.null(consumer_key) && !is.null(consumer_secret)){
     setup_twitter_oauth(consumer_key = consumer_key, consumer_secret = consumer_secret,
@@ -60,7 +60,8 @@ DSD_Transactions_Twitter <- function(consumer_key = NULL, consumer_secret = NULL
 
 #n = number of transactions
 #x = DSD object
-get_points.DSD_Transactions_Twitter <- function(x, n=1, assignment = FALSE,...) {
+#FIXME: implement outofpoints
+get_points.DSD_Transactions_Twitter <- function(x, n=1, outofpoints=FALSE, assignment = FALSE, ...) {
   ### gaussians at (3,2.5) and (3,-2.5)
   ### bars at (-3,2.8) and (-3,-2.8)
   

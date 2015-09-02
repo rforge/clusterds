@@ -6,7 +6,7 @@
  Implements the estDec algorithm for finding recent frequent patterns in transactional datastreams.
 }
 \usage{
-DST_EstDec <- function(decayRate = 0.99, minsup = 0.1, 
+DST_EstDec(decayRate = 0.99, minsup = 0.1, 
                        insertSupport = NULL, 
                        pruningSupport = NULL,
                        datatype="character") 
@@ -40,7 +40,7 @@ estDec finds frequent patterns over a transaction or list datastream. It only ke
   Chang, J., Lee, W. (2003) Finding Recent Frequent Itemsets Adaptively over Online Data Streams.
 }
 \author{
-  
+  Derek Phanekham
 }
 \note{
 %%  ~~further notes~~
@@ -49,7 +49,7 @@ estDec finds frequent patterns over a transaction or list datastream. It only ke
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
+  \code{\link{DST}}
 }
 \examples{
 ##---- Should be DIRECTLY executable !! ----

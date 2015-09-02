@@ -8,11 +8,16 @@ Twitter Data Stream Generator
 A data stream generator that gathers and returns tweets using the Twitter REST API through the \pkg{twitteR} package. This API has access to an archive of tweets from the last several days.
 }
 \usage{
-DSD_Transactions_Twitter <- function(consumer_key,
-      consumer_secret, RegisteredOAuthCredentials = NULL, search_term,
-      desired_count, since = NULL, until = NULL, sinceID = NULL, lang = NULL,
-      parser = function(text) 
-          strsplit(gsub("[^[:alnum:][:space:]#]", "", text), " ")[[1]])
+DSD_Transactions_Twitter(consumer_key = NULL, consumer_secret = NULL,
+                         access_token = NULL, access_secret =NULL,
+                         search_term, desired_count, since = NULL,
+                         until = NULL, sinceID = NULL, maxID = NULL,
+                         language = NULL, geocode = NULL, resultType = NULL,
+                         strip_retweets = FALSE, 
+                         parser = function(text) 
+                            unique(tolower(strsplit(
+                            gsub(
+                            "[^[:alnum:][:space:]#]", "", text), " ")[[1]]))  )
 
 }
 %- maybe also 'usage' for other objects documented here.
@@ -35,7 +40,7 @@ DSD_Transactions_Twitter <- function(consumer_key,
   \item{desired_count}{
     The desired number of tweets to fetch whenever the stream is empty
   }
-  \item{lang}{
+  \item{language}{
     A language code. When a language code is specified, all of which can be found in the twitter API documentation, it will only return tweets in that language.
   }
     \item{since}{
@@ -46,6 +51,18 @@ DSD_Transactions_Twitter <- function(consumer_key,
   }
      \item{sinceID}{
     A character ID in the form '123456'. It will only retrieve tweets with IDs higher than this value.
+  }
+    \item{maxID}{
+    The user can specify their own function for parsing tweets into individual words. The function must accept a string and return a list of strings. The default function removes punctuation except hashtags and splits the string by spaces.
+  }
+    \item{geocode}{
+    The user can specify their own function for parsing tweets into individual words. The function must accept a string and return a list of strings. The default function removes punctuation except hashtags and splits the string by spaces.
+  }
+    \item{resultType}{
+    The user can specify their own function for parsing tweets into individual words. The function must accept a string and return a list of strings. The default function removes punctuation except hashtags and splits the string by spaces.
+  }
+    \item{strip_retweets}{
+    If this parameter is set to TRUE, only original tweets will be parsed. 
   }
   \item{parser}{
     The user can specify their own function for parsing tweets into individual words. The function must accept a string and return a list of strings. The default function removes punctuation except hashtags and splits the string by spaces.
@@ -74,7 +91,7 @@ Derek Phanekham
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
+  \code{\link{DSD_Transactions}}
 }
 \examples{
 

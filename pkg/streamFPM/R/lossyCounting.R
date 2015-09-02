@@ -48,7 +48,7 @@ LossyCounting <- setRefClass("LossyCounting",
     ),
 )
 
-update.DST_LossyCounting <- function(dst, dsd, n=1) {
+update.DST_LossyCounting <- function(object, dsd, n=1, ...) {
   
   for(i in 1:n){
     
@@ -56,39 +56,39 @@ update.DST_LossyCounting <- function(dst, dsd, n=1) {
     
     #gets the next transaction
     Tk <- get_points(dsd)[[1]]
-    if(dst$RObj$dataType == "character") {
+    if(object$RObj$dataType == "character") {
       Tk <- Tk[Tk != ""]
     }
     
     #print(Tk)
     for(x in Tk) {
-      dst$RObj$N <- dst$RObj$N+1L
+      object$RObj$N <- object$RObj$N+1L
       
       ### insert phase ###
-      if(dst$RObj$dataType == "integer") {
+      if(object$RObj$dataType == "integer") {
         #if x is in DH
-        if (has.key(toString(x), dst$DH)){
+        if (has.key(toString(x), object$DH)){
           #increase count of item in DH by 1    
-          dst$DH[[toString(x)]][1] <- dst$DH[[toString(x)]][1] + 1
+          object$DH[[toString(x)]][1] <- object$DH[[toString(x)]][1] + 1
           
           
         }
         else {
           #insert(x, 1, b_current-1) into DH
-          dst$DH[[toString(x)]] <- c(freq = 1, err = dst$RObj$b_current - 1)
+          object$DH[[toString(x)]] <- c(freq = 1, err = object$RObj$b_current - 1)
         }
       }
       else {  #if dataType is character
         #if x is in DH
-        if (has.key(x, dst$DH)){
+        if (has.key(x, object$DH)){
           #increase count of item in DH by 1    
-          dst$DH[[x]][1] <- dst$DH[[x]][1] + 1
+          object$DH[[x]][1] <- object$DH[[x]][1] + 1
           
           
         }
         else {
           #insert(x, 1, b_current-1) into DH
-          dst$DH[[x]] <- c(freq = 1, err = dst$RObj$b_current - 1)
+          object$DH[[x]] <- c(freq = 1, err = object$RObj$b_current - 1)
         }
         
       }
@@ -96,24 +96,24 @@ update.DST_LossyCounting <- function(dst, dsd, n=1) {
       ### delete phase ###
       
       #if N mod w == 0
-      if( dst$RObj$N %% dst$RObj$width == 0) {
+      if( object$RObj$N %% object$RObj$width == 0) {
         #bucket boundary reached. delete infreq items
         
         
         #finds all elements in D where the f_i + delta <= b_current
         #removes them
-        keys <- keys(dst$DH)
+        keys <- keys(object$DH)
         
         removed <- sapply(1:length(keys), 
                     function(x, b_current) {
-                      if(dst$DH[[keys[x]]][1] + dst$DH[[keys[x]]][2] <= b_current) {
-                        delete(keys[x], dst$DH)
+                      if(object$DH[[keys[x]]][1] + object$DH[[keys[x]]][2] <= b_current) {
+                        delete(keys[x], object$DH)
                         return(keys[x])
                       }
-                    }, b_current = dst$RObj$b_current)
+                    }, b_current = object$RObj$b_current)
         
         
-        dst$RObj$b_current <- dst$RObj$b_current + 1L     #new bucket
+        object$RObj$b_current <- object$RObj$b_current + 1L     #new bucket
         
       }
     }
@@ -122,7 +122,7 @@ update.DST_LossyCounting <- function(dst, dsd, n=1) {
 
 
 #returns frequent sets
-get_patterns.DST_LossyCounting <- function(dst, minsup = 0.1, decode=FALSE) {
+get_patterns.DST_LossyCounting <- function(dst, minsup = 0.1, decode=FALSE, ...) {
   
   #$c_i >= (s - e)N$.
   

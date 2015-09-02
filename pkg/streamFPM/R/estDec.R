@@ -71,7 +71,7 @@ estDec <- setRefClass("estDec",
   ),
 )
 
-update.DST_EstDec <- function(dst, dsd, n=1) {
+update.DST_EstDec <- function(object, dsd, n=1, ...) {
 
     for(i in 1:n){
       #if(i %% 50 == 0)
@@ -84,7 +84,7 @@ update.DST_EstDec <- function(dst, dsd, n=1) {
       #print(Tk)
       
       
-      if (dst$RObj$dataType == "character") {
+      if (object$RObj$dataType == "character") {
         
           #make sure empty strings are removed from list
           Tk <- Tk[Tk != ""]
@@ -94,15 +94,15 @@ update.DST_EstDec <- function(dst, dsd, n=1) {
             for(i in 1:length(Tk)) {
                 #print(Tk[i])
                 if(!is.na(Tk[i])){ 
-                  if( has.key(key = Tk[i], hash = dst$wordHash) ) {
-                    Tk_ints[i] <- dst$wordHash[[ Tk[i] ]]
+                  if( has.key(key = Tk[i], hash = object$wordHash) ) {
+                    Tk_ints[i] <- object$wordHash[[ Tk[i] ]]
                   }
                   else {
-                    dst$wordHash[[ Tk[i] ]] <- dst$RObj$wordCount
+                    object$wordHash[[ Tk[i] ]] <- object$RObj$wordCount
                     
-                    Tk_ints[i] <- dst$RObj$wordCount
+                    Tk_ints[i] <- object$RObj$wordCount
                     
-                    dst$RObj$wordCount <- dst$RObj$wordCount + 1L
+                    object$RObj$wordCount <- object$RObj$wordCount + 1L
                     
                   }
                 }
@@ -113,7 +113,7 @@ update.DST_EstDec <- function(dst, dsd, n=1) {
       }
       
       #updates the TransactionID, which is also the total # of transactions ever seen
-      dst$RObj$TID <- dst$RObj$TID + 1L;
+      object$RObj$TID <- object$RObj$TID + 1L;
       
       #Ck(e) is the current count of an itemset e which is the number of trans
       #that contain the itemset among the k transactions
@@ -123,10 +123,10 @@ update.DST_EstDec <- function(dst, dsd, n=1) {
       #decay = b^-(1/h) (b>1, h>=1, b^-1 <= d < 1)
       
       #parameter updating phase
-      dst$RObj$Dk <- (dst$RObj$Dk * dst$RObj$decayRate) + 1.0 #FIXME
+      object$RObj$Dk <- (object$RObj$Dk * object$RObj$decayRate) + 1.0 #FIXME
       
       #updates all sets
-      dst$RObj$rt$updateAllSets(Tk, dst$RObj$TID, dst$RObj$decayRate, dst$RObj$minsup, dst$RObj$Dk)
+      object$RObj$rt$updateAllSets(Tk, object$RObj$TID, object$RObj$decayRate, object$RObj$minsup, object$RObj$Dk)
       
     }
     
@@ -134,7 +134,7 @@ update.DST_EstDec <- function(dst, dsd, n=1) {
 
 
 #returns frequent sets
-get_patterns.DST_EstDec <- function(dst, decode=FALSE) {
+get_patterns.DST_EstDec <- function(dst, decode=FALSE, ...) {
   
   if (dst$RObj$dataType == "character") {
     

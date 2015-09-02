@@ -18,13 +18,13 @@
 #size = size for each individual transaction
 DSD_Transactions_TwitterStream <- function(consumer_key, consumer_secret, RegisteredOAuthCredentials = NULL, 
                                            search_term = "", timeout = 10, language = "en",
-                                           parser = function(text) unique(strsplit(gsub("[^[:alnum:][:space:]#]", "", text), " ")[[1]])  ) {
+                                           parser = function(text) unique(strsplit(gsub("[^[:alnum:][:space:]#]", "", text), " ")[[1]]), ...  ) {
   
   if (!is.null(RegisteredOAuthCredentials)) {
     cred <- RegisteredOAuthCredentials
   }
   else {
-    cred <- OAuthFactory$new(consumerKey=consumer_key,
+    cred <- ROAuth::OAuthFactory$new(consumerKey=consumer_key,
                              consumerSecret=consumer_secret,
                              requestURL='https://api.twitter.com/oauth/request_token',
                              accessURL='https://api.twitter.com/oauth/access_token',
@@ -62,7 +62,7 @@ fetch_points <- function(x, backoff = 1) {
   
   if(x$state$position >= x$state$numberOfTweets) {
     if(x$searchTerm == "") {
-      tweetsSample <- sampleStream( file.name="", timeout=x$timeout*backoff, oauth=x$cred)
+     tweetsSample <-  streamR::sampleStream( file.name="", timeout=x$timeout*backoff, oauth=x$cred)
       tweetsSample.df <- parseTweets(tweetsSample)
       if(x$lang == "") {
         x$state$tweets <-  tweetsSample.df[, c("text")]
@@ -75,14 +75,14 @@ fetch_points <- function(x, backoff = 1) {
     #if there is a search term
     else { 
       if(x$lang == "") {
-        tweetsSample <- filterStream( file.name="", timeout=x$timeout, oauth=x$cred, track = x$searchTerm)
-        tweetsSample.df <- parseTweets(tweetsSample)
+        tweetsSample <-  streamR::filterStream( file.name="", timeout=x$timeout, oauth=x$cred, track = x$searchTerm)
+        tweetsSample.df <-  streamR::parseTweets(tweetsSample)
         x$state$tweets <-  tweetsSample.df[, c("text")]
       }
       #if there is a language
       else {
-        tweetsSample <- filterStream( file.name="", timeout=x$timeout, oauth=x$cred, track = x$searchTerm, language = x$lang)
-        tweetsSample.df <- parseTweets(tweetsSample)
+        tweetsSample <-  streamR::filterStream( file.name="", timeout=x$timeout, oauth=x$cred, track = x$searchTerm, language = x$lang)
+        tweetsSample.df <-  streamR::parseTweets(tweetsSample)
         x$state$tweets <-  tweetsSample.df[, c("text")]
       }
     }
@@ -94,7 +94,9 @@ fetch_points <- function(x, backoff = 1) {
 
 #n = number of transactions
 #x = DSD object
-get_points.DSD_Transactions_TwitterStream <- function(x, n=1, assignment = FALSE, blocking = TRUE, ...) {
+#FIXME: implement out of points
+get_points.DSD_Transactions_TwitterStream <- function(x, n=1, outofpoints=FALSE,
+                  assignment = FALSE, blocking = TRUE, ...) {
   
   
   #FIXME: add in error checking
@@ -104,8 +106,8 @@ get_points.DSD_Transactions_TwitterStream <- function(x, n=1, assignment = FALSE
   
   while(x$state$position >= x$state$numberOfTweets) {
     if(x$searchTerm == "") {
-      tweetsSample <- sampleStream( file.name="", timeout=x$timeout*backoff, oauth=x$cred)
-      tweetsSample.df <- parseTweets(tweetsSample)
+      tweetsSample <-  streamR::sampleStream( file.name="", timeout=x$timeout*backoff, oauth=x$cred)
+      tweetsSample.df <-  streamR::parseTweets(tweetsSample)
       if(x$lang == "") {
         x$state$tweets <-  tweetsSample.df[, c("text")]
       }
@@ -119,16 +121,16 @@ get_points.DSD_Transactions_TwitterStream <- function(x, n=1, assignment = FALSE
       if(x$lang == "") {
         len <- 0
         while(len == 0){
-          tweetsSample <- filterStream( file.name="", timeout=x$timeout, oauth=x$cred, track = x$searchTerm)
+          tweetsSample <-  streamR::filterStream( file.name="", timeout=x$timeout, oauth=x$cred, track = x$searchTerm)
           len <- length(tweetsSample)
         }
-        tweetsSample.df <- parseTweets(tweetsSample)
+        tweetsSample.df <-  streamR::parseTweets(tweetsSample)
         x$state$tweets <-  tweetsSample.df[, c("text")]
       }
       #if there is a language
       else {
-        tweetsSample <- filterStream( file.name="", timeout=x$timeout, oauth=x$cred, track = x$searchTerm, language = x$lang)
-        tweetsSample.df <- parseTweets(tweetsSample)
+        tweetsSample <-  streamR::filterStream( file.name="", timeout=x$timeout, oauth=x$cred, track = x$searchTerm, language = x$lang)
+        tweetsSample.df <-  streamR::parseTweets(tweetsSample)
         x$state$tweets <-  tweetsSample.df[, c("text")]
       }
     }

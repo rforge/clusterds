@@ -34,13 +34,13 @@ topN <- function(x, n = 10) {
     sort(x, decreasing = TRUE)[1:n]
 }
 
-summary.Patterns <- function(x) {
-  cat("Set of", length(x), "patterns \n")
+summary.Patterns <- function(object, ...) {
+  cat("Set of", length(object), "patterns \n")
   cat("Top 10 patterns", "\n")
-  if(length(x) < 10)
-    sort(x, decreasing = TRUE)[1:length(x)]
+  if(length(object) < 10)
+    sort(object, decreasing = TRUE)[1:length(object)]
   else
-    sort(x, decreasing = TRUE)[1:10]
+    sort(object, decreasing = TRUE)[1:10]
   
 }
 

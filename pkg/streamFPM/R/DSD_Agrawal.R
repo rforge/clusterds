@@ -31,7 +31,6 @@ DSD_Transactions_Agrawal <- function(type=c("integer"), setSize=50, maxTransacti
     ...,
     verbose = FALSE) {
     nItems <- setSize
-
     patterns <-
       random.patterns(nItems = nItems,
         method = "agrawal", ..., verbose = verbose)
@@ -154,7 +153,8 @@ random.patterns <- function(
 
 
 ## create transactions
-get_points.DSD_Agrawal <- function(x, n=1, assignment = FALSE,...)
+#FIXME: dont know what outofpoints does
+get_points.DSD_Agrawal <- function(x, n=1, outofpoints = FALSE, assignment = FALSE, ...)
 {
     patterns <- x$patterns
     nItems <- x$setSize
