@@ -13,7 +13,7 @@
 evaluate(dsc, dsd, measure, n = 100, type=c("auto", "micro", "macro"), 
   assign="micro", assignmentMethod=c("auto", "model", "nn"), 
   noise = c("class", "ignor"), ...)
-evaluate_cluster(dsc, dsd, macro=NULL, measure, n = 1000,
+evaluate_cluster(dsc, dsd, measure, n = 1000,
   type=c("auto", "micro", "macro"), 
   assign="micro", assignmentMethod=c("auto", "model", "nn"),
   horizon=100, verbose=FALSE, noise = c("class", "ignor"), ...)
@@ -30,7 +30,6 @@ evaluate_cluster(dsc, dsd, macro=NULL, measure, n = 1000,
 	\item{assign}{Assign points to micro or macro-clusters?} 
 	\item{assignmentMethod}{ How are points assigned to clusters for 
     evaluation (see \code{get_assignment})?}
-	\item{macro}{A DSC_macro object for reclustering.}
 	\item{horizon}{Evaluation is done using horizon many previous points
     (see detail section).}
 	\item{verbose}{report progress?}
@@ -231,8 +230,8 @@ evaluate_cluster(dstream, stream, type="macro", assign="micro",
 # animate the clustering process
 reset_stream(stream)
 dstream <- DSC_DStream(gridsize=0.05, lambda=0.1)
-animate_cluster(dstream, stream, n=5000, horizon=100, 
-  evaluationMeasure=c("crand"), evaluationType="macro", evaluationAssign="micro",
-  type="both", xlim=c(0,1), ylim=c(0,1))
+animate_cluster(dstream, stream, horizon=100, n=5000,  
+  measure=c("crand"), type="macro", assign="micro",
+  plot.args = list(type="both", xlim=c(0,1), ylim=c(0,1)))
 }
 }

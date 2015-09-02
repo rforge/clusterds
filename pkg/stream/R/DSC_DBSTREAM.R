@@ -88,12 +88,13 @@ dbstream <- setRefClass("dbstream",
       if(gaptime < 1L) stop("gaptime needs to be 1, 2, 3,...")
   
       metrics <- c("euclidean", "manhattan", "maximum")
-      metric <<- m <- pmatch(tolower(metric), metrics) - 1L
-      metric_name <<- metrics[m+1L]
+      m <- pmatch(tolower(metric), metrics) - 1L
       if(is.na(m)) stop("Unknow metric! Available metrics: ", 
         paste(metrics, collapse = ", "))
+      metric <<- m
+      metric_name <<- metrics[m+1L]
        
-      if(shared_density && metric != 0) 
+      if(shared_density && m != 0L) 
         stop("Shared density only works in Euclidean space!")
       
       
@@ -385,8 +386,8 @@ plot.DSC_DBSTREAM <- function(x, dsd = NULL, n = 500,
   }
 }
 
-get_assignment.DSC_DBSTREAM <- function(dsc, points, type=c("auto", "micro", "macro"), 
-  method=c("auto", "model", "nn"), ...) {
+get_assignment.DSC_DBSTREAM <- function(dsc, points, 
+  type=c("auto", "micro", "macro"), method=c("auto", "model", "nn"), ...) {
   
   type <- match.arg(type)
   method<- match.arg(method)
@@ -397,7 +398,7 @@ get_assignment.DSC_DBSTREAM <- function(dsc, points, type=c("auto", "micro", "ma
   c <- get_centers(dsc, type="micro", ...)
   
   if(nrow(c)>0L) {
-    dist <- dist(points, c, method=metric_name)
+    dist <- dist(points, c, method=dsc$RObj$metric_name)
     # Find the minimum distance and save the class
     assignment <- apply(dist, 1L, which.min)
     

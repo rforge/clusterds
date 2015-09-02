@@ -139,23 +139,24 @@ dstream$methods(list(
   ### This is for plotting images.
   toMatrix = function(grid_type="used", dim=NULL) {
     
-    cs <- get_micro(weight = TRUE, grid_type = grid_type, translate = FALSE) 
-    ws <- attr(cs, "weight")
-    
-    if(nrow(cs)>0) {
-      if(!is.null(dim)) cs <- cs[, dim[1:2]]
-      else cs <- cs[, 1:2]
-    }
-    
     ### nothing clustered yet
     if(!length(micro$mins) || !length(micro$maxs)) return(matrix(0, nrow=0, ncol=0))
+    
+    cs <- get_micro(weight = TRUE, grid_type = grid_type, translate = FALSE) 
+    ws <- attr(cs, "weight")
     
     ns <- (micro$maxs-micro$mins)+1L
     mat <- matrix(0, nrow=ns[1], ncol=ns[2])
     
-    for(i in 1:nrow(cs)) mat[cs[i,1]-micro$mins[1]+1, 
-      cs[i,2]-micro$mins[2]+1] <- ws[i]
-    
+    if(nrow(cs)>0) {
+      ## dimensions to show
+      if(!is.null(dim)) cs <- cs[, dim[1:2], drop = FALSE]
+      else cs <- cs[, 1:2, drop = FALSE]
+      
+      for(i in 1:nrow(cs)) mat[cs[i,1]-micro$mins[1]+1, 
+        cs[i,2]-micro$mins[2]+1] <- ws[i]
+    }
+     
     rownames(mat) <- (micro$mins[1]:micro$maxs[1])*gridsize + gridsize/2
     colnames(mat) <- (micro$mins[2]:micro$maxs[2])*gridsize + gridsize/2
     ### FIXME: Colnames!
@@ -395,7 +396,7 @@ plot.DSC_DStream <- function(x, dsd=NULL, n=500,
   type <- match.arg(type)
   
   ### assignment == grid
-  if(assignment) grid=TRUE
+  if(assignment) grid <- TRUE
   
   ### implements grid and grid_both
   if(!grid) return(plot.DSC(x, dsd=dsd, n=n, type=type, ...))

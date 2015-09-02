@@ -1,5 +1,5 @@
 Package: stream
-Version: 1.1-5
+Version: 1.2-0
 Date: 2015-07-02
 Title: Infrastructure for Data Stream Mining
 Authors@R: c(person("Michael", "Hahsler", role = c("aut", "cre", "cph"),
