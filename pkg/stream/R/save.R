@@ -17,7 +17,7 @@
 # helpers
 
 saveDSC <- function(object, file, ...) {
-  ### for MOA based objects (RJava)
+  ### for MOA based objects from streamMOA (rJava)
     if(!is.null(object$javaObj)) rJava::.jcache(object$javaObj)
 
     if(!is.null(object$micro_dsc$javaObj)) rJava::.jcache(object$micro$javaObj)

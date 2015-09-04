@@ -1121,7 +1121,7 @@ directory.
 <<>>= 
 file <- system.file("examples", "kddcup10000.data.gz", package = "stream")
 stream_file <- DSD_ReadCSV(gzfile(file),
-  take = c(1, 5, 6, 8:11, 13:20, 23:41), class = 42, k = 7)
+  take = c(1, 5, 6, 8:11, 13:20, 23:42), class = 42, k = 7)
 stream_file
 @
 

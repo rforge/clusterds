@@ -7,6 +7,10 @@ Changes in version 1.2-0 (xx/xx/15)
         get_clusteR_assignments() to retrieve the MC assignment of the
         clustered data points.
     * cleaned up interface for animate_cluster() and animate_data().
+    * write_stream has now an argument called header (former name was col.names)
+        to be consistent with DSD_ReadCSV.
+    * DSD_ReadCSV was completely rewritten to be more reliable. Lost argument d 
+        which is now figured out automatically.
 
 Changes in version 1.1-5 (07/02/15)
     * NAMESPACE now imports non-standard packages correctly.

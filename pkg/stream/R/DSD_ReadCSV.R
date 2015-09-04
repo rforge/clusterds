@@ -17,11 +17,13 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 
+### FIXME: test class and take
+
 # accepts an open connection
 # ... goes to read.table
-DSD_ReadCSV <- function(file, k=NA, d=NA,
+DSD_ReadCSV <- function(file, k=NA,
   take=NULL, class=NULL, loop=FALSE, 
-  sep=",", header=FALSE, skip=0, ...) {
+  sep=",", header=FALSE, skip=0, colClasses = NA, ...) {
   
   # if the user passes a string, create a new connection and open it
   if (is(file, "character")) file <- file(file)
@@ -32,24 +34,51 @@ DSD_ReadCSV <- function(file, k=NA, d=NA,
   # open the connection if its closed
   if (!isOpen(file)) open(file)
   
+  # filename
+  filename <- basename(summary(file)$description)
+  
   # seekable?
   if(loop && !isSeekable(file)) stop("Loop only allowed for seekable connections!")
   
-  # skip
+  # read first point to figure out structure!
   if(skip>0) readLines(file, n=skip)
+  point <- read.table(text=readLines(con=file, n=1+header), 
+    sep=sep, header=header, colClasses = colClasses, ...)
+ 
+  # reset stream if possible (otherwise first point is lost)
+  if(isSeekable(file)) {
+    seek(file, where=0)
+    if(skip>0) readLines(file, n=skip)
+    if(header) readLines(file, n=1)
+  }
   
+  # select columns take
+  if(!is.null(take)) {
+    if(is.character(take)) take <- pmatch(take, colnames(point))
+    if(any(is.na(take))) stop("Invalid column name specified in take!")
+    point <- point[,take]
+  }
+  
+  # dimensions
+  d <- ncol(point) - !is.null(class)
+    
   # header?
-  if(header) {
-    header <- as.character(read.table(text=readLines(con=file, n=1), 
-      sep=sep, as.is=TRUE, ...))
-    if(!is.null(take)) header <- header[take]  
-  }else header <- NULL
+  if(header) header <- colnames(point)
+  else header <- NULL
   
-  # figure out d from take
-  if(!is.null(take)) d <- length(take)
-  
-  # filename
-  filename <- basename(summary(file)$description)
+  # data types?
+  colClasses <- sapply(point[1,], class)
+  ### FIXME: make all integers numeric?
+ 
+  # class?
+  if(is.character(class)) {
+    if(is.null(header)) stop("Only numeric column index allowed if no headers are available!")
+    class <- pmatch(class, header)
+    if(is.na(class)) stop("No matching column name for class!")
+  } else if(!is.null(class)) {
+    if(!is.null(take)) class <- match(class, take)
+    if(is.na(class)) stop("Invalid class column index!")
+  }
   
   # creating the DSD object
   l <- list(
@@ -60,6 +89,7 @@ DSD_ReadCSV <- function(file, k=NA, d=NA,
     sep = sep,
     take = take,
     header = header,
+    colClasses = colClasses,
     read.table.args = list(...),
     class = class,
     loop = loop,
@@ -75,22 +105,50 @@ get_points.DSD_ReadCSV <- function(x, n=1,
   cluster = FALSE, class = FALSE, ...) {
   .nodots(...)
   
+  if((class || cluster) && is.null(x$class)) 
+    stop("Stream does not support class/cluster labels.")
+  
   outofpoints <- match.arg(outofpoints)
   n <- as.integer(n)  
   
-  d <- data.frame()
+  ## remember position
   if(!isSeekable(x$file)) pos <- NA else pos <- seek(x$file)
-  ### only text connections can do read.table
+  
+  d <- NULL
+  ## only text connections can do read.table
   if(summary(x$file)$text == "text"){
-    d <- do.call(read.table, c(list(file=x$file, sep=x$sep, nrows=n), 
-      x$read.table.args))}
-  else{
-    ### need to get the data and wrap it into a textconnection (slow)
-    d <- do.call(read.table, c(list(text=readLines(con=x$file, n=n), sep=x$sep, 
-      nrows=n), 
-      x$read.table.args))
+    suppressWarnings(
+      try(d <- do.call(read.table, c(list(file=x$file, sep=x$sep, nrows=n, 
+        colClasses=x$colClasses), x$read.table.args)), 
+        silent = TRUE))
+  }else{
+    ## need to get the data and wrap it into a textconnection (slow)
+    suppressWarnings(
+      try(d <- do.call(read.table, c(list(text=readLines(con=x$file, n=n), 
+        sep=x$sep, nrows=n, colClasses=x$colClasses), x$read.table.args)), 
+        silent = TRUE))
+  }
+ 
+  ## read did not work!
+  if(is.null(d)) {
+    #if(!is.na(pos)) seek(x$file, pos)
+    if(outofpoints == "stop") stop("Read failed (use smaller n for unreliable sources) or the stream is at its end!")
+    if(outofpoints == "warn") warning("Read failed (use smaller n for unreliable sources) or the stream is at its end!")
+   
+    ## create conforming data.frame with 0 rows
+    d <- data.frame()
+    for(i in 1:length(x$colClasses)) {
+      d[[i]] <- do.call(x$colClasses[i], list(0))
+    }
+    
+    if(!is.null(x$header)) colnames(d) <- x$header
+    if(!class && !is.null(x$class)) d <- d[,-x$class, drop=FALSE]
+    if(class) d <- d[, c((1:d)[-x$class], x$class) , drop=FALSE] 
+    
+    return(d)
   }
   
+  ## loop?
   if(nrow(d) < n) {
     if(!x$loop || !isSeekable(x$file)){
       if(outofpoints == "stop") {
@@ -99,34 +157,35 @@ get_points.DSD_ReadCSV <- function(x, n=1,
       }
       if(outofpoints == "warn") 
         warning("The stream is at its end! Returning available points!")
-    } else { ### looping
+    
+    } else { ## looping
       while(nrow(d) < n) {
-        seek(x$file, where=0) # resetting the connection
-        d2 <- do.call(read.table, c(list(text=readLines(con=x$file, n=n-nrow(d)), 
-          sep=x$sep), x$read.table.args))
+        reset_stream(x)
+        d2 <- do.call(read.table, c(list(text=readLines(con=x$file, 
+          n=n-nrow(d)), sep=x$sep, colClasses=x$colClasses), x$read.table.args))
         if(nrow(d2) < 1) stop("Empty stream!")
         
         d <- rbind(d, d2)
       }
     }      
   }
+ 
+  if(!is.null(x$take)) d <- d[,x$take, drop=FALSE]
   
-  cl <- NULL
+  ## remove additional columns from a bad line
+  if(ncol(d) > x$d+!is.null(class)) d <- d[, 1:(x$d+!is.null(class)), drop=FALSE]
+   
   if(nrow(d)>0) {
-    if(class || cluster) {
-      if(is.null(x$class)) {
-        warning("No class labels available!")
-      } else cl <- d[,x$class[1]]
-    }
+    if(!is.null(x$header)) colnames(d) <- x$header
     
-    if(!is.null(x$take)) d <- d[,x$take, drop=FALSE]
-    if(is.null(x$take) && !is.null(x$class)) d <- d[,-x$class, drop=FALSE]
+    if(!is.null(x$class)) {
+      cl <- d[,x$class]
+      d <- d[,-x$class, drop=FALSE]
+      if(class) d <- cbind(d, class = cl)
+      if(cluster) attr(d, "cluster") <- cl
+    }
   }  
   
-  if(!is.null(x$header)) colnames(d) <- x$header
-  
-  if(cluster) attr(d, "cluster") <- cl
-  if(class) d <- cbind(d, class = cl)
   d
 }
 

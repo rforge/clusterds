@@ -18,9 +18,8 @@
 
 ### write data from a stream to a file
 
-write_stream <- function(dsd, file, n=100, block=100000L,
-  class=FALSE, sep=",", 
-  col.names=FALSE, row.names=FALSE, ...) UseMethod("write_stream")
+write_stream <- function(dsd, file, n=100, block=100000L, class=FALSE, sep=",", 
+  header=FALSE, row.names=FALSE, ...) UseMethod("write_stream")
 
 write_stream.default <- function(dsd, file, n=100, block=100000L, 
   class=FALSE, sep=",", col.names=FALSE, row.names=FALSE, ...) {
@@ -29,7 +28,7 @@ write_stream.default <- function(dsd, file, n=100, block=100000L,
 
 write_stream.DSD <- function(dsd, file, n=100, block=100000L, 
   class=FALSE, 
-  sep=",", col.names=FALSE, row.names=FALSE, ...) {	
+  sep=",", header=FALSE, row.names=FALSE, ...) {	
   
   # string w/ file name (clears the file)
   if (is(file, "character")) file <- file(file, open="w")
@@ -44,9 +43,10 @@ write_stream.DSD <- function(dsd, file, n=100, block=100000L,
   for (bl in .make_block(n, block)) {
     p <- get_points(dsd, bl, class=class)
     
-    write.table(p, 
-      file, sep=sep, append=TRUE, col.names=FALSE,
-      row.names=row.names, ...)
+    ## suppress warning for append and col.names
+    suppressWarnings(write.table(p, 
+      file, sep=sep, append=TRUE, col.names=header,
+      row.names=row.names, ...))
   }
   close(file)
 }
