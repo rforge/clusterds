@@ -3,14 +3,15 @@ Changes in version 1.2-0 (xx/xx/15)
     * we use now DBSCAN from package dbscan.
     * DSC_DBSTREAM gained parameter metric and now also supports 
         Manhattan and Maximum norm. 
-    * DSC_DBSTREAM: update gained parameter assignments and function 
-        get_clusteR_assignments() to retrieve the MC assignment of the
+    * DSC_DBSTREAM gained parameter assignments and function 
+        get_cluster_assignments() to retrieve the MC assignment of the
         clustered data points.
     * cleaned up interface for animate_cluster() and animate_data().
-    * write_stream has now an argument called header (former name was col.names)
-        to be consistent with DSD_ReadCSV.
     * DSD_ReadCSV was completely rewritten to be more reliable. Lost argument d 
         which is now figured out automatically.
+    * write_stream has now an argument called header (former name was col.names)
+        to be consistent with DSD_ReadCSV.
+
 
 Changes in version 1.1-5 (07/02/15)
     * NAMESPACE now imports non-standard packages correctly.

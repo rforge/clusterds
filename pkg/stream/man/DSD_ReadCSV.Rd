@@ -18,7 +18,9 @@ close_stream(dsd)
 	\item{file}{A file/URL or an open connection.}
 	\item{k}{Number of true clusters, if known.}
 	\item{take}{indices of columns to extract from the file.}
-	\item{class}{column index for the class attribute/cluster label.}
+	\item{class}{column index for the class attribute/cluster label.
+	  If \code{take} is specified then it needs to also include the class/label
+	  column.}
 	\item{loop}{If enabled, the object will loop through the stream when
 	  the end has been reached. If disabled, the object will warn the user
 	  upon reaching the end.}
@@ -41,7 +43,8 @@ is currently being read from. In general, the connections will consist of files
 stored on disk but have many other possibilities (see \code{\link{connection}}).
 
 The implementation tries to gracefully deal with slightly corrupted data by
-dropping points with inconsistent reading. However, this is not always possible.
+dropping points with inconsistent reading and producing a warning. 
+However, this might not always be possible resulting in an error instead.
 
 The position in the file can be reset to the beginning using 
 \code{reset_stream()}. The connection can be closed using \code{close_stream()}.
@@ -61,13 +64,15 @@ The position in the file can be reset to the beginning using
 \examples{
 # creating data and writing it to disk
 stream <- DSD_Gaussians(k=3, d=5)
-write_stream(stream, "data.txt", n=100, header = TRUE, sep=",")
+write_stream(stream, "data.txt", n=10, header = TRUE, sep=",")
 
 # reading the same data back (as a loop)
 stream2 <- DSD_ReadCSV("data.txt", sep=",", header = TRUE, loop=TRUE)
 stream2
 
+# get points (fist a single point and then 20 using loop)
 get_points(stream2)
+get_points(stream2, n=20)
 
 # clean up
 close_stream(stream2)
@@ -83,7 +88,7 @@ get_points(stream, 5, class = TRUE)
 
 
 # plot 100 points (projected on the first two principal components)
-plot(stream, n=1000, method="pc")
+plot(stream, n=100, method="pc")
 
 close_stream(stream)
 }

@@ -68,7 +68,11 @@ DSD_ReadCSV <- function(file, k=NA,
   
   # data types?
   colClasses <- sapply(point[1,], class)
-  ### FIXME: make all integers numeric?
+  ### integer -> numeric, factor -> character
+  colClasses[colClasses == "integer"] <- "numeric"
+  colClasses[colClasses == "factor"] <- "character"
+  
+  
  
   # class?
   if(is.character(class)) {
@@ -102,75 +106,92 @@ DSD_ReadCSV <- function(file, k=NA,
 ## it is important that the connection is OPEN
 get_points.DSD_ReadCSV <- function(x, n=1, 
   outofpoints=c("stop", "warn", "ignore"), 
-  cluster = FALSE, class = FALSE, ...) {
+  cluster = FALSE, class = FALSE,  ...) {
   .nodots(...)
+  
+  #.DEBUG <- TRUE
+  .DEBUG <- FALSE
   
   if((class || cluster) && is.null(x$class)) 
     stop("Stream does not support class/cluster labels.")
   
   outofpoints <- match.arg(outofpoints)
+  noop <- function(...) {}
+  msg <- switch(outofpoints,
+    "stop" = stop,
+    "warn" = warning,
+    "ignor" = noop
+  )
+  
   n <- as.integer(n)  
   
   ## remember position
   if(!isSeekable(x$file)) pos <- NA else pos <- seek(x$file)
   
   d <- NULL
-  ## only text connections can do read.table
-  if(summary(x$file)$text == "text"){
+  eof <- FALSE
+  
+  ## only text connections can do read.table without readLine (would be faster)
+  #if(summary(x$file)$text == "text"){
+  #  suppressWarnings(
+  #    try(d <- do.call(read.table, c(list(file=x$file, sep=x$sep, nrows=n, 
+  #      colClasses=x$colClasses), x$read.table.args)), 
+  #      silent = TRUE))
+  #}    
+  
+  try(lines <- readLines(con=x$file, n=n), silent = !.DEBUG)
+  
+  ## EOF?
+  if(length(lines) < 1) eof <- TRUE
+  else {
     suppressWarnings(
-      try(d <- do.call(read.table, c(list(file=x$file, sep=x$sep, nrows=n, 
-        colClasses=x$colClasses), x$read.table.args)), 
-        silent = TRUE))
-  }else{
-    ## need to get the data and wrap it into a textconnection (slow)
-    suppressWarnings(
-      try(d <- do.call(read.table, c(list(text=readLines(con=x$file, n=n), 
-        sep=x$sep, nrows=n, colClasses=x$colClasses), x$read.table.args)), 
-        silent = TRUE))
-  }
- 
-  ## read did not work!
-  if(is.null(d)) {
-    #if(!is.na(pos)) seek(x$file, pos)
-    if(outofpoints == "stop") stop("Read failed (use smaller n for unreliable sources) or the stream is at its end!")
-    if(outofpoints == "warn") warning("Read failed (use smaller n for unreliable sources) or the stream is at its end!")
-   
-    ## create conforming data.frame with 0 rows
-    d <- data.frame()
-    for(i in 1:length(x$colClasses)) {
-      d[[i]] <- do.call(x$colClasses[i], list(0))
-    }
-    
-    if(!is.null(x$header)) colnames(d) <- x$header
-    if(!class && !is.null(x$class)) d <- d[,-x$class, drop=FALSE]
-    if(class) d <- d[, c((1:d)[-x$class], x$class) , drop=FALSE] 
-    
-    return(d)
+      try(d <- do.call(read.table, 
+        c(list(text=lines, sep=x$sep, nrows=n, 
+          colClasses=x$colClasses), x$read.table.args)), 
+        silent = !.DEBUG))
   }
   
+  if(eof) msg("The stream is at its end (EOF)!")
   ## loop?
-  if(nrow(d) < n) {
-    if(!x$loop || !isSeekable(x$file)){
-      if(outofpoints == "stop") {
-        if(!is.na(pos)) seek(x$file, pos)
-        stop("Not enough points in the stream!")
-      }
-      if(outofpoints == "warn") 
-        warning("The stream is at its end! Returning available points!")
-    
+  if(is.null(d) || nrow(d) < n || eof) {
+    if(!x$loop) {
+      ## try to undo read in case of stop
+      if(outofpoints == "stop" && !is.na(pos)) seek(x$file, pos) 
+      if(!eof) msg("Not enough points in the stream!")
     } else { ## looping
       while(nrow(d) < n) {
         reset_stream(x)
-        d2 <- do.call(read.table, c(list(text=readLines(con=x$file, 
-          n=n-nrow(d)), sep=x$sep, colClasses=x$colClasses), x$read.table.args))
-        if(nrow(d2) < 1) stop("Empty stream!")
+        try(lines <- readLines(con=x$file, n=n-nrow(d)), silent = !.DEBUG)
         
-        d <- rbind(d, d2)
+        ## EOF?
+        if(length(lines) == 0) eof <- TRUE
+        else {
+          d2 <- NULL
+          suppressWarnings(
+            try(d2 <- do.call(read.table, 
+              c(list(text=lines, sep=x$sep, nrows=n, 
+                colClasses=x$colClasses), x$read.table.args)), 
+              silent = !.DEBUG))
+          if(!is.null(d2) && nrow(d2 > 0)) d <- rbind(d, d2)
+          else msg("Read failed (use smaller n for unreliable sources)!")
+        }
+        
       }
     }      
   }
- 
-  if(!is.null(x$take)) d <- d[,x$take, drop=FALSE]
+  
+  ## no data!
+  if(is.null(d)) {
+    if(!eof) msg("Read failed (use smaller n for unreliable sources)!")
+   
+    ## create conforming data.frame with 0 rows
+    d <- data.frame()
+    for(i in 1:length(x$colClasses)) 
+      d[[i]] <- do.call(x$colClasses[i], list(0))
+  } else {
+    ## take columns
+    if(!is.null(x$take)) d <- d[,x$take, drop=FALSE]
+  }
   
   ## remove additional columns from a bad line
   if(ncol(d) > x$d+!is.null(class)) d <- d[, 1:(x$d+!is.null(class)), drop=FALSE]
