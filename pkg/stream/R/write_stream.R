@@ -18,11 +18,12 @@
 
 ### write data from a stream to a file
 
-write_stream <- function(dsd, file, n=100, block=100000L, class=FALSE, sep=",", 
+write_stream <- function(dsd, file, n=100, block=100000L, 
+  class=FALSE, append = FALSE, sep=",", 
   header=FALSE, row.names=FALSE, ...) UseMethod("write_stream")
 
 write_stream.default <- function(dsd, file, n=100, block=100000L, 
-  class=FALSE, append = FALSE, sep=",", col.names=FALSE, row.names=FALSE, ...) {
+  class=FALSE, append = FALSE, sep=",", header=FALSE, row.names=FALSE, ...) {
   stop(gettextf("write_stream not implemented for class '%s'.", class(dsd)))
 }
 

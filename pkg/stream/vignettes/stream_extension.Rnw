@@ -34,7 +34,7 @@
 \DeclareTextFontCommand{\emph}{\normalfont}
 
 %\usepackage{Sweave} 
-%\VignetteIndexEntry{Introduction to stream}
+%\VignetteIndexEntry{Extending the stream Framework}
 
 %% publication information
 %% NOTE: This needs to filled out ONLY IF THE PAPER WAS ACCEPTED.
@@ -224,11 +224,22 @@ Since all data is random, there is also no need to store a state. The
 assignments are needed attaches a vector with the appropriate 
 number of \code{NA}s indicating that the data points are all noise.
 
-Now the new stream type can already be used.
-<<>>=
+Now the new stream type can already be used. 
+
+<<dsd_example, fig=TRUE, include=FALSE>>=
 stream <- DSD_UniformNoise()
+stream
 plot(stream, main = description(stream))
 @
+
+The resulting plot is shown in Figure~\ref{figure:dsd_example}.
+
+\begin{figure}
+\centering
+\includegraphics[width=.5\linewidth]{stream_extension-dsd_example}
+\caption{Sample points from the newly implemented \code{DSD\_UniformNoise} object.}
+\label{figure:dsd_example}
+\end{figure}
 
 Several more complicated examples are available in the package's source code 
 directory in files starting with \code{DSD_}.
