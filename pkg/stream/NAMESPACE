@@ -130,7 +130,9 @@ export(
   get_macroweights,
 
   saveDSC,
-  readDSC
+  readDSC,
+  
+  description
 )
 
 ### update
@@ -200,6 +202,11 @@ S3method(get_copy, DSC_R)
 
 S3method(print, stream_eval)
 
+### description
+S3method(description, DSD)
+S3method(description, DSC)
+S3method(description, DSO)
+
 ### DSD_MGC
 S3method(add_cluster, DSD_MG)
 S3method(reset_stream, DSD_MG)
@@ -212,3 +219,4 @@ S3method(print, MGC_Linear)
 S3method(add_keyframe, MGC_Linear)
 S3method(get_keyframes, MGC_Linear)
 S3method(remove_keyframe, MGC_Linear)
+

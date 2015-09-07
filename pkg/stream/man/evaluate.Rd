@@ -12,11 +12,11 @@
 \usage{
 evaluate(dsc, dsd, measure, n = 100, type=c("auto", "micro", "macro"), 
   assign="micro", assignmentMethod=c("auto", "model", "nn"), 
-  noise = c("class", "ignor"), ...)
+  noise = c("class", "exclude"), ...)
 evaluate_cluster(dsc, dsd, measure, n = 1000,
   type=c("auto", "micro", "macro"), 
   assign="micro", assignmentMethod=c("auto", "model", "nn"),
-  horizon=100, verbose=FALSE, noise = c("class", "ignor"), ...)
+  horizon=100, verbose=FALSE, noise = c("class", "exclude"), ...)
 }
 
 \arguments{
@@ -33,7 +33,8 @@ evaluate_cluster(dsc, dsd, measure, n = 1000,
 	\item{horizon}{Evaluation is done using horizon many previous points
     (see detail section).}
 	\item{verbose}{report progress?}
-	\item{noise}{how to handle noise (as a separate class or ignor). }
+	\item{noise}{how to handle noise (treat as a separate class or exclude 
+	  from evaluation). }
 	\item{...}{Unused arguments are ignored.}
 }
 

@@ -6,7 +6,7 @@ connection.}
 
 \usage{
 	write_stream(dsd, file, n=100, block=100000L, 
-	class=FALSE, sep=",", header=FALSE, row.names=FALSE, ...)
+	class=FALSE, append = FALSE, sep=",", header=FALSE, row.names=FALSE, ...)
 }
 
 \arguments{
@@ -16,6 +16,7 @@ connection.}
 	\item{block}{Write stream in blocks to improve file I/O speed.}
 	\item{class}{Save the class/cluster labels of the points as the last column.}
 	\item{sep}{The character that will separate attributes in a data point.}
+	\item{append}{Append the data to an existing file.}
 	\item{header}{A flag that determines if column names will be output 
 	  (equivalent to \code{col.names} in \code{write.table()}).}
 	\item{row.names}{A flag that determines if row names will be output.}

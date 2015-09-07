@@ -63,7 +63,7 @@ evaluate <- function (dsc, dsd, measure, n = 100,
   type=c("auto", "micro", "macro"), 
   assign="micro", 
   assignmentMethod=c("auto","model", "nn"),
-  noise = c("class", "ignor"),
+  noise = c("class", "exclude"),
   ...) {
   
   assignmentMethod <- match.arg(assignmentMethod)
@@ -121,7 +121,7 @@ evaluate <- function (dsc, dsd, measure, n = 100,
         actual_fpc[is.na(actual_fpc)] <- max(actual_fpc, na.rm = TRUE)
       predict_fpc[is.na(predict_fpc)] <- max(predict_fpc, na.rm = TRUE)
     
-    }else if(noise=="ignor") {
+    }else if(noise=="exclude") {
       ## remove all actual noise points
       if(!is.null(actual_fpc)) {
         nsp <- is.na(actual_fpc)
@@ -157,7 +157,7 @@ evaluate <- function (dsc, dsd, measure, n = 100,
       ## noise it its own group with index 0: this works for external measures
       if(!is.null(actual)) actual[is.na(actual)] <- 0L
       predict[is.na(predict)] <- 0L
-    }else if(noise=="ignor") {
+    }else if(noise=="exclude") {
       ## remove all actual noise points
       if(!is.null(actual)) {
         nsp <- is.na(actual)
@@ -191,7 +191,7 @@ print.stream_eval <-  function(x, ...) {
 evaluate_cluster <- function(dsc, dsd, measure, 
   n=1000, type=c("auto", "micro", "macro"), assign="micro",
   assignmentMethod =  c("auto", "model", "nn"),
-  horizon=100, verbose=FALSE, noise = c("class", "ignor"), ...) {
+  horizon=100, verbose=FALSE, noise = c("class", "exclude"), ...) {
   
   rounds <- n %/% horizon 
   measure <- .all_measures[pmatch(tolower(measure), tolower(.all_measures))] 

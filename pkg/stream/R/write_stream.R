@@ -22,17 +22,22 @@ write_stream <- function(dsd, file, n=100, block=100000L, class=FALSE, sep=",",
   header=FALSE, row.names=FALSE, ...) UseMethod("write_stream")
 
 write_stream.default <- function(dsd, file, n=100, block=100000L, 
-  class=FALSE, sep=",", col.names=FALSE, row.names=FALSE, ...) {
+  class=FALSE, append = FALSE, sep=",", col.names=FALSE, row.names=FALSE, ...) {
   stop(gettextf("write_stream not implemented for class '%s'.", class(dsd)))
 }
 
 write_stream.DSD <- function(dsd, file, n=100, block=100000L, 
-  class=FALSE, 
-  sep=",", header=FALSE, row.names=FALSE, ...) {	
+  class=FALSE, append = FALSE, sep=",", header=FALSE, row.names=FALSE, ...) {	
+
+  # make sure files are not overwritten
+  if(is(file, "character") && file.exists(file) && !append) 
+    stop("file exists already. Please remove the file first.")
   
   # string w/ file name (clears the file)
-  if (is(file, "character")) file <- file(file, open="w")
-  
+  if (is(file, "character")) {
+    if(append) file <- file(file, open="a")
+    else file <- file(file, open="w")
+  }
   # error	
   else if (!is(file, "connection")) stop("Please pass a valid connection!")
   

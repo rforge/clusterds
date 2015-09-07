@@ -1,4 +1,8 @@
 Changes in version 1.2-0 (xx/xx/15)
+    * generic and methods for description() added to exact descriptions from
+        DSD, DSC and DSO objects.
+    * write_stream() gained parameter append and now throws an error if it would 
+        overwrite a file.
     * DSC objects can now be saved and loaded using saveDSC and readDSC.  
     * we use now DBSCAN from package dbscan.
     * DSC_DBSTREAM gained parameter metric and now also supports 

@@ -6,6 +6,7 @@
 
 \description{
 Save and Read DSC objects savely (serializes the underlying data structure).
+This also works for \pkg{streamMOA} DSC objects.
 }
 
 \usage{
