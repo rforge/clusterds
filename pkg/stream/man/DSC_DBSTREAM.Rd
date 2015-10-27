@@ -77,6 +77,11 @@ An object of class \code{DSC_DBSTREAM}
 	\code{\link{DSC_Micro}}
 }
 
+\author{
+    Michael Hahsler and Matthew Bolanos
+}
+
+
 \examples{
 set.seed(0)
 stream <- DSD_Gaussians(k = 3, noise = 0.05)

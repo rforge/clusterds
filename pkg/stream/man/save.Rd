@@ -25,6 +25,10 @@ readDSC(file)
   \code{\link{saveRDS}} and \code{\link{readRDS}}. 
 }
 
+\author{
+    Michael Hahsler
+}
+
 
 \examples{
 set.seed(0)
