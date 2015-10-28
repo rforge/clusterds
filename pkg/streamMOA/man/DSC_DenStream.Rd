@@ -57,6 +57,11 @@ Classification and Clustering. In Journal of Machine Learning Research
 	\code{\link{DSC_Micro}},
 	\code{\link{DSC_MOA}}
 }
+
+\author{
+    Michael Hahsler and John Forrest
+}
+
 \examples{
 # 3 clusters with 5% noise
 stream <- DSD_Gaussians(k=3, d=2, noise=0.05)
