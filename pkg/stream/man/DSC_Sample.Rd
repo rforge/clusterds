@@ -69,22 +69,22 @@ sample
 # plot micro-clusters
 plot(sample, stream)
 
-# reclustering (Kmeans is sufficient because DSC_Sample does not return weights)
+# reclustering
 kmeans <- DSC_Kmeans(3)
 recluster(kmeans, sample)
 plot(kmeans, stream, type="both")
 
 # sample from an evolving stream
 stream <- DSD_Benchmark(1)
-sample <- DSC_Sample(k=100)
-update(sample, stream, 2000)
+sample <- DSC_Sample(k=20)
+update(sample, stream, 1000)
 plot(sample, stream)
 # Note: the clusters move from left to right and the sample keeps many 
 # outdated points
   
 # use a biased sample to keep more recent data points 
 stream <- DSD_Benchmark(1)
-sample <- DSC_Sample(k=100, biased=TRUE)
-update(sample, stream, 2000)
+sample <- DSC_Sample(k=20, biased=TRUE)
+update(sample, stream, 1000)
 plot(sample, stream)
 }
